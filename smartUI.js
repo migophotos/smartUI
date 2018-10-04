@@ -1,6 +1,6 @@
 /**
  * smartUI - семейство UI элементов, позволяющих строить пользовательские интерфейсы.
- * Каждый элемент представляет собо custom control
+ * Каждый элемент представляет собой custom control
  * 
  */
 class smartEditSlider extends HTMLElement {
@@ -131,14 +131,14 @@ class smartEditSlider extends HTMLElement {
                         </div>
                     </div>
 
-                    <input class="indata" type="text" value="0 ${this.getAttribute('units')}">
+                    <input class="indata" type="number" value="0" max="${this.getAttribute('max')}" min="${this.getAttribute('min')}" step="${this.getAttribute('step')}">
                     <div class="slider btn" style="width:96px; height:16px;">
                         <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="scroll" xml:space="preserve" x="0px" y="0px" width="96px" height="16px" viewBox="0 0 96 16">
                             <g class="iconstroke" stroke-width="2" fill="none">
                                 <g id="SL0" transform="translate(20.2,0)">
-                                    <path class="left-part" stroke="rgba( 102,227,255, 1" stroke-width="5" d="M-80,8 L1,8"></path>
+                                    <path class="left-part" stroke="rgba(102,227,255,0.8)" stroke-width="5" d="M-80,8 L1,8"></path>
                                     <path class="right-part" d="M15,8 L96,8"></path>
-                                    <circle cx="8" cy="8" r="7"></circle>
+                                    <circle cx="8" cy="8" r="7" fill="skyblue"></circle>
                                 </g>
                             </g>
                         </svg>
