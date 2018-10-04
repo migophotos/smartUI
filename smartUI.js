@@ -1,10 +1,13 @@
-/* eslint-disable */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-multi-spaces */
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable indent */
+
 /**
  * Utilitts
  */
 class utils {
-    constructor() {};
-    	/**
+    /**
 	 * Converts known numeric property (ies) to numbers
 	 * @param {object} optObj reference to an options object
 	 * @param {string} prop the property name which value needs (in case of it known) to be validated. If null, all properties will be validated.
@@ -28,14 +31,12 @@ class utils {
 					count++;
 					break;
 				}
-			} else {
-				if (optObj.hasOwnProperty(np)) {
+			} else if (optObj.hasOwnProperty(np)) {
 					optObj[np] = Number(optObj[np]);
 					count++;
-				}
 			}
-		}
-		return (count > 0);
+        }
+        return (count > 0);
 	}
 
 }
@@ -49,7 +50,8 @@ class smartEditSlider extends HTMLElement {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
 		if (!this._shadowDOM) {
-			throw new Error('Unfortunately, your browser does not support shadow DOM v1. Think about switching to a last release of Chrome browser that supports all new technologies!');
+            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
+            Think about switching to a last release of Chrome browser that supports all new technologies!`);
         }
         // this.getAttribute('title');
         this._shadowDOM.innerHTML = `
@@ -171,7 +173,8 @@ class smartEditSlider extends HTMLElement {
             </style>
             <div class="editwithslider">
                 <div class="svgcontainer">
-                    <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="scroll" xml:space="preserve" x="0px" y="0px" width="48px" height="40px" viewBox="0 0 48 40">
+                    <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="48px" height="40px" viewBox="0 0 48 40">
                         <g class="imagefill">
                         <image xlink:href="${this.getAttribute('image')}" x="0" y="-4" height="48px" width="48px"/>
                         </g>
@@ -181,14 +184,16 @@ class smartEditSlider extends HTMLElement {
                     <div class="title">${this.getAttribute('title')}</div>
                     <div class="plusminus">
                         <div class="svgcontainer btn" id="MB">
-                            <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="scroll" xml:space="preserve" x="0px" y="0px" width="17px" height="16px" viewBox="0 0 17 16">
+                            <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            overflow="scroll" xml:space="preserve" x="0px" y="0px" width="17px" height="16px" viewBox="0 0 17 16">
                                 <g class="iconfill">
                                     <path d="M8,0C3.582,0,0,3.582,0,8s3.582,8,8,8h8V0H8z M5,9V7h8v2H5z"></path>
                                 </g>
                             </svg>
                         </div>
                         <div class="svgcontainer btn" id="PB">
-                            <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="scroll" xml:space="preserve" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16">
+                            <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            overflow="scroll" xml:space="preserve" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16">
                                 <g class="iconfill">
                                     <path d="M8,0H0v16h8c4.418,0,8-3.582,8-8S12.418,0,8,0z M11,9H8v3H6V9H3V7h3V4h2v3h3V9z"></path>
                                 </g>
@@ -196,9 +201,17 @@ class smartEditSlider extends HTMLElement {
                         </div>
                     </div>
 
-                    <input class="indata" id="IC" type="text" value="${this.getAttribute('value')} ${this.getAttribute('units')}" max="${this.getAttribute('max')}" min="${this.getAttribute('min')}" step="${this.getAttribute('step')}">
+                    <input class="indata" id="IC" type="text"
+                        value="${this.getAttribute('value')} ${this.getAttribute('units')}"
+                        max="${this.getAttribute('max')}"
+                        min="${this.getAttribute('min')}"
+                        step="${this.getAttribute('step')}">
                     <div class="slider btn" style="width:90px; height:16px;">
-                        <input name="slider" class="slider-bar" id="SL" type="range" max="${this.getAttribute('max')}" value="${this.getAttribute('value')}" min="${this.getAttribute('min')}" step="${this.getAttribute('step')}" />
+                        <input name="slider" class="slider-bar" id="SL" type="range"
+                        max="${this.getAttribute('max')}"
+                        value="${this.getAttribute('value')}"
+                        min="${this.getAttribute('min')}"
+                        step="${this.getAttribute('step')}" />
                     </div>
                 </div>
             </div>
@@ -227,10 +240,10 @@ class smartEditSlider extends HTMLElement {
         });
         this._input.addEventListener('input', (evt) => {
             let result;
-            if (parseFloat(this._o.step) - parseInt(this._o.step) != 0) {
+            if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
                 result = parseFloat(this._input.value).toFixed(1);
             } else {
-                result = parseInt(this._input.value);
+                result = parseInt(this._input.value, 10);
             }
             this._o.value = result;
             this.setAttribute('value', `${this._o.value}`);
@@ -239,10 +252,10 @@ class smartEditSlider extends HTMLElement {
         });
         this._input.addEventListener('change', (evt) => {
             let result;
-            if (parseFloat(this._o.step) - parseInt(this._o.step) != 0) {
+            if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
                 result = parseFloat(this._input.value).toFixed(1);
             } else {
-                result = parseInt(this._input.value);
+                result = parseInt(this._input.value, 10);
             }
             this._o.value = result;
             this.setAttribute('value', `${this._o.value}`);
@@ -253,17 +266,17 @@ class smartEditSlider extends HTMLElement {
         });
 
         this._plus.addEventListener('click', (evt) => {
-            if (typeof this._o.value === "number" && typeof this._o.max === "number" && typeof this._o.step === "number" ) {
+            if (typeof this._o.value === 'number' && typeof this._o.max === 'number' && typeof this._o.step === 'number') {
                 if (this._o.value + this._o.step > this._o.max) {
                     this._o.value = this._o.max;
                 } else {
                     this._o.value += this._o.step;
                 }
                 let result;
-                if (parseFloat(this._o.step) - parseInt(this._o.step) != 0) {
+                if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
                     result = parseFloat(this._o.value).toFixed(1);
                 } else {
-                    result = parseInt(this._o.value);
+                    result = parseInt(this._o.value, 10);
                 }
                 this.setAttribute('value', `${result}`);
 
@@ -272,17 +285,17 @@ class smartEditSlider extends HTMLElement {
             }
         });
         this._minus.addEventListener('click', (evt) => {
-            if (typeof this._o.value === "number" && typeof this._o.min === "number" && typeof this._o.step === "number" ) {
+            if (typeof this._o.value === 'number' && typeof this._o.min === 'number' && typeof this._o.step === 'number') {
                 if (this._o.value - this._o.step < this._o.min) {
                     this._o.value = this._o.min;
                 } else {
                     this._o.value -= this._o.step;
                 }
                 let result;
-                if (parseFloat(this._o.step) - parseInt(this._o.step) != 0) {
+                if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
                     result = parseFloat(this._o.value).toFixed(1);
                 } else {
-                    result = parseInt(this._o.value);
+                    result = parseInt(this._o.value, 10);
                 }
                 this.setAttribute('value', `${result}`);
 
@@ -292,13 +305,15 @@ class smartEditSlider extends HTMLElement {
         });
 	}
 	disconnectedCallback() {
+        this.className = this.className;
     }
 
 
 }
 const supportsCustomElementsV1 = 'customElements' in window;
 if (!supportsCustomElementsV1) {
-	throw new Error('Unfortunately, your browser does not support custom elements v1. Think about switching to a last release of Chrome browser that supports all new technologies!');
+    throw new Error(`Unfortunately, your browser does not support custom elements v1.
+                    Think about switching to a last release of Chrome browser that supports all new technologies!`);
 }
 
 window.customElements.define('smart-editslider', smartEditSlider);
