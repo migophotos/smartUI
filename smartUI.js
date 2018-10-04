@@ -1,7 +1,48 @@
+/* eslint-disable */
+/**
+ * Utilitts
+ */
+class utils {
+    constructor() {};
+    	/**
+	 * Converts known numeric property (ies) to numbers
+	 * @param {object} optObj reference to an options object
+	 * @param {string} prop the property name which value needs (in case of it known) to be validated. If null, all properties will be validated.
+	 */
+	static convertNumericProps(optObj = {}, prop = null) {
+		if (typeof optObj !== 'object') {
+			throw new ReferenceError("options object hasn't been initialized!");
+		}
+
+		const numericProps =  [
+			'max',
+			'min',
+			'step',
+			'value'
+		];
+		let count = 0;
+		for (let np of numericProps) {
+			if (prop) {
+				if (np === prop && optObj.hasOwnProperty(prop)) {
+					optObj[prop] = Number(optObj[prop]);
+					count++;
+					break;
+				}
+			} else {
+				if (optObj.hasOwnProperty(np)) {
+					optObj[np] = Number(optObj[np]);
+					count++;
+				}
+			}
+		}
+		return (count > 0);
+	}
+
+}
 /**
  * smartUI - семейство UI элементов, позволяющих строить пользовательские интерфейсы.
  * Каждый элемент представляет собой custom control
- * 
+ *
  */
 class smartEditSlider extends HTMLElement {
     constructor() {
@@ -20,7 +61,7 @@ class smartEditSlider extends HTMLElement {
                 :host([disabled]) { /* style when host has disabled attribute. */
                     pointer-events: none;
                     opacity: 0.2;
-                }                
+                }
 
                 .imagefill {
                     opacity: 0.8;
@@ -46,14 +87,14 @@ class smartEditSlider extends HTMLElement {
                 .editwithslider {
                     font-family: Helvetica, sans-serif;
                     color: rgba( 255,255,255, 0.8 );
-                    
+
                 }
                 .editwithslider .controls {
                     display: inline-block;
                     margin-top: 3px;
-                    margin-left: 8px;
+                    margin-left: 2px;
                     vertical-align: top;
-                } 
+                }
                 .editwithslider .title {
                     text-transform: uppercase;
                     font-size: 9px;
@@ -80,29 +121,53 @@ class smartEditSlider extends HTMLElement {
                     height: 16px;
                     overflow: hidden;
                     margin-top: 3px;
-                }                             
+                }
                 .editwithslider input {
                     display: block;
-                    float: left;                    
-                    width: 64px;
+                    float: left;
+                    width: 40px;
                     background: none;
                     border: 1px solid;
-                    margin: 2px 12px;
+                    margin: 2px 4px 2px 8px;
                     padding: 1px 3px 2px 3px;
                     font-size: 11px;
                     text-align: right;
                 }
                 .editwithslider .slider {
                     display: block;
-                    float: left;                    
-                    overflow: hidden;
-                    margin: 3px 8px 0 0;
+                    float: left;
+                    overflow: unset;
+                    margin: 6px 12px 0 0;
                 }
-                
+
                 .editwithslider .btn:hover path {
                     color: rgba( 255,255,255, 1 );
                     opacity: 1;
-                }              
+                }
+                input[type=range] {
+                    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+                    height:2px;
+                    width:80px;
+                    cursor: pointer;
+                    background: #009fff;
+                    margin-bottom: 10px;
+                  }
+
+                  input[type=range]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    border: 1px solid #fff;
+                    height: 16px;
+                    width: 16px;
+                    border-radius: 8px;
+                    background: #009fff;
+                    cursor: pointer;
+                    margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+                  }
+
+                  input[type=range]:focus {
+                    outline: none;
+                  }
+
             </style>
             <div class="editwithslider">
                 <div class="svgcontainer">
@@ -111,18 +176,18 @@ class smartEditSlider extends HTMLElement {
                         <image xlink:href="${this.getAttribute('image')}" x="0" y="-4" height="48px" width="48px"/>
                         </g>
                     </svg>
-                </div>            
+                </div>
                 <div class="controls">
                     <div class="title">${this.getAttribute('title')}</div>
                     <div class="plusminus">
-                        <div class="svgcontainer btn" onclick="_(2, 0, 0)">
+                        <div class="svgcontainer btn" id="MB">
                             <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="scroll" xml:space="preserve" x="0px" y="0px" width="17px" height="16px" viewBox="0 0 17 16">
                                 <g class="iconfill">
                                     <path d="M8,0C3.582,0,0,3.582,0,8s3.582,8,8,8h8V0H8z M5,9V7h8v2H5z"></path>
                                 </g>
                             </svg>
                         </div>
-                        <div class="svgcontainer btn" onclick="_(2, 0, 1)">
+                        <div class="svgcontainer btn" id="PB">
                             <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="scroll" xml:space="preserve" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16">
                                 <g class="iconfill">
                                     <path d="M8,0H0v16h8c4.418,0,8-3.582,8-8S12.418,0,8,0z M11,9H8v3H6V9H3V7h3V4h2v3h3V9z"></path>
@@ -131,24 +196,104 @@ class smartEditSlider extends HTMLElement {
                         </div>
                     </div>
 
-                    <input class="indata" type="number" value="0" max="${this.getAttribute('max')}" min="${this.getAttribute('min')}" step="${this.getAttribute('step')}">
-                    <div class="slider btn" style="width:96px; height:16px;">
-                        <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="scroll" xml:space="preserve" x="0px" y="0px" width="96px" height="16px" viewBox="0 0 96 16">
-                            <g class="iconstroke" stroke-width="2" fill="none">
-                                <g id="SL0" transform="translate(20.2,0)">
-                                    <path class="left-part" stroke="rgba(102,227,255,0.8)" stroke-width="5" d="M-80,8 L1,8"></path>
-                                    <path class="right-part" d="M15,8 L96,8"></path>
-                                    <circle cx="8" cy="8" r="7" fill="skyblue"></circle>
-                                </g>
-                            </g>
-                        </svg>
+                    <input class="indata" id="IC" type="text" value="${this.getAttribute('value')} ${this.getAttribute('units')}" max="${this.getAttribute('max')}" min="${this.getAttribute('min')}" step="${this.getAttribute('step')}">
+                    <div class="slider btn" style="width:90px; height:16px;">
+                        <input name="slider" class="slider-bar" id="SL" type="range" max="${this.getAttribute('max')}" value="${this.getAttribute('value')}" min="${this.getAttribute('min')}" step="${this.getAttribute('step')}" />
                     </div>
                 </div>
             </div>
 
         `;
-
     }
+	connectedCallback() {
+        // get all attributes into _o (options)
+        this._o = {};
+        for (let attr of this.attributes) {
+			this._o[attr.name] = attr.value;
+        }
+        // convert to numbers
+        utils.convertNumericProps(this._o);
+        //get references on controls
+        this._input  = this._shadowDOM.getElementById('IC');    // input
+        this._minus  = this._shadowDOM.getElementById('MB');    // buttton '-'
+        this._plus   = this._shadowDOM.getElementById('PB');    // button '+'
+        this._slider = this._shadowDOM.getElementById('SL');    // range input
+
+        this._slider.addEventListener('input', (evt) => {
+            this._o.value = Number(this._slider.value);
+            this.setAttribute('value', `${this._o.value}`);
+
+            this._input.value = `${this._o.value} ${this._o.units}`;
+        });
+        this._input.addEventListener('input', (evt) => {
+            let result;
+            if (parseFloat(this._o.step) - parseInt(this._o.step) != 0) {
+                result = parseFloat(this._input.value).toFixed(1);
+            } else {
+                result = parseInt(this._input.value);
+            }
+            this._o.value = result;
+            this.setAttribute('value', `${this._o.value}`);
+
+            this._slider.value = this._o.value;
+        });
+        this._input.addEventListener('change', (evt) => {
+            let result;
+            if (parseFloat(this._o.step) - parseInt(this._o.step) != 0) {
+                result = parseFloat(this._input.value).toFixed(1);
+            } else {
+                result = parseInt(this._input.value);
+            }
+            this._o.value = result;
+            this.setAttribute('value', `${this._o.value}`);
+
+            this._input.value = `${result} ${this._o.units}`;
+            this._slider.value = this._o.value;
+
+        });
+
+        this._plus.addEventListener('click', (evt) => {
+            if (typeof this._o.value === "number" && typeof this._o.max === "number" && typeof this._o.step === "number" ) {
+                if (this._o.value + this._o.step > this._o.max) {
+                    this._o.value = this._o.max;
+                } else {
+                    this._o.value += this._o.step;
+                }
+                let result;
+                if (parseFloat(this._o.step) - parseInt(this._o.step) != 0) {
+                    result = parseFloat(this._o.value).toFixed(1);
+                } else {
+                    result = parseInt(this._o.value);
+                }
+                this.setAttribute('value', `${result}`);
+
+                this._input.value = `${result} ${this._o.units}`;
+                this._slider.value = this._o.value;
+            }
+        });
+        this._minus.addEventListener('click', (evt) => {
+            if (typeof this._o.value === "number" && typeof this._o.min === "number" && typeof this._o.step === "number" ) {
+                if (this._o.value - this._o.step < this._o.min) {
+                    this._o.value = this._o.min;
+                } else {
+                    this._o.value -= this._o.step;
+                }
+                let result;
+                if (parseFloat(this._o.step) - parseInt(this._o.step) != 0) {
+                    result = parseFloat(this._o.value).toFixed(1);
+                } else {
+                    result = parseInt(this._o.value);
+                }
+                this.setAttribute('value', `${result}`);
+
+                this._input.value = `${result} ${this._o.units}`;
+                this._slider.value = this._o.value;
+            }
+        });
+	}
+	disconnectedCallback() {
+    }
+
 
 }
 const supportsCustomElementsV1 = 'customElements' in window;

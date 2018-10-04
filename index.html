@@ -37,7 +37,7 @@
             .overlay {
                 color: rgba( 255,255,255, 0.8 );
                 background: rgba( 0,0,0, 0.8 );
-                min-width: 288px;
+                /* min-width: 288px; */
                 padding: 20px 16px;
                 overflow-x: hidden;
                 overflow-y: auto;
@@ -47,7 +47,7 @@
                 top: 20px;
                 border-radius: 10px;
                 cursor: auto;
-            }            
+            }
             .overlay {
                 box-shadow: 0 10px 32px rgba(0,0,0,0.2);
             }
@@ -65,12 +65,12 @@
         <div class="overlay" style="max-height: 766px; display: block;">
             <h2>Smart Tooltip</h2>
             <div style="display: block;">
-                <smart-editslider title="Delay Out (250 - 1000 ms)" units="ms" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Delay On (2 - 20 s)" units="s" min="2" max="20" step="1" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Frame Scale Factor (0.5 - 1)" units="" min="0.5" max="1" step="0.1" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Tooltip max width (100 - 600 px)" units="px" min="100" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Title wrap width (100 - 600 px)" units="px" min="100" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Description wrap width (100 - 600 px)" units="px" min="100" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider title="Delay Out (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider title="Tooltip max width (100 - 600 px)" value="340" units="px" min="100" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider title="Title wrap width (0 - 600 px)" value="0" units="px" min="0" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider title="Description wrap width (0 - 600 px)" value="0" units="px" min="0" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
 
             </div>
         </div>
