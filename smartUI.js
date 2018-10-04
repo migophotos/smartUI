@@ -147,9 +147,9 @@ class smartEditSlider extends HTMLElement {
                 input[type=range] {
                     -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
                     height:2px;
-                    width:80px;
+                    width:100%;
                     cursor: pointer;
-                    background: #009fff;
+                    background: transparent;
                     margin-bottom: 10px;
                   }
 
