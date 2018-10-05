@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <rect id="frame-opacity" x="0" y="0" width="34" height="34" style="fill:none;"/>
+    <circle cx="9.5" cy="9.5" r="5" style="fill:#f00;stroke:#fffbfb;stroke-width:0.5px;"/>
+    <circle cx="12.5" cy="24.5" r="5" style="fill:#f00;stroke:#fffbfb;stroke-width:0.5px;"/>
+    <circle cx="23.5" cy="9.5" r="5" style="fill:#f00;stroke:#fffbfb;stroke-width:0.5px;"/>
+    <circle cx="26.5" cy="24.5" r="5" style="fill:#f00;stroke:#fffbfb;stroke-width:0.5px;"/>
+    <rect x="1" y="1" width="32" height="25.5" style="fill-opacity:0.580392;stroke:#fff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;"/>
+    <g transform="matrix(1,0,0,1,1.5501,-300.534)">
+        <text x="4px" y="311.529px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:10.47px;fill:#fff;">tool -</text>
+        <text x="4px" y="322.342px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:10.47px;fill:#fff;">tip</text>
+    </g>
+</svg>

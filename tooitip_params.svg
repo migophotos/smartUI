@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="48" height="48" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.5;">
-    <g transform="translate(10, 10)">
+<svg width="34" height="34" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.5;">
         <path d="M1.803,13.803l20,0l-20,0Z" style="fill:none;stroke:#fff;stroke-width:2px;"/>
         <path d="M21.803,33.803l0,-20l0,20Z" style="fill:none;stroke:#fff;stroke-width:2px;"/>
         <path d="M21.803,1.803l0,12" style="fill:none;stroke:#fff;stroke-width:2px;"/>
@@ -15,5 +14,4 @@
             <path d="M20.303,6.803l-18.5,0" style="fill:none;stroke:#fff;stroke-width:2px;"/>
         </g>
         <rect x="1.803" y="14.803" width="19" height="19" style="fill:#fff;fill-opacity:0.4;"/>
-    </g>
 </svg>

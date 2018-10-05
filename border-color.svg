@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <rect id="border-color" x="0" y="0" width="34" height="34" style="fill:none;"/>
+    <rect x="1" y="1" width="32" height="32" style="fill:none;"/>
+    <circle cx="6.5" cy="22.939" r="3.939" style="fill:#2000ff;"/>
+    <circle cx="14.939" cy="28.939" r="3.939" style="fill:#00d7ff;"/>
+    <circle cx="24.939" cy="26.061" r="3.939" style="fill:#008500;"/>
+    <circle cx="23.939" cy="7.439" r="3.939" style="fill:#ff5800;"/>
+    <circle cx="28.939" cy="16.5" r="3.939" style="fill:#fbff00;"/>
+    <circle cx="13.439" cy="5.561" r="3.939" style="fill:#f00;"/>
+    <circle cx="5.939" cy="12.5" r="3.939" style="fill:#890082;"/>
+    <text x="10.5px" y="19px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:8.376px;fill:#fff;">line</text>
+</svg>
