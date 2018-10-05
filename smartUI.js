@@ -45,7 +45,7 @@ class utils {
  * Каждый элемент представляет собой custom control
  *
  */
-class smartEditSlider extends HTMLElement {
+class SmartEditSlider extends HTMLElement {
     constructor() {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
@@ -53,7 +53,6 @@ class smartEditSlider extends HTMLElement {
             throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
             Think about switching to a last release of Chrome browser that supports all new technologies!`);
         }
-        // this.getAttribute('title');
         this._shadowDOM.innerHTML = `
             <style>
                 :host {
@@ -65,57 +64,44 @@ class smartEditSlider extends HTMLElement {
                     opacity: 0.2;
                 }
 
-                .imagefill {
-                    opacity: 0.8;
-                }
                 .iconfill {
-                    fill: #FFFFFF;
+                    fill: #ffffff;
                     opacity: 0.8;
                 }
-                input {
-                    color: rgba( 255,255,255, 0.8 );
-                }
-                .iconstroke {
-                    stroke: #ffffff;
-                    opacity: 0.8;
-                }
-                .iconsh1 {
-                    opacity: 0.4;
-                }
-                .iconsh0 {
+                .iconfill:hover {
                     opacity: 1;
                 }
-
-                .editwithslider {
+                .title:hover {
+                    opacity: 1;
+                }
+                
+                .editslider {
                     font-family: Helvetica, sans-serif;
                     color: rgba( 255,255,255, 0.8 );
 
                 }
-                .editwithslider .controls {
-                    display: inline-block;
-                    margin-top: 3px;
-                    margin-left: 2px;
-                    vertical-align: top;
-                }
-                .editwithslider .title {
+                .editslider .title {
                     text-transform: uppercase;
                     font-size: 9px;
                     -webkit-font-smoothing: subpixel-antialiased;
                     height: 12px;
                 }
+
+                .editslider .controls {
+                    display: inline-block;
+                    margin-top: 3px;
+                    margin-left: 2px;
+                    vertical-align: top;
+                }
+                
                 .svgcontainer {
                     position: relative;
                     display: inline-block;
                     overflow: hidden;
-                }
-                .svgcontainer svg {
                     vertical-align: top;
                 }
-                .btn, .cbtn{
-                    cursor: pointer;
-                }
 
-
+                /* plus and minus buttons */
                 .plusminus {
                     display: block;
                     float: left;
@@ -124,7 +110,23 @@ class smartEditSlider extends HTMLElement {
                     overflow: hidden;
                     margin-top: 3px;
                 }
-                .editwithslider input {
+                .plusminus .btn path {
+                    opacity: 0.8;
+                }
+                .plusminus .btn:hover path {
+                    cursor: pointer;
+                    opacity: 1;
+                }
+
+                
+                .slider {
+                    display: block;
+                    float: left;
+                    overflow: unset;
+                    margin: 6px 12px 0 0;
+                }
+                .editslider input {
+                    color: rgba( 255,255,255, 1 );
                     display: block;
                     float: left;
                     width: 40px;
@@ -134,18 +136,14 @@ class smartEditSlider extends HTMLElement {
                     padding: 1px 3px 2px 3px;
                     font-size: 11px;
                     text-align: right;
+                    opacity: 0.8;
                 }
-                .editwithslider .slider {
-                    display: block;
-                    float: left;
-                    overflow: unset;
-                    margin: 6px 12px 0 0;
-                }
-
-                .editwithslider .btn:hover path {
-                    color: rgba( 255,255,255, 1 );
+                .editslider input:hover {
                     opacity: 1;
                 }
+
+
+                /* styling input[type-range] */
                 input[type=range] {
                     -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
                     height:2px;
@@ -153,9 +151,8 @@ class smartEditSlider extends HTMLElement {
                     cursor: pointer;
                     background: transparent;
                     margin-bottom: 10px;
-                  }
-
-                  input[type=range]::-webkit-slider-thumb {
+                }
+                input[type=range]::-webkit-slider-thumb {
                     -webkit-appearance: none;
                     border: 1px solid #fff;
                     height: 16px;
@@ -164,18 +161,17 @@ class smartEditSlider extends HTMLElement {
                     background: #009fff;
                     cursor: pointer;
                     margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-                  }
-
-                  input[type=range]:focus {
+                }
+                input:focus {
                     outline: none;
-                  }
+                }
 
             </style>
-            <div class="editwithslider">
-                <div class="svgcontainer">
-                    <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            <div class="editslider">
+                <div class="icon svgcontainer">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                     overflow="scroll" xml:space="preserve" x="0px" y="0px" width="48px" height="40px" viewBox="0 0 48 40">
-                        <g class="imagefill">
+                        <g class="iconfill">
                         <image xlink:href="${this.getAttribute('image')}" x="0" y="-4" height="48px" width="48px"/>
                         </g>
                     </svg>
@@ -184,7 +180,7 @@ class smartEditSlider extends HTMLElement {
                     <div class="title">${this.getAttribute('title')}</div>
                     <div class="plusminus">
                         <div class="svgcontainer btn" id="MB">
-                            <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                             overflow="scroll" xml:space="preserve" x="0px" y="0px" width="17px" height="16px" viewBox="0 0 17 16">
                                 <g class="iconfill">
                                     <path d="M8,0C3.582,0,0,3.582,0,8s3.582,8,8,8h8V0H8z M5,9V7h8v2H5z"></path>
@@ -192,7 +188,7 @@ class smartEditSlider extends HTMLElement {
                             </svg>
                         </div>
                         <div class="svgcontainer btn" id="PB">
-                            <svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                             overflow="scroll" xml:space="preserve" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16">
                                 <g class="iconfill">
                                     <path d="M8,0H0v16h8c4.418,0,8-3.582,8-8S12.418,0,8,0z M11,9H8v3H6V9H3V7h3V4h2v3h3V9z"></path>
@@ -201,12 +197,12 @@ class smartEditSlider extends HTMLElement {
                         </div>
                     </div>
 
-                    <input class="indata" id="IC" type="text"
+                    <input id="IC" type="text"
                         value="${this.getAttribute('value')} ${this.getAttribute('units')}"
                         max="${this.getAttribute('max')}"
                         min="${this.getAttribute('min')}"
                         step="${this.getAttribute('step')}">
-                    <div class="slider btn" style="width:90px; height:16px;">
+                    <div class="slider" style="width:90px; height:16px;">
                         <input name="slider" class="slider-bar" id="SL" type="range"
                         max="${this.getAttribute('max')}"
                         value="${this.getAttribute('value')}"
@@ -218,6 +214,25 @@ class smartEditSlider extends HTMLElement {
 
         `;
     }
+    convertAndValidate(val) { 
+        let result = null;   
+        if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
+            result = parseFloat(this._input.value).toFixed(1);
+        } else {
+            result = parseInt(this._input.value, 10);
+        }
+        if (isNaN(result)) {
+            result = this._o.min;
+        }
+        if (result < this._o.min) {
+            result = this._o.min;
+        }
+        if (result > this._o.max) {
+            result = this._o.max;
+        }
+        return result;
+    }
+
 	connectedCallback() {
         // get all attributes into _o (options)
         this._o = {};
@@ -239,24 +254,14 @@ class smartEditSlider extends HTMLElement {
             this._input.value = `${this._o.value} ${this._o.units}`;
         });
         this._input.addEventListener('input', (evt) => {
-            let result;
-            if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
-                result = parseFloat(this._input.value).toFixed(1);
-            } else {
-                result = parseInt(this._input.value, 10);
-            }
+            let result = this.convertAndValidate(this._input.value);
             this._o.value = result;
             this.setAttribute('value', `${this._o.value}`);
 
             this._slider.value = this._o.value;
         });
         this._input.addEventListener('change', (evt) => {
-            let result;
-            if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
-                result = parseFloat(this._input.value).toFixed(1);
-            } else {
-                result = parseInt(this._input.value, 10);
-            }
+            let result = this.convertAndValidate(this._input.value);
             this._o.value = result;
             this.setAttribute('value', `${this._o.value}`);
 
@@ -272,12 +277,7 @@ class smartEditSlider extends HTMLElement {
                 } else {
                     this._o.value += this._o.step;
                 }
-                let result;
-                if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
-                    result = parseFloat(this._o.value).toFixed(1);
-                } else {
-                    result = parseInt(this._o.value, 10);
-                }
+                let result = this.convertAndValidate(this._input.value);
                 this.setAttribute('value', `${result}`);
 
                 this._input.value = `${result} ${this._o.units}`;
@@ -291,12 +291,7 @@ class smartEditSlider extends HTMLElement {
                 } else {
                     this._o.value -= this._o.step;
                 }
-                let result;
-                if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
-                    result = parseFloat(this._o.value).toFixed(1);
-                } else {
-                    result = parseInt(this._o.value, 10);
-                }
+                let result = this.convertAndValidate(this._input.value);
                 this.setAttribute('value', `${result}`);
 
                 this._input.value = `${result} ${this._o.units}`;
@@ -310,10 +305,109 @@ class smartEditSlider extends HTMLElement {
 
 
 }
-const supportsCustomElementsV1 = 'customElements' in window;
-if (!supportsCustomElementsV1) {
-    throw new Error(`Unfortunately, your browser does not support custom elements v1.
-                    Think about switching to a last release of Chrome browser that supports all new technologies!`);
-}
 
-window.customElements.define('smart-editslider', smartEditSlider);
+window.customElements.define('smart-editslider', SmartEditSlider);
+
+class SmartCheckBox extends HTMLElement {
+    constructor() {
+        super();
+        this._shadowDOM = this.attachShadow({mode: 'open'});
+		if (!this._shadowDOM) {
+            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
+            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+        }
+        this._shadowDOM.innerHTML = `
+            <style>
+                :host {
+                    all: initial;
+                    color: rgba( 102,227,255, 0.4 );
+                }
+                :host([disabled]) { /* style when host has disabled attribute. */
+                    pointer-events: none;
+                    opacity: 0.2;
+                }
+
+                .iconfill {
+                    fill: #ffffff;
+                    opacity: 0.8;
+                }
+                .iconfill:hover {
+                    opacity: 1;
+                }
+                .title:hover {
+                    opacity: 1;
+                }
+                
+                .checkbox {
+                    font-family: Helvetica, sans-serif;
+                    color: rgba( 255,255,255, 0.8 );
+
+                }
+                .checkbox .title {
+                    text-transform: uppercase;
+                    font-size: 9px;
+                    -webkit-font-smoothing: subpixel-antialiased;
+                    height: 12px;
+                }
+
+                .checkbox .controls {
+                    display: inline-block;
+                    margin-top: 3px;
+                    margin-left: 2px;
+                    vertical-align: top;
+                }
+                
+                .svgcontainer {
+                    position: relative;
+                    display: inline-block;
+                    overflow: hidden;
+                    vertical-align: top;
+                }
+
+                /* styling input[type-range] */
+                input[type=checkbox] {
+                    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+                    height:2px;
+                    width:100%;
+                    cursor: pointer;
+                    background: transparent;
+                    margin-bottom: 10px;
+                }
+                input[type=checkbox]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    border: 1px solid #fff;
+                    height: 16px;
+                    width: 16px;
+                    border-radius: 8px;
+                    background: #009fff;
+                    cursor: pointer;
+                    margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+                }
+                input:focus {
+                    outline: none;
+                }
+
+            </style>
+            <div class="checkbox">
+                <div class="icon svgcontainer">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="48px" height="40px" viewBox="0 0 48 40">
+                        <g class="iconfill">
+                        <image xlink:href="${this.getAttribute('image')}" x="0" y="-4" height="48px" width="48px"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="controls">
+                    <div class="title">${this.getAttribute('title')}</div>
+
+                    <div class="slider" style="width:48px; height:48px;">
+                        <input name="ch01" id="CHB" type="checkbox"
+                        value="${this.getAttribute('value')}"
+                    </div>
+                </div>
+            </div>
+
+        `;
+    }
+}
+window.customElements.define('smart-checkbox', SmartCheckBox);

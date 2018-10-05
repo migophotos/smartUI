@@ -23,7 +23,7 @@
                 user-select: none;
                 -o-user-select: none;
             }
-            #overlaywrapper {
+            #overlaywrapper, #smarttooltip {
                 position: fixed;
                 top: 80px;
                 left: 0;
@@ -61,20 +61,61 @@
             </style>
     </header>
     <body>
-    <div id="overlaywrapper" style="width: 632px; height: 480px; display: block;">
-        <div class="overlay" style="max-height: 766px; display: block;">
-            <h2>Smart Tooltip</h2>
-            <div style="display: block;">
-                <smart-editslider title="Delay Out (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Tooltip max width (100 - 600 px)" value="340" units="px" min="100" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Title wrap width (0 - 600 px)" value="0" units="px" min="0" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
-                <smart-editslider title="Description wrap width (0 - 600 px)" value="0" units="px" min="0" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
+        <smart-tooltip className="">Sorry, yout browser does not support custom elements.</smart-tooltip>
 
+    <div id="smarttooltip" style="width: 632px; height: 480px; display: block;">
+        <div id="interactivity" class="overlay" style="max-height: 766px; display: none;">
+            <h2>Временные характеристики</h2>
+            <div style="display: block;">
+                <smart-editslider sttip-param="delay-in" title="Delay In (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="delay-out" title="Delay Out (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="image_width.svg">edit control with slider</smart-editslider>
             </div>
         </div>
+        <div id="window-params" class="overlay" style="max-height: 766px; display: block;">
+            <h2>Параметры окна подсказки</h2>
+            <div style="display: block;">
+                <smart-editslider sttip-param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="var-frame-fill" title="Background color" value="none" units="" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider tsttip-param="var-border-color" itle="Border color" value="none" units="" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="var-border-radius" title="Border readius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-checkbox sttip-param="is-shadow" title="Enable shadows" value="true" image="onoff.svg">edit control with slider</smart-checkbox>
+            </div>
+        </div>
+        <div id="title-params" class="overlay" style="max-height: 766px; display: none;">
+            <h2>Параметры отображения заголовка</h2>
+            <div style="display: block;">
+                <smart-editslider sttip-param="tooltip-max-width" title="Tooltip max width (100 - 600 px)" value="340" units="px" min="100" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="title-text-wrap" title="Title wrap width (0 - 600 px)" value="0" units="px" min="0" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="title-format" title="Title Text Format" value="$LEGEND$" units="" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="descr-format" title="Description Format" value="$VALUE$" units="" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                <smart-editslider sttip-param="descr-text-wrap" title="Description wrap width (0 - 600 px)" value="0" units="px" min="0" max="600" step="1" image="image_width.svg">edit control with slider</smart-editslider>
+            </div>
+        </div>
+        <div id="legend-params" class="overlay" style="max-height: 766px; display: none;">
+                <h2>Параметры отображения легенды</h2>
+                <div style="display: block;">
+                    <smart-editslider sttip-param="legend-format" title="Legend Text Format" value="$LEGEND$" units="" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                    <smart-editslider sttip-param="legend-val-format" title="Legend Value Format" value="$VALUE$" units="" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                    <smart-editslider sttip-param="var-legend-fill" title="Legend background color" value="none" units="" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                    <smart-editslider sttip-param="var-legend-stroke" title="Legend border color" value="none" units="" min="250" max="1000" step="50" image="image_width.svg">edit control with slider</smart-editslider>
+                </div>
+        </div>
     </div>
+
+    <div id="smartpie" style="width: 632px; height: 480px; display: none;">
+    </div>
+
+    <div id="smartgauge" style="width: 632px; height: 480px; display: none;">
+    </div>
+    
+
+    <script src="./../smartTooltip/smarttooltip.js"></script>
+    <script src="./../smartgauge/smartgauge.js"></script>
+    <script src="./../smartpie/smartpie.js"></script>
+
     <script src="smartUI.js"></script>
     </body>
 </html>
