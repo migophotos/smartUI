@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="48" height="48" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.5;">
+    <g transform="translate(10, 10)">
+        <path d="M1.803,13.803l20,0l-20,0Z" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+        <path d="M21.803,33.803l0,-20l0,20Z" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+        <path d="M21.803,1.803l0,12" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+        <path d="M33.803,13.803l-12,0" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+        <g>
+            <path d="M24.303,19.303l4.25,-5l4.25,5" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+            <path d="M28.553,15.803l0,18" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+        </g>
+        <g>
+            <path d="M16.803,2.553l5,4.25l-5,4.25" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+            <path d="M20.303,6.803l-18.5,0" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+        </g>
+        <rect x="1.803" y="14.803" width="19" height="19" style="fill:#fff;fill-opacity:0.4;"/>
+    </g>
+</svg>
