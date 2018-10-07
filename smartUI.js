@@ -75,19 +75,19 @@ class SmartEditSlider extends HTMLElement {
                     opacity: 1;
                 }
                 
-                .editslider {
+                .smartcontainer {
                     font-family: Helvetica, sans-serif;
                     color: rgba( 255,255,255, 0.8 );
 
                 }
-                .editslider .title {
+                .smartcontainer .title {
                     text-transform: uppercase;
                     font-size: 9px;
                     -webkit-font-smoothing: subpixel-antialiased;
                     height: 12px;
                 }
 
-                .editslider .controls {
+                .smartcontainer .controls {
                     display: inline-block;
                     margin-bottom: 3px;
                     margin-left: 2px;
@@ -126,7 +126,7 @@ class SmartEditSlider extends HTMLElement {
                     overflow: unset;
                     margin: 6px 12px 0 0;
                 }
-                .editslider input {
+                .smartcontainer input {
                     color: rgba( 255,255,255, 1 );
                     display: block;
                     float: left;
@@ -139,7 +139,7 @@ class SmartEditSlider extends HTMLElement {
                     text-align: right;
                     opacity: 0.8;
                 }
-                .editslider input:hover {
+                .smartcontainer input:hover {
                     opacity: 1;
                 }
 
@@ -168,7 +168,7 @@ class SmartEditSlider extends HTMLElement {
                 }
 
             </style>
-            <div class="editslider">
+            <div class="smartcontainer">
                 <div class="icon svgcontainer">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                     overflow="scroll" xml:space="preserve" x="0px" y="0px" width="35px" height="34px" viewBox="0 0 35 34">
@@ -306,116 +306,33 @@ class SmartEditSlider extends HTMLElement {
 
 
 }
-
-window.customElements.define('smart-editslider', SmartEditSlider);
-
-class SmartCheckBox extends HTMLElement {
-    constructor() {
-        super();
-        this._shadowDOM = this.attachShadow({mode: 'open'});
-		if (!this._shadowDOM) {
-            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
-            Think about switching to a last release of Chrome browser that supports all new technologies!`);
-        }
-        this._shadowDOM.innerHTML = `
-            <style>
-                :host {
-                    all: initial;
-                    color: rgba( 102,227,255, 0.4 );
-                }
-                :host([disabled]) { /* style when host has disabled attribute. */
-                    pointer-events: none;
-                    opacity: 0.2;
-                }
-
-                .iconfill {
-                    fill: #ffffff;
-                    opacity: 0.8;
-                }
-                .iconfill:hover {
-                    opacity: 1;
-                }
-                .title:hover {
-                    opacity: 1;
-                }
-                
-                .checkbox {
-                    font-family: Helvetica, sans-serif;
-                    color: rgba( 255,255,255, 0.8 );
-
-                }
-                .checkbox .title {
-                    text-transform: uppercase;
-                    font-size: 9px;
-                    -webkit-font-smoothing: subpixel-antialiased;
-                    height: 12px;
-                }
-
-                .checkbox .controls {
-                    display: inline-block;
-                    margin-top: 3px;
-                    margin-left: 2px;
-                    vertical-align: top;
-                }
-                
-                .svgcontainer {
-                    position: relative;
-                    display: inline-block;
-                    overflow: hidden;
-                    vertical-align: top;
-                }
-
-                /* styling input[type-range] */
-                input[type=checkbox] {
-                    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
-                    height:2px;
-                    width:100%;
-                    cursor: pointer;
-                    background: transparent;
-                    margin-bottom: 10px;
-                }
-                input[type=checkbox]::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    border: 1px solid #fff;
-                    height: 16px;
-                    width: 16px;
-                    border-radius: 8px;
-                    background: #009fff;
-                    cursor: pointer;
-                    margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-                }
-                input:focus {
-                    outline: none;
-                }
-
-            </style>
-            <div class="checkbox">
-                <div class="icon svgcontainer">
-                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="48px" height="48px" viewBox="0 0 48 48">
-                        <g class="iconfill">
-                            <image xlink:href="${this.getAttribute('image')}" x="0" y="0" height="48px" width="48px"/>
-                        </g>
-                    </svg>
-                </div>
-                <div class="controls">
-                    <div class="title">${this.getAttribute('title')}</div>
-
-                    <div class="slider" style="width:48px; height:48px;">
-                        <input name="ch01" id="CHB" type="checkbox"
-                        value="${this.getAttribute('value')}"
-                    </div>
-                </div>
-            </div>
-
-        `;
-    }
+if (!customElements.get('smart-editslider')) {
+    customElements.define('smart-editslider', SmartEditSlider);
 }
-window.customElements.define('smart-checkbox', SmartCheckBox);
+/** SmartButton realizes button, checkbox, radiobutton in group
+ *  <smart-button 
+ *      class="widgets-btn" - class name of radiobuttons group in case of type equal 'radio', in other cases just a class name 
+ *      id="btn-01"         - unique id 
+ *      targets="comma-separated list of targets" - not in use 
+ *      type="radio or checkbox (if not exist)"   - if attribute empty, or not exist the type of button is checkbox or just a button (see images description)
+ *      state="on or off"   - initial state for checkbox or radio-button, toggles on click (on / off)
+ *      imageOn=""          - visualization for 'on' state, in case of not specified 'image' attribute will be used instead it
+ *      imageOff=""         - visualization for 'off' state, in case of not specified 'image' attribute will be used instead it
+ *      (or image="" if not needed switch effect) - may be specified instead of 'imageOn' and/or 'imageOff' attributes
+ *      data-sttip-tooltip="tooltip"> - this attribute used by SmartTooltip for showing specified text as tooltip. 
+ *                                      For this functionality the class name must be specified in attribute 'className' of <smart-tooltip> custom element
+ *  </smart-button>
+ * When user clicks on this button this element generates an event 'click' and store own state in parameter this.state and inside attribute 'current-state'
 
-class SmartColorBox extends HTMLElement {
+ */
+class SmartButton extends HTMLElement {
     constructor() {
         super();
+        this._o     = null; // options
+        this._btn   = null; // button
+        this._off   = null; // icon off
+        this._on    = null; // icon on
+
         this._shadowDOM = this.attachShadow({mode: 'open'});
 		if (!this._shadowDOM) {
             throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
@@ -427,6 +344,7 @@ class SmartColorBox extends HTMLElement {
                     all: initial;
                     contain: content;
                     color: rgba( 102,227,255, 0.4 );
+                    --smart-ui-gap: 20px;
                 }
                 :host([disabled]) { /* style when host has disabled attribute. */
                     pointer-events: none;
@@ -444,19 +362,19 @@ class SmartColorBox extends HTMLElement {
                     opacity: 1;
                 }
                 
-                .selectcolor {
+                .smartcontainer {
                     font-family: Helvetica, sans-serif;
                     color: rgba( 255,255,255, 0.8 );
 
                 }
-                .selectcolor .title {
+                .smartcontainer .title {
                     text-transform: uppercase;
                     font-size: 9px;
                     -webkit-font-smoothing: subpixel-antialiased;
                     height: 12px;
                 }
 
-                .selectcolor .controls {
+                .smartcontainer .controls {
                     display: inline-block;
                     margin-bottom: 3px;
                     margin-left: 2px;
@@ -494,7 +412,7 @@ class SmartColorBox extends HTMLElement {
                     float: left;
                     overflow: unset;
                 }
-                .selectcolor input[type=text] {
+                .smartcontainer input[type=text] {
                     color: rgba( 255,255,255, 1 );
                     // display: block;
                     // float: left;
@@ -510,7 +428,7 @@ class SmartColorBox extends HTMLElement {
                     position: relative;
                     left: -58px
                 }
-                .selectcolor input[type=color] {
+                .smartcontainer input[type=color] {
                     color: rgba( 255,255,255, 1 );
                     display: block;
                     float: left;
@@ -523,13 +441,13 @@ class SmartColorBox extends HTMLElement {
                     opacity: 0.8;
                     //-webkit-appearance: menulist-text;
                 }
-                .selectcolor input:hover {
+                .smartcontainer input:hover {
                     opacity: 1;
                 }
 
 
                 /* styling input[type-color] */
-                .selectcolor input[type='color']::-webkit-color-swatch-wrapper {
+                .smartcontainer input[type='color']::-webkit-color-swatch-wrapper {
                     padding: 0 0 0 0;
                     width: 13px;
                     height: 13px;
@@ -537,7 +455,340 @@ class SmartColorBox extends HTMLElement {
                     border: 1px solid #fff;
                     margin-top: 0.5px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
                 }
-                .selectcolor input[type='color']::-webkit-color-swatch {
+                .smartcontainer input[type='color']::-webkit-color-swatch {
+                    border-width: 0px;
+                }
+
+                input:focus {
+                    outline: none;
+                }
+
+
+
+            </style>
+            <div class="smartcontainer">
+                <div class="icon svgcontainer" id="btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="35px" height="34px" viewBox="0 0 35 34">
+                        <g class="iconfill">
+                        <image id="off" xlink:href="${this.getAttribute('imageOff') || this.getAttribute('image')}" x="0" y="0" width="35px" height="34px"/>
+                        <image id="on" xlink:href="${this.getAttribute('imageOn') || this.getAttribute('image')}" x="0" y="0" width="35px" height="34px"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        `;
+    }
+    _applyState(state) {
+        if (state == 'off') {
+            this._on.style.setProperty('display', 'none');
+            this._off.style.setProperty('display', 'unset')
+        } else {
+            this._on.style.setProperty('display', 'unset');
+            this._off.style.setProperty('display', 'none')
+        }
+        this.setAttribute('current-state', this._o.state);
+
+        if (typeof this._o.class === 'string' && this._o.class.length) {
+            if (this._o.type === 'radio' && this._o.state === 'on') {        
+                // try to find all elements with same class name and same type and change it's state (exclude own) to off
+                const sameClassEls = document.getElementsByClassName(this._o.class);
+                const els = [];
+                for (let el of sameClassEls) {
+                    if (el.getAttribute('type') === this._o.type && el.getAttribute('id') !== this.id) {
+                        el.setAttribute('state', 'off');
+                    }
+                }
+            }
+        }
+    }
+    static get observedAttributes() {
+		return 	['state', 'imageOn', 'imageOff', 'targets'];
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (!this._o) return;
+
+        switch (name) {
+            case 'state':
+                this._o.state = (newValue === '1' || newValue === 'on') ? 'on' : 'off';
+                this._applyState(this._o.state);
+                break;
+            case 'imageOn':
+                if (this._on) {
+                    this._on.setAttribute('xlink:href', newValue);
+                    break;
+                }
+            case 'imageOff':
+                if (this._off) {
+                    this._off.setAttribute('xlink:href', newValue);
+                    break;
+                }
+            case 'targets':
+                this._o.targets = newValue;
+                break;
+        }
+
+    }
+    
+
+    connectedCallback() {
+        // get all attributes into _o (options)
+        this._o = {};
+        for (let attr of this.attributes) {
+            this._o[attr.name] = attr.value;
+        }
+        // get references
+        this._btn = this._shadowDOM.getElementById('btn');
+        this._on  = this._shadowDOM.getElementById('on');
+        this._off = this._shadowDOM.getElementById('off');
+
+        if (this._btn && this._on && this._off) {
+            this._o.state = this._o.state || 'on';
+            this._applyState(this._o.state);
+
+            this._btn.addEventListener('click', (evt) => {
+                if (this._o.type === 'radio' && this._o.state === 'on') return;
+                this._o.state = this._o.state === 'on' ? 'off' : 'on';
+                this.state = this._o.state; // see evt.target.state on 'click' event
+                this._applyState(this._o.state);
+            })
+        }
+    }
+}
+if (!customElements.get('smart-button')) {
+    customElements.define('smart-button', SmartButton);
+}
+class SmartCheckBox extends HTMLElement {
+    constructor() {
+        super();
+        this._shadowDOM = this.attachShadow({mode: 'open'});
+		if (!this._shadowDOM) {
+            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
+            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+        }
+        this._shadowDOM.innerHTML = `
+            <style>
+                :host {
+                    all: initial;
+                    color: rgba( 102,227,255, 0.4 );
+                }
+                :host([disabled]) { /* style when host has disabled attribute. */
+                    pointer-events: none;
+                    opacity: 0.2;
+                }
+
+                .iconfill {
+                    fill: #ffffff;
+                    opacity: 0.8;
+                }
+                .iconfill:hover {
+                    opacity: 1;
+                }
+                .title:hover {
+                    opacity: 1;
+                }
+                
+                .smartcontainer {
+                    font-family: Helvetica, sans-serif;
+                    color: rgba( 255,255,255, 0.8 );
+
+                }
+                .smartcontainer .title {
+                    text-transform: uppercase;
+                    font-size: 9px;
+                    -webkit-font-smoothing: subpixel-antialiased;
+                    height: 12px;
+                }
+
+                .smartcontainer .controls {
+                    display: inline-block;
+                    margin-top: 3px;
+                    margin-left: 2px;
+                    vertical-align: top;
+                }
+                
+                .svgcontainer {
+                    position: relative;
+                    display: inline-block;
+                    overflow: hidden;
+                    vertical-align: top;
+                }
+
+                /* styling input[type-range] */
+                input[type=checkbox] {
+                    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+                    height:2px;
+                    width:100%;
+                    cursor: pointer;
+                    background: transparent;
+                    margin-bottom: 10px;
+                }
+                input[type=checkbox]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    border: 1px solid #fff;
+                    height: 16px;
+                    width: 16px;
+                    border-radius: 8px;
+                    background: #009fff;
+                    cursor: pointer;
+                    margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+                }
+                input:focus {
+                    outline: none;
+                }
+
+            </style>
+            <div class="smartcontainer">
+                <div class="icon svgcontainer">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="48px" height="48px" viewBox="0 0 48 48">
+                        <g class="iconfill">
+                            <image xlink:href="${this.getAttribute('image')}" x="0" y="0" height="48px" width="48px"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="controls">
+                    <div class="title">${this.getAttribute('title')}</div>
+
+                    <div class="slider" style="width:48px; height:48px;">
+                        <input name="ch01" id="CHB" type="checkbox"
+                        value="${this.getAttribute('value')}"
+                    </div>
+                </div>
+            </div>
+
+        `;
+    }
+}
+if (!customElements.get('smart-checkbox')) {
+    customElements.define('smart-checkbox', SmartCheckBox);
+}
+
+class SmartColorBox extends HTMLElement {
+    constructor() {
+        super();
+        this._shadowDOM = this.attachShadow({mode: 'open'});
+		if (!this._shadowDOM) {
+            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
+            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+        }
+        this._shadowDOM.innerHTML = `
+            <style>
+                :host {
+                    all: initial;
+                    contain: content;
+                    color: rgba( 102,227,255, 0.4 );
+                }
+                :host([disabled]) { /* style when host has disabled attribute. */
+                    pointer-events: none;
+                    opacity: 0.2;
+                }
+
+                .iconfill {
+                    fill: #ffffff;
+                    opacity: 0.8;
+                }
+                .iconfill:hover {
+                    opacity: 1;
+                }
+                .title:hover {
+                    opacity: 1;
+                }
+                
+                .smartcontainer {
+                    font-family: Helvetica, sans-serif;
+                    color: rgba( 255,255,255, 0.8 );
+
+                }
+                .smartcontainer .title {
+                    text-transform: uppercase;
+                    font-size: 9px;
+                    -webkit-font-smoothing: subpixel-antialiased;
+                    height: 12px;
+                }
+
+                .smartcontainer .controls {
+                    display: inline-block;
+                    margin-bottom: 3px;
+                    margin-left: 2px;
+                    vertical-align: top;
+                }
+                
+                .svgcontainer {
+                    position: relative;
+                    display: inline-block;
+                    overflow: hidden;
+                    margin-bottom: 3px;
+                    vertical-align: top;
+                }
+
+                /* plus and minus buttons */
+                .plusminus {
+                    display: block;
+                    float: left;
+                    width: 3px;
+                    height: 16px;
+                    overflow: hidden;
+                    margin-top: 3px;
+                }
+                .plusminus .btn path {
+                    opacity: 0.8;
+                }
+                .plusminus .btn:hover path {
+                    cursor: pointer;
+                    opacity: 1;
+                }
+
+                
+                .slider {
+                    display: block;
+                    float: left;
+                    overflow: unset;
+                }
+                .smartcontainer input[type=text] {
+                    color: rgba( 255,255,255, 1 );
+                    // display: block;
+                    // float: left;
+                    overflow: unset;
+                    width: 50px;
+                    background: none;
+                    border: 0px solid;
+                    // margin: 2px 4px 2px 8px;
+                    // padding: 1px 3px 2px 3px;
+                    font-size: 11px;
+                    text-align: right;
+                    opacity: 0.8;
+                    position: relative;
+                    left: -58px
+                }
+                .smartcontainer input[type=color] {
+                    color: rgba( 255,255,255, 1 );
+                    display: block;
+                    float: left;
+                    width: 74px;
+                    height: 13px;
+                    background: none;
+                    border: 1px solid;
+                    margin: 2px 4px 2px 8px;
+                    padding: 1px 3px 2px 3px;
+                    opacity: 0.8;
+                    //-webkit-appearance: menulist-text;
+                }
+                .smartcontainer input:hover {
+                    opacity: 1;
+                }
+
+
+                /* styling input[type-color] */
+                .smartcontainer input[type='color']::-webkit-color-swatch-wrapper {
+                    padding: 0 0 0 0;
+                    width: 13px;
+                    height: 13px;
+                    // radius: 6px;
+                    border: 1px solid #fff;
+                    margin-top: 0.5px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+                }
+                .smartcontainer input[type='color']::-webkit-color-swatch {
                     border-width: 0px;
                 }
 
@@ -546,7 +797,7 @@ class SmartColorBox extends HTMLElement {
                 }
 
             </style>
-            <div class="selectcolor">
+            <div class="smartcontainer">
                 <div class="icon svgcontainer">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                     overflow="scroll" xml:space="preserve" x="0px" y="0px" width="35px" height="34px" viewBox="0 0 35 34">
@@ -612,4 +863,6 @@ class SmartColorBox extends HTMLElement {
 
     }
 }
-window.customElements.define('smart-colorbox', SmartColorBox);
+if (!customElements.get('smart-colorbox')) {
+    customElements.define('smart-colorbox', SmartColorBox);
+}
