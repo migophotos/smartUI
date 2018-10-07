@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="19px" height="19px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="radioOff">
+        <path d="M9.5,18.5C14.471,18.5 18.5,14.471 18.5,9.5C18.5,4.529 14.471,0.5 9.5,0.5C4.529,0.5 0.5,4.529 0.5,9.5C0.5,14.471 4.529,18.5 9.5,18.5Z" style="fill:#fff;stroke:#898989;stroke-width:1px;"/>
+        <path d="M9.5,15.5C12.814,15.5 15.5,12.814 15.5,9.5C15.5,6.186 12.814,3.5 9.5,3.5C6.186,3.5 3.5,6.186 3.5,9.5C3.5,12.814 6.186,15.5 9.5,15.5Z" style="fill:#dadada;"/>
+    </g>
+</svg>

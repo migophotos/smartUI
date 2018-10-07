@@ -319,6 +319,7 @@ if (!customElements.get('smart-editslider')) {
  *      imageOn=""          - visualization for 'on' state, in case of not specified 'image' attribute will be used instead it
  *      imageOff=""         - visualization for 'off' state, in case of not specified 'image' attribute will be used instead it
  *      (or image="" if not needed switch effect) - may be specified instead of 'imageOn' and/or 'imageOff' attributes
+ *      label="any text"    - show label after icon if specified
  *      data-sttip-tooltip="tooltip"> - this attribute used by SmartTooltip for showing specified text as tooltip. 
  *                                      For this functionality the class name must be specified in attribute 'className' of <smart-tooltip> custom element
  *  </smart-button>
@@ -458,7 +459,10 @@ class SmartButton extends HTMLElement {
                 .smartcontainer input[type='color']::-webkit-color-swatch {
                     border-width: 0px;
                 }
-
+                div#label {
+                    float: right;
+                    margin-left: 10px;
+                }                
                 input:focus {
                     outline: none;
                 }
@@ -471,10 +475,11 @@ class SmartButton extends HTMLElement {
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                     overflow="scroll" xml:space="preserve" x="0px" y="0px" width="35px" height="34px" viewBox="0 0 35 34">
                         <g class="iconfill">
-                        <image id="off" xlink:href="${this.getAttribute('imageOff') || this.getAttribute('image')}" x="0" y="0" width="35px" height="34px"/>
-                        <image id="on" xlink:href="${this.getAttribute('imageOn') || this.getAttribute('image')}" x="0" y="0" width="35px" height="34px"/>
+                        <image id="off" xlink:href="${this.getAttribute('imageOff') || this.getAttribute('image')}" x="0" y="0" width="35" height="34"/>
+                        <image id="on" xlink:href="${this.getAttribute('imageOn') || this.getAttribute('image')}" x="0" y="0" width="35" height="34"/>
                         </g>
                     </svg>
+                    <div id="label"> ${this.getAttribute('label') || ''}</div>
                 </div>
             </div>
         `;
@@ -542,6 +547,20 @@ class SmartButton extends HTMLElement {
         this._off = this._shadowDOM.getElementById('off');
 
         if (this._btn && this._on && this._off) {
+            let imageWidth = this.getAttribute('image-width');
+            let imageHeight = this.getAttribute('image-height');
+            if (imageHeight && imageWidth) {
+                this._on.setAttribute('width', imageWidth);
+                this._on.setAttribute('height', imageHeight);
+                this._off.setAttribute('width', imageWidth);
+                this._off.setAttribute('height', imageHeight);
+                const btnSvg = this._btn.firstElementChild;
+                btnSvg.viewBox.baseVal.width = imageWidth;
+                btnSvg.viewBox.baseVal.height = imageHeight;
+                btnSvg.setAttribute('width', `${imageWidth}px`);
+                btnSvg.setAttribute('height', `${imageHeight}px`);
+            }
+    
             this._o.state = this._o.state || 'on';
             this._applyState(this._o.state);
 
@@ -613,25 +632,12 @@ class SmartCheckBox extends HTMLElement {
                     vertical-align: top;
                 }
 
-                /* styling input[type-range] */
-                input[type=checkbox] {
-                    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
-                    height:2px;
-                    width:100%;
-                    cursor: pointer;
-                    background: transparent;
-                    margin-bottom: 10px;
+                #c_btn {
+                    float: right;
+                    margin-left: 40px;
                 }
-                input[type=checkbox]::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    border: 1px solid #fff;
-                    height: 16px;
-                    width: 16px;
-                    border-radius: 8px;
-                    background: #009fff;
-                    cursor: pointer;
-                    margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-                }
+
+
                 input:focus {
                     outline: none;
                 }
@@ -640,24 +646,24 @@ class SmartCheckBox extends HTMLElement {
             <div class="smartcontainer">
                 <div class="icon svgcontainer">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="48px" height="48px" viewBox="0 0 48 48">
+                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="35px" height="34px" viewBox="0 0 35 34">
                         <g class="iconfill">
-                            <image xlink:href="${this.getAttribute('image')}" x="0" y="0" height="48px" width="48px"/>
+                        <image xlink:href="${this.getAttribute('image')}" x="0" y="0" width="35px" height="34px"/>
                         </g>
                     </svg>
                 </div>
                 <div class="controls">
                     <div class="title">${this.getAttribute('title')}</div>
 
-                    <div class="slider" style="width:48px; height:48px;">
-                        <smart-button class="c-btn" 
-                            id="c_btn" 
-                            state="${this.getAttribute('state')}" 
-                            imageOn="${this.getAttribute('imageOn')}" 
-                            imageOff="${this.getAttribute('imageOff')}"
-                            >
-                        </smart-button>
-                    </div>
+                    <smart-button class="c-btn"
+                        id="c_btn" 
+                        state="${this.getAttribute('state')}" 
+                        imageOn="${this.getAttribute('imageOn')}" 
+                        imageOff="${this.getAttribute('imageOff')}"
+                        image-width="${this.getAttribute('iw')}"
+                        image-height="${this.getAttribute('ih')}"
+                        >
+                    </smart-button>
                 </div>
             </div>
 

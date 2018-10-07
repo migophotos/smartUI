@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="66px" height="24px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="switchOff">
+        <path d="M65.5,6.115C65.5,3.016 62.984,0.5 59.885,0.5L6.115,0.5C3.016,0.5 0.5,3.016 0.5,6.115L0.5,17.346C0.5,20.445 3.016,22.962 6.115,22.962L59.885,22.962C62.984,22.962 65.5,20.445 65.5,17.346L65.5,6.115Z" style="fill:#d9d9d9;stroke:#898989;stroke-width:1px;"/>
+        <path d="M32.5,2.228C32.5,2.228 13.662,2.228 5.842,2.228C4.955,2.228 4.105,2.58 3.479,3.207C2.852,3.833 2.5,4.683 2.5,5.569C2.5,9.036 2.5,14.426 2.5,17.892C2.5,18.778 2.852,19.628 3.479,20.255C4.105,20.882 4.955,21.234 5.842,21.234C13.662,21.234 32.5,21.234 32.5,21.234L32.5,2.228Z" style="fill:#4ec351;"/>
+        <text x="8px" y="14.962px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:9.772px;fill:#fff;">ON</text>
+        <path d="M32.5,2.228C32.5,2.228 52.146,2.228 60.158,2.228C62.004,2.228 63.5,3.724 63.5,5.569C63.5,9.036 63.5,14.426 63.5,17.892C63.5,19.738 62.004,21.234 60.158,21.234C52.146,21.234 32.5,21.234 32.5,21.234L32.5,2.228Z" style="fill:#9c9c9c;"/>
+        <text x="40px" y="14.962px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:9.772px;fill:#f00;">OFF</text>
+        <g>
+            <path d="M36.662,5.88C36.662,3.717 34.906,1.962 32.743,1.962L5.918,1.962C3.756,1.962 2,3.717 2,5.88L2,17.315C2,19.478 3.756,21.234 5.918,21.234L32.743,21.234C34.906,21.234 36.662,19.478 36.662,17.315L36.662,5.88Z" style="fill:url(#_Linear1);stroke:#898989;stroke-width:1px;stroke-linecap:butt;"/>
+            <path d="M34.314,11.598L30.686,13.412L30.686,9.784L34.314,11.598Z" style="fill:#f00;stroke:#f00;stroke-width:1px;"/>
+            <path d="M4.686,11.598L8.314,13.412L8.314,9.784L4.686,11.598Z" style="fill:#4ec351;stroke:#4ec351;stroke-width:1px;"/>
+        </g>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.169171,20,-20,0.169171,19.3308,3.96151)"><stop offset="0" style="stop-color:#fff;stop-opacity:1"/><stop offset="1" style="stop-color:#a8a8a8;stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>
