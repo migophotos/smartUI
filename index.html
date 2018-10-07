@@ -129,7 +129,7 @@
 
             .widgets-btn, .categories-btn {
                 --sttip-show-mode: float;
-                --sttip-delay-on: 10000;
+                /* --sttip-delay-on: 10000; */
             }
             </style>
             <script>
@@ -158,7 +158,7 @@
             </script>
     </header>
     <body>
-        <smart-tooltip className="widgets-btn categories-btn">Sorry, yout browser does not support custom elements.</smart-tooltip>
+        <!-- <smart-tooltip className="widgets-btn categories-btn">Sorry, yout browser does not support custom elements.</smart-tooltip> -->
         <div id="header" class="faded" style="pointer-events:all;">
             <div class="btn-container">
                 <smart-spacer class="hor-big"></smart-spacer>
@@ -179,7 +179,7 @@
                 <smart-spacer class="ver-small"></smart-spacer>
                 <smart-button class="categories-btn" id="title_params_btn" targets="title-params_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg"  data-sttip-tooltip="Настроить параметры заголовка"></smart-button>
                 <smart-spacer class="ver-small"></smart-spacer>
-                <smart-button class="categories-btn" id="legend_params_btn" targets="legend-params_pan" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg" data-sttip-tooltip="Настроить параметры легенды"></smart-button>
+                <smart-button class="categories-btn" id="legend_params_btn" targets="legend-params_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg" data-sttip-tooltip="Настроить параметры легенды"></smart-button>
             </div>
             <div id="smartpie_cat" style="display: none;">
             </div>
@@ -243,10 +243,39 @@
         <script src="smartUI.js"></script>
         <script>
             (function() {
-                let el = document.getElementById('legend_params_btn');
-                el.addEventListener('click', (evt) => {
-                    console.log(`${evt.target.state} == ${evt.target.attributes['current-state'].value}`);
-                })
+                // let el = document.getElementById('legend_params_btn');
+                // el.addEventListener('click', (evt) => {
+                //     console.log(`${evt.target.state} == ${evt.target.attributes['current-state'].value}`);
+                // })
+                let el, els;
+
+                els = document.getElementsByClassName('categories-btn');
+                for (let el of els) {
+                    el.addEventListener('click', (evt) => {
+                        let allBtns = document.getElementsByClassName('categories-btn');
+                        for (let btn of allBtns) {
+                            let wdgs = btn.attributes.targets.value.split(',');
+                            const state = btn.attributes['current-state'].value;
+                            for (let n = 0; n < wdgs.length; n++) {
+                                document.getElementById(wdgs[n]).style.setProperty('display', (state === 'on' ? 'block' : 'none'));
+                            }
+                        }
+                    });
+                }
+
+                els = document.getElementsByClassName('widgets-btn');
+                for (let el of els) {
+                    el.addEventListener('click', (evt) => {
+                        let allBtns = document.getElementsByClassName('widgets-btn');
+                        for (let btn of allBtns) {
+                            let wdgs = btn.attributes.targets.value.split(',');
+                            const state = btn.attributes['current-state'].value;
+                            for (let n = 0; n < wdgs.length; n++) {
+                                document.getElementById(wdgs[n]).style.setProperty('display', (state === 'on' ? 'block' : 'none'));
+                            }
+                        }
+                    });
+                }
             })();
         </script>
     </body>

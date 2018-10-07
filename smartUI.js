@@ -493,7 +493,6 @@ class SmartButton extends HTMLElement {
             if (this._o.type === 'radio' && this._o.state === 'on') {        
                 // try to find all elements with same class name and same type and change it's state (exclude own) to off
                 const sameClassEls = document.getElementsByClassName(this._o.class);
-                const els = [];
                 for (let el of sameClassEls) {
                     if (el.getAttribute('type') === this._o.type && el.getAttribute('id') !== this.id) {
                         el.setAttribute('state', 'off');
