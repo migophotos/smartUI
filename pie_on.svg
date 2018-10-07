@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="66px" height="66px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="pieOn">
+        <path d="M32.75,0.75C50.411,0.75 64.75,15.089 64.75,32.75C64.75,50.411 50.411,64.75 32.75,64.75C15.089,64.75 0.75,50.411 0.75,32.75C0.75,15.089 15.089,0.75 32.75,0.75ZM32.75,24.75C37.165,24.75 40.75,28.335 40.75,32.75C40.75,37.165 37.165,40.75 32.75,40.75C28.335,40.75 24.75,37.165 24.75,32.75C24.75,28.335 28.335,24.75 32.75,24.75Z" style="fill:#fffc00;stroke:#008fff;stroke-width:1.5px;"/>
+        <path d="M64.75,32.75C64.75,15.077 50.423,0.75 32.75,0.75C15.089,0.75 0.75,15.089 0.75,32.75C0.75,41.237 4.121,49.376 10.123,55.377L27.093,38.407C25.593,36.907 24.75,34.872 24.75,32.75C24.75,28.335 28.335,24.75 32.75,24.75C37.168,24.75 40.75,28.332 40.75,32.75L64.75,32.75Z" style="fill:#4cd964;stroke:#008fff;stroke-width:1.5px;"/>
+        <path d="M32.75,0.75C15.077,0.75 0.75,15.077 0.75,32.75C0.75,41.237 4.121,49.376 10.123,55.377L27.093,38.407C25.593,36.907 24.75,34.872 24.75,32.75C24.75,28.332 28.332,24.75 32.75,24.75L32.75,0.75Z" style="fill:#eb3223;stroke:#008fff;stroke-width:1.5px;"/>
+    </g>
+</svg>

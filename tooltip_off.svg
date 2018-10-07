@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="66px" height="66px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="tooltipOff">
+        <path d="M64.75,26.35C64.75,12.221 50.411,0.75 32.75,0.75C15.089,0.75 0.75,12.221 0.75,26.35C0.75,34.7 5.84,42.525 14.388,47.316L10.35,64.75L24.459,51.076C27.163,51.656 29.95,51.95 32.75,51.95C50.411,51.95 64.75,40.479 64.75,26.35Z" style="fill:none;stroke:#fff;stroke-width:1.5px;"/>
+        <text x="19.743px" y="43.422px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:43.504px;fill:#fff;">?</text>
+    </g>
+</svg>

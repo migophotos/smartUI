@@ -103,7 +103,7 @@
             } */
             .btn-container {
                 float: left;
-                padding: 20px;
+                padding: 10px;
             }
             #thelogo, .widgets-btn, .mainsep {
                 float: left;
@@ -230,11 +230,11 @@
         <div id="header" style="pointer-events:all;">
             <div class="btn-container">
                 <smart-spacer class="hor-big"></smart-spacer>
-                <smart-button class="widgets-btn" id="smarttoolip_btn" targets="smarttooltip_cat,smarttooltip_opt" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg" data-sttip-tooltip="Настроить параметры виджета SmartTooltip"></smart-button>
+                <smart-button class="widgets-btn" id="smarttoolip_btn" targets="smarttooltip_cat,smarttooltip_opt" type="radio" state="off" image-width="64" image-height="64" imageOn="tooltip_on.svg" imageOff="tooltip_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartTooltip"></smart-button>
                 <smart-spacer class="hor-small"></smart-spacer>
-                <smart-button class="widgets-btn" id="smartpie_btn" targets="smartpie_cat,smartpie_opt" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg"  data-sttip-tooltip="Настроить параметры виджета SmartPie"></smart-button>
+                <smart-button class="widgets-btn" id="smartpie_btn" targets="smartpie_cat,smartpie_opt" type="radio" state="off" image-width="64" image-height="64" imageOn="pie_on.svg" imageOff="pie_off.svg"  data-sttip-tooltip="Настроить параметры виджета SmartPie"></smart-button>
                 <smart-spacer class="hor-small"></smart-spacer>
-                <smart-button class="widgets-btn" id="smartgauge_btn" targets="smartgauge_cat,smartgauge_opt" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg" data-sttip-tooltip="Настроить параметры виджета SmartGauge"></smart-button>
+                <smart-button class="widgets-btn" id="smartgauge_btn" targets="smartgauge_cat,smartgauge_opt" type="radio" state="off" image-width="64" image-height="64" imageOn="gauge_on.svg" imageOff="gauge_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartGauge"></smart-button>
                 <smart-spacer class="hor-small"></smart-spacer>
             </div>
         </div>
@@ -242,24 +242,24 @@
 
         <div id="sidepanel">
             <div id="smarttooltip_cat" style="display: none;">
-                <smart-button class="categories-btn" id="interactivity_btn" targets="interactivity_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg" data-sttip-tooltip="Настроить параметры интерактивности"></smart-button>
+                <smart-button class="categories-btn" id="interactivity_btn" targets="interactivity_pan" type="radio" state="off" imageOn="gauge_on.svg" imageOff="gauge_off.svg" data-sttip-tooltip="Настроить параметры интерактивности"></smart-button>
                 <smart-spacer class="ver-small"></smart-spacer>
-                <smart-button class="categories-btn" id="window-params_btn" targets="window-params_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg" data-sttip-tooltip="Настроить параметры окна подсказки"></smart-button>
+                <smart-button class="categories-btn" id="window-params_btn" targets="window-params_pan" type="radio" state="off" imageOn="gauge_on.svg" imageOff="gauge_off.svg" data-sttip-tooltip="Настроить параметры окна подсказки"></smart-button>
                 <smart-spacer class="ver-small"></smart-spacer>
-                <smart-button class="categories-btn" id="title_params_btn" targets="title-params_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg"  data-sttip-tooltip="Настроить параметры заголовка"></smart-button>
+                <smart-button class="categories-btn" id="title_params_btn" targets="title-params_pan" type="radio" state="off" imageOn="gauge_on.svg" imageOff="gauge_off.svg"  data-sttip-tooltip="Настроить параметры заголовка"></smart-button>
                 <smart-spacer class="ver-small"></smart-spacer>
-                <smart-button class="categories-btn" id="legend_params_btn" targets="legend-params_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg" data-sttip-tooltip="Настроить параметры легенды"></smart-button>
+                <smart-button class="categories-btn" id="legend_params_btn" targets="legend-params_pan" type="radio" state="off" imageOn="gauge_on.svg" imageOff="gauge_off.svg" data-sttip-tooltip="Настроить параметры легенды"></smart-button>
             </div>
             <div id="smartpie_cat" style="display: none;">
-                <smart-button class="categories-btn" id="pie_params_btn" targets="pie-params_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg" data-sttip-tooltip="Настроить основные параметры круговой диаграммы, такие как тип, вид, сортировки и углы"></smart-button>
+                <smart-button class="categories-btn" id="pie_params_btn" targets="pie-params_pan" type="radio" state="off" imageOn="gauge_on.svg" imageOff="gauge_off.svg" data-sttip-tooltip="Настроить основные параметры круговой диаграммы, такие как тип, вид, сортировки и углы"></smart-button>
                 <smart-spacer class="ver-small"></smart-spacer>
-                <smart-button class="categories-btn" id="pie_ui_params_btn" targets="pie-ui-params_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как фонт, цвет, размер и т.д."></smart-button>
+                <smart-button class="categories-btn" id="pie_ui_params_btn" targets="pie-ui-params_pan" type="radio" state="off" imageOn="gauge_on.svg" imageOff="gauge_off.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как фонт, цвет, размер и т.д."></smart-button>
                 <smart-spacer class="ver-small"></smart-spacer>
             </div>
             <div id="smartgauge_cat" style="display: none;">
-                <smart-button class="categories-btn" id="gauge_params_btn" targets="gauge-params_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg" data-sttip-tooltip="Настроить параметры индикатора, такие как тип, вид стрелок, количество шкал и др."></smart-button>
+                <smart-button class="categories-btn" id="gauge_params_btn" targets="gauge-params_pan" type="radio" state="off" imageOn="gauge_on.svg" imageOff="gauge_off.svg" data-sttip-tooltip="Настроить параметры индикатора, такие как тип, вид стрелок, количество шкал и др."></smart-button>
                 <smart-spacer class="ver-small"></smart-spacer>
-                <smart-button class="categories-btn" id="gauge_ui-params_btn" targets="gauge-ui-params_pan" type="radio" state="off" imageOn="gauge.svg" imageOff="gauge-white-transp.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как фонт, цвет, размер и др."></smart-button>
+                <smart-button class="categories-btn" id="gauge_ui-params_btn" targets="gauge-ui-params_pan" type="radio" state="off" imageOn="gauge_on.svg" imageOff="gauge_off.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как фонт, цвет, размер и др."></smart-button>
                 <smart-spacer class="ver-small"></smart-spacer>
             </div>
         </div>
@@ -438,11 +438,11 @@
                 <div style="display: block;">
                     <smart-editslider sttip-param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="scale-factor.svg">edit control with slider</smart-editslider>
                     <smart-editslider sttip-param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="frame-opacity.svg">edit control with slider</smart-editslider>
-                    <smart-colorbox sttip-param="var-frame-fill" title="Background color" value="#aabbcc" image="frame-fill.svg">color selector</smart-colorbox>
-                    <smart-colorbox tsttip-param="var-border-color" title="Border color" value="#000000" image="border-color.svg">color selector</smart-colorbox>
-                    <smart-editslider sttip-param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="gauge-white-transp.svg">edit control with slider</smart-editslider>
+                    <smart-colorbox sttip-param="var-frame-fill" title="Background color" value="#aabbcc" image="color_wheel.png">color selector</smart-colorbox>
+                    <smart-colorbox tsttip-param="var-border-color" title="Border color" value="#000000" image="color_wheel.png">color selector</smart-colorbox>
+                    <smart-editslider sttip-param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="gauge_off.svg">edit control with slider</smart-editslider>
                     <smart-editslider sttip-param="var-border-radius" title="Border radius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="image_width.svg">edit control with slider</smart-editslider>
-                    <smart-checkbox sttip-param="is-shadow" title="Enable shadows" state="on" image="gauge.svg" iw="52" ih="18" imageOn="switch_on.svg" imageOff="switch_off.svg">edit control with slider</smart-checkbox>
+                    <smart-checkbox sttip-param="is-shadow" title="Enable shadows" state="on" image="gauge_on.svg" iw="52" ih="18" imageOn="switch_on.svg" imageOff="switch_off.svg">edit control with slider</smart-checkbox>
                 </div>
             </div>
             <div id="title-params_pan" class="overlay" style="max-height: 766px; display: none;">
@@ -480,11 +480,11 @@
                 <div style="display: block;">
                     <smart-editslider sttip-param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="scale-factor.svg">edit control with slider</smart-editslider>
                     <smart-editslider sttip-param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="frame-opacity.svg">edit control with slider</smart-editslider>
-                    <smart-colorbox sttip-param="var-frame-fill" title="Background color" value="#aabbcc" image="frame-fill.svg">color selector</smart-colorbox>
-                    <smart-colorbox tsttip-param="var-border-color" title="Border color" value="#000000" image="border-color.svg">color selector</smart-colorbox>
-                    <smart-editslider sttip-param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="gauge-white-transp.svg">edit control with slider</smart-editslider>
+                    <smart-colorbox sttip-param="var-frame-fill" title="Background color" value="#aabbcc" image="color_wheel.png">color selector</smart-colorbox>
+                    <smart-colorbox tsttip-param="var-border-color" title="Border color" value="#000000" image="color_wheel.png">color selector</smart-colorbox>
+                    <smart-editslider sttip-param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="gauge_off.svg">edit control with slider</smart-editslider>
                     <smart-editslider sttip-param="var-border-radius" title="Border radius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="image_width.svg">edit control with slider</smart-editslider>
-                    <smart-checkbox sttip-param="is-shadow" title="Enable shadows" state="on" image="gauge.svg" iw="52" ih="18" imageOn="switch_on.svg" imageOff="switch_off.svg">edit control with slider</smart-checkbox>
+                    <smart-checkbox sttip-param="is-shadow" title="Enable shadows" state="on" image="gauge_on.svg" iw="52" ih="18" imageOn="switch_on.svg" imageOff="switch_off.svg">edit control with slider</smart-checkbox>
                 </div>
             </div>
         </div>
@@ -503,11 +503,11 @@
                 <div style="display: block;">
                     <smart-editslider sttip-param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="scale-factor.svg">edit control with slider</smart-editslider>
                     <smart-editslider sttip-param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="frame-opacity.svg">edit control with slider</smart-editslider>
-                    <smart-colorbox sttip-param="var-frame-fill" title="Background color" value="#aabbcc" image="frame-fill.svg">color selector</smart-colorbox>
-                    <smart-colorbox tsttip-param="var-border-color" title="Border color" value="#000000" image="border-color.svg">color selector</smart-colorbox>
-                    <smart-editslider sttip-param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="gauge-white-transp.svg">edit control with slider</smart-editslider>
+                    <smart-colorbox sttip-param="var-frame-fill" title="Background color" value="#aabbcc" image="color_wheel.png">color selector</smart-colorbox>
+                    <smart-colorbox tsttip-param="var-border-color" title="Border color" value="#000000" image="color_wheel.png">color selector</smart-colorbox>
+                    <smart-editslider sttip-param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="gauge_off.svg">edit control with slider</smart-editslider>
                     <smart-editslider sttip-param="var-border-radius" title="Border radius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="image_width.svg">edit control with slider</smart-editslider>
-                    <smart-checkbox sttip-param="is-shadow" title="Enable shadows" state="on" image="gauge.svg" iw="52" ih="18" imageOn="switch_on.svg" imageOff="switch_off.svg">edit control with slider</smart-checkbox>
+                    <smart-checkbox sttip-param="is-shadow" title="Enable shadows" state="on" image="gauge_on.svg" iw="52" ih="18" imageOn="switch_on.svg" imageOff="switch_off.svg">edit control with slider</smart-checkbox>
                 </div>
             </div>
         </div>

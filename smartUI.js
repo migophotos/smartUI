@@ -316,6 +316,8 @@ if (!customElements.get('smart-editslider')) {
  *      targets="comma-separated list of targets" - not in use 
  *      type="radio or checkbox (if not exist)"   - if attribute empty, or not exist the type of button is checkbox or just a button (see images description)
  *      state="on or off"   - initial state for checkbox or radio-button, toggles on click (on / off)
+ *      image-width="WW"    - set width of images, default is 35
+ *      image-height="HH"   - set height of images, default is 34
  *      imageOn=""          - visualization for 'on' state, in case of not specified 'image' attribute will be used instead it
  *      imageOff=""         - visualization for 'off' state, in case of not specified 'image' attribute will be used instead it
  *      (or image="" if not needed switch effect) - may be specified instead of 'imageOn' and/or 'imageOff' attributes
