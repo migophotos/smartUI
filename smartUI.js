@@ -651,8 +651,13 @@ class SmartCheckBox extends HTMLElement {
                     <div class="title">${this.getAttribute('title')}</div>
 
                     <div class="slider" style="width:48px; height:48px;">
-                        <input name="ch01" id="CHB" type="checkbox"
-                        value="${this.getAttribute('value')}"
+                        <smart-button class="c-btn" 
+                            id="c_btn" 
+                            state="${this.getAttribute('state')}" 
+                            imageOn="${this.getAttribute('imageOn')}" 
+                            imageOff="${this.getAttribute('imageOff')}"
+                            >
+                        </smart-button>
                     </div>
                 </div>
             </div>
