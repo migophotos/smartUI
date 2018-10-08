@@ -267,12 +267,13 @@
         <div id="bottompanel">
             <div id="sourcetype_selector">
                     <smart-spacer class="ver-small"></smart-spacer>
-                    <smart-button class="selector-btn" id="def-custom-elem_btn" targets="def-custom-elem_pan" type="radio" state="off" image-width="18" image-height="18" imageOn="radio_on.svg" imageOff="radio_off.svg" label="Web component" data-sttip-tooltip="Показать параметры для Web component"></smart-button>
+                    <smart-button class="selector-btn" id="def-custom-elem_btn" targets="def-custom-elem_pan" type="radio" state="off" image-width="24" image-height="20" imageOn="radio_on.svg" imageOff="radio_off.svg" label="Web component" data-sttip-tooltip="Показать параметры для Web component"></smart-button>
                     <smart-spacer class="ver-small"></smart-spacer>
-                    <smart-button class="selector-btn" id="def-json_btn" targets="def-json_pan" type="radio" state="off" image-width="18" image-height="18" imageOn="radio_on.svg" imageOff="radio_off.svg" label="JSON format" data-sttip-tooltip="Показать параметры в JSON-формате"></smart-button>
+                    <smart-button class="selector-btn" id="def-json_btn" targets="def-json_pan" type="radio" state="off" image-width="24" image-height="20" imageOn="radio_on.svg" imageOff="radio_off.svg" label="JSON format" data-sttip-tooltip="Показать параметры в JSON-формате"></smart-button>
                     <smart-spacer class="ver-small"></smart-spacer>
-                    <smart-button class="selector-btn" id="def-object-params_btn" targets="def-object-params_pan" type="radio" state="off" image-width="18" image-height="18" imageOn="radio_on.svg" imageOff="radio_off.svg" label="JS Object" data-sttip-tooltip="Показать параметры в виде JavaScript объекта"></smart-button>
+                    <smart-button class="selector-btn" id="def-object-params_btn" targets="def-object-params_pan" type="radio" state="off" image-width="24" image-height="20" imageOn="radio_on.svg" imageOff="radio_off.svg" label="JS Object" data-sttip-tooltip="Показать параметры в виде JavaScript объекта"></smart-button>
                     <smart-spacer class="ver-small"></smart-spacer>
+                    <smart-button class="selector-btn" id="def-svg_widget_btn" targets="def-svg_widget_pan" type="radio" state="off" image-width="24" image-height="20" imageOn="radio_on.svg" imageOff="radio_off.svg" label="SVG View" data-sttip-tooltip="Показать SVG представление сконфигурированного виджета"></smart-button>
             </div>
             <div id="sourcepanel">
                 <textarea id="def-custom-elem_pan" style="border-width: 0px; resize: none; padding: 0;width: 100%; height: 100%; display: none;">
@@ -421,7 +422,294 @@
                         isShadow:				1
                     }
                 </textarea>
-            </div>
+                <textarea id="def-svg_widget_pan" style="border-width: 0px; resize: none; padding: 0;width: 100%; height: 100%; display: none;">
+                        <svg class="sttip" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="345.6000061035156" height="61.29999923706055">
+                            <defs>
+                                <filter id="drop-shadow">
+                                    <feGaussianBlur in="SourceAlpha" stdDeviation="2.2"></feGaussianBlur>
+                                    <feOffset dx="2" dy="2" result="offsetblur"></feOffset>
+                                    <feFlood flood-color="rgba(0,0,0,0.5)"></feFlood>
+                                    <feComposite in2="offsetblur" operator="in"></feComposite>
+                                    <feMerge>
+                                        <feMergeNode></feMergeNode>
+                                        <feMergeNode in="SourceGraphic"></feMergeNode>
+                                    </feMerge>
+                                </filter>
+                                <pattern id="sttip-pattern-stripe45" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                                    <rect width="2" height="4" transform="translate(0,0)" fill="white"></rect>
+                                </pattern>
+                                <pattern id="sttip-pattern-stripe-45" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+                                    <rect width="2" height="4" transform="translate(0,0)" fill="white"></rect>
+                                </pattern>
+                                <pattern id="sttip-pattern-stripe-45-black" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+                                    <rect width="2" height="4" transform="translate(0,0)" fill="black"></rect>
+                                </pattern>
+                                <mask id="sttip-mask-stripe">
+                                    <rect x="0" y="0" width="100%" height="100%" fill="url(#sttip-pattern-stripe45)"></rect>
+                                </mask>
+                                <mask id="sttip-mask-stripe-black">
+                                    <rect x="0" y="0" width="100%" height="100%" fill="url(#sttip-pattern-stripe45)"></rect>
+                                </mask>
+                                <mask id="sttip-mask-cross">
+                                    <rect x="0" y="0" width="100%" height="100%" fill="url(#sttip-pattern-stripe45)"></rect>
+                                    <rect x="0" y="0" width="100%" height="100%" fill="url(#sttip-pattern-stripe-45)"></rect>
+                                </mask>
+    
+                            </defs>
+                            <style>
+                                svg.sttip {
+                                    overflow: visible;
+                                    vector-effect: non-scaling-stroke;
+    
+                                    --sttip-var-font-family: 'Arial', 'DIN Condensed', 'Noteworthy', sans-serif;
+                                    --sttip-var-font-stretch: condensed;
+                                    --sttip-var-font-color: #666;
+                                    --sttip-var-scale-size: 12px;
+                                    --sttip-var-legend-size: 18px;
+                                    --sttip-var-title-size: 22px;
+                                    --sttip-var-descr-size: 18px;
+    
+                                    --sttip-var-run-color: #0f0;
+                                    --sttip-var-stop-color: #f00;
+                                    --sttip-var-def-color: #666;
+    
+                                    --sttip-var-frame-fill: #fff;
+                                    --sttip-var-frame-opacity: 0.95;
+                                    --sttip-var-border-color: none;
+                                    --sttip-var-border-width: 2;
+                                    --sttip-var-border-radius: 2;
+    
+                                    --sttip-var-legend-fill: #fff;
+                                    --sttip-var-legend-stroke: #666;
+    
+    
+                                    --legend-frm-border-width: 2;
+                                    --legend-frm-border-radius: var(--sttip-var-border-radius, 2);
+                                    --legend-frm-border-color: var(--sttip-var-legend-stroke, #666);
+                                    --legend-frm-fill: var(--sttip-var-legend-fill, #ffc6c6);
+    
+                                    --no-color:	none;
+                                    --run-color: var(--sttip-var-run-color, green);
+                                    --stop-color: var(--sttip-var-stop-color, red);
+                                }
+                                .sttip-scale-line {
+                                    fill: none;
+                                    stroke: var(--sttip-var-font-color);
+                                    stroke-width: 2;
+                                    stroke-linecap: butt;
+                                }
+                                text.sttip-text {
+                                    font-family: var(--sttip-var-font-family);
+                                    font-stretch: var(--sttip-var-font-stretch);
+                                    pointer-events: none;
+                                    fill: var(--sttip-var-font-color);
+                                }
+                                .sttip-scale-text {
+                                    font-size:var(--sttip-var-scale-size, 12px);
+                                }
+                                .sttip-title {
+                                    font-size: var(--sttip-var-title-size, 22px);
+                                }
+                                .sttip-description {
+                                    font-size: var(--sttip-var-descr-size, 18px);
+                                }
+                                .sttip-legend-value, .sttip-legend-name {
+                                    font-size: var(--sttip-var-legend-size, 18px);
+                                }
+                                .sttip-legend-rect {
+                                    fill:var(--legend-frm-fill);
+                                }
+                                .sttip-legend-frame {
+                                    fill:var(--legend-frm-fill);
+                                    fill-opacity: 0.1;
+                                    rx: var(--legend-frm-border-radius);
+                                    ry: var(--legend-frm-border-radius);
+                                }
+                                .sttip-frame {
+                                    fill:var(--sttip-var-frame-fill);
+                                    fill-opacity: var(--sttip-var-frame-opacity, 1);
+                                    stroke: var(--sttip-var-border-color);
+                                    stroke-width: var(--sttip-var-border-width);
+                                    rx: var(--sttip-var-border-radius);
+                                    ry: var(--sttip-var-border-radius);
+                                }
+    
+                                #SmartTooltip.hidden {
+                                    transition: all 500ms ease-in-out;
+                                }
+    
+                                .sttip-legend-rect {
+                                    fill:var(--no-color);
+                                    fill:var(--legend-frm-fill);
+                                    rx: var(--legend-frm-border-radius);
+                                    ry: var(--legend-frm-border-radius);
+                                }
+                                .sttip-run-indicator {
+                                    stroke: #969696;
+                                    stroke-width: 1px;
+                                }
+                                .sttip-value-gauge {
+                                    fill: #ff9191;
+                                    stroke: var(--sttip-var-font-color, black);
+                                }
+                                .sttip-run {
+                                    fill: var(--run-color);
+                                }
+                                .sttip-stop {
+                                    fill: var(--stop-color);
+                                }
+                                .sttip-shadowed {
+                                    filter: url(#drop-shadow);
+                                }
+                                .sttip-linked {
+                                    cursor: pointer;
+                                }
+                                .sttip-animated {
+                                    transition:all 1s;
+                                }
+                                .sttip-selected {
+                                    mask: url(#sttip-mask-cross);
+                                }
+                                .sttip-current &gt; rect {
+                                    stroke-width: 1.5;
+                                    stroke: var(--legend-frm-border-color);
+                                }
+                                .sttip-current &gt; text {
+                                    font-weight: bold;
+                                }
+                                .sttip-hover {
+                                    mask: url(#sttip-mask-stripe);
+                                }
+                                .sttip-lightgray {
+                                    fill: lightgray;
+                                }
+    
+                                .sttip-max-value {
+                                    width: 265px;
+                                }
+                                .sttip-min-value {
+                                    width: 0;
+                                }
+    
+                                rect.sttip-legend-rect:hover {
+                                    fill: lightgray;
+                                }
+                                .sttip-diagram:hover, path.sttip-linked:hover {
+                                    mask: url(#sttip-mask-stripe);
+                                }
+                                g#legend-text-stroke {
+                                    pointer-events: none;
+                                }
+    
+                                #pinMe {
+                                    fill: var(--sttip-var-frame-fill, gray);
+                                    stroke: var(--sttip-var-font-color, black);
+                                    stroke-width: 1.5;
+                                    transition: all 500ms ease-in-out;
+                                }
+                                #pinMe:hover {
+                                    cursor: pointer;
+                                    fill: lightgray;
+                                }
+                                #frmBtns rect {
+                                    fill: var(--sttip-var-frame-fill, none);
+                                    stroke: var(--sttip-var-font-color, black);
+                                    stroke-width: 0.5;
+                                    pointer-events: bounding-box;
+                                    cursor: pointer;
+                                }
+                                #frmBtns path {
+                                    stroke: var(--sttip-var-font-color, black);
+                                }
+                                #frmBtns text {
+                                    stroke: var(--sttip-var-font-color, black);
+                                }
+    
+                                #frmBtns rect:hover {
+                                    fill: lightgray;
+                                }
+    
+                                #pinMe.sttip-custom circle {
+                                    fill: red;
+                                }
+                                #pinMe #tippex {
+                                    display: none;
+                                }
+                                #pinMe.sttip-custom #tippex {
+                                    display: block;
+                                    stroke: var(--sttip-var-frame-fill, white);
+                                    stroke-width: 1.5;
+                                }
+                                #pinMe.sttip-pinned {
+                                    transform: rotate(-45deg);
+                                    transform-origin: 8px 8px;
+                                    transform-box: border-box;
+                                }
+                                #pinMe.sttip-custom {
+                                    transform: rotate(-45deg);
+                                    transform-origin: 12px 12px;
+                                    transform-box: border-box;
+                                }
+    
+                            </style>
+                            <g id="tooltip-group" transform="scale(0.8)">
+                                <rect id="tooltip-frame" class="sttip-frame sttip-shadowed" x="0" y="0" fill-opacity="0.8" width="432" height="76.625"></rect>
+                                <g id="bound-group">
+                                    <g id="frmBtns" transform="translate(391.99999618530273, 4)">
+                                        <g transform="translate(0, 0)">
+                                            <rect id="helpMe" x="0" y="0" width="16" height="16"></rect>
+                                            <text text-anchor="middle" pointer-events="none" x="8" y="13">?</text>
+                                        </g>
+                                        <g transform="translate(20, 0)">
+                                            <rect id="closeMe" x="0" y="0" width="16" height="16"></rect>
+                                            <path d="M2,2L14,14M2,14L14,2" stroke="black" stroke-width="2" pointer-events="none"></path>
+                                        </g>
+                                    </g>
+                                    <g transform="translate(4,4)">
+                                        <g id="pinMe" display="none">
+                                            <path id="pin" d="M8,8L24,7L24,9Z" pointer-events="none"></path>
+                                            <path id="tippex" d="M8,8L12,7L12,9Z"></path>
+                                            <circle id="rosh-pin" cx="24" cy="8" r="5"></circle>
+                                        </g>
+                                    </g>
+                                    <circle id="diagram" class="sttip-diagram" cx="72.5" cy="72.5" r="65" style="fill: rgb(255, 255, 255); display: none;"></circle>
+                                    <g id="diagram-group" style="display: none;">
+                                    </g>
+                                    <g id="legend-group" data-x="10" style="display: none;">
+                                        <circle id="run-indicator" class="sttip-run-indicator sttip-stop" cx="16.5" cy="157.5" r="5"></circle>
+                                        <g id="legend-stroke">
+                                            <rect id="legend-rect" class="sttip-legend-rect" x="22" y="172" width="396" height="34"></rect>
+                                            <g id="legend-text-stroke">
+                                                <rect id="legend-color" class="sttip-legend-color" x="26.5" y="178.5" width="20" height="20" fill="#ff0600"></rect>
+                                                <text id="legend-name" data-format="$NAME$" class="sttip-text sttip-legend-name" x="53.5px" y="196.5" text-anchor="left">Legend stroke</text>
+                                                <text id="legend-value" data-format="$VALUE$" class="sttip-text sttip-legend-value" x="359.794px" y="196.5" text-anchor="left">Value</text>
+                                            </g>
+                                        </g>
+                                    </g>
+                                    <g id="title-group" data-x="147" transform="translate(-137, 0)">
+                                        <g id="scale-group" transform="translate(0, 13.624977111816406)" style="display: none;">
+                                            <rect id="tooltip-value" class="sttip-value-gauge sttip-animated" data-maxw="265" data-maxh="20" x="147" y="73" width="20" height="20"></rect>
+                                            <g transform="translate(0, -8)">
+                                            <path id="scale-line" class="sttip-scale-line" d="M147,105.5l265,0"></path>
+                                            <path id="scale-0" class="sttip-scale-line" d="M148,111.827l0,-7.327"></path>
+                                            <path id="scale-25" class="sttip-scale-line" d="M213.25,109.827l0,-5.327"></path>
+                                            <path id="scale-50" class="sttip-scale-line" d="M279.5,111.827l0,-7.327"></path>
+                                            <path id="scale-75" class="sttip-scale-line" d="M345.75,109.827l0,-5.327"></path>
+                                            <path id="scale-100" class="sttip-scale-line" d="M411,111.827l0,-7.327"></path>
+                                            <text id="value-0" class="sttip-text sttip-scale-text" x="145.155px" y="128px">0</text>
+                                            <text id="value-50" class="sttip-text sttip-scale-text" text-anchor="middle" x="280" y="128px">50%</text>
+                                            <text id="value-100" class="sttip-text sttip-scale-text" text-anchor="middle" x="412" y="128px">100%</text>
+                                            </g>
+                                        </g>
+                                        <g id="descr-group">
+                                            <text id="tooltip-title" class="sttip-text sttip-title" x="147" y="40" style="text-anchor: middle;"><tspan x="353" dy="0">Настроить параметры виджета </tspan><tspan x="353" dy="1em">SmartGauge </tspan></text>
+                                            <text id="tooltip-description" class="sttip-text sttip-description" x="147" y="86.6249771118164"></text>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>                    </textarea>
+                </div>
         </div>
     
         <div id="smarttooltip_opt" style="width: 632px; height: 480px; display: block;">
