@@ -355,6 +355,29 @@ class SmartButton extends HTMLElement {
                     opacity: 0.2;
                 }
 
+
+                .smartcontainer {
+                    font-family: Helvetica, sans-serif;
+                    color: rgba( 255,255,255, 0.8 );
+                }
+                .smartcontainer .title {
+                    text-transform: uppercase;
+                    font-size: 9px;
+                    -webkit-font-smoothing: subpixel-antialiased;
+                    height: 12px;
+                }
+                .svgcontainer {
+                    position: relative;
+                    display: inline-block;
+                    overflow: hidden;
+                    margin-bottom: 3px;
+                    vertical-align: top;
+                }
+                div#label {
+                    float: right;
+                    margin-left: 10px;
+                    margin-top: 3px;
+                }
                 .iconfill {
                     fill: #ffffff;
                     opacity: 0.8;
@@ -365,111 +388,9 @@ class SmartButton extends HTMLElement {
                 .title:hover {
                     opacity: 1;
                 }
-
-                .smartcontainer {
-                    font-family: Helvetica, sans-serif;
-                    color: rgba( 255,255,255, 0.8 );
-
+                div#label:hover {
+                    opacity: 1; 
                 }
-                .smartcontainer .title {
-                    text-transform: uppercase;
-                    font-size: 9px;
-                    -webkit-font-smoothing: subpixel-antialiased;
-                    height: 12px;
-                }
-
-                .smartcontainer .controls {
-                    display: inline-block;
-                    margin-bottom: 3px;
-                    margin-left: 2px;
-                    vertical-align: top;
-                }
-
-                .svgcontainer {
-                    position: relative;
-                    display: inline-block;
-                    overflow: hidden;
-                    margin-bottom: 3px;
-                    vertical-align: top;
-                }
-
-                /* plus and minus buttons */
-                .plusminus {
-                    display: block;
-                    float: left;
-                    width: 3px;
-                    height: 16px;
-                    overflow: hidden;
-                    margin-top: 3px;
-                }
-                .plusminus .btn path {
-                    opacity: 0.8;
-                }
-                .plusminus .btn:hover path {
-                    cursor: pointer;
-                    opacity: 1;
-                }
-
-
-                .slider {
-                    display: block;
-                    float: left;
-                    overflow: unset;
-                }
-                .smartcontainer input[type=text] {
-                    color: rgba( 255,255,255, 1 );
-                    // display: block;
-                    // float: left;
-                    overflow: unset;
-                    width: 50px;
-                    background: none;
-                    border: 0px solid;
-                    // margin: 2px 4px 2px 8px;
-                    // padding: 1px 3px 2px 3px;
-                    font-size: 11px;
-                    text-align: right;
-                    opacity: 0.8;
-                    position: relative;
-                    left: -58px
-                }
-                .smartcontainer input[type=color] {
-                    color: rgba( 255,255,255, 1 );
-                    display: block;
-                    float: left;
-                    width: 74px;
-                    height: 13px;
-                    background: none;
-                    border: 1px solid;
-                    margin: 2px 4px 2px 8px;
-                    padding: 1px 3px 2px 3px;
-                    opacity: 0.8;
-                    //-webkit-appearance: menulist-text;
-                }
-                .smartcontainer input:hover {
-                    opacity: 1;
-                }
-
-
-                /* styling input[type-color] */
-                .smartcontainer input[type='color']::-webkit-color-swatch-wrapper {
-                    padding: 0 0 0 0;
-                    width: 13px;
-                    height: 13px;
-                    // radius: 6px;
-                    border: 1px solid #fff;
-                    margin-top: 0.5px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-                }
-                .smartcontainer input[type='color']::-webkit-color-swatch {
-                    border-width: 0px;
-                }
-                div#label {
-                    float: right;
-                    margin-left: 10px;
-                }
-                input:focus {
-                    outline: none;
-                }
-
 
 
             </style>
@@ -482,7 +403,7 @@ class SmartButton extends HTMLElement {
                         <image id="on" xlink:href="${this.getAttribute('imageOn') || this.getAttribute('image')}" x="0" y="0" width="35" height="34"/>
                         </g>
                     </svg>
-                    <div id="label"> ${this.getAttribute('label') || ''}</div>
+                    <div class="title" id="label"> ${this.getAttribute('label') || ''}</div>
                 </div>
             </div>
         `;
