@@ -204,13 +204,15 @@ class SmartEditSlider extends HTMLElement {
                         value="${this.getAttribute('value')} ${this.getAttribute('units')}"
                         max="${this.getAttribute('max')}"
                         min="${this.getAttribute('min')}"
-                        step="${this.getAttribute('step')}">
+                        step="${this.getAttribute('step')}"
+                        multi="${this.getAttribute('step')}" />
                     <div class="slider" style="width:90px; height:16px;">
                         <input name="slider" class="slider-bar" id="SL" type="range"
                         max="${this.getAttribute('max')}"
                         value="${this.getAttribute('value')}"
                         min="${this.getAttribute('min')}"
-                        step="${this.getAttribute('step')}" />
+                        step="${this.getAttribute('step')}"
+                        multi="${this.getAttribute('multi')}" />
                     </div>
                 </div>
             </div>
