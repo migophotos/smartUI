@@ -105,22 +105,6 @@ class SmartSelector extends HTMLElement {
                     vertical-align: top;
                 }
 
-                /* plus and minus buttons */
-                .plusminus {
-                    display: block;
-                    float: left;
-                    /* width: 33px; */
-                    height: 16px;
-                    overflow: hidden;
-                    margin-top: 3px;
-                }
-
-                .slider {
-                    display: block;
-                    float: left;
-                    overflow: unset;
-                    margin: 6px 12px 0 0;
-                }
                 .smartcontainer input {
                     color: rgba( 255,255,255, 1 );
                     display: block;
@@ -138,27 +122,11 @@ class SmartSelector extends HTMLElement {
                     opacity: 1;
                 }
 
-
-                /* styling input[type-range] */
-                input[type=range] {
-                    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
-                    height:2px;
-                    width:100%;
-                    cursor: pointer;
-                    background: transparent;
-                    margin-bottom: 10px;
+                select {
+                    min-width: 65px;
+                    height: 20px;
                 }
-                input[type=range]::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    border: 1px solid #fff;
-                    height: 16px;
-                    width: 16px;
-                    border-radius: 8px;
-                    background: #009fff;
-                    cursor: pointer;
-                    margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-                }
-                input:focus {
+                select:focus {
                     outline: none;
                 }
 
@@ -174,9 +142,6 @@ class SmartSelector extends HTMLElement {
                 </div>
                 <div class="controls">
                     <div class="title">${this.getAttribute('title')}</div>
-                    <div class="plusminus">
-                    </div>
-
                     <select id="IC" />
                 </div>
             </div>
@@ -208,15 +173,16 @@ class SmartSelector extends HTMLElement {
         utils.convertNumericProps(this._o);
         // get references to controls
         this._input  = this._shadowDOM.getElementById('IC');    // input
+        const values = this._o.valuelist.split(','); 
+        const labels  = typeof this._o.labellist !== 'undefined' ? this._o.labellist.split(',') : values;        
 
-        const opts = this._o.list.split(',');
-
-        for (let n = 0; n < opts.length; n++) {
-            let val = opts[n];
-            let opt = this._shadowDOM.ownerDocument.createElement('option');
-            opt.label = val;
-            opt.value = val;
-            this._input.add(opt);
+        for (let n = 0; n < values.length; n++) {
+            let value = values[n];
+            let label = labels[n];
+            let optionEl = this._shadowDOM.ownerDocument.createElement('option');
+            optionEl.label = label;
+            optionEl.value = value;
+            this._input.add(optionEl);
         }
 
         this._input.addEventListener('input', (evt) => {
@@ -320,7 +286,7 @@ class SmartEditText extends HTMLElement {
                     width: 190px;
                     background: none;
                     border: 1px solid;
-                    margin: 2px 4px 2px 8px;
+                    margin: 2px 4px 2px 0px;
                     padding: 1px 3px 2px 3px;
                     font-size: 11px;
                     text-align: left;
@@ -507,7 +473,9 @@ if (!customElements.get('smart-ui-edittext')) {
                     color: rgba( 255,255,255, 1 );
                     display: block;
                     float: left;
-                    width: 40px;
+                    max-width: 62px;
+                    min-width: 40px;
+                    // width: 40px;
                     background: none;
                     border: 1px solid;
                     margin: 2px 4px 2px 8px;
@@ -771,7 +739,7 @@ class SmartButton extends HTMLElement {
                 div#label {
                     float: right;
                     margin-left: 10px;
-                    margin-top: 3px;
+                    margin-top: 6px;
                 }
                 .iconfill {
                     fill: #ffffff;
@@ -1153,11 +1121,11 @@ class SmartColorBox extends HTMLElement {
                     color: rgba( 255,255,255, 1 );
                     display: block;
                     float: left;
-                    width: 74px;
+                    width: 76px;
                     height: 13px;
                     background: none;
                     border: 1px solid;
-                    margin: 2px 4px 2px 8px;
+                    margin: 2px 4px 2px 0px;
                     padding: 1px 3px 2px 3px;
                     opacity: 0.8;
                     //-webkit-appearance: menulist-text;
@@ -1170,7 +1138,7 @@ class SmartColorBox extends HTMLElement {
                 /* styling input[type-color] */
                 .smartcontainer input[type='color']::-webkit-color-swatch-wrapper {
                     padding: 0 0 0 0;
-                    width: 13px;
+                    width: 14px;
                     height: 13px;
                     // radius: 6px;
                     border: 1px solid #fff;
@@ -1196,24 +1164,6 @@ class SmartColorBox extends HTMLElement {
                 </div>
                 <div class="controls">
                     <div class="title">${this.getAttribute('title')}</div>
-                    <div class="plusminus" style="opacity:0;">
-                        <div class="svgcontainer btn" id="MB">
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                            overflow="scroll" xml:space="preserve" x="0px" y="0px" width="17px" height="16px" viewBox="0 0 17 16">
-                                <g class="iconfill">
-                                    <path d="M8,0C3.582,0,0,3.582,0,8s3.582,8,8,8h8V0H8z M5,9V7h8v2H5z"></path>
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="svgcontainer btn" id="PB">
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                            overflow="scroll" xml:space="preserve" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16">
-                                <g class="iconfill">
-                                    <path d="M8,0H0v16h8c4.418,0,8-3.582,8-8S12.418,0,8,0z M11,9H8v3H6V9H3V7h3V4h2v3h3V9z"></path>
-                                </g>
-                            </svg>
-                        </div>
-                    </div>
 
                     <div class="slider">
                         <input name="colorbox" class="slider-bar" id="colorbox" type="color" value="${this.getAttribute('value')}">

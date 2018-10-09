@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="54px" height="19px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="switchDown">
+        <path d="M52.589,5C52.589,2.516 50.573,0.5 48.089,0.5L5,0.5C2.516,0.5 0.5,2.516 0.5,5L0.5,14C0.5,16.484 2.516,18.5 5,18.5L48.089,18.5C50.573,18.5 52.589,16.484 52.589,14L52.589,5Z" style="fill:#d9d9d9;stroke:#898989;stroke-width:1px;"/>
+        <g>
+            <path d="M26.144,1.885C26.144,1.885 12.05,1.885 5.444,1.885C3.599,1.885 2.103,3.381 2.103,5.226C2.103,7.763 2.103,11.237 2.103,13.774C2.103,15.619 3.599,17.115 5.444,17.115C12.05,17.115 26.144,17.115 26.144,17.115L26.144,1.885Z" style="fill:#fff;"/>
+            <path d="M26.144,1.885C26.144,1.885 40.868,1.885 47.645,1.885C48.531,1.885 49.381,2.237 50.008,2.863C50.634,3.49 50.986,4.34 50.986,5.226C50.986,7.763 50.986,11.237 50.986,13.774C50.986,14.66 50.634,15.51 50.008,16.137C49.381,16.763 48.531,17.115 47.645,17.115C40.868,17.115 26.144,17.115 26.144,17.115L26.144,1.885Z" style="fill:#fff;"/>
+        </g>
+        <g>
+            <text x="22.09px" y="11.427px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:6px;">U<tspan x="26.637px " y="11.427px ">P</tspan></text>
+            <g>
+                <path d="M14.396,7.731L10.545,4.269L6.693,7.731" style="fill:none;stroke:#000500;stroke-width:1.91px;stroke-linecap:butt;stroke-linejoin:miter;"/>
+                <path d="M14.396,13.731L10.545,10.269L6.693,13.731" style="fill:none;stroke:#000500;stroke-width:1.91px;stroke-linecap:butt;stroke-linejoin:miter;"/>
+            </g>
+            <g>
+                <path d="M46.396,7.731L42.545,4.269L38.693,7.731" style="fill:none;stroke:#000500;stroke-width:1.91px;stroke-linecap:butt;stroke-linejoin:miter;"/>
+                <path d="M46.396,13.731L42.545,10.269L38.693,13.731" style="fill:none;stroke:#000500;stroke-width:1.91px;stroke-linecap:butt;stroke-linejoin:miter;"/>
+            </g>
+        </g>
+    </g>
+</svg>

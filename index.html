@@ -730,55 +730,55 @@
                         <div id="main_pan" class="overlay" style="max-height: 766px; display: none;">
                             <h2>Основные характеристики</h2>
                             <div style="display: block;">
-                                <smart-ui-checkbox name="sttip-param" sttip-param="enable-storage" title="Enable storage" value="" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
-                                <smart-ui-checkbox name="sttip-param" sttip-param="is-run" title="Run Indicator" value="" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
-                                <smart-ui-selector name="sttip-param" sttip-param="sort-by" title="Sort Legend by parameter" value="" list="asis,name,value,color,state" image="images/gauge_on.svg"></smart-ui-selector>
-                                <smart-ui-checkbox name="sttip-param" sttip-param="sort-dir" title="Sort direction (up/down)" value="" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
-                                <smart-ui-selector name="sttip-param" sttip-param="template" title="Tooltip template" value="" list="simple,pie,image,iframe" image="images/gauge_on.svg"></smart-ui-selector>
-                                <smart-ui-selector name="sttip-param" sttip-param="show-mode" title="Show mode" value="" list=" ,float,fixed" image="images/gauge_on.svg"></smart-ui-selector>
-                                <smart-ui-selector name="sttip-param" sttip-param="position" title="Fixed Position" value="" list="lt,rt,rb,lb" image="images/gauge_on.svg"></smart-ui-selector>
+                                <smart-ui-checkbox name="sttip-param" param="enable-storage" title="Запоминать состояния" value="" image="images/gauge_on.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                <!-- <smart-ui-checkbox name="sttip-param" param="is-run" title="" value="" image="images/gauge_on.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox> -->
+                                <smart-ui-selector name="sttip-param" param="template" title="Шаблон Подсказки" value="" valueList="simple,pie,image,iframe" labellist="Простой,Диаграмма,Картинка,IFrame" image="images/gauge_on.svg"></smart-ui-selector>
+                                <smart-ui-selector name="sttip-param" param="show-mode" title="Состояние" value="" valueList=" ,float,pinned,fixed" labellist=" ,Плавающий,Приколотый,Зафиксированный" image="images/gauge_on.svg"></smart-ui-selector>
+                                <smart-ui-selector name="sttip-param" param="position" title="Расположение" value="" valuelist="rt,rb,lb,lt" labellist="Справа Сверху,Справа Снизу,Слева Снизу,Слева Сверху" image="images/gauge_on.svg"></smart-ui-selector>
+                                <smart-ui-editslider name="sttip-param" param="frame-scale" title="Масштабирование окна подсказки" value="" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
                             </div>
                         </div>
                         <div id="interactivity_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Временные характеристики</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider name="sttip-param" sttip-param="delay-in" title="Delay In (250 - 1000 ms)" value="" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" sttip-param="delay-out" title="Delay Out (250 - 1000 ms)" value="" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" sttip-param="delay-on" title="Delay On (500 - 20000 ms)" value="" units="ms" min="500" max="20000" step="500" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="delay-in" title="Задержка показа на входе" value="" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="delay-out" title="Задержка показа на выходе" value="" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="delay-on" title="Время показа" value="" units="ms" min="500" max="20000" step="500" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
                         </div>
                     </div>
                     <div id="window-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Параметры окна подсказки</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider name="sttip-param" sttip-param="frame-scale" title="Frame Scale Factor (0.5 - 1)" value="" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" sttip-param="var-frame-opacity" title="Opacity (0 - 1)" value="" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-colorbox name="sttip-param" sttip-param="var-frame-fill" title="Background color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                            <smart-ui-colorbox name="sttip-param" sttip-param="var-border-color" title="Border color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                            <smart-ui-editslider name="sttip-param" sttip-param="var-border-width" title="Border wide (0 - 10)" value="" units="" min="0" max="10" step="0.5" image="images/gauge_off.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" sttip-param="var-border-radius" title="Border radius (0 - 20 px)" value="" units="px" min="0" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-checkbox name="sttip-param" sttip-param="is-shadow" title="Enable shadows" value="" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                            <smart-ui-editslider name="sttip-param" param="var-frame-opacity" title="Непрозрачность" value="" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-colorbox name="sttip-param" param="var-frame-fill" title="Цвет фона" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
+                            <smart-ui-colorbox name="sttip-param" param="var-border-color" title="Цвет обводки" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
+                            <smart-ui-editslider name="sttip-param" param="var-border-width" title="Толщина обводки" value="" units="" min="0" max="10" step="0.5" image="images/gauge_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="var-border-radius" title="Скругление углов" value="" units="px" min="0" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-checkbox name="sttip-param" param="is-shadow" title="Отбасывание тени" value="" image="images/gauge_on.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                         </div>
                     </div>
                     <div id="title-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Параметры отображения заголовка</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider name="sttip-param" sttip-param="tooltip-max-width" title="Tooltip max width (100 - 600 px)" value="" units="px" min="100" max="600" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" sttip-param="title-text-wrap" title="Title wrap width (0 - 600 px)" value="" units="px" min="0" max="600" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-edittext   name="sttip-param" sttip-param="title-format" title="Title Text Format" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
-                            <smart-ui-selector   name="sttip-param" sttip-param="title-text-align" title="Align title text" value="" list="left,center,right,justify" image="images/gauge_on.svg"></smart-ui-selector>
-                            <smart-ui-editslider name="sttip-param" sttip-param="descr-text-wrap" title="Description wrap width (0 - 600 px)" value="" units="px" min="0" max="600" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-edittext   name="sttip-param" sttip-param="descr-format" title="Description Format" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
-                            <smart-ui-selector   name="sttip-param" sttip-param="descr-text-align" title="Align description text" value="" list="left,center,right,justify" image="images/gauge_on.svg"></smart-ui-selector>
+                            <smart-ui-editslider name="sttip-param" param="tooltip-max-width" title="Ширина окна подсказки" value="" units="px" min="100" max="600" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="title-text-wrap" title="Ширина выравнивания заголовка" value="" units="px" min="0" max="600" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-edittext   name="sttip-param" param="title-format" title="Форматирование заголовка" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
+                            <smart-ui-selector   name="sttip-param" param="title-text-align" title="Выравнивание заголовка" value="" valueList="left,center,right,justify" labelList="Слева,По центру,Справа,Выровнено" image="images/gauge_on.svg"></smart-ui-selector>
+                            <smart-ui-editslider name="sttip-param" param="descr-text-wrap" title="Ширина выравнивания описания" value="" units="px" min="0" max="600" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-edittext   name="sttip-param" param="descr-format" title="Форматирование описания" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
+                            <smart-ui-selector   name="sttip-param" param="descr-text-align" title="Выравнивание описания" value="" valueList="left,center,right,justify" labelList="Слева,По центру,Справа,Выровнено" image="images/gauge_on.svg"></smart-ui-selector>
                         </div>
                     </div>
                     <div id="legend-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Параметры отображения легенды</h2>
                         <div style="display: block;">
-                            <smart-ui-edittext name="sttip-param" sttip-param="legend-format" title="Legend Text Format" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
-                            <smart-ui-edittext name="sttip-param" sttip-param="legend-val-format" title="Legend Value Format" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
-                            <smart-ui-colorbox name="sttip-param" sttip-param="var-legend-fill" title="Legend background color" value="#000000" image="images/image_width.svg">color selector</smart-ui-colorbox>
-                            <smart-ui-colorbox name="sttip-param" sttip-param="var-legend-stroke" title="Legend border color" value="#000000" image="images/image_width.svg">color selector</smart-ui-colorbox>
-                        </div>
+                            <smart-ui-edittext name="sttip-param" param="legend-format" title="Форматирование легенды" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
+                            <smart-ui-edittext name="sttip-param" param="legend-val-format" title="Форматирование значения" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
+                            <smart-ui-colorbox name="sttip-param" param="var-legend-fill" title="Цвет фона" value="#000000" image="images/image_width.svg">color selector</smart-ui-colorbox>
+                            <smart-ui-colorbox name="sttip-param" param="var-legend-stroke" title="Цвет обводки" value="#000000" image="images/image_width.svg">color selector</smart-ui-colorbox>
+                            <smart-ui-selector name="sttip-param" param="sort-by" title="Сортировка легенды по параметру" value="" valueList="asis,name,value,color,state" labelList="Не сортировать,По алфавиту,По значению,По цвету,По состоянию" image="images/gauge_on.svg"></smart-ui-selector>
+                            <smart-ui-checkbox name="sttip-param" param="sort-dir" title="Направление сортировки" value="" image="images/gauge_on.svg" iw="65" ih="22.5" imageOn="images/switch_down.svg" imageOff="images/switch_up.svg">edit control with slider</smart-ui-checkbox>
+                    </div>
                     </div>
                 </div>
 
@@ -786,21 +786,21 @@
                     <div id="pie-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Основные характеристики диаграммы</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider sttip-param="delay-in" title="Delay In (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-out" title="Delay Out (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stpie-param" param="delay-in" title="Delay In (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stpie-param" param="delay-out" title="Delay Out (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stpie-param" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
                         </div>
                     </div>
                     <div id="pie-ui-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Параметры интерфейса диаграммы</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider sttip-param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-colorbox sttip-param="var-frame-fill" title="Background color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                            <smart-ui-colorbox tsttip-param="var-border-color" title="Border color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                            <smart-ui-editslider sttip-param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="images/gauge_off.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="var-border-radius" title="Border radius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-checkbox sttip-param="is-shadow" title="Enable shadows" value="on" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                            <smart-ui-editslider name="stpie-param" param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stpie-param" param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-colorbox name="stpie-param" param="var-frame-fill" title="Background color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
+                            <smart-ui-colorbox name="stpie-param" param="var-border-color" title="Border color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
+                            <smart-ui-editslider name="stpie-param" param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="images/gauge_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stpie-param" param="var-border-radius" title="Border radius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-checkbox name="stpie-param" param="is-shadow" title="Enable shadows" value="on" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                         </div>
                     </div>
                 </div>
@@ -809,29 +809,29 @@
                     <div id="gauge-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Основные параметры индикатора</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider sttip-param="delay-in" title="Delay In (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-out" title="Delay Out (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-in" title="Delay In (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-out" title="Delay Out (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="delay-on" title="Delay On (2 - 20 s)" value="2" units="s" min="2" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
                         </div>
                     </div>
                     <div id="gauge-ui-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Параметры интерфейса индикатора</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider sttip-param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-colorbox sttip-param="var-frame-fill" title="Background color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                            <smart-ui-colorbox tsttip-param="var-border-color" title="Border color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                            <smart-ui-editslider sttip-param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="images/gauge_off.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider sttip-param="var-border-radius" title="Border radius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-checkbox sttip-param="is-shadow" title="Enable shadows" value="on" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                            <smart-ui-editslider name="stgauge" param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-colorbox name="stgauge" param="var-frame-fill" title="Background color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
+                            <smart-ui-colorbox name="stgauge" param="var-border-color" title="Border color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
+                            <smart-ui-editslider name="stgauge" param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="images/gauge_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="stgauge" param="var-border-radius" title="Border radius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-checkbox name="stgauge" param="is-shadow" title="Enable shadows" value="on" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                         </div>
                     </div>
                 </div>
@@ -847,10 +847,15 @@
                     </style>
                     <p>SmartTooltip это продвинутый виджет, позволяющий реализовать отображение подсказок на веб странице. Умеет автоматически регистрироваться,
                             на лету подстраивается под контекст, умеет отображать несколько шаблонов и имеет простой API. <br></p>
+                    <p>Изменяйте параметры виджета, наводите курсор указателя мыши на выделенные слова и проверяйте поведение окна подсказки.</p>
+                    <p>По окончании настройки, скопируйте параметры виджета в нижней части экрана, в требуемом вам формате.</p>
                     <p><label id="simple-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="simple" data-sttip-tooltip="Просто подсказка">simple</label></p>
+                    <br><br>
                     <p><label id="pie-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="pie" data-sttip-tooltip="Диаграмма">pie</label></p>
+                    <br><br>
                     <p><label id="image-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="image" data-sttip-tooltip="Картинка!" data-sttip-link="http://static.boredpanda.com/blog/wp-content/uploads/2015/09/DSC_024402__880.jpg">image</label></p>
-                    <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-tooltip="IFrame" data-sttip-link="https://platform.twitter.com/widgets/tweet_button.html">iframe</label></p>
+                    <br><br><br><br>
+                    <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-tooltip="IFrame" data-sttip-link="index.html">iframe</label>  - Важное примечание: Установите параметр 'Масштабирование окна подсказки' в 1!!!</p>
                 </div>
                 <div class="widget-example" id="smarttpie_examp" style="display: none; background: rgb(174, 255, 255);"></div>
                 <div class="widget-example" id="smartgauge_examp" style="display: none; background: rgb(237, 174, 255);"></div>
@@ -876,7 +881,7 @@
                         const parentDiv = document.getElementById('smarttooltip_examp');
                         if (parentDiv) {
                             const rc = parentDiv.getBoundingClientRect();
-                            demoTooltipEl.showDemoTooltip(0 + rc.width / 3, 0 + rc.height / 4);
+                            demoTooltipEl.showDemoTooltip(0 + rc.width / 2, 0 + rc.height / 3);
                         }
                     }
                 }
@@ -884,7 +889,7 @@
                 // set value from options into apropriated elements on UI panels
                 els = document.getElementsByName('sttip-param');
                 for (let el of els) {
-                    const optionNameAttr = el.attributes['sttip-param'].value;
+                    const optionNameAttr = el.attributes['param'].value;
                     let optionName = CustomProperties.customProp2Param(optionNameAttr);
                     let optionValue = demoTooltipEl._o[optionName];
                     if (typeof optionValue === 'undefined') {
@@ -994,7 +999,7 @@
                                     optionValue = attrValue;
                                 }
                             }
-                            const optionName = mutation.target._o['sttip-param'];
+                            const optionName = mutation.target._o['param'];
                             const panel = mutation.target.offsetParent.offsetParent;
                             if (panel.id === 'smarttooltip_opt') {
                                 if (typeof demoTooltipEl.showDemoTooltip !== 'undefined') {
