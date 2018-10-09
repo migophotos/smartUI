@@ -47,7 +47,382 @@ class utils {
  * Каждый элемент представляет собой custom control
  *
  */
-class SmartEditSlider extends HTMLElement {
+
+class SmartSelector extends HTMLElement {
+    constructor() {
+        super();
+        this._shadowDOM = this.attachShadow({mode: 'open'});
+		if (!this._shadowDOM) {
+            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
+            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+        }
+        this._shadowDOM.innerHTML = `
+            <style>
+                :host {
+                    all: initial;
+                    color: rgba( 102,227,255, 0.4 );
+                }
+                :host([disabled]) { /* style when host has disabled attribute. */
+                    pointer-events: none;
+                    opacity: 0.2;
+                }
+
+                .iconfill {
+                    fill: #ffffff;
+                    opacity: 0.8;
+                }
+                .iconfill:hover {
+                    opacity: 1;
+                }
+                .title:hover {
+                    opacity: 1;
+                }
+
+                .smartcontainer {
+                    font-family: Helvetica, sans-serif;
+                    color: rgba( 255,255,255, 0.8 );
+
+                }
+                .smartcontainer .title {
+                    text-transform: uppercase;
+                    font-size: 9px;
+                    -webkit-font-smoothing: subpixel-antialiased;
+                    height: 12px;
+                }
+
+                .smartcontainer .controls {
+                    display: inline-block;
+                    margin-bottom: 3px;
+                    margin-left: 2px;
+                    vertical-align: top;
+                }
+
+                .svgcontainer {
+                    position: relative;
+                    display: inline-block;
+                    overflow: hidden;
+                    margin-bottom: 3px;
+                    vertical-align: top;
+                }
+
+                /* plus and minus buttons */
+                .plusminus {
+                    display: block;
+                    float: left;
+                    /* width: 33px; */
+                    height: 16px;
+                    overflow: hidden;
+                    margin-top: 3px;
+                }
+
+                .slider {
+                    display: block;
+                    float: left;
+                    overflow: unset;
+                    margin: 6px 12px 0 0;
+                }
+                .smartcontainer input {
+                    color: rgba( 255,255,255, 1 );
+                    display: block;
+                    float: left;
+                    width: 190px;
+                    background: none;
+                    border: 1px solid;
+                    margin: 2px 4px 2px 8px;
+                    padding: 1px 3px 2px 3px;
+                    font-size: 11px;
+                    text-align: left;
+                    opacity: 0.8;
+                }
+                .smartcontainer input:hover {
+                    opacity: 1;
+                }
+
+
+                /* styling input[type-range] */
+                input[type=range] {
+                    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+                    height:2px;
+                    width:100%;
+                    cursor: pointer;
+                    background: transparent;
+                    margin-bottom: 10px;
+                }
+                input[type=range]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    border: 1px solid #fff;
+                    height: 16px;
+                    width: 16px;
+                    border-radius: 8px;
+                    background: #009fff;
+                    cursor: pointer;
+                    margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+                }
+                input:focus {
+                    outline: none;
+                }
+
+            </style>
+            <div class="smartcontainer">
+                <div class="icon svgcontainer">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="35px" height="34px" viewBox="0 0 35 34">
+                        <g class="iconfill">
+                        <image xlink:href="${this.getAttribute('image')}" x="0" y="0" width="35px" height="34px"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="controls">
+                    <div class="title">${this.getAttribute('title')}</div>
+                    <div class="plusminus">
+                    </div>
+
+                    <select id="IC" />
+                </div>
+            </div>
+
+        `;
+    }
+    static get observedAttributes() {
+		return 	['value'];
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (!this._o || oldValue == newValue) return;
+
+        switch (name) {
+            case 'value': {
+                this._o.value = newValue;
+                this.setAttribute('value', `${this._o.value}`);
+                break;
+            }
+        }
+    }
+
+	connectedCallback() {
+        // get all attributes into _o (options)
+        this._o = {};
+        for (let attr of this.attributes) {
+			this._o[attr.name] = attr.value;
+        }
+        // convert to numbers
+        utils.convertNumericProps(this._o);
+        // get references to controls
+        this._input  = this._shadowDOM.getElementById('IC');    // input
+
+        const opts = this._o.list.split(',');
+
+        for (let n = 0; n < opts.length; n++) {
+            let val = opts[n];
+            let opt = this._shadowDOM.ownerDocument.createElement('option');
+            opt.label = val;
+            opt.value = val;
+            this._input.add(opt);
+        }
+
+        this._input.addEventListener('input', (evt) => {
+            this._o.value = this._input.value;
+            this.setAttribute('value', `${this._o.value}`);
+        });
+        this._input.addEventListener('change', (evt) => {
+            this._o.value = this._input.value;
+            this.setAttribute('value', `${this._o.value}`);
+        });
+
+	}
+	disconnectedCallback() {
+        this.className = this.className;
+    }
+
+
+}
+if (!customElements.get('smart-ui-selector')) {
+    customElements.define('smart-ui-selector', SmartSelector);
+}
+
+
+class SmartEditText extends HTMLElement {
+    constructor() {
+        super();
+        this._shadowDOM = this.attachShadow({mode: 'open'});
+		if (!this._shadowDOM) {
+            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
+            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+        }
+        this._shadowDOM.innerHTML = `
+            <style>
+                :host {
+                    all: initial;
+                    color: rgba( 102,227,255, 0.4 );
+                }
+                :host([disabled]) { /* style when host has disabled attribute. */
+                    pointer-events: none;
+                    opacity: 0.2;
+                }
+
+                .iconfill {
+                    fill: #ffffff;
+                    opacity: 0.8;
+                }
+                .iconfill:hover {
+                    opacity: 1;
+                }
+                .title:hover {
+                    opacity: 1;
+                }
+
+                .smartcontainer {
+                    font-family: Helvetica, sans-serif;
+                    color: rgba( 255,255,255, 0.8 );
+
+                }
+                .smartcontainer .title {
+                    text-transform: uppercase;
+                    font-size: 9px;
+                    -webkit-font-smoothing: subpixel-antialiased;
+                    height: 12px;
+                }
+
+                .smartcontainer .controls {
+                    display: inline-block;
+                    margin-bottom: 3px;
+                    margin-left: 2px;
+                    vertical-align: top;
+                }
+
+                .svgcontainer {
+                    position: relative;
+                    display: inline-block;
+                    overflow: hidden;
+                    margin-bottom: 3px;
+                    vertical-align: top;
+                }
+
+                /* plus and minus buttons */
+                .plusminus {
+                    display: block;
+                    float: left;
+                    /* width: 33px; */
+                    height: 16px;
+                    overflow: hidden;
+                    margin-top: 3px;
+                }
+
+                .slider {
+                    display: block;
+                    float: left;
+                    overflow: unset;
+                    margin: 6px 12px 0 0;
+                }
+                .smartcontainer input {
+                    color: rgba( 255,255,255, 1 );
+                    display: block;
+                    float: left;
+                    width: 190px;
+                    background: none;
+                    border: 1px solid;
+                    margin: 2px 4px 2px 8px;
+                    padding: 1px 3px 2px 3px;
+                    font-size: 11px;
+                    text-align: left;
+                    opacity: 0.8;
+                }
+                .smartcontainer input:hover {
+                    opacity: 1;
+                }
+
+
+                /* styling input[type-range] */
+                input[type=range] {
+                    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+                    height:2px;
+                    width:100%;
+                    cursor: pointer;
+                    background: transparent;
+                    margin-bottom: 10px;
+                }
+                input[type=range]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    border: 1px solid #fff;
+                    height: 16px;
+                    width: 16px;
+                    border-radius: 8px;
+                    background: #009fff;
+                    cursor: pointer;
+                    margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+                }
+                input:focus {
+                    outline: none;
+                }
+
+            </style>
+            <div class="smartcontainer">
+                <div class="icon svgcontainer">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="35px" height="34px" viewBox="0 0 35 34">
+                        <g class="iconfill">
+                        <image xlink:href="${this.getAttribute('image')}" x="0" y="0" width="35px" height="34px"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="controls">
+                    <div class="title">${this.getAttribute('title')}</div>
+                    <div class="plusminus">
+                    </div>
+
+                    <input id="IC" type="text" value="${this.getAttribute('value')}" />
+                </div>
+            </div>
+
+        `;
+    }
+    static get observedAttributes() {
+		return 	['value'];
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (!this._o) return;
+
+        switch (name) {
+            case 'value': {
+                this._o.value = newValue;
+                this._input.value = `${this._o.value}`;
+                break;
+            }
+        }
+    }
+
+	connectedCallback() {
+        // get all attributes into _o (options)
+        this._o = {};
+        for (let attr of this.attributes) {
+			this._o[attr.name] = attr.value;
+        }
+        // convert to numbers
+        utils.convertNumericProps(this._o);
+        // get references to controls
+        this._input  = this._shadowDOM.getElementById('IC');    // input
+
+        this._input.addEventListener('input', (evt) => {
+            this._o.value = this._input.value;
+            this.setAttribute('value', `${this._o.value}`);
+        });
+        this._input.addEventListener('change', (evt) => {
+            this._o.value = this._input.value;
+            this.setAttribute('value', `${this._o.value}`);
+        });
+
+	}
+	disconnectedCallback() {
+        this.className = this.className;
+    }
+
+
+}
+if (!customElements.get('smart-ui-edittext')) {
+    customElements.define('smart-ui-edittext', SmartEditText);
+}
+
+
+ class SmartEditSlider extends HTMLElement {
     constructor() {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
@@ -205,7 +580,7 @@ class SmartEditSlider extends HTMLElement {
                         max="${this.getAttribute('max')}"
                         min="${this.getAttribute('min')}"
                         step="${this.getAttribute('step')}"
-                        multi="${this.getAttribute('step')}" />
+                        multi="${this.getAttribute('multi')}" />
                     <div class="slider" style="width:90px; height:16px;">
                         <input name="slider" class="slider-bar" id="SL" type="range"
                         max="${this.getAttribute('max')}"
@@ -219,6 +594,24 @@ class SmartEditSlider extends HTMLElement {
 
         `;
     }
+    static get observedAttributes() {
+		return 	['value'];
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (!this._o) return;
+
+        switch (name) {
+            case 'value': {
+                let result = this.convertAndValidate(newValue);
+                this._o.value = result;
+                this._input.value = `${result} ${this._o.units}`;
+                this._slider.value = this._o.value;
+                break;
+            }
+        }
+    }
+
+
     convertAndValidate(val) {
         let result = null;
         if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
@@ -391,7 +784,7 @@ class SmartButton extends HTMLElement {
                     opacity: 1;
                 }
                 div#label:hover {
-                    opacity: 1; 
+                    opacity: 1;
                 }
 
 
@@ -495,7 +888,7 @@ class SmartButton extends HTMLElement {
                 this._o.state = this._o.state === 'on' ? 'off' : 'on';
                 this.state = this._o.state; // see evt.target.state on 'click' event
                 this._applyState(this._o.state);
-            })
+            });
         }
     }
 }
@@ -596,6 +989,32 @@ class SmartCheckBox extends HTMLElement {
 
         `;
     }
+    static get observedAttributes() {
+		return 	['value', 'imageOn', 'imageOff', 'iw', 'ih'];
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (!this._o) return;
+
+        switch (name) {
+            case 'value':
+                this._o.value = (newValue === '1' || newValue === 'on') ? 'on' : 'off';
+                this._btn.setAttribute('state', this._o.value);
+                break;
+            case 'imageOn':
+                this._btn.setAttribute('xlink:href', newValue);
+                break;
+            case 'imageOff':
+                this._btn.setAttribute('xlink:href', newValue);
+                break;
+            case 'iw':
+                this._btn.setAttribute('width', imageWidth);
+                break;
+            case 'ih':
+                this._btn.setAttribute('height', imageHeight);
+                break;
+        }
+    }
+
     connectedCallback() {
         // get all attributes into _o (options)
         this._o = {};
@@ -613,12 +1032,12 @@ class SmartCheckBox extends HTMLElement {
                 this._btn.setAttribute('height', imageHeight);
             }
 
-            this._o.state = this._o.state || 'on';
-            this._btn.setAttribute('state', this._o.state);
+            this._o.vaue = this._o.value || 'on';
+            this._btn.setAttribute('state', this._o.value);
 
             this._btn.addEventListener('click', (evt) => {
-                this.state = this._o.state = this._btn.state;
-                this.setAttribute('state', this.state);
+                this.value = this._o.value = this._btn.state;
+                this.setAttribute('value', this.value);
                 // simulate 'click event
                 let simulateClick = document.createEvent('MouseEvents');
                 simulateClick.initMouseEvent('click', true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, 0, null, null);
@@ -805,6 +1224,22 @@ class SmartColorBox extends HTMLElement {
 
         `;
     }
+    static get observedAttributes() {
+		return 	['value'];
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (!this._o) return;
+
+        switch (name) {
+            case 'value': {
+                this._o.value = newValue;
+                this._input.value = `${this._o.value} `;
+                this._colorBox.value = this._o.value;
+                break;
+            }
+        }
+    }
+
     connectedCallback() {
         // get all attributes into _o (options)
         this._o = {};
@@ -819,15 +1254,12 @@ class SmartColorBox extends HTMLElement {
             this._o.value = `${this._colorBox.value}`;
             this.setAttribute('value', `${this._o.value}`);
             this._input.value = `${this._o.value} `;
-        })
+        });
         this._input.addEventListener('change', (evt) => {
             let result = this._input.value.trimRight();
             this._o.value = result;
             this.setAttribute('value', `${this._o.value}`);
-
-            // this._input.value = `${result} ${this._o.units}`;
             this._colorBox.value = this._o.value;
-
         });
 
     }
