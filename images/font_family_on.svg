@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <rect id="font-family-on" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <clipPath id="_clip1">
+        <rect x="0" y="0" width="34" height="33.971"/>
+    </clipPath>
+    <g clip-path="url(#_clip1)">
+        <path d="M34.193,1.497C34.193,0.559 33.431,-0.203 32.493,-0.203L1.893,-0.203C0.954,-0.203 0.193,0.559 0.193,1.497L0.193,32.097C0.193,33.035 0.954,33.797 1.893,33.797L32.493,33.797C33.431,33.797 34.193,33.035 34.193,32.097L34.193,1.497Z"/>
+        <text x="2.815px" y="10.067px" style="font-family:'Tahoma', sans-serif;font-size:10px;fill:#f00;">T<tspan x="6.762px 11.142px 15.794px 20.324px 27.331px " y="10.067px 10.067px 10.067px 10.067px 10.067px ">ahoma</tspan></text>
+        <text x="-1.937px" y="14.067px" style="font-family:'TimesNewRomanPSMT', 'Times New Roman', serif;font-size:10px;fill:#fff;">T<tspan x="2.866px 5.184px 11.673px 15.377px 18.623px 20.709px 26.734px 30.438px " y="14.067px 14.067px 14.067px 14.067px 14.067px 14.067px 14.067px 14.067px ">imes New</tspan></text>
+        <text x="4.893px" y="26.099px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:15.114px;fill:#d9d9d9;">A<tspan x="13.303px 17.502px 20.304px 27.317px " y="26.099px 26.099px 26.099px 26.099px ">rial</tspan></text>
+        <text x="0.198px" y="29.999px" style="font-family:'Verdana', sans-serif;font-size:10px;fill:#953c00;">V<tspan x="5.493px 10.464px 14.024px 19.222px 24.233px 29.513px " y="29.999px 29.999px 29.999px 29.999px 29.999px 29.999px ">erdana</tspan></text>
+        <text x="1.279px" y="20.173px" style="font-family:'ComicSansMS', 'Comic Sans MS', cursive;font-size:10px;fill:#dbb71e;">C<tspan x="6.306px 10.693px 17.175px 19.513px 23.799px 26.292px 32.077px 36.346px 40.713px " y="20.173px 20.173px 20.173px 20.173px 20.173px 20.173px 20.173px 20.173px 20.173px ">omic Sans</tspan></text>
+    </g>
+</svg>

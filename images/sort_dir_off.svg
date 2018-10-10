@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.5;">
+    <rect id="sort-dir-off" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <text x="4.51px" y="11.189px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:14.207px;fill:#fff;">A</text>
+    <text x="4.943px" y="30.689px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:14.207px;fill:#fff;">Z</text>
+    <g>
+        <path d="M19.626,21.657L23.876,28.735L28.126,21.657" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+        <path d="M23.876,26.612L23.876,18.985" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+    </g>
+    <g>
+        <path d="M19.626,9.927L23.876,5.235L28.126,9.927" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+        <path d="M23.876,6.643L23.876,15.405" style="fill:none;stroke:#fff;stroke-width:2px;"/>
+    </g>
+</svg>

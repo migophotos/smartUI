@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:1.5;">
+    <rect id="border-radius-off" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <clipPath id="_clip1">
+        <rect x="0" y="0" width="34" height="33.971"/>
+    </clipPath>
+    <g clip-path="url(#_clip1)">
+        <path d="M31.349,4.174C31.349,0.215 30.959,-3 29.035,-3L-0.307,-3C-2.23,-3 -2.62,0.215 -2.62,4.174L-2.62,18.522C-2.62,22.481 -2.23,25.696 -0.307,25.696L8.42,25.696L0.242,33.971L13.515,25.696L26.122,25.642C28.819,25.696 31.713,21.464 31.349,18.522L31.349,4.174Z" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+        <path d="M23.202,16.985L27.136,22.042L27.903,19.564L28.47,19.825L27.368,22.961L24.012,23.13L24.043,22.52L26.489,22.382L22.63,17.423L23.202,16.985Z" style="fill:#fff;fill-opacity:0.352941;stroke:#fff;stroke-width:0.84px;stroke-linecap:butt;stroke-miterlimit:4;"/>
+        <rect x="10.31" y="16.522" width="13.189" height="1.738" style="fill:#fff;"/>
+        <text x="11.196px" y="13.387px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16.536px;fill:#fff;">r</text>
+    </g>
+</svg>

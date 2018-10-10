@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:1.5;">
+    <rect id="template_off" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <clipPath id="_clip1">
+        <rect x="0" y="0" width="34" height="33.971"/>
+    </clipPath>
+    <g clip-path="url(#_clip1)">
+        <path d="M19.172,3.841C19.172,2.522 18.918,1.451 17.666,1.451L-1.438,1.451C-2.69,1.451 -2.944,2.522 -2.944,3.841L-2.944,8.621C-2.944,9.94 -2.69,11.011 -1.438,11.011L4.244,11.011L1.479,15.108L7.561,11.011L17.666,11.011C18.918,11.011 19.172,9.94 19.172,8.621L19.172,3.841Z" style="fill:#ffd7d2;fill-opacity:0.266667;stroke:#fff;stroke-width:1px;"/>
+        <g id="pieOn">
+            <path d="M15.923,9.087C19.506,9.087 22.416,11.997 22.416,15.58C22.416,19.164 19.506,22.073 15.923,22.073C12.34,22.073 9.43,19.164 9.43,15.58C9.43,11.997 12.34,9.087 15.923,9.087ZM15.923,13.957C16.819,13.957 17.546,14.684 17.546,15.58C17.546,16.476 16.819,17.203 15.923,17.203C15.027,17.203 14.3,16.476 14.3,15.58C14.3,14.684 15.027,13.957 15.923,13.957Z" style="fill:none;stroke:#fff;stroke-width:0.93px;stroke-linejoin:round;"/>
+            <path d="M22.416,15.58C22.416,11.994 19.509,9.087 15.923,9.087C12.34,9.087 9.43,11.997 9.43,15.58C9.43,17.302 10.114,18.954 11.332,20.171L14.775,16.728C14.471,16.424 14.3,16.011 14.3,15.58C14.3,14.684 15.027,13.957 15.923,13.957C16.819,13.957 17.546,14.684 17.546,15.58L22.416,15.58Z" style="fill:#fff;fill-opacity:0.509804;stroke:#fff;stroke-width:0.93px;stroke-linejoin:round;"/>
+            <path d="M15.923,9.087C12.337,9.087 9.43,11.994 9.43,15.58C9.43,17.302 10.114,18.954 11.332,20.171L14.775,16.728C14.471,16.424 14.3,16.011 14.3,15.58C14.3,14.684 15.027,13.957 15.923,13.957L15.923,9.087Z" style="fill:none;stroke:#fff;stroke-width:0.93px;stroke-linejoin:round;"/>
+        </g>
+        <rect x="14.63" y="20.171" width="18.121" height="12.985" style="fill:#fff;fill-opacity:0.545098;stroke:#fff;stroke-width:1px;"/>
+    </g>
+</svg>

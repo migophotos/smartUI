@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-miterlimit:1.5;">
+    <rect id="delayIn-off" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <path d="M32.878,29.692L2.577,29.692L21.702,29.692L21.399,7.692L32.707,7.692" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+    <path d="M4.355,32.47L4.355,2.914" style="fill:none;stroke:#fff;stroke-width:1.5px;stroke-dasharray:1.5,3,0,0;"/>
+    <path d="M21.355,32.47L21.355,2.914" style="fill:none;stroke:#fff;stroke-width:1px;stroke-dasharray:1,2,0,0;"/>
+    <rect x="21.696" y="7.692" width="11.438" height="21.663" style="fill:#fff;fill-opacity:0.352941;"/>
+    <path d="M21.015,10.192L19.004,6.853L18.434,7.333L20.016,9.76L6.13,9.76L7.746,7.2L7.143,6.853L5.186,10.22M5.186,10.22L7.143,13.534L7.746,13.021L6.13,10.627L20.016,10.627L18.501,13.054L19.004,13.534L21.015,10.192" style="fill:#fff;fill-opacity:0.352941;fill-rule:nonzero;stroke:#fff;stroke-width:0.72px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;"/>
+</svg>

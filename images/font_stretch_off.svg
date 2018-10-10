@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.5;">
+    <rect id="font-stretch-off" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <text x="6.896px" y="23.222px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:30px;fill:#fff;">F</text>
+    <g>
+        <g>
+            <path d="M8.896,25.318L5.529,28.66L8.882,31.989" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+            <path d="M11.818,28.66L6.193,28.66" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+        </g>
+        <g>
+            <path d="M27.76,28.687L22.135,28.687" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+            <path d="M25.104,32.029L28.471,28.687L25.077,25.318" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+        </g>
+        <text x="13.435px" y="31.047px" style="font-family:'Verdana', sans-serif;font-size:8.657px;fill:#fff;">w</text>
+    </g>
+</svg>

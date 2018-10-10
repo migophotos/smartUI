@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:1.5;">
+    <rect id="font-size-off" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <text x="14.204px" y="27.723px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:30px;fill:#fff;">F</text>
+    <g>
+        <path d="M12.351,9.384L9.009,6.017L5.68,9.37" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+        <path d="M9.009,12.306L9.009,6.681" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+        <path d="M9.009,27.306L9.009,21.681" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+        <path d="M5.667,24.65L9.009,28.017L12.377,24.624" style="fill:none;stroke:#fff;stroke-width:1px;"/>
+    </g>
+    <text x="6.06px" y="19.888px" style="font-family:'Verdana', sans-serif;font-size:7.897px;fill:#fff;">N</text>
+</svg>

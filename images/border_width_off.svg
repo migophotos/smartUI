@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:1.5;">
+    <rect id="border-width-off" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <clipPath id="_clip1">
+        <rect x="0" y="0" width="34" height="33.971"/>
+    </clipPath>
+    <g clip-path="url(#_clip1)">
+        <path d="M22.049,9.923C22.049,7.312 21.766,5.192 20.369,5.192L-0.94,5.192C-2.337,5.192 -2.62,7.312 -2.62,9.923L-2.62,19.385C-2.62,21.996 -2.337,24.115 -0.94,24.115L5.397,24.115L0,33.971L9.098,24.115L20.369,24.115C21.766,24.115 22.049,21.996 22.049,19.385L22.049,9.923Z" style="fill:none;stroke:#fff;stroke-width:2.47px;"/>
+        <path d="M10.79,12.465L18.601,12.465L16.791,9.905L17.467,9.559L19.66,12.925L17.309,16.239L16.746,15.759L18.444,13.332L10.782,13.332L10.79,12.465Z" style="fill:#fff;fill-opacity:0.352941;stroke:#fff;stroke-width:1.01px;stroke-linecap:butt;stroke-miterlimit:4;"/>
+        <path d="M33.269,12.465L25.457,12.465L27.268,9.905L26.592,9.559L24.399,12.925L26.75,16.239L27.313,15.759L25.615,13.332L33.277,13.332L33.269,12.465Z" style="fill:#fff;fill-opacity:0.352941;stroke:#fff;stroke-width:1.01px;stroke-linecap:butt;stroke-miterlimit:4;"/>
+    </g>
+</svg>

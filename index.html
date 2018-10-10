@@ -261,6 +261,8 @@
                     <smart-ui-button class="categories-btn" id="title_params_btn" targets="title-params_pan" type="radio" state="off" imageOn="images/title_bkg_on.svg" imageOff="images/title_off.svg"  data-sttip-tooltip="Настроить параметры заголовка"></smart-ui-button>
                     <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                     <smart-ui-button class="categories-btn" id="legend_params_btn" targets="legend-params_pan" type="radio" state="off" imageOn="images/legend_bkg_on.svg" imageOff="images/legend_off.svg" data-sttip-tooltip="Настроить параметры легенды"></smart-ui-button>
+                    <smart-ui-spacer class="ver-small"></smart-ui-spacer>
+                    <smart-ui-button class="categories-btn" id="font_params_btn" targets="font-params_pan" type="radio" state="off" imageOn="images/font_family_on.svg" imageOff="images/font_family_off.svg" data-sttip-tooltip="Настроить параметры шрифтов"></smart-ui-button>
                 </div>
                 <div id="smartpie_cat" style="display: none;">
                     <smart-ui-button class="categories-btn" id="pie_params_btn" targets="pie-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить основные параметры круговой диаграммы, такие как тип, вид, сортировки и углы"></smart-ui-button>
@@ -730,58 +732,70 @@
                         <div id="main_pan" class="overlay" style="max-height: 766px; display: none;">
                             <h2>Основные характеристики</h2>
                             <div style="display: block;">
-                                <smart-ui-checkbox name="sttip-param" param="enable-storage" title="Запоминать состояния" value="" image="images/gauge_on.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                <smart-ui-checkbox name="sttip-param" param="enable-storage" title="Запоминать состояния" value="" image="images/enable_storage_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                 <!-- <smart-ui-checkbox name="sttip-param" param="is-run" title="" value="" image="images/gauge_on.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox> -->
-                                <smart-ui-selector name="sttip-param" param="template" title="Шаблон Подсказки" value="" valueList="simple,pie,image,iframe" labellist="Простой,Диаграмма,Картинка,IFrame" image="images/gauge_on.svg"></smart-ui-selector>
-                                <smart-ui-selector name="sttip-param" param="show-mode" title="Состояние" value="" valueList=" ,float,pinned,fixed" labellist=" ,Плавающий,Приколотый,Зафиксированный" image="images/gauge_on.svg"></smart-ui-selector>
-                                <smart-ui-selector name="sttip-param" param="position" title="Расположение" value="" valuelist="rt,rb,lb,lt" labellist="Справа Сверху,Справа Снизу,Слева Снизу,Слева Сверху" image="images/gauge_on.svg"></smart-ui-selector>
+                                <smart-ui-selector name="sttip-param" param="template" title="Шаблон Подсказки" value="" valueList="simple,pie,image,iframe" labellist="Простой,Диаграмма,Картинка,IFrame" image="images/template_off.svg"></smart-ui-selector>
+                                <smart-ui-selector name="sttip-param" param="show-mode" title="Состояние" value="" valueList=" ,float,pinned,fixed" labellist=" ,Плавающий,Приколотый,Зафиксированный" image="images/show_mode_off.svg"></smart-ui-selector>
+                                <smart-ui-selector name="sttip-param" param="position" title="Расположение" value="" valuelist="rt,rb,lb,lt" labellist="Справа Сверху,Справа Снизу,Слева Снизу,Слева Сверху" image="images/position_off.svg"></smart-ui-selector>
                                 <smart-ui-editslider name="sttip-param" param="frame-scale" title="Масштабирование окна подсказки" value="" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
                             </div>
                         </div>
                         <div id="interactivity_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Временные характеристики</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider name="sttip-param" param="delay-in" title="Задержка показа на входе" value="" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" param="delay-out" title="Задержка показа на выходе" value="" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" param="delay-on" title="Время показа" value="" units="ms" min="500" max="20000" step="500" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="delay-in" title="Задержка показа на входе" value="" units="ms" min="250" max="1000" step="50" image="images/delay_in_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="delay-out" title="Задержка показа на выходе" value="" units="ms" min="250" max="1000" step="50" image="images/delay_out_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="delay-on" title="Время показа" value="" units="ms" min="500" max="20000" step="500" image="images/delay_on_off.svg">edit control with slider</smart-ui-editslider>
                         </div>
                     </div>
                     <div id="window-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Параметры окна подсказки</h2>
                         <div style="display: block;">
                             <smart-ui-editslider name="sttip-param" param="var-frame-opacity" title="Непрозрачность" value="" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-colorbox name="sttip-param" param="var-frame-fill" title="Цвет фона" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                            <smart-ui-colorbox name="sttip-param" param="var-border-color" title="Цвет обводки" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                            <smart-ui-editslider name="sttip-param" param="var-border-width" title="Толщина обводки" value="" units="" min="0" max="10" step="0.5" image="images/gauge_off.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" param="var-border-radius" title="Скругление углов" value="" units="px" min="0" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-checkbox name="sttip-param" param="is-shadow" title="Отбасывание тени" value="" image="images/gauge_on.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                            <smart-ui-colorbox name="sttip-param" param="var-frame-fill" title="Цвет фона" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
+                            <smart-ui-colorbox name="sttip-param" param="var-border-color" title="Цвет обводки" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
+                            <smart-ui-editslider name="sttip-param" param="var-border-width" title="Толщина обводки" value="" units="" min="0" max="10" step="0.5" image="images/border_width_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="var-border-radius" title="Скругление углов" value="" units="px" min="0" max="20" step="1" image="images/border_radius_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-checkbox name="sttip-param" param="is-shadow" title="Отбасывание тени" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                         </div>
                     </div>
                     <div id="title-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Параметры отображения заголовка</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider name="sttip-param" param="tooltip-max-width" title="Ширина окна подсказки" value="" units="px" min="100" max="600" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" param="title-text-wrap" title="Ширина выравнивания заголовка" value="" units="px" min="0" max="600" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-edittext   name="sttip-param" param="title-format" title="Форматирование заголовка" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
-                            <smart-ui-selector   name="sttip-param" param="title-text-align" title="Выравнивание заголовка" value="" valueList="left,center,right,justify" labelList="Слева,По центру,Справа,Выровнено" image="images/gauge_on.svg"></smart-ui-selector>
-                            <smart-ui-editslider name="sttip-param" param="descr-text-wrap" title="Ширина выравнивания описания" value="" units="px" min="0" max="600" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-edittext   name="sttip-param" param="descr-format" title="Форматирование описания" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
-                            <smart-ui-selector   name="sttip-param" param="descr-text-align" title="Выравнивание описания" value="" valueList="left,center,right,justify" labelList="Слева,По центру,Справа,Выровнено" image="images/gauge_on.svg"></smart-ui-selector>
+                            <smart-ui-editslider name="sttip-param" param="tooltip-max-width" title="Ширина окна подсказки" value="" units="px" min="100" max="600" step="1" image="images/wrap-width-off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="title-text-wrap" title="Ширина выравнивания заголовка" value="" units="px" min="0" max="600" step="1" image="images/wrap-width-off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-edittext   name="sttip-param" param="title-format" title="Форматирование заголовка" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
+                            <smart-ui-selector   name="sttip-param" param="title-text-align" title="Выравнивание заголовка" value="" valueList="left,center,right,justify" labelList="Слева,По центру,Справа,Выровнено" image="images/align_text_off.svg"></smart-ui-selector>
+                            <smart-ui-editslider name="sttip-param" param="descr-text-wrap" title="Ширина выравнивания описания" value="" units="px" min="0" max="600" step="1" image="images/wrap-width-off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-edittext   name="sttip-param" param="descr-format" title="Форматирование описания" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
+                            <smart-ui-selector   name="sttip-param" param="descr-text-align" title="Выравнивание описания" value="" valueList="left,center,right,justify" labelList="Слева,По центру,Справа,Выровнено" image="images/align_text_off.svg"></smart-ui-selector>
                         </div>
                     </div>
                     <div id="legend-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Параметры отображения легенды</h2>
                         <div style="display: block;">
-                            <smart-ui-edittext name="sttip-param" param="legend-format" title="Форматирование легенды" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
-                            <smart-ui-edittext name="sttip-param" param="legend-val-format" title="Форматирование значения" value="" image="images/image_width.svg">edit control with vocabulary</smart-ui-edittext>
-                            <smart-ui-colorbox name="sttip-param" param="var-legend-fill" title="Цвет фона" value="#000000" image="images/image_width.svg">color selector</smart-ui-colorbox>
-                            <smart-ui-colorbox name="sttip-param" param="var-legend-stroke" title="Цвет обводки" value="#000000" image="images/image_width.svg">color selector</smart-ui-colorbox>
-                            <smart-ui-selector name="sttip-param" param="sort-by" title="Сортировка легенды по параметру" value="" valueList="asis,name,value,color,state" labelList="Не сортировать,По алфавиту,По значению,По цвету,По состоянию" image="images/gauge_on.svg"></smart-ui-selector>
-                            <smart-ui-checkbox name="sttip-param" param="sort-dir" title="Направление сортировки" value="" image="images/gauge_on.svg" iw="65" ih="22.5" imageOn="images/switch_down.svg" imageOff="images/switch_up.svg">edit control with slider</smart-ui-checkbox>
+                            <smart-ui-edittext name="sttip-param" param="legend-format" title="Форматирование легенды" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
+                            <smart-ui-edittext name="sttip-param" param="legend-val-format" title="Форматирование значения" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
+                            <smart-ui-colorbox name="sttip-param" param="var-legend-fill" title="Цвет фона" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
+                            <smart-ui-colorbox name="sttip-param" param="var-legend-stroke" title="Цвет обводки" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
+                            <smart-ui-selector name="sttip-param" param="sort-by" title="Сортировка легенды по параметру" value="" valueList="asis,name,value,color,state" labelList="Не сортировать,По алфавиту,По значению,По цвету,По состоянию" image="images/sort_by_off.svg"></smart-ui-selector>
+                            <smart-ui-checkbox name="sttip-param" param="sort-dir" title="Направление сортировки" value="" image="images/sort_dir_off.svg" iw="65" ih="22.5" imageOn="images/switch_down.svg" imageOff="images/switch_up.svg">edit control with slider</smart-ui-checkbox>
+                        </div>
                     </div>
+                    <div id="font-params_pan" class="overlay" style="max-height: 766px; display: none;">
+                            <h2>Настройки шрифтов</h2>
+                            <div style="display: block;">
+                                <smart-ui-edittext name="sttip-param" param="font-family" title="Семейство шрифтов" value="" image="images/font_family_off.svg"></smart-ui-edittext>
+                                <smart-ui-selector name="sttip-param" param="font-stretch" title="Ширина начертания шрифта" value="" valueList="extra-condensed,ultra-condensed,condensed,normal,expanded,extra-expanded,ultra-expanded" image="images/font_stretch_off.svg"></smart-ui-selector>
+                                <smart-ui-editslider name="sttip-param" param="font-size" title="Размер шрифта" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
+                                <smart-ui-colorbox name="sttip-param" param="font-color" title="Цвет шрифта" value="#000000" image="images/select_color3_off.svg"></smart-ui-colorbox>
+                                <smart-ui-editslider name="sttip-param" param="title-size" title="Размер шрифта заголовка" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
+                                <smart-ui-editslider name="sttip-param" param="descr-size" title="Размер шрифта описания" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
+                                <smart-ui-editslider name="sttip-param" param="legend-size" title="Размер шрифта легенды" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
+                                <smart-ui-editslider name="sttip-param" param="scale-size" title="Размер шрифта шкалы" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
                 <div id="smartpie_opt" style="width: 632px; height: 480px; display: none;">
                     <div id="pie-params_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Основные характеристики диаграммы</h2>
@@ -1004,6 +1018,15 @@
                             const panel = mutation.target.offsetParent.offsetParent;
                             if (panel.id === 'smarttooltip_opt') {
                                 if (typeof demoTooltipEl.showDemoTooltip !== 'undefined') {
+                                    // special for font sizes (add 'px')
+                                    switch (optionName) {
+                                        case 'title-size':
+                                        case 'descr-size':
+                                        case 'legend-size':
+                                        case 'scale-size':
+                                            optionValue = `${optionValue}px`;
+                                            break;
+                                    }
                                     demoTooltipEl._o[CustomProperties.customProp2Param(optionName)] = optionValue;
                                     showDemoTooltip();
                                 }
