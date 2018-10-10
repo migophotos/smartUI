@@ -1,32 +1,47 @@
+
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <header>
+        <meta charset="utf-8" />
+        <link rel="icon" href="favicon.png" />
         <title>Smart Widgets Interactive Buider</title>
+        <!-- <base href="../.." /> -->
+
         <meta name="Description" content="Author: M. Goyberg,
         Smart Widgets Interactive Buider web-application">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="content-type" content="text/html;charset=utf-8">
+
+        <link rel="stylesheet" href="css/themes/prism.css" data-noprefix />
+
         <style>
-            body, {
-                color:rgba( 102,227,255, 0.4 );
-                background:rgb(0,71,87);
+            /* * {
+                margin: 0;
+                padding: 0;
+                font-weight: normal;
+            } */
+            body {
+                font: 100%/1.5 Questrial, sans-serif;
+                tab-size: 4;
+                hyphens: auto;
+                /* font-family: Helvetica, sans-serif;
+                font-size: 13px; */
+                /* -webkit-font-smoothing: subpixel-antialiased; */
+            }
+            code, pre {
+                font-family: Consolas, Monaco, 'Andale Mono', 'Lucida Console', monospace;
+                hyphens: none;
+            }
+            pre {
+                height: 200px;
+                overflow: auto;
+            }
+            pre > code.highlight {
+                outline: .4em sold red;
+                outline-offset: .4em;
             }
 
-            body {
-                font-family: Helvetica, sans-serif;
-                font-size: 13px;
-                /* -webkit-font-smoothing: subpixel-antialiased; */
-                -webkit-text-size-adjust: none;
-                -moz-text-size-adjust: none;
-                -ms-text-size-adjust: none;
-                text-size-adjust: none;
-                -o-text-size-adjust: none;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-                -o-user-select: none;
-            }
             #smarttooltip_opt,
             #smartpie_opt,
             #smartgauge_opt  {
@@ -165,7 +180,7 @@
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                height: 250px;
+                height: 230px;
                 min-height: 70px;
                 overflow: hidden;
                 padding: 8px 0 12px 0;
@@ -183,15 +198,9 @@
                 display: block;
                 float: left;
                 top: 5px;
-                height: 240px;
+                height: 200px;
                 width: calc(100% - 449px);
             }
-
-            .microlight {
-                font-family : monospace;
-                white-space : pre;
-            }
-
 
             .btn:hover, .slctd {
                 color: rgba( 102,227,255, 1 );
@@ -200,9 +209,9 @@
             .widgets-btn, .categories-btn, .selector-btn {
                 cursor: pointer;
                 display: inline-block;
-                --sttip-show-mode: float;
+                --sttip-show-mode: pinned;
                 --sttip-delay-out: 10;
-                --sttip-delay-on: 500;
+                --sttip-delay-on: 60000;
             }
             </style>
             <script>
@@ -290,57 +299,59 @@
                     <smart-ui-button class="selector-btn" id="def-svg_widget_btn" targets="def-svg_widget_pan" type="radio" state="off" image-width="24" image-height="20" imageOn="images/radio_on.svg" imageOff="images/radio_off.svg" label="SVG View" data-sttip-tooltip="Показать SVG представление сконфигурированного виджета"></smart-ui-button>
                 </div>
                 <div id="sourcepanel">
-                    <pre id="def-custom-elem_pan" style="overflow: auto; border-width: 0px; resize: none; padding: 0;width: 100%; height: 100%; display: none;"><code>
+                    <pre  class="language-html" id="def-custom-elem_pan" style="padding: 0 1em 0 1em; display: none;">
+                        <code>
                         &ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>
-
-                        .smart-ui-custom-elem {
-                            sttip-title-format:       $TITLE$;
-                            sttip-descrFormat:        $DESCR$;
-                            sttip-legendFormat:       $LEGEND$;
-                            sttip-legendValFormat:    $VALUE$;
-                            sttip-titleTextWrap:      0;
-                            sttip-titleTextAlign:     center;
-                            sttip-descrTextWrap:      0;
-                            sttip-descrTextAlign:     justify;
-                            sttip-enableStorage:      true;
-                            sttip-isRun:              0;
-                            sttip-sortBy:             value;
-                            sttip-sortDir:            1;
-                            sttip-template:           pie;
-                            sttip-dataSection:        data-tooltip;
-                            sttip-outputMode:         all-targets;
-                            sttip-startFrom:          float;
-                            sttip-showMode:           ' ';
-                            sttip-position:           ' ';
-                            sttip-delayIn:            0;
-                            sttip-delayOut:           250;
-                            sttip-delayOn:            2000;
-                            sttip-transitionIn:       0;
-                            sttip-transitionOut:      0;
-                            sttip-isShadow:           1;
-                            sttip-var-fontFamily:     Arial, sans-serif;
-                            sttip-var-fontSize:       12px;
-                            sttip-var-fontStretch:    condensed;
-                            sttip-var-fontSize:       22px;
-                            sttip-var-fontColor:      #666;
-                            sttip-var-scaleSize:      12px;
-                            sttip-var-legendSize:     18px;
-                            sttip-var-titleSize:      22px;
-                            sttip-var-descrSize:      18px;
-                            sttip-var-runColor:       #0f0;
-                            sttip-var-stopColor:      #f00;
-                            sttip-var-defColor:       #666;
-                            sttip-var-legendFill:     #fff;
-                            sttip-var-legensStroke:   #666;
-                            sttip-var-frameFill:      #fff;
-                            sttip-var-borderColor:    none;
-                            sttip-var-frameOpacity:   0.95;
-                            sttip-var-frameScale:     0.8;
-                            sttip-var-borderWidth:    2;
-                            sttip-var-borderRadius:   2;
-                        }
+                        &ltstyle>
+                            .smart-ui-custom-elem {
+                                sttip-title-format:       $TITLE$;
+                                sttip-descrFormat:        $DESCR$;
+                                sttip-legendFormat:       $LEGEND$;
+                                sttip-legendValFormat:    $VALUE$;
+                                sttip-titleTextWrap:      0;
+                                sttip-titleTextAlign:     center;
+                                sttip-descrTextWrap:      0;
+                                sttip-descrTextAlign:     justify;
+                                sttip-enableStorage:      true;
+                                sttip-isRun:              0;
+                                sttip-sortBy:             value;
+                                sttip-sortDir:            1;
+                                sttip-template:           pie;
+                                sttip-dataSection:        data-tooltip;
+                                sttip-outputMode:         all-targets;
+                                sttip-startFrom:          float;
+                                sttip-showMode:           ' ';
+                                sttip-position:           ' ';
+                                sttip-delayIn:            0;
+                                sttip-delayOut:           250;
+                                sttip-delayOn:            2000;
+                                sttip-transitionIn:       0;
+                                sttip-transitionOut:      0;
+                                sttip-isShadow:           1;
+                                sttip-var-fontFamily:     Arial, sans-serif;
+                                sttip-var-fontSize:       12px;
+                                sttip-var-fontStretch:    condensed;
+                                sttip-var-fontSize:       22px;
+                                sttip-var-fontColor:      #666;
+                                sttip-var-scaleSize:      12px;
+                                sttip-var-legendSize:     18px;
+                                sttip-var-titleSize:      22px;
+                                sttip-var-descrSize:      18px;
+                                sttip-var-runColor:       #0f0;
+                                sttip-var-stopColor:      #f00;
+                                sttip-var-defColor:       #666;
+                                sttip-var-legendFill:     #fff;
+                                sttip-var-legensStroke:   #666;
+                                sttip-var-frameFill:      #fff;
+                                sttip-var-borderColor:    none;
+                                sttip-var-frameOpacity:   0.95;
+                                sttip-var-frameScale:     0.8;
+                                sttip-var-borderWidth:    2;
+                                sttip-var-borderRadius:   2;
+                            }
+                        &lt/style>
                     </code></pre>
-                    <pre id="def-json_pan" style="overflow: auto; border-width: 0px; resize: none; padding: 0;width: 100%; height: 100%; display: none;"><code>
+                    <pre class="language-json" id="def-json_pan" style="padding: 0 1em 0 1em; display: none;"><code>
                         const options = {
                             'titleFormat':			'$TITLE$',
                             'descrFormat':			'$DESCR$',
@@ -388,55 +399,63 @@
                             'isShadow':				1
                         }
                     </code></pre>
-                    <pre id="def-object-params_pan" style="overflow: auto; border-width: 0px; resize: none; padding: 0;width: 100%; height: 100%; display: none;"><code>
-                        const options = {
-                            titleFormat:			'$TITLE$',
-                            descrFormat:			'$DESCR$',
-                            legendFormat:			'$LEGEND$',
-                            legendValFormat:		'$VALUE$',
-                            titleTextWrap:			0,
-                            titleTextAlign:			'center',
-                            descrTextWrap:			0,
-                            descrTextAlign:			'justify',
-                            enableStorage:			true,
-                            isRun:					0,
-                            sortBy:					'value',
-                            sortDir:				1,
-                            template:				'pie',
-                            dataSection:			'data-tooltip',
-                            outputMode:				'all-targets',
-                            startFrom:				'float',
-                            showMode:				'',
-                            position:				'',
-                            delayIn:				0,
-                            delayOut:				250,
-                            delayOn:				2000,
-                            transitionIn:			0,
-                            transitionOut:			0,
-                            fontFamily:				'Arial Narrow, DIN Condensed, Noteworthy, sans-serif',
-                            fontSize:				'12px',
-                            fontStretch:			'condensed',
-                            fontSize:				'22px',
-                            fontColor:				'#666',
-                            scaleSize:				'12px',
-                            legendSize:				'18px',
-                            titleSize:				'22px',
-                            descrSize:				'18px',
-                            runColor:				'#0f0',
-                            stopColor:				'#f00',
-                            defColor:				'#666',
-                            legendFill:				'#fff',
-                            legensStroke:			'#666',
-                            frameFill:				'#fff',
-                            borderColor:			'none',
-                            frameOpacity:			0.95,
-                            frameScale:				0.8,
-                            borderWidth:			2,
-                            borderRadius:			2,
-                            isShadow:				1
-                        }
+                    <pre id="def-object-params_pan" style="padding: 0 1em 0 1em; display: none;"><code class="language-js">
+                        const data = {
+                            x: evt.x,
+                            y: evt.y,
+                            options: {
+                                titleFormat:			'$TITLE$',
+                                descrFormat:			'$DESCR$',
+                                legendFormat:			'$LEGEND$',
+                                legendValFormat:		'$VALUE$',
+                                titleTextWrap:			0,
+                                titleTextAlign:			'center',
+                                descrTextWrap:			0,
+                                descrTextAlign:			'justify',
+                                enableStorage:			true,
+                                isRun:					0,
+                                sortBy:					'value',
+                                sortDir:				1,
+                                template:				'pie',
+                                dataSection:			'data-tooltip',
+                                outputMode:				'all-targets',
+                                startFrom:				'float',
+                                showMode:				'',
+                                position:				'',
+                                delayIn:				0,
+                                delayOut:				250,
+                                delayOn:				2000,
+                                transitionIn:			0,
+                                transitionOut:			0,
+                                fontFamily:				'Arial Narrow, DIN Condensed, Noteworthy, sans-serif',
+                                fontSize:				'12px',
+                                fontStretch:			'condensed',
+                                fontSize:				'22px',
+                                fontColor:				'#666',
+                                scaleSize:				'12px',
+                                legendSize:				'18px',
+                                titleSize:				'22px',
+                                descrSize:				'18px',
+                                runColor:				'#0f0',
+                                stopColor:				'#f00',
+                                defColor:				'#666',
+                                legendFill:				'#fff',
+                                legensStroke:			'#666',
+                                frameFill:				'#fff',
+                                borderColor:			'none',
+                                frameOpacity:			0.95,
+                                frameScale:				0.8,
+                                borderWidth:			2,
+                                borderRadius:			2,
+                                isShadow:				1
+                            },
+                            tytle: { name: 'Title', value: '10', descr: 'Description', link: 'url', color: '#ff00ff'}
+                        };
+                        
+                        
                     </code></pre>
-                    <pre id="def-svg_widget_pan" style="overflow: auto; border-width: 0px; resize: none; padding: 0;width: 100%; height: 100%; display: none;"><code>
+                    <pre id="def-svg_widget_pan" style="padding: 0 1em 0 1em; display: none;"><code>
+                        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                         <svg class="sttip" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="345.6000061035156" height="61.29999923706055">
                             <defs>
                                 <filter id="drop-shadow">
@@ -862,13 +881,11 @@
                     <p>SmartTooltip это продвинутый виджет, позволяющий реализовать отображение подсказок на веб странице. Умеет автоматически регистрироваться,
                             на лету подстраивается под контекст, умеет отображать несколько шаблонов и имеет простой API. <br></p>
                     <p>Изменяйте параметры виджета, наводите курсор указателя мыши на выделенные слова и проверяйте поведение окна подсказки.</p>
-                    <p>По окончании настройки, скопируйте параметры виджета в нижней части экрана, в требуемом вам формате.</p>
+                    <p>По окончании настройки, скопируйте параметры<br>
+                    виджета в нижней части экрана, в требуемом<br>вам формате.</p>
                     <p><label id="simple-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="simple" data-sttip-tooltip="Просто подсказка">simple</label></p>
-                    <br><br>
                     <p><label id="pie-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="pie" data-sttip-tooltip="Диаграмма">pie</label></p>
-                    <br><br>
                     <p><label id="image-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="image" data-sttip-tooltip="Картинка!" data-sttip-link="http://static.boredpanda.com/blog/wp-content/uploads/2015/09/DSC_024402__880.jpg">image</label></p>
-                    <br><br><br><br>
                     <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-tooltip="IFrame" data-sttip-link="index.html">iframe</label>
                           - Важное примечание: Для правильного отображения фрейма, установите параметр 'Масштабирование окна подсказки' в 1!!!</p>
                 </div>
@@ -877,10 +894,8 @@
             </div>
         </div>
 
-        <!-- <script src="./../smartTooltip/smarttooltip.js"></script>
-        <script src="./../smartgauge/smartgauge.js"></script>
-        <script src="./../smartpie/smartpie.js"></script> -->
-
+        <script src="js/prism.js"></script>
+        <script src="js/utopia.js"></script>
         <script src="js/smarttooltip.js"></script>
         <script src="js/smartUI.js"></script>
 

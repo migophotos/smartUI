@@ -567,7 +567,7 @@ if (!customElements.get('smart-ui-edittext')) {
 		return 	['value'];
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        if (!this._o) return;
+        if (!this._o || oldValue == newValue) return;
 
         switch (name) {
             case 'value': {
@@ -620,13 +620,13 @@ if (!customElements.get('smart-ui-edittext')) {
 
             this._input.value = `${this._o.value} ${this._o.units}`;
         });
-        this._input.addEventListener('input', (evt) => {
-            let result = this.convertAndValidate(this._input.value);
-            this._o.value = result;
-            this.setAttribute('value', `${this._o.value}`);
+        // this._input.addEventListener('input', (evt) => {
+        //     let result = this.convertAndValidate(this._input.value);
+        //     this._o.value = result;
+        //     this.setAttribute('value', `${this._o.value}`);
 
-            this._slider.value = this._o.value;
-        });
+        //     this._slider.value = this._o.value;
+        // });
         this._input.addEventListener('change', (evt) => {
             let result = this.convertAndValidate(this._input.value);
             this._o.value = result;

@@ -259,10 +259,7 @@ class TemplateDefs {
 								pointer-events: bounding-box;
 								cursor: pointer;
 							}
-							#frmBtns path {
-								stroke: var(--sttip-var-font-color, black);
-							}
-							#frmBtns text {
+							#frmBtns path, #frmBtns text, #delay-on {
 								stroke: var(--sttip-var-font-color, black);
 							}
 
@@ -296,6 +293,7 @@ class TemplateDefs {
 						<g id="tooltip-group">
 							<rect id="tooltip-frame" class="sttip-frame" x="0" y="0" fill-opacity="0.8" width="432" height="0"/>
 							<g id="bound-group">
+								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" style="transition:none; WebkitTransition:none;" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -477,10 +475,7 @@ class TemplateDefs {
 								pointer-events: bounding-box;
 								cursor: pointer;
 							}
-							#frmBtns path {
-								stroke: var(--sttip-var-font-color, black);
-							}
-							#frmBtns text {
+							#frmBtns path, #frmBtns text, #delay-on {
 								stroke: var(--sttip-var-font-color, black);
 							}
 
@@ -519,6 +514,7 @@ class TemplateDefs {
 										<circle id="rosh-pin" cx="24" cy="8" r="5" />
 									</g>
 								</g>
+								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" style="transition:none; WebkitTransition:none;" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -649,10 +645,7 @@ class TemplateDefs {
 								pointer-events: bounding-box;
 								cursor: pointer;
 							}
-							#frmBtns path {
-								stroke: var(--sttip-var-font-color, black);
-							}
-							#frmBtns text {
+							#frmBtns path, #frmBtns text, #delay-on {
 								stroke: var(--sttip-var-font-color, black);
 							}
 
@@ -691,6 +684,7 @@ class TemplateDefs {
 										<circle id="rosh-pin" cx="24" cy="8" r="5" />
 									</g>
 								</g>
+								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" style="transition:none; WebkitTransition:none;" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -825,10 +819,7 @@ class TemplateDefs {
 								pointer-events: bounding-box;
 								cursor: pointer;
 							}
-							#frmBtns path {
-								stroke: var(--sttip-var-font-color, black);
-							}
-							#frmBtns text {
+							#frmBtns path, #frmBtns text, #delay-on {
 								stroke: var(--sttip-var-font-color, black);
 							}
 
@@ -867,6 +858,7 @@ class TemplateDefs {
 										<circle id="rosh-pin" cx="24" cy="8" r="5" />
 									</g>
 								</g>
+								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" style="transition:none; WebkitTransition:none;" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -1589,6 +1581,17 @@ class SmartTooltip {
 			clearTimeout(window.SmartTooltip._interval);
 		}
 		let noMouseActive = delay || window.SmartTooltip._o.delayOn;
+		
+		if (noMouseActive <= 10) {
+			if (window.SmartTooltip._fixed ||
+				(typeof window.SmartTooltip.isDrag !== 'undefined' && window.SmartTooltip.isDrag === true)) {
+				return;
+			}
+			window.SmartTooltip.hide();
+			window.SmartTooltip._interval = null;
+			return;
+		}
+
 		window.SmartTooltip._interval = setTimeout(function () {
 			if (window.SmartTooltip._fixed) {
 				return;
@@ -1933,6 +1936,7 @@ class SmartTooltip {
             this._ttipValue100     = this._root.getElementById('value-100');
             this._ttipFakeIFrame   = this._root.getElementById('fake-iframe');
 			this._ttipImageLink    = this._root.getElementById('image-link');
+			this._ttipDelayPath    = this._root.getElementById('delay-on');
 
 			if (!this._demo) { // demo tooltip does not use this functionality
 				// init events
@@ -2309,13 +2313,36 @@ class SmartTooltip {
 				// add if enabled shadow effect
 				if (this._o.isShadow)
 				 this._ttipFrame.classList.add('sttip-shadowed');
-
+				
+				let btnX;
 				if (this._ttipFrameBGroup) { // move buttons 'helpMe' and 'closeMe' to the right side of frame
 					ttipBoundGroupBR = this._ttipFrame.getBoundingClientRect();
 					const btnRect = this._ttipFrameBGroup.getBoundingClientRect();
-					const btnX = ttipBoundGroupBR.width - (btnRect.width + 4); /* the gap */
+					btnX = ttipBoundGroupBR.width - (btnRect.width + 4); /* the gap */
 					this._ttipFrameBGroup.setAttribute('transform', `translate(${btnX}, 4)`);
 				}
+				//setup animation for 'delay-on' an case of not fixed!
+				if (this._ttipDelayPath) {
+					if (this._o.showMode === 'fixed' || this._fixed) {
+						// just hide the delay on path indicator in fixed mode
+						this._ttipDelayPath.setAttribute('display', 'none');
+					}
+					this._ttipDelayPath.setAttribute('d', `M30,12 h${btnX - 30}`);
+					this._ttipDelayPath.setAttribute('stroke-width', 2);
+					const length = this._ttipDelayPath.getTotalLength();
+					// setup the starting position
+					this._ttipDelayPath.style.strokeDasharray = `${length} ${length}`;
+					this._ttipDelayPath.style.strokeDashoffset = 0;
+					// trigger layout (just a hack)
+					this._ttipDelayPath.getBoundingClientRect();
+					// define transition
+					// get delayOn in second
+					const delayOn = this._o.delayOn / 1000;
+					this._ttipDelayPath.style.transition = this._ttipDelayPath.style.WebkitTransition = 'stroke-dashoffset '+ delayOn + 's ease-in-out';
+					// Go!
+					this._ttipDelayPath.style.strokeDashoffset = length;
+				}
+
 				// zoom tooltip window to optional parameter 'frameScale'
 				this._ttipGroup.setAttribute('transform', `scale(${this._o.frameScale})`);
 				// get real (after scaling) size of #toolip-group and resize the root SVG
