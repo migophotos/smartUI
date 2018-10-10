@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:1.5;">
+    <rect id="windowOff" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <clipPath id="_clip1">
+        <rect x="0" y="0" width="34" height="33.971"/>
+    </clipPath>
+    <g clip-path="url(#_clip1)">
+        <g>
+            <rect x="3.5" y="24.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="7.5" y="24.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="11.5" y="24.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="15.5" y="24.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+        </g>
+        <g>
+            <rect x="3.5" y="31.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="7.5" y="31.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="11.5" y="31.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="15.5" y="31.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+        </g>
+        <g>
+            <rect x="3.5" y="4.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="7.5" y="4.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="11.5" y="4.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="15.5" y="4.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+        </g>
+        <g>
+            <rect x="3.5" y="12.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="7.5" y="12.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="11.5" y="12.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="15.5" y="12.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+        </g>
+        <g>
+            <rect x="3.5" y="-2.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="7.5" y="-2.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="11.5" y="-2.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+            <rect x="15.5" y="-2.5" width="2.5" height="4" style="fill:none;stroke:#fff;stroke-width:0.3px;"/>
+        </g>
+        <g>
+            <g opacity="0.8866">
+                <path d="M31.75,10.276C31.75,8.61 31.417,7.257 29.775,7.257L4.725,7.257C3.083,7.257 2.75,8.61 2.75,10.276L2.75,16.314C2.75,17.98 3.083,19.332 4.725,19.332L12.175,19.332L8.25,24L16.525,19.332L29.775,19.332C31.417,19.332 31.75,17.98 31.75,16.314L31.75,10.276Z" style="fill:none;stroke:#fff;stroke-width:1.5px;"/>
+                <path d="M31.25,9.975C31.25,8.333 30.917,7 29.275,7L4.225,7C2.583,7 2.25,8.333 2.25,9.975L2.25,15.925C2.25,17.567 2.583,18.9 4.225,18.9L11.675,18.9L8.05,24L16.025,18.9L29.275,18.9C30.917,18.9 31.25,17.567 31.25,15.925L31.25,9.975Z" style="fill:none;stroke:#fff;stroke-width:1.5px;"/>
+            </g>
+        </g>
+    </g>
+</svg>

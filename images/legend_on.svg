@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="34px" height="34px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:1.5;">
+    <rect id="legendOn" x="0" y="0" width="34" height="33.971" style="fill:none;"/>
+    <clipPath id="_clip1">
+        <rect x="0" y="0" width="34" height="33.971"/>
+    </clipPath>
+    <g clip-path="url(#_clip1)">
+        <path d="M2,32L2,2" style="fill:none;stroke:#fff;stroke-width:1px;stroke-dasharray:2,3,0,0;"/>
+        <path d="M32,32L32,2" style="fill:none;stroke:#fff;stroke-width:1px;stroke-dasharray:2,3,0,0;"/>
+        <g id="pieOn">
+            <path d="M10,-2.5C15.587,-2.5 20.123,2.036 20.123,7.623C20.123,13.21 15.587,17.746 10,17.746C4.413,17.746 -0.123,13.21 -0.123,7.623C-0.123,2.036 4.413,-2.5 10,-2.5ZM10,5.092C11.397,5.092 12.531,6.226 12.531,7.623C12.531,9.02 11.397,10.154 10,10.154C8.603,10.154 7.469,9.02 7.469,7.623C7.469,6.226 8.603,5.092 10,5.092Z" style="fill:#fffc00;stroke:#008fff;stroke-width:1.45px;stroke-linejoin:round;"/>
+            <path d="M20.123,7.623C20.123,2.032 15.591,-2.5 10,-2.5C4.413,-2.5 -0.123,2.036 -0.123,7.623C-0.123,10.308 0.943,12.883 2.842,14.781L8.21,9.413C7.736,8.938 7.469,8.294 7.469,7.623C7.469,6.226 8.603,5.092 10,5.092C11.398,5.092 12.531,6.225 12.531,7.623L20.123,7.623Z" style="fill:#4cd964;stroke:#008fff;stroke-width:1.45px;stroke-linejoin:round;"/>
+            <path d="M10,-2.5C4.409,-2.5 -0.123,2.032 -0.123,7.623C-0.123,10.308 0.943,12.883 2.842,14.781L8.21,9.413C7.736,8.938 7.469,8.294 7.469,7.623C7.469,6.225 8.602,5.092 10,5.092L10,-2.5Z" style="fill:#eb3223;stroke:#008fff;stroke-width:1.45px;stroke-linejoin:round;"/>
+        </g>
+        <rect x="1.5" y="19.5" width="31.5" height="3.586" style="fill:#ff1900;"/>
+        <rect x="1.5" y="24.207" width="31.5" height="3.586" style="fill:#4cd964;"/>
+        <rect x="1.5" y="28.914" width="31.5" height="3.586" style="fill:#fffc00;"/>
+    </g>
+</svg>
