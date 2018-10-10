@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="64px" height="64px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="gaugeON">
+        <path d="M64,3.2C64,1.434 62.566,0 60.8,0L3.2,0C1.434,0 0,1.434 0,3.2L0,60.8C0,62.566 1.434,64 3.2,64L60.8,64C62.566,64 64,62.566 64,60.8L64,3.2Z" style="fill:#1d1d1d;"/>
+        <g>
+            <ellipse cx="31.988" cy="32.006" rx="27.259" ry="27.243" style="fill:#0088ca;stroke:#0088ca;stroke-width:0.45px;"/>
+            <clipPath id="_clip1">
+                <path d="M54.683,24.837C51.555,14.936 42.371,8.206 31.988,8.206L31.988,32.006L54.683,24.837Z"/>
+            </clipPath>
+            <g clip-path="url(#_clip1)">
+                <use xlink:href="#_Image2" x="32.419" y="8.275" width="22.695px" height="23.8px" transform="matrix(0.986719,0,0,0.991667,0,1.77636e-15)"/>
+            </g>
+            <path d="M31.425,32.425C36.531,26.808 44.305,24.231 51.778,25.849C46.673,31.465 38.899,34.043 31.425,32.425" style="fill:#00acff;stroke:#fff;stroke-width:1.12px;"/>
+            <ellipse cx="31.988" cy="32.006" rx="4.089" ry="4.086" style="fill:#00acff;stroke:#fff;stroke-width:1.12px;"/>
+            <path d="M32.079,4C39.218,4.034 46.282,6.879 51.439,11.853C57.776,17.964 60.974,27.102 59.738,35.919C58.648,43.698 54.1,50.927 47.512,55.32C41.458,59.356 33.781,60.893 26.601,59.494C18.076,57.832 10.514,51.984 6.732,44.144C3.03,36.469 3.076,27.094 6.957,19.411C11.338,10.739 20.337,4.619 30.369,4.046C30.938,4.014 31.509,3.999 32.079,4ZM31.903,5.526C23.8,5.564 15.848,9.492 10.903,15.977C5.859,22.591 4.189,31.598 6.613,39.643C8.867,47.123 14.583,53.454 21.828,56.466C28.253,59.138 35.726,59.137 42.148,56.466C49.377,53.461 55.139,47.11 57.387,39.565C59.307,33.118 58.663,25.917 55.547,19.884C51.226,11.521 42.319,5.748 32.587,5.532C32.359,5.527 32.131,5.525 31.903,5.526Z" style="fill:#00acff;fill-rule:nonzero;stroke:#beeaff;stroke-width:0.45px;stroke-linecap:butt;stroke-miterlimit:1.41421;"/>
+        </g>
+    </g>
+    <defs>
+        <image id="_Image2" width="23px" height="24px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABg0lEQVRIia2UW27DIBBFD5H3v5eqC+hO2u8klZpXUz8w7oehXMbYUataGg0IdLhzGePCExMe8MAoeQSGONc1Xa/Nxxw7JpbfBISY03owkSC1+Q8cAUwVsIVOAkjZy1zUNwvFepDCrMKt8PPe3QJcU/yg/KICnytoFmBrw5Zqe9Hmcuu2qCVbpdfAMl4qZ8OOGtAzt6wBuxGaaqeoatv/VuVQjl3Ie5oqWMsPFVjK+pMNs1rdmz1fO0BBCu5XwEWfr11g2qRAC+4jtPZMFBdaazVrQR8jjp03YIWHNfhggAPQSa6BhwzNyrUN1bdeoo25A6cVKNR2VEhw7WOFdhEcs1NbbLeY5zYrt13RAV8x2jm7dFgNbt/yYOG9QO85uwgvwD3LDpEI7wAW3kbw5xwuHSKeL+wYIeypfg1BFN+AK3ABdzPW6EVuAEu4j4AL8AHuBJyj+ns8OFoSDo+BJbwDTsAB3H4+gGsEt78HlvAz8AbuFTjOFYTj34EF3L1AeM5P+X9+32ybw3fvprJ7AAAAAElFTkSuQmCC"/>
+    </defs>
+</svg>

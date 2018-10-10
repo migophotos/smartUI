@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="64px" height="64px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="tooltipOn">
+        <path d="M64,3.2C64,1.434 62.566,0 60.8,0L3.2,0C1.434,0 0,1.434 0,3.2L0,60.8C0,62.566 1.434,64 3.2,64L60.8,64C62.566,64 64,62.566 64,60.8L64,3.2Z" style="fill:#1d1d1d;"/>
+        <g>
+            <path d="M60,26.665C60,14.302 47.454,4.265 32,4.265C16.546,4.265 4,14.302 4,26.665C4,33.971 8.454,40.818 15.933,45.01L12.4,60.265L24.745,48.3C27.111,48.808 29.55,49.065 32,49.065C47.454,49.065 60,39.028 60,26.665Z" style="fill:#fff15f;stroke:#fff;stroke-width:1.5px;"/>
+            <text x="20.619px" y="41.603px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:38.066px;fill:#008fff;">?</text>
+        </g>
+    </g>
+</svg>
