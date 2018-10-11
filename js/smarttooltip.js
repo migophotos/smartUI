@@ -619,6 +619,19 @@ class TemplateDefs {
 								--run-color: var(--sttip-var-run-color, green);
 								--stop-color: var(--sttip-var-stop-color, red);
 							}
+							text.sttip-text {
+								font-family: var(--sttip-var-font-family);
+								font-stretch: var(--sttip-var-font-stretch);
+								pointer-events: none;
+								fill: var(--sttip-var-font-color);
+							}
+							.sttip-title {
+								font-size: var(--sttip-var-title-size, 22px);
+							}
+							.sttip-description {
+								font-size: var(--sttip-var-descr-size, 18px);
+							}
+
 							.sttip-frame {
 								fill:var(--sttip-var-frame-fill);
 								fill-opacity: var(--sttip-var-frame-opacity, 1);
@@ -795,6 +808,19 @@ class TemplateDefs {
 								--run-color: var(--sttip-var-run-color, green);
 								--stop-color: var(--sttip-var-stop-color, red);
 							}
+							text.sttip-text {
+								font-family: var(--sttip-var-font-family);
+								font-stretch: var(--sttip-var-font-stretch);
+								pointer-events: none;
+								fill: var(--sttip-var-font-color);
+							}
+							.sttip-title {
+								font-size: var(--sttip-var-title-size, 22px);
+							}
+							.sttip-description {
+								font-size: var(--sttip-var-descr-size, 18px);
+							}
+
 							.sttip-frame {
 								fill:var(--sttip-var-frame-fill);
 								fill-opacity: var(--sttip-var-frame-opacity, 1);
@@ -901,12 +927,11 @@ class TemplateDefs {
 		return internalTemplates.get(templateName);
 	}
 
-
 	constructor() {
 		this._templates = new Map();	// stores id to {name: name, template: template} pair
 		this._options = new Map();		// stores id to opt pair
 		this._similars = new Map();		// in case of template name already defined, store in this map the reference on id, that contains it in form: id -> id
-										// the function get(id) will returns this 'right' definition
+										// the function get(id) will returns the  real definition from similar id
 	}
 	register(id, name) {
 		const sdef = this.getByName(name);
@@ -918,14 +943,20 @@ class TemplateDefs {
 		}
 	}
 
+	// This function append template to register id, or store thid id in similars map
+	// In case it appends the template for the first time (template contains 'loading...' instead of definition)
+	// it will replase an id with fake one and after that store the original as similar to this faked one.
 	set(id, name, template, opt) {
 		const sdef = this.getByName(name);
 		if (sdef && id != sdef.id) {
 			this._options.set(id, opt);
 			this._similars.set(id, sdef.id);
 		} else {
+			const fakeId = `fake-${this._templates.size}`;
+			this._options.set(fakeId, opt);
+			this._templates.set(fakeId, {name: name, template: template});
 			this._options.set(id, opt);
-			this._templates.set(id, {name: name, template: template});
+			this._similars.set(id, fakeId);
 		}
 	}
 	has(id) {
@@ -938,6 +969,7 @@ class TemplateDefs {
 			const sdef = this._templates.get(sid);
 			ttdef.name = sdef.name;				// similar template name
 			ttdef.template = sdef.template;		// similar template definition
+			ttdef.similar = true;				// this property says that id was found in similars
 		} else {
 			if (!this._templates.has(id)) {
 				return null;
@@ -945,6 +977,7 @@ class TemplateDefs {
 			const def = this._templates.get(id);
 			ttdef.name = def.name;				// own template name
 			ttdef.template = def.template;		// own template definition
+			ttdef.similar = false;				// here, this property says that id has an original template
 		}
 		ttdef.opt = this._options.get(id);		// own options
 		return ttdef;
@@ -953,10 +986,14 @@ class TemplateDefs {
 	getByName(name) {
 		for (let [id, ttdef] of this._templates) {
 			if (ttdef.name === name) {
-				return {id: id, def: ttdef};
+				return {id: id, name: ttdef.name, template: ttdef.template, opt: this._options.get(id)};
 			}
 		}
 		return null;
+	}
+
+	deleteFromSimilars(id) {
+		this._similars.delete(id);	// don't need to check an id before deleting. this function just return false in case that specified id is not exist
 	}
 
 }
@@ -1562,7 +1599,7 @@ class SmartTooltip {
 			this._fixed = false;
 			// this map will contains pairs: widget id (as key) : object with template file name (as name) and loaded external tooltip template string (as template)
 			// the function 'show(...)' will load the corresponding template into the body of the tooltip and fill it with the data received from outside
-			this._definitions = null;
+			this._definitions = new TemplateDefs();
 			this._ownOptions = {}; // options from host custom element will stored here (function setOptions fills it on attributes changes of custom element SmartTooltipElement)
 			this._root = root;
 			this._ttipRef = div;
@@ -1878,7 +1915,7 @@ class SmartTooltip {
 					this._ttipPinMe.classList.add('sttip-pinned');
 				}
 			}
-			if (typeof options.showMode === 'string') {
+			if (typeof options.showMode === 'string' && options.showMode.length) {
 				// hide pinMe button in case of tooltip for specific element has optional showMode
 				this._ttipPinMe.setAttribute('display', 'none');
 				this._o.showMode = options.showMode;
@@ -2102,6 +2139,17 @@ class SmartTooltip {
 			let ttipdef = null;
 			if (this._definitions && this._definitions.has(data.id)) {
 				ttipdef = this._definitions.get(data.id);
+				if (ttipdef && typeof data.options.template != 'undefined' && ttipdef.name !== data.options.template) {
+					// now I need to replace template definition on new one. Because this may cause the problems for similars
+					// I will do this operation only for similar id!
+					if (ttipdef.similar) {
+						// this._definitions.deleteFromSimilars(data.id);
+						ttipdef = TemplateDefs.getInternalTemplate(data.options.template);
+						if (ttipdef) {
+							this._definitions.set(data.id, data.options.template, ttipdef.template, ttipdef.opt);
+						}
+					}
+				}
 			} else {
 				let templName;
 				// lets register new element with specified internal or default template name this._ownOptions.template
@@ -2114,9 +2162,13 @@ class SmartTooltip {
 				} else {
 					templName = this._ownOptions.template || 'pie';
 				}
-				ttipdef = TemplateDefs.getInternalTemplate(templName);
+				// load only not loaded templates!!!
+				ttipdef = this._definitions.getByName(templName);
+				if (!ttipdef) {
+					ttipdef = TemplateDefs.getInternalTemplate(templName);
+				}
 				// demo tooltip does not have definitions, so don't register it!
-				if (this._definitions) {
+				if (!this._demo) {
 					this._definitions.set(data.id, templName, ttipdef.template, ttipdef.opt);
 				}
 			}

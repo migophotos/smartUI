@@ -584,7 +584,7 @@ if (!customElements.get('smart-ui-edittext')) {
     convertAndValidate(val) {
         let result = null;
         if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
-            result = parseFloat(val).toFixed(1);
+            result = parseFloat(parseFloat(val).toFixed(1));    // for example: let val = "1.245"; parseFloat(parseFloat(val).toFixed(1)) == 1.2
         } else {
             result = parseInt(val, 10);
         }
