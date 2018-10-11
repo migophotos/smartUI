@@ -1591,7 +1591,20 @@ class SmartTooltip {
 			window.SmartTooltip._interval = null;
 			return;
 		}
-
+		if(this._ttipDelayPath) {
+			// Start the delay-on path indicator animation now!
+			// trigger layout (just a hack)
+			let length = this._ttipDelayPath.dataset['length'];
+			let delayOn = this._ttipDelayPath.dataset['delay'];
+			if (typeof length !== 'undefined') {
+				this._ttipDelayPath.style.strokeDasharray = `${length} ${length}`;
+				this._ttipDelayPath.style.strokeDashoffset = 0;
+				this._ttipDelayPath.getBoundingClientRect();
+				this._ttipDelayPath.style.transition = this._ttipDelayPath.style.WebkitTransition = 'stroke-dashoffset '+ delayOn + 's ease-in-out';
+				// go!
+				this._ttipDelayPath.style.strokeDashoffset = length;
+			}
+		}
 		window.SmartTooltip._interval = setTimeout(function () {
 			if (window.SmartTooltip._fixed) {
 				return;
@@ -2321,7 +2334,7 @@ class SmartTooltip {
 					btnX = ttipBoundGroupBR.width - (btnRect.width + 4); /* the gap */
 					this._ttipFrameBGroup.setAttribute('transform', `translate(${btnX}, 4)`);
 				}
-				//setup animation for 'delay-on' an case of not fixed!
+				//setup animation for 'delay-on' in case of not fixed!
 				if (this._ttipDelayPath) {
 					if (this._o.showMode === 'fixed' || this._fixed) {
 						// just hide the delay on path indicator in fixed mode
@@ -2339,8 +2352,9 @@ class SmartTooltip {
 					// get delayOn in second
 					const delayOn = this._o.delayOn / 1000;
 					this._ttipDelayPath.style.transition = this._ttipDelayPath.style.WebkitTransition = 'stroke-dashoffset '+ delayOn + 's ease-in-out';
-					// Go!
-					this._ttipDelayPath.style.strokeDashoffset = length;
+					// the start will be done in _checkMouseMoving function
+					this._ttipDelayPath.dataset['delay'] = delayOn;
+					this._ttipDelayPath.dataset['length'] = length;
 				}
 
 				// zoom tooltip window to optional parameter 'frameScale'
