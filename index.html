@@ -935,6 +935,7 @@
 
                 let el, els;
                 // set value from options into apropriated elements on UI panels
+                // 'sttip-param' is a name attribute of all element on 'smarttooltip_opt' panels
                 els = document.getElementsByName('sttip-param');
                 for (let el of els) {
                     const optionNameAttr = el.attributes['param'].value;
