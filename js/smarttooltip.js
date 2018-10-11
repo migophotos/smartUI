@@ -2310,7 +2310,9 @@ class SmartTooltip {
                         }
                         const top = this._ttipFakeIFrame.getAttribute('y');
                         this._iframe.style.setProperty('top', `${top}px`);
-                        this._iframe.setAttribute('src', data.title.link);
+                        if (typeof data.title.link !== 'undefined') {
+                            this._iframe.setAttribute('src', data.title.link);
+                        }
                         prevElemRef = this._ttipFakeIFrame;
                     }
                     if (this._ttipImageLink) {
@@ -2321,7 +2323,9 @@ class SmartTooltip {
 							let offset = height - gap;
 							this._ttipImageLink.attributes.y.value = Number(this._ttipImageLink.attributes.y.value) + offset;
                         }
-                        this._ttipImageLink.setAttribute('xlink:href', data.title.link);
+                        if (typeof data.title.link !== 'undefined') {
+                            this._ttipImageLink.setAttribute('xlink:href', data.title.link);
+                        }
                         prevElemRef = this._ttipImageLink;
                     }
 
@@ -2602,8 +2606,24 @@ class SmartTooltip {
 				}
 
 				// zoom tooltip window to optional parameter 'frameScale'
-				this._ttipGroup.setAttribute('transform', `scale(${this._o.frameScale})`);
-				// get real (after scaling) size of #toolip-group and resize the root SVG
+                this._ttipGroup.setAttribute('transform', `scale(${this._o.frameScale})`);
+
+                // after scaling: in case of 'iframe' - template zoom ifame also
+                if (this._ttipFakeIFrame) {
+                    // get fake rectangle coordinates and size and convert its to client
+                    const fakeRc = this._ttipFakeIFrame.getBoundingClientRect();
+                    let pt = this._svg.createSVGPoint();
+                    pt.x = fakeRc.x;
+                    pt.y = fakeRc.y;
+                    pt = pt.matrixTransform(this._svg.getScreenCTM().inverse());
+                    // reposition and scaling the frame
+                    this._iframe.style.setProperty('top', `${pt.y}px`);
+                    this._iframe.style.setProperty('left', `${pt.x}px`);
+                    this._iframe.style.setProperty('width', `${fakeRc.width}px`);
+                    this._iframe.style.setProperty('height', `${fakeRc.height}px`);
+                }
+
+				// after scaling: get real size of #toolip-group and resize the root SVG
 				ttipBoundGroupBR = this._ttipGroup.getBoundingClientRect();
 				this._svg.setAttributeNS(null, 'width', ttipBoundGroupBR.width);
 				this._svg.setAttributeNS(null, 'height', ttipBoundGroupBR.height);
@@ -2713,24 +2733,14 @@ class SmartTooltipElement extends HTMLElement {
 		return options;
 	}
 
-	showDemoTooltip(x, y) {
+	showDemoTooltip(demoData) {
 		if (this._demoTooltip) {
 			const options = this.convertKnownProperties(this._o);
 			CustomProperties.convertNumericProps(options);
 
-
-			const data = {
-				x: x,
-				y: y,
-				id: null,
-				options: options,
-				title: {
-					uuid: 'uuid-demo-tooltip',
-                    name: 'Change options for this SmartTooltip widget and hover mouse pointer over bold text at the left side to check real SmartTooltip',
-                    link: 'index.html'
-				}
-			};
-			const evt = null;
+            const data = Object.assign({}, demoData);
+            data.options = Object.assign({}, options);
+            const evt = null;
 			this._demoTooltip.show(evt, data);
 		}
 	}

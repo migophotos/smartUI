@@ -887,7 +887,6 @@
                     <p><label id="pie-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="pie" data-sttip-tooltip="Диаграмма">pie</label></p>
                     <p><label id="image-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="image" data-sttip-tooltip="Картинка!" data-sttip-link="images/colorwill.png">image</label></p>
                     <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-tooltip="IFrame" data-sttip-link="index.html">iframe</label>
-                          - Важное примечание: Для правильного отображения фрейма, установите параметр 'Масштабирование окна подсказки' в 1!!!</p>
                 </div>
                 <div class="widget-example" id="smarttpie_examp" style="display: none; background: rgb(174, 255, 255);"></div>
                 <div class="widget-example" id="smartgauge_examp" style="display: none; background: rgb(237, 174, 255);"></div>
@@ -912,10 +911,28 @@
                         const parentDiv = document.getElementById('smarttooltip_examp');
                         if (parentDiv) {
                             const rc = parentDiv.getBoundingClientRect();
-                            demoTooltipEl.showDemoTooltip(0 + rc.width / 2, 0 + rc.height / 3);
+                            const data = {
+                				x: parseInt(rc.width, 10) / 2,
+				                y: parseInt(rc.height, 10) / 3,
+				                id: null,
+                                title: {
+                                    uuid: 'uuid-demo-tooltip',
+                                    name: 'Change options for this SmartTooltip widget and hover mouse pointer over bold text at the left side to check real SmartTooltip',
+                                },
+                                targets: {}
+                            };
+                            if (demoTooltipEl._o.template === 'image') {
+                                data.title.link = 'images/colorwill.png';
+                            } else if (demoTooltipEl._o.template === 'iframe') {
+                                data.title.link = 'index.html';
+                            } else {
+                                data.title.link = undefined;
+                            }
+                            demoTooltipEl.showDemoTooltip(data);
                         }
                     }
                 }
+
                 let el, els;
                 // set value from options into apropriated elements on UI panels
                 els = document.getElementsByName('sttip-param');
