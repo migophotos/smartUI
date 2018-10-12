@@ -2156,8 +2156,8 @@ class SmartTooltip {
                     y = ownerRect.top;
                 } else {
                     // offset the tooltip window by 6 pixels to right and down from mouse pointer
-                    x += 6;
-                    y += 6;
+                    x += 30;
+                    y += 0;
                 }
                 // caclulate an absolute location
                 const scroll = SmartTooltip.getScroll();
