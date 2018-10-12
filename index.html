@@ -1,7 +1,7 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
     <header>
         <meta charset="utf-8" />
         <link rel="icon" href="favicon.png" />
@@ -14,6 +14,7 @@
         <meta http-equiv="content-type" content="text/html;charset=utf-8">
 
         <link rel="stylesheet" href="css/themes/prism.css" data-noprefix />
+        <script src="js/vocabulary.js"></script>
 
         <style>
             /* * {
@@ -904,6 +905,8 @@
                 if (!demoTooltipEl) {
                     throw new ReferenceError(`Custom element 'smart-ui-tooltip' with id='demoTooltipW' hasn't been initialised`);
                 }
+                // try to translate
+                
 
                 // show smarttooltip window
                 function showDemoTooltip () {
@@ -934,10 +937,22 @@
                 }
 
                 let el, els;
+                els = document.getElementsByClassName("widgets-btn");
+                for (let el of els) {
+                    el.attributes['data-sttip-tooltip.textContent'] = _(el.attributes['data-sttip-tooltip.textContent']);
+                }
+
+                els = document.getElementsByTagName('h2');
+                for (let el of els) {
+                    el.textContent = _(el.textContent);
+                }
+                // translate title attributes in-place
+                // file vocabulary.js has function _(str) and returns translated text or original if translation is not found  
                 // set value from options into apropriated elements on UI panels
                 // 'sttip-param' is a name attribute of all element on 'smarttooltip_opt' panels
                 els = document.getElementsByName('sttip-param');
                 for (let el of els) {
+                    el.attributes.title.textContent = _(el.attributes.title.value);
                     const optionNameAttr = el.attributes['param'].value;
                     let optionName = CustomProperties.customProp2Param(optionNameAttr);
                     let optionValue = demoTooltipEl._o[optionName];

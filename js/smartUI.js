@@ -141,7 +141,7 @@ class SmartSelector extends HTMLElement {
                     </svg>
                 </div>
                 <div class="controls">
-                    <div class="title">${this.getAttribute('title')}</div>
+                    <div class="title">${_(this.getAttribute('title'))}</div>
                     <select id="IC" />
                 </div>
             </div>
@@ -332,7 +332,7 @@ class SmartEditText extends HTMLElement {
                     </svg>
                 </div>
                 <div class="controls">
-                    <div class="title">${this.getAttribute('title')}</div>
+                    <div class="title">${_(this.getAttribute('title'))}</div>
                     <div class="plusminus">
                     </div>
 
@@ -524,7 +524,7 @@ if (!customElements.get('smart-ui-edittext')) {
                     </svg>
                 </div>
                 <div class="controls">
-                    <div class="title">${this.getAttribute('title')}</div>
+                    <div class="title">${_(this.getAttribute('title'))}</div>
                     <div class="plusminus">
                         <div class="svgcontainer btn" id="MB">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -945,7 +945,7 @@ class SmartCheckBox extends HTMLElement {
                 <div class="controls">
                     <smart-ui-button class="c-btn"
                         id="c_btn"
-                        label="${this.getAttribute('title')}";
+                        label="${_(this.getAttribute('title'))}";
                         state="${this.getAttribute('state')}"
                         imageOn="${this.getAttribute('imageOn')}"
                         imageOff="${this.getAttribute('imageOff')}"
@@ -1164,7 +1164,7 @@ class SmartColorBox extends HTMLElement {
                     </svg>
                 </div>
                 <div class="controls">
-                    <div class="title">${this.getAttribute('title')}</div>
+                    <div class="title">${_(this.getAttribute('title'))}</div>
 
                     <div class="slider">
                         <input name="colorbox" class="slider-bar" id="colorbox" type="color" value="${this.getAttribute('value')}">
