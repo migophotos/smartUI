@@ -1036,7 +1036,103 @@ class CustomProperties {
 	 */
 	static getPrefix() {
 		return '--sttip-';
+    }
+
+    /**
+     * build and returns an options object siutable for show tooltip function
+     * options: {
+     *  paramKey: value,
+     *  paramKey: value,
+     *  ...
+     *  cssVars: {
+     *      sttip-var-param-key: value,
+     *      sttip-var-param-key: value,
+     *      ...
+     *  }
+     * }
+     *
+     * @param {object} opt options object to be converted
+     * @returns {object} options with known structure
+     *
+     */
+    static convertKnownProperties(opt) {
+		const options = {
+			// position: evt.target.getBoundingClientRect(),
+			cssVars: {}
+		};
+
+		// convert properties started with 'var-' to css values
+		const customProp = CustomProperties.getCustomProperties();
+		for (let n = 0; n < customProp.length; n++) {
+			if (customProp[n].startsWith('var-')) {
+				let cssKey = `${CustomProperties.getPrefix()}${customProp[n]}`;
+				let oKey = CustomProperties.customProp2Param(`${customProp[n]}`);
+				let cssVal = opt[oKey];
+				if (typeof cssVal === 'undefined') {
+					oKey = customProp[n].replace('var-', '');
+					oKey = CustomProperties.customProp2Param(oKey);
+					cssVal = opt[oKey];
+				}
+				// and now?
+				if (typeof cssVal !== 'undefined') {
+					cssVal = cssVal.toString();
+					options.cssVars[`${cssKey}`] = cssVal;
+				}
+			} else {
+				const propKey = CustomProperties.customProp2Param(`${customProp[n]}`);
+				let propVal = opt[CustomProperties.customProp2Param(`${customProp[n]}`)];
+				if (typeof propVal !== 'undefined') {
+					options[propKey] = propVal;
+				}
+			}
+		}
+		return options;
 	}
+
+    /**
+     * Compares parameters values in specified object with originals (defOptions)
+     *  and returns an object with changed parameters only
+     *
+     * @param {object} opt current options with default and changed params
+     * @return {object} changes an object with changed params only
+     */
+    static diffProperties(opt) {
+        const changes = {};
+        const originalOpt = CustomProperties.defOptions();
+        for (let key in originalOpt) {
+            if (opt[key] != originalOpt[key]) {
+                changes[key] = opt[key];
+            }
+        }
+        return changes;
+    }
+
+    static serializeOptions(opt, templateId) {
+        let template = '';
+        switch (templateId) {
+            case 'def-custom-elem_btn':
+                template = '&lt;smart-ui-tooltip class="tooltip-elem">Yout browser does not support custom elements.&lt/smart-ui-tooltip>\n';
+                template += '&lt;style>\n';
+                template += '  .tooltip-elem {\n';
+                // template += `    `
+                for (let key in opt) {
+                    template += `    ${key}:        ${opt[key]}\n`;
+                }
+                template += '  }\n';
+                template += '&lt;/style>';
+                break;
+            case 'def-json_btn':
+                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+                break;
+            case 'def-object-params_btn':
+                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+                break;
+            case 'def-svg_widget_btn':
+                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+                break;
+        }
+        return template;
+    }
 	/**
 	 * Returns an array of custom properties. Each of the custom property has corresponding declarative attribute in form first-second == prefix-first-second
 	 * and option parameter with name "firstSecond".
@@ -1216,7 +1312,48 @@ class CustomProperties {
 			paramsArray.push(CustomProperties.customProp2Param(prop));
 		}
 		return paramsArray;
-	}
+    }
+
+    static tryToTranslate(data) {
+        const title   = data.title;
+        const options = data.options;
+
+        if (typeof vocabulary !== 'undefined') {
+            if (typeof title.tooltip !== 'undefined') {
+                title.tooltip = _(title.tooltip);
+            }
+            if (typeof title.name !== 'undefined') {
+                title.name = _(title.name);
+            }
+            if (typeof title.legend !== 'undefined') {
+                title.legend = _(title.legend);
+            }
+            if (typeof title.descr !== 'undefined') {
+                title.descr = _(title.descr);
+            }
+            if (typeof title.value !== 'undefined' && title.value === 'string') {
+                title.value = _(title.value);
+            }
+            if (typeof title.titleFormat !== 'undefined') {
+                title.titleFormat = _(title.titleFormat);
+            }
+            if (typeof title.descFormat !== 'undefined') {
+                title.descFormat = _(title.descFormat);
+            }
+            if (typeof options.titleFormat !== 'undefined') {
+                options.titleFormat = _(options.titleFormat);
+            }
+            if (typeof options.descrFormat !== 'undefined') {
+                options.descrFormat = _(options.descrFormat);
+            }
+            if (typeof options.descrFormat !== 'undefined') {
+                options.legendFormat = _(options.legendFormat);
+            }
+            if (typeof options.legendValFormat !== 'undefined') {
+                options.legendValFormat = _(options.legendValFormat);
+            }
+        }
+    }
 
 	static registerElementsByIds(doc, ids = []) {
 		const curDocument = doc || document;
@@ -2032,14 +2169,18 @@ class SmartTooltip {
 							const param = sttipKey.replace(/[A-Z]/, lowerFirst);
 							title[param] = evt.target.dataset[key];
 						}
-					}
+                    }
+
 					const data = {
 						id: evt.target.id,
 						x:  evt.clientX,
 						y: evt.clientY,
 						title: title,
 						options: options
-					};
+                    };
+                    // translate data to html lang (from russian)
+                    CustomProperties.tryToTranslate(data);
+
 					SmartTooltip.showTooltip(data, evt);
 				});
 				element.addEventListener('mousemove', function (evt) {
@@ -2111,8 +2252,8 @@ class SmartTooltip {
                     y = ownerRect.top;
                 } else {
                     // offset the tooltip window by 6 pixels to right and down from mouse pointer
-                    x += 6;
-                    y += 6;
+                    x += 30;
+                    y += 0;
                 }
                 // caclulate an absolute location
                 const scroll = SmartTooltip.getScroll();
@@ -2751,43 +2892,9 @@ class SmartTooltipElement extends HTMLElement {
         this._o = 0;
 	}
 
-	convertKnownProperties(opt) {
-		const options = {
-			// position: evt.target.getBoundingClientRect(),
-			cssVars: {}
-		};
-
-		// convert properties started with 'var-' to css values
-		const customProp = CustomProperties.getCustomProperties();
-		for (let n = 0; n < customProp.length; n++) {
-			if (customProp[n].startsWith('var-')) {
-				let cssKey = `${CustomProperties.getPrefix()}${customProp[n]}`;
-				let oKey = CustomProperties.customProp2Param(`${customProp[n]}`);
-				let cssVal = this._o[oKey];
-				if (typeof cssVal === 'undefined') {
-					oKey = customProp[n].replace('var-', '');
-					oKey = CustomProperties.customProp2Param(oKey);
-					cssVal = this._o[oKey];
-				}
-				// and now?
-				if (typeof cssVal !== 'undefined') {
-					cssVal = cssVal.toString();
-					options.cssVars[`${cssKey}`] = cssVal;
-				}
-			} else {
-				const propKey = CustomProperties.customProp2Param(`${customProp[n]}`);
-				let propVal = this._o[CustomProperties.customProp2Param(`${customProp[n]}`)];
-				if (typeof propVal !== 'undefined') {
-					options[propKey] = propVal;
-				}
-			}
-		}
-		return options;
-	}
-
 	showDemoTooltip(demoData) {
 		if (this._demoTooltip) {
-			const options = this.convertKnownProperties(this._o);
+			const options = CustomProperties.convertKnownProperties(this._o);
 			CustomProperties.convertNumericProps(options);
 
             const data = Object.assign({}, demoData);
