@@ -1036,7 +1036,103 @@ class CustomProperties {
 	 */
 	static getPrefix() {
 		return '--sttip-';
+    }
+
+    /**
+     * build and returns an options object siutable for show tooltip function
+     * options: {
+     *  paramKey: value,
+     *  paramKey: value,
+     *  ...
+     *  cssVars: {
+     *      sttip-var-param-key: value,
+     *      sttip-var-param-key: value,
+     *      ...
+     *  }
+     * }
+     *
+     * @param {object} opt options object to be converted
+     * @returns {object} options with known structure
+     *
+     */
+    static convertKnownProperties(opt) {
+		const options = {
+			// position: evt.target.getBoundingClientRect(),
+			cssVars: {}
+		};
+
+		// convert properties started with 'var-' to css values
+		const customProp = CustomProperties.getCustomProperties();
+		for (let n = 0; n < customProp.length; n++) {
+			if (customProp[n].startsWith('var-')) {
+				let cssKey = `${CustomProperties.getPrefix()}${customProp[n]}`;
+				let oKey = CustomProperties.customProp2Param(`${customProp[n]}`);
+				let cssVal = opt[oKey];
+				if (typeof cssVal === 'undefined') {
+					oKey = customProp[n].replace('var-', '');
+					oKey = CustomProperties.customProp2Param(oKey);
+					cssVal = opt[oKey];
+				}
+				// and now?
+				if (typeof cssVal !== 'undefined') {
+					cssVal = cssVal.toString();
+					options.cssVars[`${cssKey}`] = cssVal;
+				}
+			} else {
+				const propKey = CustomProperties.customProp2Param(`${customProp[n]}`);
+				let propVal = opt[CustomProperties.customProp2Param(`${customProp[n]}`)];
+				if (typeof propVal !== 'undefined') {
+					options[propKey] = propVal;
+				}
+			}
+		}
+		return options;
 	}
+
+    /**
+     * Compares parameters values in specified object with originals (defOptions)
+     *  and returns an object with changed parameters only
+     *
+     * @param {object} opt current options with default and changed params
+     * @return {object} changes an object with changed params only
+     */
+    static diffProperties(opt) {
+        const changes = {};
+        const originalOpt = CustomProperties.defOptions();
+        for (let key in originalOpt) {
+            if (opt[key] != originalOpt[key]) {
+                changes[key] = opt[key];
+            }
+        }
+        return changes;
+    }
+
+    static serializeOptions(opt, templateId) {
+        let template = '';
+        switch (templateId) {
+            case 'def-custom-elem_btn':
+                template = '&lt;smart-ui-tooltip class="tooltip-elem">Yout browser does not support custom elements.&lt/smart-ui-tooltip>\n';
+                template += '&lt;style>\n';
+                template += '  .tooltip-elem {\n';
+                // template += `    `
+                for (let key in opt) {
+                    template += `    ${key}:        ${opt[key]}\n`;
+                }
+                template += '  }\n';
+                template += '&lt;/style>';
+                break;
+            case 'def-json_btn':
+                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+                break;
+            case 'def-object-params_btn':
+                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+                break;
+            case 'def-svg_widget_btn':
+                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+                break;
+        }
+        return template;
+    }
 	/**
 	 * Returns an array of custom properties. Each of the custom property has corresponding declarative attribute in form first-second == prefix-first-second
 	 * and option parameter with name "firstSecond".
@@ -2796,43 +2892,9 @@ class SmartTooltipElement extends HTMLElement {
         this._o = 0;
 	}
 
-	convertKnownProperties(opt) {
-		const options = {
-			// position: evt.target.getBoundingClientRect(),
-			cssVars: {}
-		};
-
-		// convert properties started with 'var-' to css values
-		const customProp = CustomProperties.getCustomProperties();
-		for (let n = 0; n < customProp.length; n++) {
-			if (customProp[n].startsWith('var-')) {
-				let cssKey = `${CustomProperties.getPrefix()}${customProp[n]}`;
-				let oKey = CustomProperties.customProp2Param(`${customProp[n]}`);
-				let cssVal = this._o[oKey];
-				if (typeof cssVal === 'undefined') {
-					oKey = customProp[n].replace('var-', '');
-					oKey = CustomProperties.customProp2Param(oKey);
-					cssVal = this._o[oKey];
-				}
-				// and now?
-				if (typeof cssVal !== 'undefined') {
-					cssVal = cssVal.toString();
-					options.cssVars[`${cssKey}`] = cssVal;
-				}
-			} else {
-				const propKey = CustomProperties.customProp2Param(`${customProp[n]}`);
-				let propVal = this._o[CustomProperties.customProp2Param(`${customProp[n]}`)];
-				if (typeof propVal !== 'undefined') {
-					options[propKey] = propVal;
-				}
-			}
-		}
-		return options;
-	}
-
 	showDemoTooltip(demoData) {
 		if (this._demoTooltip) {
-			const options = this.convertKnownProperties(this._o);
+			const options = CustomProperties.convertKnownProperties(this._o);
 			CustomProperties.convertNumericProps(options);
 
             const data = Object.assign({}, demoData);

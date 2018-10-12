@@ -902,6 +902,7 @@
 
         <script>
             (function() {
+                let changedOptions = {};
                 const demoTooltipEl = document.getElementById('demoTooltipW');
                 if (!demoTooltipEl) {
                     throw new ReferenceError(`Custom element 'smart-ui-tooltip' with id='demoTooltipW' hasn't been initialised`);
@@ -932,6 +933,7 @@
                             } else {
                                 data.title.link = undefined;
                             }
+                            changedOptions = CustomProperties.diffProperties(demoTooltipEl._o);
                             demoTooltipEl.showDemoTooltip(data);
                         }
                     }
@@ -998,6 +1000,9 @@
                                 document.getElementById(wdgs[n]).style.setProperty('display', (state === 'on' ? 'block' : 'none'));
                             }
                         }
+                        let containerEl = document.getElementById(evt.target.attributes.targets.value);
+                        const optString = CustomProperties.serializeOptions(changedOptions, evt.target.id);
+                        containerEl.innerHTML = `<code>${optString}</code>`;
                     });
                 }
                 // switch targets after clicks on categories buttons
@@ -1054,11 +1059,11 @@
                             title: title,
                             options: null
                         }
-                        if (typeof demoTooltipEl.convertKnownProperties !== 'undefined') {
-                            const options = demoTooltipEl.convertKnownProperties(demoTooltipEl._o);
-                            data.options = options;
-                            data.options.position = evt.target.getBoundingClientRect();
-                        }
+
+                        const options = CustomProperties.convertKnownProperties(demoTooltipEl._o);
+                        data.options = options;
+                        data.options.position = evt.target.getBoundingClientRect();
+
                         CustomProperties.tryToTranslate(data);
                         SmartTooltip.showTooltip(data, evt);
                     });
