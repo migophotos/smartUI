@@ -43,12 +43,32 @@ const vocRu_En = [
     ["Параметры отображения легенды", "Legend Parameters"],
     ["Настройки шрифтов", "All Texts Parameters"],
     ["Основные характеристики диаграммы", "Pie Main Parameters"],
-    ["Параметры интерфейса диаграммы", "Pai UI Parameters"],
+    ["Параметры интерфейса диаграммы", "Pie UI Parameters"],
     ["Основные параметры индикатора", "Gauge Main Parameters"], 
     ["Параметры интерфейса индикатора", "Gauge UI Parameters"],
     ["Настроить параметры виджета SmartTooltip", "SmartTooltip Widget Parameters"],
     ["Настроить параметры виджета SmartPie", "SmartPie Widget Parameters"],
-    ["Настроить параметры виджета SmartGauge", "SmartGauge Widget Parameters"]
+    ["Настроить параметры виджета SmartGauge", "SmartGauge Widget Parameters"],
+    ["Простой", "Simple"],
+    ["Диаграмма", "Pie"],
+    ["Картинка", "Image"],
+    ["Плавающий", "Floating"],
+    ["Приколотый", "Pinned"],
+    ["Зафиксированный", "Fixed"],
+    ["Справа Сверху", "Right Top"],
+    ["Справа Снизу", "Right Bottom"],
+    ["Слева Снизу", "Left Bottom"],
+    ["Слева Сверху", "Left Top"],
+    ["Слева", "Left"],
+    ["По центру", "Center"],
+    ["Справа", "Right"],
+    ["Выровнено", "Justify"],
+    ["Не сортировать", "No sorting"],
+    ["По алфавиту", "Alphabetically"],
+    ["По значению", "By Value"],
+    ["По цвету", "By Color"],
+    ["По состоянию", "By State"]
+
 ];
 
 class Vocabulary {

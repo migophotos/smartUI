@@ -179,7 +179,7 @@ class SmartSelector extends HTMLElement {
 
         for (let n = 0; n < values.length; n++) {
             let value = values[n];
-            let label = labels[n];
+            let label = _(labels[n]);
             let optionEl = this._shadowDOM.ownerDocument.createElement('option');
             optionEl.label = label;
             optionEl.value = value;
@@ -767,7 +767,7 @@ class SmartButton extends HTMLElement {
                         <image id="on" xlink:href="${this.getAttribute('imageOn') || this.getAttribute('image')}" x="0" y="0" width="35" height="34"/>
                         </g>
                     </svg>
-                    <div class="title" id="label"> ${this.getAttribute('label') || ''}</div>
+                    <div class="title" id="label"> ${_(this.getAttribute('label')) || ''}</div>
                 </div>
             </div>
         `;
