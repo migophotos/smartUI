@@ -1216,7 +1216,48 @@ class CustomProperties {
 			paramsArray.push(CustomProperties.customProp2Param(prop));
 		}
 		return paramsArray;
-	}
+    }
+
+    static tryToTranslate(data) {
+        const title   = data.title;
+        const options = data.options;
+
+        if (typeof vocabulary !== 'undefined') {
+            if (typeof title.tooltip !== 'undefined') {
+                title.tooltip = _(title.tooltip);
+            }
+            if (typeof title.name !== 'undefined') {
+                title.name = _(title.name);
+            }
+            if (typeof title.legend !== 'undefined') {
+                title.legend = _(title.legend);
+            }
+            if (typeof title.descr !== 'undefined') {
+                title.descr = _(title.descr);
+            }
+            if (typeof title.value !== 'undefined' && title.value === 'string') {
+                title.value = _(title.value);
+            }
+            if (typeof title.titleFormat !== 'undefined') {
+                title.titleFormat = _(title.titleFormat);
+            }
+            if (typeof title.descFormat !== 'undefined') {
+                title.descFormat = _(title.descFormat);
+            }
+            if (typeof options.titleFormat !== 'undefined') {
+                options.titleFormat = _(options.titleFormat);
+            }
+            if (typeof options.descrFormat !== 'undefined') {
+                options.descrFormat = _(options.descrFormat);
+            }
+            if (typeof options.descrFormat !== 'undefined') {
+                options.legendFormat = _(options.legendFormat);
+            }
+            if (typeof options.legendValFormat !== 'undefined') {
+                options.legendValFormat = _(options.legendValFormat);
+            }
+        }
+    }
 
 	static registerElementsByIds(doc, ids = []) {
 		const curDocument = doc || document;
@@ -2032,14 +2073,18 @@ class SmartTooltip {
 							const param = sttipKey.replace(/[A-Z]/, lowerFirst);
 							title[param] = evt.target.dataset[key];
 						}
-					}
+                    }
+
 					const data = {
 						id: evt.target.id,
 						x:  evt.clientX,
 						y: evt.clientY,
 						title: title,
 						options: options
-					};
+                    };
+                    // translate data to html lang (from russian)
+                    CustomProperties.tryToTranslate(data);
+
 					SmartTooltip.showTooltip(data, evt);
 				});
 				element.addEventListener('mousemove', function (evt) {

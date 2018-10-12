@@ -262,7 +262,7 @@
 
             <div id="sidepanel">
                 <div id="smarttooltip_cat" style="display: none;">
-                    <smart-ui-button class="categories-btn" id="main_btn" targets="main_pan" type="radio" state="off" imageOn="images/main_bkg_on.svg" imageOff="images/main_off.svg" data-sttip-tooltip="Настроить Основные параметры"></smart-ui-button>
+                    <smart-ui-button class="categories-btn" id="main_btn" targets="main_pan" type="radio" state="off" imageOn="images/main_bkg_on.svg" imageOff="images/main_off.svg" data-sttip-tooltip="Настроить oсновные параметры"></smart-ui-button>
                     <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                     <smart-ui-button class="categories-btn" id="interactivity_btn" targets="interactivity_pan" type="radio" state="off" imageOn="images/timing_bkg_on.svg" imageOff="images/timing_off.svg" data-sttip-tooltip="Настроить параметры интерактивности"></smart-ui-button>
                     <smart-ui-spacer class="ver-small"></smart-ui-spacer>
@@ -879,15 +879,16 @@
                             cursor: pointer;
                         }
                     </style>
-                    <p>SmartTooltip это продвинутый виджет, позволяющий реализовать отображение подсказок на веб странице. Умеет автоматически регистрироваться,
+                    <p class="demotext">SmartTooltip это продвинутый виджет, позволяющий реализовать отображение подсказок на веб странице. Умеет автоматически регистрироваться,
                             на лету подстраивается под контекст, умеет отображать несколько шаблонов и имеет простой API. <br></p>
-                    <p>Изменяйте параметры виджета, наводите курсор указателя мыши на выделенные слова и проверяйте поведение окна подсказки.</p>
-                    <p>По окончании настройки, скопируйте параметры<br>
-                    виджета в нижней части экрана, в требуемом<br>вам формате.</p>
+                    <p class="demotext">Изменяйте параметры виджета, наводите курсор указателя мыши на выделенные слова и проверяйте поведение окна подсказки.</p>
+                    <label class="demotext">По окончании настройки, скопируйте параметры</label><br>
+                    <label class="demotext">виджета в нижней части экрана, в требуемом</label><br>
+                    <label class="demotext">вам формате.</label>
                     <p><label id="simple-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="simple" data-sttip-tooltip="Просто подсказка">simple</label></p>
-                    <p><label id="pie-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="pie" data-sttip-tooltip="Диаграмма">pie</label></p>
+                    <p><label id="pie-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="pie" data-sttip-tooltip="Круговая диаграмма">pie</label></p>
                     <p><label id="image-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="image" data-sttip-tooltip="Картинка!" data-sttip-link="images/colorwill.png">image</label></p>
-                    <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-tooltip="IFrame" data-sttip-link="index.html">iframe</label>
+                    <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-tooltip="Ссылка на ресурс" data-sttip-link="index.html">iframe</label>
                 </div>
                 <div class="widget-example" id="smarttpie_examp" style="display: none; background: rgb(174, 255, 255);"></div>
                 <div class="widget-example" id="smartgauge_examp" style="display: none; background: rgb(237, 174, 255);"></div>
@@ -906,7 +907,7 @@
                     throw new ReferenceError(`Custom element 'smart-ui-tooltip' with id='demoTooltipW' hasn't been initialised`);
                 }
                 // try to translate
-                
+
 
                 // show smarttooltip window
                 function showDemoTooltip () {
@@ -940,7 +941,7 @@
                 //         vocabulary.setLanguage(lang);
                 //     }
                 //     let el, els;
-                //     ["smart-ui-button", 
+                //     ["smart-ui-button",
                 //      'smart-ui-checkbox',
                 //      'smart-ui-colorbox',
                 //      'smart-ui-selector',
@@ -962,8 +963,13 @@
                 for (let el of els) {
                     el.textContent = _(el.textContent);
                 }
+                els = document.getElementsByClassName('demotext');
+                for (let el of els) {
+                    el.textContent = _(el.textContent);
+                }
+
                 // translate title attributes in-place
-                // file vocabulary.js has function _(str) and returns translated text or original if translation is not found  
+                // file vocabulary.js has function _(str) and returns translated text or original if translation is not found
                 // set value from options into apropriated elements on UI panels
                 // 'sttip-param' is a name attribute of all element on 'smarttooltip_opt' panels
                 els = document.getElementsByName('sttip-param');
@@ -1053,6 +1059,7 @@
                             data.options = options;
                             data.options.position = evt.target.getBoundingClientRect();
                         }
+                        CustomProperties.tryToTranslate(data);
                         SmartTooltip.showTooltip(data, evt);
                     });
                     el.addEventListener('mousemove', (evt) => {
