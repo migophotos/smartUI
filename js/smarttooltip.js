@@ -1040,22 +1040,30 @@ class CustomProperties {
 
     /**
      * build and returns an options object siutable for show tooltip function
-     * options: {
-     *  paramKey: value,
-     *  paramKey: value,
-     *  ...
+	 * 
+	 * input: {
+	 * 	paramKey: value,	// custom prop is param-key
+	 *  paramKey: value		// custorm property is var-param-key
+	 * }
+	 * knownOnly = true;
+     * output: {
+     *  paramKey: value,	// custom prop is param-key
      *  cssVars: {
-     *      sttip-var-param-key: value,
-     *      sttip-var-param-key: value,
-     *      ...
+     *      sttip-var-param-key: value,		// custom property is var-param-key
      *  }
+     * }
+	 * knownOnly = false;
+     * output: {
+     * 		sttip-var-param-key: value,		// custom property is param-key
+     * 		sttip-var-param-key: value,		// custom property is var-param-key
      * }
      *
      * @param {object} opt options object to be converted
+	 * @param {boolean} knownOnly the flag that enables (if it equals to false) to convert all properties to css vars (needed for web-components) 
      * @returns {object} options with known structure
      *
      */
-    static convertKnownProperties(opt) {
+    static buidOptionsAndCssVars(opt, knownOnly = true) {
 		const options = {
 			// position: evt.target.getBoundingClientRect(),
 			cssVars: {}
@@ -1064,7 +1072,7 @@ class CustomProperties {
 		// convert properties started with 'var-' to css values
 		const customProp = CustomProperties.getCustomProperties();
 		for (let n = 0; n < customProp.length; n++) {
-			if (customProp[n].startsWith('var-')) {
+			if (customProp[n].startsWith('var-') || !knownOnly) {
 				let cssKey = `${CustomProperties.getPrefix()}${customProp[n]}`;
 				let oKey = CustomProperties.customProp2Param(`${customProp[n]}`);
 				let cssVal = opt[oKey];
@@ -1080,12 +1088,16 @@ class CustomProperties {
 				}
 			} else {
 				const propKey = CustomProperties.customProp2Param(`${customProp[n]}`);
-				let propVal = opt[CustomProperties.customProp2Param(`${customProp[n]}`)];
+				let propVal = opt[propKey];
 				if (typeof propVal !== 'undefined') {
 					options[propKey] = propVal;
 				}
 			}
 		}
+		if (!knownOnly) {
+			return options.cssVars;
+		}
+
 		return options;
 	}
 
@@ -1099,7 +1111,12 @@ class CustomProperties {
     static diffProperties(opt) {
         const changes = {};
         const originalOpt = CustomProperties.defOptions();
-        for (let key in originalOpt) {
+        for (let key in opt) {
+			// store all unknown properties
+			if (typeof originalOpt[key] === 'undefined') {
+				changes[key] = opt[key];
+			}
+			// comapre values of known properties
             if (opt[key] != originalOpt[key]) {
                 changes[key] = opt[key];
             }
@@ -1108,25 +1125,61 @@ class CustomProperties {
     }
 
     static serializeOptions(opt, templateId) {
-        let template = '';
-        switch (templateId) {
-            case 'def-custom-elem_btn':
-                template = '&lt;smart-ui-tooltip class="tooltip-elem">Yout browser does not support custom elements.&lt/smart-ui-tooltip>\n';
-                template += '&lt;style>\n';
-                template += '  .tooltip-elem {\n';
+		let template = '';
+		let cssOpt = null;
+
+		switch (templateId) {
+			case 'def-custom-elem_btn':
+				// convert all options into css vars
+				cssOpt = CustomProperties.buidOptionsAndCssVars(opt, false);
+
+                template = '&lt;style>\n';
+                template += '  .need-tooltip {\n';
                 // template += `    `
-                for (let key in opt) {
-                    template += `    ${key}:        ${opt[key]}\n`;
+                for (let key in cssOpt) {
+                    template += `    ${key}:${cssOpt[key]};\n`;
                 }
                 template += '  }\n';
-                template += '&lt;/style>';
+                template += '&lt;/style>\n';
+				template += '&lt;smart-ui-tooltip class-names="need-tooltip">Yout browser does not support custom elements.&lt/smart-ui-tooltip>\n';
+				template += '&lt;div class="need-tooltip" data-sttip-tooltip="The text to be shown as title in tooltip window">any content&lt;/div>'
                 break;
-            case 'def-json_btn':
-                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+			case 'def-json_btn':
+				cssOpt = CustomProperties.buidOptionsAndCssVars(opt, false);
+				template = `options = {\n`;
+				for (let key in cssOpt) {
+					template += `  "${key}": "${cssOpt[key]}"\n`;
+				}
+                template += `};\n`;
                 break;
             case 'def-object-params_btn':
-                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
-                break;
+				cssOpt = CustomProperties.buidOptionsAndCssVars(opt);
+				template = `// inside 'mouseover' event\n`;
+				template += `const data = {\n  x: evt.clientX,\n  y: evt.clientY,\n  id: evt.target.id;\n`;
+				template += `  options: {\n`;
+				if (typeof cssOpt.cssVars === 'object') {
+					template += `    cssVars: {\n`
+					for (let key in cssOpt.cssVars) {
+						template += `      ${key}: ${cssOpt.cssVars[key]};\n`
+					}
+					template += `    },\n`;
+				}
+				for (let key in cssOpt) {
+					if (key !== 'cssVars') {
+						if (typeof cssOpt[key] === 'string') {
+							template += `    ${key}: '${cssOpt[key]}';\n`;
+						} else {
+							template += `    ${key}: ${cssOpt[key]};\n`;
+						}
+					}
+				}
+				template += `  },\n`;
+				template += `  title: {},\n`;
+				template += `  targets: [{}]\n};\n`;
+				template += `SmartTooltip.showTooltip(data, evt);\n\n`;
+				template += `// Inside 'mousemove' event:\nSmartTooltip.moveTooltip(evt);\n`;
+				template += `// Inside 'mouseout' event:\nSmartTooltip.hideTooltip(evt);\n\n\n`;
+				break;
             case 'def-svg_widget_btn':
                 template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
                 break;
@@ -1213,7 +1266,6 @@ class CustomProperties {
 			descrTextWrap:			0,
 			descrTextAlign:			'justify',
 			enableStorage:			1,
-			isRun:					0,
 			sortBy:					'value',
 			sortDir:				1,
 			template:				'pie',
@@ -1227,26 +1279,28 @@ class CustomProperties {
 			delayOn:				2000,
 			transitionIn:			0,
 			transitionOut:			0,
-			fontFamily:				'Arial, DIN Condensed, Noteworthy, sans-serif',
-			fontSize:				'12px',
-			fontStretch:			'condensed',
-			fontColor:				'#666666',
-			scaleSize:				'12px',
-			legendSize:				'18px',
-			titleSize:				'22px',
-			descrSize:				'18px',
-			runColor:				'#00ff00',
-			stopColor:				'#ff0000',
-			defColor:				'#666666',
-			legendFill:				'#ffffff',
-			legendStroke:			'#666666',
-			frameFill:				'#fffcde',
-			borderColor:			'#d1c871',
-			frameOpacity:			0.90,
 			frameScale:				0.8,
-			borderWidth:			2.5,
-			borderRadius:			6,
-			isShadow:				1
+			isShadow:				1,
+			isRun:					0,
+
+			varFontFamily:			'Arial, DIN Condensed, Noteworthy, sans-serif',
+			varFontSize:			'12px',
+			varFontStretch:			'condensed',
+			varFontColor:			'#666666',
+			varScaleSize:			'12px',
+			varLegendSize:			'18px',
+			varTitleSize:			'22px',
+			varDescrSize:			'18px',
+			varRunColor:			'#00ff00',
+			varStopColor:			'#ff0000',
+			varDefColor:			'#666666',
+			varLegendFill:			'#ffffff',
+			varLegendStroke:		'#666666',
+			varFrameFill:			'#fffcde',
+			varBorderColor:			'#d1c871',
+			varFrameOpacity:		0.90,
+			varBorderWidth:			2.5,
+			varBorderRadius:		6
 		};
 	}
 
@@ -2880,7 +2934,7 @@ class SmartTooltipElement extends HTMLElement {
 	connectedCallback() {
 		// initialize all internal here
 		CustomProperties.convertNumericProps(this._o);
-        let classNames = this.getAttribute('classNames');
+        let classNames = this.getAttribute('class-names');
         if (classNames) {
             classNames = classNames.split(' ');
             document.addEventListener('DOMContentLoaded', (evt) => {
@@ -2894,7 +2948,7 @@ class SmartTooltipElement extends HTMLElement {
 
 	showDemoTooltip(demoData) {
 		if (this._demoTooltip) {
-			const options = CustomProperties.convertKnownProperties(this._o);
+			const options = CustomProperties.buidOptionsAndCssVars(this._o);
 			CustomProperties.convertNumericProps(options);
 
             const data = Object.assign({}, demoData);
