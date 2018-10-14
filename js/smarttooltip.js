@@ -2065,21 +2065,21 @@ class SmartTooltip {
 
 	_checkMouseMoving(delay = null) {
 		if (this._interval) {
-			clearTimeout(window.SmartTooltip._interval);
+			clearTimeout(this._interval);
 		}
-		let noMouseActive = delay || window.SmartTooltip._o.delayOn;
+		let noMouseActive = delay || this._o.delayOn;
 
-		if (noMouseActive <= 10) {
-			if (window.SmartTooltip._fixed ||
-				(typeof window.SmartTooltip.isDrag !== 'undefined' && window.SmartTooltip.isDrag === true)) {
-				return;
-			}
-			window.SmartTooltip.hide();
-			window.SmartTooltip._interval = null;
-			return;
-		}
+		// if (noMouseActive <= 10) {
+		// 	if (this._fixed ||
+		// 		(typeof this.isDrag !== 'undefined' && this.isDrag === true)) {
+		// 		return;
+		// 	}
+		// 	this.hide();
+		// 	this._interval = null;
+		// 	return;
+		// }
 
-		window.SmartTooltip._interval = setTimeout(function () {
+		this._interval = setTimeout(function () {
 			if (window.SmartTooltip._fixed) {
 				return;
 			}
@@ -2934,13 +2934,13 @@ class SmartTooltip {
 			clearTimeout(window.SmartTooltip._delayInInterval);
 		}
 		if (this._ttipRef.style.display == 'none') {
+			clearTimeout(this._interval);
 			return;
 		}
 
 		if (typeof evt === 'undefined') {
 			// hide!!!
 			this._ttipRef.style.display = 'none';
-
 			return;
 		}
 		if (this._ttipRef && this._ttipGroup) {
