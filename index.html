@@ -339,9 +339,9 @@
                         <div id="interactivity_pan" class="overlay" style="max-height: 766px; display: none;">
                         <h2>Временные характеристики</h2>
                         <div style="display: block;">
-                            <smart-ui-editslider name="sttip-param" param="delay-in" title="Задержка показа на входе" value="" units="ms" min="250" max="1000" step="50" image="images/delay_in_off.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" param="delay-out" title="Задержка показа на выходе" value="" units="ms" min="250" max="1000" step="50" image="images/delay_out_off.svg">edit control with slider</smart-ui-editslider>
-                            <smart-ui-editslider name="sttip-param" param="delay-on" title="Время показа" value="" units="ms" min="500" max="20000" step="500" image="images/delay_on_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="delay-in" title="Задержка показа на входе" value="" units="ms" min="0" max="1000" step="50" image="images/delay_in_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="delay-out" title="Задержка показа на выходе" value="" units="ms" min="0" max="2000" step="50" image="images/delay_out_off.svg">edit control with slider</smart-ui-editslider>
+                            <smart-ui-editslider name="sttip-param" param="delay-on" title="Время показа" value="" units="ms" min="500" max="60000" step="500" image="images/delay_on_off.svg">edit control with slider</smart-ui-editslider>
                         </div>
                     </div>
                     <div id="window-params_pan" class="overlay" style="max-height: 766px; display: none;">
@@ -495,7 +495,7 @@
                             const data = {
                 				x: parseInt(rc.width, 10) / 2,
 				                y: parseInt(rc.height, 10) / 3,
-				                id: null,
+				                id: 'smarttooltip_examp',
                                 title: {
                                     uuid: 'uuid-demo-tooltip',
                                     name: 'Change options for this SmartTooltip widget and hover mouse pointer over bold text at the left side to check real SmartTooltip',
@@ -647,7 +647,7 @@
 
                         const options = CustomProperties.buidOptionsAndCssVars(demoTooltipEl._o);
                         data.options = options;
-                        data.options.position = evt.target.getBoundingClientRect();
+                        data.options.location = evt.target.getBoundingClientRect();
 
                         CustomProperties.tryToTranslate(data);
                         SmartTooltip.showTooltip(data, evt);
