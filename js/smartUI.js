@@ -157,7 +157,6 @@ class SmartSelector extends HTMLElement {
         switch (name) {
             case 'value': {
                 this._o.value = newValue;
-                this.setAttribute('value', `${this._o.value}`);
                 this._input.value = newValue;
                 break;
             }
@@ -186,10 +185,6 @@ class SmartSelector extends HTMLElement {
             this._input.add(optionEl);
         }
 
-        this._input.addEventListener('input', (evt) => {
-            this._o.value = this._input.value;
-            this.setAttribute('value', `${this._o.value}`);
-        });
         this._input.addEventListener('change', (evt) => {
             this._o.value = this._input.value;
             this.setAttribute('value', `${this._o.value}`);

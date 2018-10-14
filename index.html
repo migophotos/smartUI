@@ -701,17 +701,17 @@
                 var observer = new MutationObserver(callback);
                 observer.observe(document.getElementById('smarttooltip_opt'), {
                     attributeFilter: [ "value" ],
-                    attributeOldValue: true,
+                    attributeOldValue: false,
                     subtree: true
                 });
                 observer.observe(document.getElementById('smartpie_opt'), {
                     attributeFilter: [ "state", "value" ],
-                    attributeOldValue: true,
+                    attributeOldValue: false,
                     subtree: true
                 });
                 observer.observe(document.getElementById('smartgauge_opt'), {
                     attributeFilter: [ "state", "value" ],
-                    attributeOldValue: true,
+                    attributeOldValue: false,
                     subtree: true
                 });
 

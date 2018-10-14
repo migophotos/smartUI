@@ -295,12 +295,21 @@ class TemplateDefs {
 								transform-origin: 12px 12px;
 								transform-box: border-box;
 							}
+							.delay-on-off {
+								stroke-dashoffset: 0;
+							}
+							.delay-on-on {
+								stroke-dashoffset: var(--delay-on-length, 0);
+							}
+							.delay-on-transition {
+								transition: stroke-dashoffset var(--delay-on-time, 250ms) ease-in-out;
+							}
 
 						</style>
 						<g id="tooltip-group">
 							<rect id="tooltip-frame" class="sttip-frame" x="0" y="0" fill-opacity="0.8" width="432" height="0"/>
 							<g id="bound-group">
-								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" style="transition:none; WebkitTransition:none;" />
+								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -513,6 +522,16 @@ class TemplateDefs {
 								transform-origin: 12px 12px;
 								transform-box: border-box;
 							}
+							.delay-on-off {
+								stroke-dashoffset: 0;
+							}
+							.delay-on-on {
+								stroke-dashoffset: var(--delay-on-length, 0);
+							}
+							.delay-on-transition {
+								transition: stroke-dashoffset var(--delay-on-time, 250ms) ease-in-out;
+							}
+
 						</style>
 						<g id="tooltip-group">
 							<rect id="tooltip-frame" class="sttip-frame" x="0" y="0" fill-opacity="0.8" width="360" height="0"/>
@@ -524,7 +543,7 @@ class TemplateDefs {
 										<circle id="rosh-pin" cx="24" cy="8" r="5" />
 									</g>
 								</g>
-								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" style="transition:none; WebkitTransition:none;" />
+								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -697,6 +716,16 @@ class TemplateDefs {
 								transform-origin: 12px 12px;
 								transform-box: border-box;
 							}
+							.delay-on-off {
+								stroke-dashoffset: 0;
+							}
+							.delay-on-on {
+								stroke-dashoffset: var(--delay-on-length, 0);
+							}
+							.delay-on-transition {
+								transition: stroke-dashoffset var(--delay-on-time, 250ms) ease-in-out;
+							}
+
 						</style>
 						<g id="tooltip-group">
 							<rect id="tooltip-frame" class="sttip-frame" x="0" y="0" fill-opacity="0.8" width="380" height="0"/>
@@ -708,7 +737,7 @@ class TemplateDefs {
 										<circle id="rosh-pin" cx="24" cy="8" r="5" />
 									</g>
 								</g>
-								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" style="transition:none; WebkitTransition:none;" />
+								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -886,6 +915,16 @@ class TemplateDefs {
 								transform-origin: 12px 12px;
 								transform-box: border-box;
 							}
+							.delay-on-off {
+								stroke-dashoffset: 0;
+							}
+							.delay-on-on {
+								stroke-dashoffset: var(--delay-on-length, 0);
+							}
+							.delay-on-transition {
+								transition: stroke-dashoffset var(--delay-on-time, 25s) ease-in-out;
+							}
+
 						</style>
 						<g id="tooltip-group">
 							<rect id="tooltip-frame" class="sttip-frame" x="0" y="0" fill-opacity="0.8" width="380" height="0"/>
@@ -897,7 +936,7 @@ class TemplateDefs {
 										<circle id="rosh-pin" cx="24" cy="8" r="5" />
 									</g>
 								</g>
-								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" style="transition:none; WebkitTransition:none;" />
+								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -1487,10 +1526,13 @@ class SmartTooltip {
 		}
 		window.SmartTooltip.init(id, template);
 	}
-	static showTooltip(data, evt = null) {
-		if (evt && (evt.ctrlKey || evt.metaKey || evt.buttons == 2)) {
-			return;
-		}
+
+	/**
+	 * Instantinate SmartTooltip and show tooltip near specified element
+	 * @param {object} data Contains all infor for building and showing tooltip:
+	 * data: {x, y, id, options:{}, title:{}, targets:{}} 
+	 */
+	static showTooltip(data) {
 		// create SmartTooltip only once! the 'window' is a global object, so don't store the reference on SmartTooltip inside your class!
 		// You can alwaise find it by window.SmartTooltip call
 		if (!window.SmartTooltip) {
@@ -1499,17 +1541,17 @@ class SmartTooltip {
 		window.SmartTooltip.show(data);
 	}
 	static moveTooltip(evt = null) {
-		// call move(..) in any case, lets this function make it's own decision :)
+		// call move(..) in any case, lets this function make it's own work :)
 		if (window.SmartTooltip) {
 			window.SmartTooltip.move(evt);
 		} else {
 			throw new ReferenceError("window.SmartTooltip hasn't been initialised. call SmartTooltip.show(data), or SmartTooltip.init(id, template) before.");
 		}
 	}
-	static hideTooltip(evt = null) {
-		// call hide(..) in any case, lets this function make it's own decision :)
+	static hideTooltip() {
+		// call hide(..) in any case, lets this function make it's own work :)
 		if (window.SmartTooltip) {
-			window.SmartTooltip.hide(evt);
+			window.SmartTooltip.hide();
 		} else {
 			throw new ReferenceError("window.SmartTooltip hasn't been initialised. call SmartTooltip.show(data), or SmartTooltip.init(id, template) before.");
 		}
@@ -1987,30 +2029,32 @@ class SmartTooltip {
 
 				this._ttipGroup.addEventListener('mousedown', this._startDrag);
 
-				this._ttipGroup.addEventListener('mouseover', function (evt) {
+				this._ttipGroup.addEventListener('mouseover', (evt) => {
 					if (evt.target.classList.contains('sttip-legend-rect')) {
-							window.SmartTooltip._setOverEffect('sub-target', evt.target.dataset[UUID], 'sttip-hover');
+							this._setOverEffect('sub-target', evt.target.dataset[UUID], 'sttip-hover');
 					} else
 					if (evt.target.classList.contains('sub-target')) {
-							window.SmartTooltip._setOverEffect('sttip-legend-rect', evt.target.dataset[UUID], 'sttip-lightgray');
+							this._setOverEffect('sttip-legend-rect', evt.target.dataset[UUID], 'sttip-lightgray');
 					}
 				});
-				this._ttipGroup.addEventListener('mouseout', function (evt) {
+				this._ttipGroup.addEventListener('mouseout', (evt) => {
 					if (evt.target.classList.contains('sttip-legend-rect')) {
-							window.SmartTooltip._setOverEffect('sub-target', 'resetall', 'sttip-hover');
+							this._setOverEffect('sub-target', 'resetall', 'sttip-hover');
 					} else
 					if (evt.target.classList.contains('sub-target')) {
-							window.SmartTooltip._setOverEffect('sttip-legend-rect', 'resetall', 'sttip-lightgray');
+							this._setOverEffect('sttip-legend-rect', 'resetall', 'sttip-lightgray');
+					} else {
+						this._checkMouseMoving(this._o.delayOut);
 					}
 				});
 
-				this._ttipGroup.addEventListener('mousemove', function (evt) {
+				this._ttipGroup.addEventListener('mousemove', (evt) => {
+					evt.preventDefault();
 					if (evt.buttons == 1) {
-						evt.preventDefault();
 						return;
 					}
-					window.SmartTooltip._checkMouseMoving();
-					evt.preventDefault();
+					this._renewDelayOnPath();
+					this._checkMouseMoving(this._o.delayOn);
 				});
 
 				this._ttipGroup.addEventListener('click', function (evt) {
@@ -2069,16 +2113,6 @@ class SmartTooltip {
 		}
 		let noMouseActive = delay || this._o.delayOn;
 
-		// if (noMouseActive <= 10) {
-		// 	if (this._fixed ||
-		// 		(typeof this.isDrag !== 'undefined' && this.isDrag === true)) {
-		// 		return;
-		// 	}
-		// 	this.hide();
-		// 	this._interval = null;
-		// 	return;
-		// }
-
 		this._interval = setTimeout(function () {
 			if (window.SmartTooltip._fixed) {
 				return;
@@ -2088,9 +2122,24 @@ class SmartTooltip {
 			}
 
 			console.log(`${noMouseActive} ms delay is out, hide tooltip window now!`);
-			window.SmartTooltip.hide();
+			window.SmartTooltip.hide(true);
 			window.SmartTooltip._interval = null;
-		}, noMouseActive); // 5000 - 5 second for showing tooltip on the screen without any mouse activity on it
+		}, noMouseActive); 
+	}
+
+	_renewDelayOnPath() {
+		if(this._ttipDelayPath.getAttribute('display') === 'none') {
+			return;
+		}
+		const length = this._svg.style.getPropertyValue('--delay-on-length');
+		var newone = this._ttipDelayPath.cloneNode(true);
+		this._ttipBoundGroup.replaceChild(newone, this._ttipDelayPath);
+		this._ttipDelayPath = newone;
+
+		this._ttipDelayPath.style.strokeDashoffset = 0;
+		this._ttipDelayPath.getBoundingClientRect();
+		this._ttipDelayPath.classList.add('delay-on-transition');
+		this._ttipDelayPath.style.strokeDashoffset = length;
 	}
 
 	_applyCustomOptions(options = null, forId) {
@@ -2307,17 +2356,10 @@ class SmartTooltip {
 
 	// needMoveForNewId - Id of new owner control, found in data.id
 	move(evt, needMoveForNewId = 0, ownerRect) {
-		let x = evt.x, y = evt.y;
 		if (typeof evt === 'object') {
-			if (evt.type === 'mousemove') {
-				// lets check buttons
-				if (evt && (evt.ctrlKey || evt.metaKey || evt.buttons == 2)) {
-					console.log('mouse moved with buttons');
-					window.SmartTooltip._checkMouseMoving();
-					return;
-				}
-			}
-            if (!needMoveForNewId) {
+			let x = evt.x, y = evt.y;
+
+			if (!needMoveForNewId) {
                 if (this._pinned) {
                     return;
                 }
@@ -2346,9 +2388,10 @@ class SmartTooltip {
                 if (offsetX < 0) {
                     x += (offsetX - 50);
                     this._ttipRef.style.left = x;
-                }
-
-                window.SmartTooltip._checkMouseMoving();
+				}
+				if (typeof evt.type !== 'undefined' && evt.type !== 'fakeEvent') {
+					this._checkMouseMoving(this._o.delayOn);
+				}
             }
 		}
 	}
@@ -2890,12 +2933,15 @@ class SmartTooltip {
 						this._ttipDelayPath.style.strokeDashoffset = 0;
 						// trigger layout (just a hack)
 						this._ttipDelayPath.getBoundingClientRect();
-						// define transition
 						// get delayOn in second
 						const delayOn = this._o.delayOn / 1000;
-						this._ttipDelayPath.style.transition = 'stroke-dashoffset ' + delayOn + 's ease-in-out';
-						this._ttipDelayPath.style.WebkitTransition = this._ttipDelayPath.style.transition;
-						// Go!
+
+						// transition defined in this class. the time is in svg style variable
+						this._svg.style.setProperty('--delay-on-time', delayOn + 's');
+						this._ttipDelayPath.classList.add('delay-on-transition');
+						// store the length of path in svg style also
+						this._svg.style.setProperty('--delay-on-length', length);
+						// start anomation now!
 						this._ttipDelayPath.style.strokeDashoffset = length;
 					}
 
@@ -2923,34 +2969,34 @@ class SmartTooltip {
 					this._svg.setAttributeNS(null, 'height', ttipBoundGroupBR.height);
 
 					if (!this._demo) { // demo tooltip does not use this functionality
-						window.SmartTooltip._checkMouseMoving();
+						window.SmartTooltip._checkMouseMoving(this._o.delayOn);
 					}
 				}
 			}, this._demo ? 0 : this._o.delayIn);
 		}
 	}
-	hide(evt) {
-		if (window.SmartTooltip._delayInInterval) {
-			clearTimeout(window.SmartTooltip._delayInInterval);
+	hide(realy = false) {
+		if (this._delayInInterval) {
+			clearTimeout(this._delayInInterval);
+			this._delayInInterval = null;
 		}
 		if (this._ttipRef.style.display == 'none') {
-			clearTimeout(this._interval);
+			if (this._interval) {
+				clearTimeout(this._interval);
+				this._interval = null;
+			}
 			return;
 		}
 
-		if (typeof evt === 'undefined') {
+		if (typeof realy === 'boolean' && realy) {
 			// hide!!!
 			this._ttipRef.style.display = 'none';
 			return;
 		}
 		if (this._ttipRef && this._ttipGroup) {
 			if (!this._fixed) {
-				if (evt && (evt.ctrlKey || evt.metaKey || evt.buttons == 2)) {
-					console.log('out with buttons');
-				}
 				// instead of hiding, lets delay for some small interval
-				const delay = this._o.delayOut;
-				window.SmartTooltip._checkMouseMoving(delay);
+				window.SmartTooltip._checkMouseMoving(this._o.delayOut);
 			}
 		}
 	}
