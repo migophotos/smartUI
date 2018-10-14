@@ -967,7 +967,8 @@ class TemplateDefs {
 			if (!sid) {
 				return null;
 			}
-			this._options.set(id, JSON.parse(JSON.stringify(opt)));
+			// merge options
+			this._options.set(id, Object.assign({}, this._options.get(id), opt));
 		}
 		return this.get(id);
 	}
@@ -2357,17 +2358,31 @@ class SmartTooltip {
 			console.error('Can not show tooltip for unknown id!');
 			return;
 		}
+		if (typeof data.x === 'undefined' || typeof data.y === 'undefined') {
+			let resone = 'without coordinates';
+			let error = true;
+			if (typeof data.options === 'object' || typeof data.options.location === 'object') {
+				error = false;
+			} else {
+				resone += 'and without element location';
+			}
+
+			if (error) {
+				console.error(`Can not show tooltip ${resone}!`);
+				return;
+			}
+		}
 		if (typeof data === 'object') {
 			let ttipdef = null;
 			if (this._definitions.has(data.id)) {
 				ttipdef = this._definitions.get(data.id);
-				if (ttipdef && typeof data.options.template != 'undefined' && ttipdef.name !== data.options.template) {
+				if (ttipdef && typeof data.options.template !== 'undefined' && ttipdef.name !== data.options.template) {
 					// now I need to replace template definition on new one.
 					ttipdef = TemplateDefs.getInternalTemplate(data.options.template);
 					if (ttipdef) {
-						ttipdef = this._definitions.set(data.id, data.options.template, ttipdef.template, data.options);
+						ttipdef = this._definitions.set(data.id, data.options.template, ttipdef.template, (typeof data.options ? data.options : ttipdef.opt));
 					}
-				} else {
+				} else if (typeof data.options !== 'undefined') {
 					// update options!
 					ttipdef = this._definitions.set(data.id, null, null, data.options);
 				}
@@ -2388,11 +2403,7 @@ class SmartTooltip {
 				if (!ttipdef) {
 					ttipdef = TemplateDefs.getInternalTemplate(templName);
 				}
-				// demo tooltip does not use definitions, so don't register it!
-				// if (!this._demo) {
-				// 	this._definitions.set(data.id, templName, ttipdef.template, ttipdef.opt);
-				// }
-				ttipdef = this._definitions.set(data.id, templName, ttipdef.template, data.options);
+				ttipdef = this._definitions.set(data.id, templName, ttipdef.template, (typeof data.options ? data.options : ttipdef.opt));
 			}
 			if (!ttipdef) {
 				this._ttipGroup = null;
