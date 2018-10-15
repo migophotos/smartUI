@@ -266,7 +266,7 @@ class TemplateDefs {
 								pointer-events: bounding-box;
 								cursor: pointer;
 							}
-							#frmBtns path, #frmBtns text, #delay-on {
+							#frmBtns path, #frmBtns text {
 								stroke: var(--sttip-var-font-color, black);
 							}
 
@@ -295,21 +295,10 @@ class TemplateDefs {
 								transform-origin: 12px 12px;
 								transform-box: border-box;
 							}
-							.delay-on-off {
-								stroke-dashoffset: 0;
-							}
-							.delay-on-on {
-								stroke-dashoffset: var(--delay-on-length, 0);
-							}
-							.delay-on-transition {
-								transition: stroke-dashoffset var(--delay-on-time, 250ms) ease-in-out;
-							}
-
 						</style>
 						<g id="tooltip-group">
 							<rect id="tooltip-frame" class="sttip-frame" x="0" y="0" fill-opacity="0.8" width="432" height="0"/>
 							<g id="bound-group">
-								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -494,7 +483,7 @@ class TemplateDefs {
 								pointer-events: bounding-box;
 								cursor: pointer;
 							}
-							#frmBtns path, #frmBtns text, #delay-on {
+							#frmBtns path, #frmBtns text {
 								stroke: var(--sttip-var-font-color, black);
 							}
 
@@ -522,16 +511,6 @@ class TemplateDefs {
 								transform-origin: 12px 12px;
 								transform-box: border-box;
 							}
-							.delay-on-off {
-								stroke-dashoffset: 0;
-							}
-							.delay-on-on {
-								stroke-dashoffset: var(--delay-on-length, 0);
-							}
-							.delay-on-transition {
-								transition: stroke-dashoffset var(--delay-on-time, 250ms) ease-in-out;
-							}
-
 						</style>
 						<g id="tooltip-group">
 							<rect id="tooltip-frame" class="sttip-frame" x="0" y="0" fill-opacity="0.8" width="360" height="0"/>
@@ -543,7 +522,6 @@ class TemplateDefs {
 										<circle id="rosh-pin" cx="24" cy="8" r="5" />
 									</g>
 								</g>
-								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -688,7 +666,7 @@ class TemplateDefs {
 								pointer-events: bounding-box;
 								cursor: pointer;
 							}
-							#frmBtns path, #frmBtns text, #delay-on {
+							#frmBtns path, #frmBtns text {
 								stroke: var(--sttip-var-font-color, black);
 							}
 
@@ -716,16 +694,6 @@ class TemplateDefs {
 								transform-origin: 12px 12px;
 								transform-box: border-box;
 							}
-							.delay-on-off {
-								stroke-dashoffset: 0;
-							}
-							.delay-on-on {
-								stroke-dashoffset: var(--delay-on-length, 0);
-							}
-							.delay-on-transition {
-								transition: stroke-dashoffset var(--delay-on-time, 250ms) ease-in-out;
-							}
-
 						</style>
 						<g id="tooltip-group">
 							<rect id="tooltip-frame" class="sttip-frame" x="0" y="0" fill-opacity="0.8" width="380" height="0"/>
@@ -737,7 +705,6 @@ class TemplateDefs {
 										<circle id="rosh-pin" cx="24" cy="8" r="5" />
 									</g>
 								</g>
-								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -887,7 +854,7 @@ class TemplateDefs {
 								pointer-events: bounding-box;
 								cursor: pointer;
 							}
-							#frmBtns path, #frmBtns text, #delay-on {
+							#frmBtns path, #frmBtns text {
 								stroke: var(--sttip-var-font-color, black);
 							}
 
@@ -915,16 +882,6 @@ class TemplateDefs {
 								transform-origin: 12px 12px;
 								transform-box: border-box;
 							}
-							.delay-on-off {
-								stroke-dashoffset: 0;
-							}
-							.delay-on-on {
-								stroke-dashoffset: var(--delay-on-length, 0);
-							}
-							.delay-on-transition {
-								transition: stroke-dashoffset var(--delay-on-time, 25s) ease-in-out;
-							}
-
 						</style>
 						<g id="tooltip-group">
 							<rect id="tooltip-frame" class="sttip-frame" x="0" y="0" fill-opacity="0.8" width="380" height="0"/>
@@ -936,7 +893,6 @@ class TemplateDefs {
 										<circle id="rosh-pin" cx="24" cy="8" r="5" />
 									</g>
 								</g>
-								<path id="delay-on" d="M30,10 h150" pointer-events="none" stroke="black" />
 								<g id="frmBtns" transform="translate(0, 4)">
 									<g transform="translate(0, 0)">
 										<rect id="helpMe" x="0" y="0" width="16" height="16" />
@@ -1280,8 +1236,6 @@ class CustomProperties {
 			'delay-in',				// The time delay interval before tooltip window will be shown on the screen. The default is 250 (ms). (0 - 1000)
 			'delay-out',  			// The time delay interval when tooltip window will be hided. The default is 250 (ms). (0 - 2000)
 									// This delayed interval will counted after mouse pointer will out from the element.
-			'delay-on',				// The time delay interval when tooltip window will disappear from screen after non-activity of mouse pointer.
-									// The default value is 2000 (ms) (500 - 60000)
 			'transition-in',		// Not yet implemented: Opacity transition in process of showing tooltip window. The default value is 0 means immidiatly showing.
 			'transition-out',		// Not yet implemented: Opacity transition in process of disappearing of tooltip window. The defaul value is immidiatly hiding.
 			'is-run',				// runtime status indicator. The default value is 0 - 'stopped' in opposite to 1 - 'runned'.
@@ -1331,7 +1285,6 @@ class CustomProperties {
 			position:				'rt',
 			delayIn:				250,
 			delayOut:				250,
-			delayOn:				2000,
 			transitionIn:			0,
 			transitionOut:			0,
 			frameScale:				0.8,
@@ -1844,6 +1797,7 @@ class SmartTooltip {
 	}
 
 	constructor(role = null, div = null, root) {
+		this._defOptions = CustomProperties.defOptions();
 		this._delayInInterval = null;
 		this._interval = null;
 		this._intervalTimerDelay = 50;
@@ -1884,39 +1838,42 @@ class SmartTooltip {
                     } else if (!own) {
                         console.error('delayHide: trying to clear unsetted!');
                     }
-                },
+				},
+				// reset counter
                 reset: function () {
-                    if (this.setted && !this.ready) {
-                        this.counter = this.delay;
+                    if (this.setted) {
+						this.counter = this.delay;
+						this.ready = false;
                         console.log(`delayHide: ${this.reason} reset to new cicle interval ${this.delay * this.freq}ms`);
-                    } else {
-                        console.error('delayHide: trying to reset unsetted delayShow!');
-                    }
+					}
                 },
                 is: function () {
                     return this.setted;
                 },
                 set: function (id, delay, reason, freq) {
-                    this.reason = reason;
-                    this.freq = freq;
-                    this.delay = delay / freq;
-                    this.counter = this.delay;
-                    this.id = id;
-                    this.ready = false;
-                    this.setted = true;
-
-                    console.log(`delayHide: ${this.reason} interval ${this.delay * this.freq}ms is setted.`);
+					this.id = id;
+					this.freq = freq;
+					if (delay) {
+	                    this.delay = delay / freq;
+						this.reason = reason;
+						this.counter = this.delay;
+						this.ready = false;
+						this.setted = true;
+						console.log(`delayHide: ${this.reason} interval ${this.delay * this.freq}ms is setted.`);
+					} else {
+						this.setted = false;
+						
+					}
                     return this;
                 },
                 changeDelay: function (delay, reason) {
-                    if (this.setted && !this.ready) {
-                        this.delay = delay / this.freq;
-                        this.counter = this.delay;
-                        this.reason = reason;
-                        console.log(`delayHide: ${this.reason} changed delay to new interval ${this.delay * this.freq}ms`);
-                    } else {
-                        console.error('delayHide: trying to change unsetted delayShow!');
-                    }
+                    this.setted = false;
+					this.delay = delay / this.freq;
+					this.counter = this.delay;
+					this.reason = reason;
+					console.log(`delayHide: ${this.reason} changed delay to new interval ${this.delay * this.freq}ms`);
+                    this.ready = false;
+                    this.setted = true;
                 },
                 dec: function () {
                     if (this.setted) {
@@ -1933,7 +1890,7 @@ class SmartTooltip {
                     }
                 }
             },
-
+			// clear all!
 			clear: function (own = null) {
                 if (this.setted) {
                     this.setted = false;
@@ -1948,15 +1905,13 @@ class SmartTooltip {
 					console.error('delayShow: trying to clear unsetted!');
 				}
 			},
+			// reset counters
 			reset: function () {
                 if (this.setted) {
-                    if (!this.ready) {
-                        this.counter = this.delay;
-                        this.ready = false;
-                        console.log(`delayShow: reset to new cicle interval ${this.delay * this.freq}ms`);
-                    } else {
-                        this.hide.reset();
-                    }
+					this.counter = this.delay;
+					this.ready = false;
+					console.log(`delayShow: reset to new cicle interval ${this.delay * this.freq}ms`);
+					this.hide.reset();
                 } else {
                     console.error('delayShow: trying to reset unsetted delayShow!');
                 }
@@ -1975,17 +1930,21 @@ class SmartTooltip {
 				this.delay = delayShow / freq;
 				this.counter = this.delay;
 				this.id = id;
-                this.data = data;
-                this.hide.set(id, delayHide, reason, freq);
-                this.ready = false;
+				this.data = data;
+
+				this.hide.set(id, delayHide, reason, freq);
+
+				this.ready = false;
 				this.setted = true;
 
 				console.log(`delayShow: interval ${this.delay * this.freq}ms is setted.`);
 				return this;
             },
             setDelayHide(delay, reason) {
-                this.hide.changeDelay(delay, reason);
-            },
+				if (this.setted) {
+	                this.hide.changeDelay(delay, reason);
+				}
+			},
 			dec: function () {
 				if (this.setted) {
                     if (!this.ready) {
@@ -2207,7 +2166,6 @@ class SmartTooltip {
 					if (evt.target.classList.contains('sub-target')) {
 							this._setOverEffect('sttip-legend-rect', 'resetall', 'sttip-lightgray');
 					} else {
-                        this._renewDelayOnPath(this._o.delayOut);
                         this._delayShow.setDelayHide(this._o.delayOut, 'delayOut');
 					}
 				});
@@ -2217,9 +2175,7 @@ class SmartTooltip {
 					if (evt.buttons == 1) {
 						return;
 					}
-					this._renewDelayOnPath(this._o.delayOn);
                     this._delayShow.setDelayHide(this._o.delayOn, 'delayOn');
-					// this._checkMouseMoving(this._o.delayOn);
 				});
 
 				this._ttipGroup.addEventListener('click', function (evt) {
@@ -2307,31 +2263,6 @@ class SmartTooltip {
 			window.SmartTooltip._interval = null;
 		}, this._noMouseActiveInterval);
 		console.log(`Handler ${this._interval} <= ${this._noMouseActiveInterval} ms`);
-	}
-
-	_renewDelayOnPath(howMuch) {
-        if (typeof this._ttipDelayPath === 'undefined') {
-            return;
-        }
-
-		if (this._ttipDelayPath.getAttribute('display') === 'none') {
-			return;
-		}
-        const length = this._svg.style.getPropertyValue('--delay-on-length');
-        let delayTime = this._svg.style.getPropertyValue('--delay-on-time');
-        const newDelay = `${howMuch / 1000}s`;
-        if (delayTime != newDelay) {
-            this._svg.style.setProperty('--delay-on-time', newDelay);
-        }
-
-		const newOne = this._ttipDelayPath.cloneNode(true);
-		this._ttipBoundGroup.replaceChild(newOne, this._ttipDelayPath);
-		this._ttipDelayPath = newOne;
-
-		this._ttipDelayPath.style.strokeDashoffset = 0;
-		this._ttipDelayPath.getBoundingClientRect();
-		this._ttipDelayPath.classList.add('delay-on-transition');
-		this._ttipDelayPath.style.strokeDashoffset = length;
 	}
 
 	_applyCustomOptions(options = null, forId) {
@@ -2551,7 +2482,7 @@ class SmartTooltip {
         }
         if (evt.type !== 'fakeEvent') {
             console.log('fake event!');
-            this._renewDelayOnPath(this._o.delayOut);
+            // this._renewDelayOnPath(this._o.delayOut);
             this._delayShow.reset();
         }
 
@@ -2594,7 +2525,23 @@ class SmartTooltip {
             }
 		}
 	}
+
+	/**
+	 * Show toolip.data = { x, y, title: {color, value, name, descr}, targets: [sub-targets], ...options}
+	 * @param {object} data 
+	 */
 	show(data) {
+		if (this._demo) {
+			this.showTT(data);
+		} else {
+			const delayIn = data.options.delayIn || this._ownOptions.delayIn || this._defOptions.delayIn;
+			const delayOut = data.options.delayOut || this._ownOptions.delayOut || this._defOptions.delayOut;
+			this._delayShow.set(data.id, delayIn, data, 0, '', this._intervalTimerDelay);
+		}
+	}
+
+	showTT(data) 
+	{
 		if (!this._definitions || typeof data !== 'object' || typeof data.id === 'undefined' || data.id === '' || data.id == null) {
 			console.error('Can not show tooltip for unknown id!');
 			return;
@@ -2669,13 +2616,6 @@ class SmartTooltip {
 			this._ttipTemplate = ttipdef.template;
 		}
 
-		if (!this._demo) {
-			this._delayShow.set(data.id, this._o.delayIn, data, this._o.delayOn, 'delayOn', this._intervalTimerDelay);
-		} else {
-			this.showTT(data);
-		}
-	}
-	showTT(data) { // data = { x, y, title: {color, value, name, descr}, targets: [sub-targets], ...options}
 		if (this._o) {
 			// check delayIn parameter and delay the showing if needed
 			// this._delayInInterval = setTimeout(() => {
@@ -2721,7 +2661,6 @@ class SmartTooltip {
 				this._ttipValue100     = this._root.getElementById('value-100');
 				this._ttipFakeIFrame   = this._root.getElementById('fake-iframe');
 				this._ttipImageLink    = this._root.getElementById('image-link');
-				this._ttipDelayPath    = this._root.getElementById('delay-on');
 
 				if (!this._demo) { // demo tooltip does not use this functionality
 					// init events
@@ -3131,32 +3070,6 @@ class SmartTooltip {
 						btnX = ttipBoundGroupBR.width - (btnRect.width + 4); /* the gap */
 						this._ttipFrameBGroup.setAttribute('transform', `translate(${btnX}, 4)`);
 					}
-					// setup animation for 'delay-on' an case of not fixed!
-					if (this._ttipDelayPath) {
-						if (this._o.showMode === 'fixed' || this._fixed) {
-							// just hide the delay on path indicator in fixed mode
-							this._ttipDelayPath.setAttribute('display', 'none');
-						}
-						this._ttipDelayPath.setAttribute('d', `M30,12 h${btnX - 30}`);
-						this._ttipDelayPath.setAttribute('stroke-width', 2);
-						const length = this._ttipDelayPath.getTotalLength();
-						// setup the starting position
-						this._ttipDelayPath.style.strokeDasharray = `${length} ${length}`;
-						this._ttipDelayPath.style.strokeDashoffset = 0;
-						// trigger layout (just a hack)
-						this._ttipDelayPath.getBoundingClientRect();
-						// get delayOn in second
-						const delayOn = this._o.delayOn / 1000;
-
-						// transition defined in this class. the time is in svg style variable
-						this._svg.style.setProperty('--delay-on-time', delayOn + 's');
-						this._ttipDelayPath.classList.add('delay-on-transition');
-						// store the length of path in svg style also
-						this._svg.style.setProperty('--delay-on-length', length);
-						// start anomation now!
-						this._ttipDelayPath.style.strokeDashoffset = length;
-					}
-
 					// zoom tooltip window to optional parameter 'frameScale'
 					this._ttipGroup.setAttribute('transform', `scale(${this._o.frameScale})`);
 
@@ -3186,10 +3099,15 @@ class SmartTooltip {
 				}
 			// }, this._demo ? 0 : this._o.delayIn);
 			//console.log(`DelayIn Handler ${this._delayInInterval} <= ${this._o.delayIn} ms`);
+			
 		}
 	}
+
+
 	hide(realy = false) {
-        this._delayShow.setDelayHide(this._o.delayOut, 'delayOut');
+		if (this._o) {
+			this._delayShow.setDelayHide(this._o.delayOut, 'delayOut');
+		}
 /*
 		if (this._delayInInterval) {
 
