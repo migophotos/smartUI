@@ -42,12 +42,12 @@ class utils {
 	}
 
 }
+
 /**
  * smartUI - семейство UI элементов, позволяющих строить пользовательские интерфейсы.
  * Каждый элемент представляет собой custom control
  *
  */
-
 class SmartSelector extends HTMLElement {
     constructor() {
         super();
@@ -152,7 +152,9 @@ class SmartSelector extends HTMLElement {
 		return 	['value'];
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        if (!this._o || oldValue == newValue) return;
+        if (!this._o || oldValue == newValue) {
+            return;
+        }
 
         switch (name) {
             case 'value': {
@@ -173,8 +175,8 @@ class SmartSelector extends HTMLElement {
         utils.convertNumericProps(this._o);
         // get references to controls
         this._input  = this._shadowDOM.getElementById('IC');    // input
-        const values = this._o.valuelist.split(','); 
-        const labels  = typeof this._o.labellist !== 'undefined' ? this._o.labellist.split(',') : values;        
+        const values = this._o.valuelist.split(',');
+        const labels  = typeof this._o.labellist !== 'undefined' ? this._o.labellist.split(',') : values;
 
         for (let n = 0; n < values.length; n++) {
             let value = values[n];
@@ -341,7 +343,9 @@ class SmartEditText extends HTMLElement {
 		return 	['value'];
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        if (!this._o) return;
+        if (!this._o) {
+            return;
+        }
 
         switch (name) {
             case 'value': {
@@ -562,7 +566,9 @@ if (!customElements.get('smart-ui-edittext')) {
 		return 	['value'];
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        if (!this._o || oldValue == newValue) return;
+        if (!this._o || oldValue == newValue) {
+            return;
+        }
 
         switch (name) {
             case 'value': {
@@ -770,10 +776,10 @@ class SmartButton extends HTMLElement {
     _applyState(state) {
         if (state == 'off') {
             this._on.style.setProperty('display', 'none');
-            this._off.style.setProperty('display', 'unset')
+            this._off.style.setProperty('display', 'unset');
         } else {
             this._on.style.setProperty('display', 'unset');
-            this._off.style.setProperty('display', 'none')
+            this._off.style.setProperty('display', 'none');
         }
         this.setAttribute('current-state', this._o.state);
 
@@ -793,7 +799,9 @@ class SmartButton extends HTMLElement {
 		return 	['state', 'imageOn', 'imageOff', 'targets'];
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        if (!this._o) return;
+        if (!this._o) {
+            return;
+        }
 
         switch (name) {
             case 'state':
@@ -848,7 +856,9 @@ class SmartButton extends HTMLElement {
             this._applyState(this._o.state);
 
             this._btn.addEventListener('click', (evt) => {
-                if (this._o.type === 'radio' && this._o.state === 'on') return;
+                if (this._o.type === 'radio' && this._o.state === 'on') {
+                    return;
+                }
                 this._o.state = this._o.state === 'on' ? 'off' : 'on';
                 this.state = this._o.state; // see evt.target.state on 'click' event
                 this._applyState(this._o.state);
@@ -957,7 +967,9 @@ class SmartCheckBox extends HTMLElement {
 		return 	['value', 'imageOn', 'imageOff', 'iw', 'ih'];
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        if (!this._o) return;
+        if (!this._o) {
+            return;
+        }
 
         switch (name) {
             case 'value':
@@ -1174,7 +1186,9 @@ class SmartColorBox extends HTMLElement {
 		return 	['value'];
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        if (!this._o) return;
+        if (!this._o) {
+            return;
+        }
 
         switch (name) {
             case 'value': {
