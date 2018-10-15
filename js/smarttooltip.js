@@ -1831,12 +1831,7 @@ class SmartTooltip {
                         this.reday = false;
                         this.id = null;
                         this.freq = null;
-                        if (!own) {
-                            console.log(`delayHide: ${this.reason} cleared before out of interval`);
-                        }
                         this.reason = '';
-                    } else if (!own) {
-                        console.error('delayHide: trying to clear unsetted!');
                     }
 				},
 				// reset counter
@@ -1844,7 +1839,6 @@ class SmartTooltip {
                     if (this.setted) {
 						this.counter = this.delay;
 						this.ready = false;
-                        console.log(`delayHide: ${this.reason} reset to new cicle interval ${this.delay * this.freq}ms`);
 					}
                 },
                 is: function () {
@@ -1859,10 +1853,8 @@ class SmartTooltip {
 						this.counter = this.delay;
 						this.ready = false;
 						this.setted = true;
-						console.log(`delayHide: ${this.reason} interval ${this.delay * this.freq}ms is setted.`);
 					} else {
 						this.setted = false;
-						
 					}
                     return this;
                 },
@@ -1871,7 +1863,6 @@ class SmartTooltip {
 					this.delay = delay / this.freq;
 					this.counter = this.delay;
 					this.reason = reason;
-					console.log(`delayHide: ${this.reason} changed delay to new interval ${this.delay * this.freq}ms`);
                     this.ready = false;
                     this.setted = true;
                 },
@@ -1885,13 +1876,11 @@ class SmartTooltip {
                                 console.log(`delayHide: ${this.reason} interval ${this.delay * this.freq}ms is out!`);
                             }
                         }
-                    } else {
-                        console.error('delayHide: try to count without setting!');
-                    }
+					}
                 }
             },
 			// clear all!
-			clear: function (own = null) {
+			clear: function () {
                 if (this.setted) {
                     this.setted = false;
                     this.counter = 0;
@@ -1900,9 +1889,6 @@ class SmartTooltip {
                     this.data = null;
                     this.freq = null;
                     this.hide.clear(own);
-                    console.log('delayShow: cleared!');
-                } else if (!own) {
-					console.error('delayShow: trying to clear unsetted!');
 				}
 			},
 			// reset counters
@@ -1910,11 +1896,8 @@ class SmartTooltip {
                 if (this.setted) {
 					this.counter = this.delay;
 					this.ready = false;
-					console.log(`delayShow: reset to new cicle interval ${this.delay * this.freq}ms`);
 					this.hide.reset();
-                } else {
-                    console.error('delayShow: trying to reset unsetted delayShow!');
-                }
+				}
 			},
 			resetDelayHide: function () {
                 this.hide.reset();
@@ -1936,12 +1919,10 @@ class SmartTooltip {
 
 				this.ready = false;
 				this.setted = true;
-
-				console.log(`delayShow: interval ${this.delay * this.freq}ms is setted.`);
-				return this;
             },
             setDelayHide(delay, reason) {
 				if (this.setted) {
+					this.ready = true;
 	                this.hide.changeDelay(delay, reason);
 				}
 			},
@@ -1957,9 +1938,7 @@ class SmartTooltip {
                     } else if (this.hide.is()) {
                         this.hide.dec();
                     }
-				} else {
-                    console.error('delayShow: try to count without setting!');
-                }
+				} 
 			}
 		};
 
@@ -2228,43 +2207,6 @@ class SmartTooltip {
 		}
     }
 
-	_checkMouseMoving(delay = null) {
-        return;
-
-
-		if (this._interval) {
-			console.log(`Handler ${this._interval} XXX ${this._noMouseActiveInterval} ms`);
-			clearTimeout(this._interval);
-			this._interval = null;
-		}
-		if (this._o.showMode === 'fixed'  || this._fixed) {
-			console.log('Nothing todo here in fixed mode');
-			return;
-		}
-
-		this._noMouseActiveInterval = delay || this._o.delayOn;
-
-
-		if (this._interval) {
-			console.log(`Handler ${this._interval} XXX ${this._noMouseActiveInterval} ms`);
-			clearTimeout(this._interval);
-			this._interval = null;
-		}
-		this._interval = setTimeout(() => {
-			if (window.SmartTooltip._fixed) {
-				return;
-			}
-			if (typeof window.SmartTooltip.isDrag !== 'undefined' && window.SmartTooltip.isDrag === true) {
-				return;
-			}
-
-			console.log(`Handler ${this._interval} : ${this._noMouseActiveInterval} ms delay is out, hide tooltip window now!`);
-			window.SmartTooltip.hide(true);
-			window.SmartTooltip._interval = null;
-		}, this._noMouseActiveInterval);
-		console.log(`Handler ${this._interval} <= ${this._noMouseActiveInterval} ms`);
-	}
-
 	_applyCustomOptions(options = null, forId) {
 		if (options) {
 			if (typeof options.startFrom === 'string') {
@@ -2482,7 +2424,6 @@ class SmartTooltip {
         }
         if (evt.type !== 'fakeEvent') {
             console.log('fake event!');
-            // this._renewDelayOnPath(this._o.delayOut);
             this._delayShow.reset();
         }
 
@@ -2519,9 +2460,6 @@ class SmartTooltip {
                     x += (offsetX - 50);
                     this._ttipRef.style.left = x;
 				}
-				// if (typeof evt.type !== 'undefined' && evt.type !== 'fakeEvent') {
-				// 	this._checkMouseMoving(this._o.delayOn);
-				// }
             }
 		}
 	}
@@ -2626,7 +2564,7 @@ class SmartTooltip {
 				this._root.innerHTML = this._ttipTemplate;
 				this._svg = this._root.firstElementChild;
 
-				if (this._o.template.name === 'iframe') {
+				if (this._o.template === 'iframe') {
 					this._iframe = this._root.lastElementChild;
 				} else {
 					this._iframe = null;
@@ -3092,10 +3030,6 @@ class SmartTooltip {
 					ttipBoundGroupBR = this._ttipGroup.getBoundingClientRect();
 					this._svg.setAttributeNS(null, 'width', ttipBoundGroupBR.width);
 					this._svg.setAttributeNS(null, 'height', ttipBoundGroupBR.height);
-
-					// if (!this._demo) { // demo tooltip does not use this functionality
-					// 	window.SmartTooltip._checkMouseMoving(this._o.delayOn);
-					// }
 				}
 			// }, this._demo ? 0 : this._o.delayIn);
 			//console.log(`DelayIn Handler ${this._delayInInterval} <= ${this._o.delayIn} ms`);
@@ -3104,41 +3038,15 @@ class SmartTooltip {
 	}
 
 
-	hide(realy = false) {
+	hide() {
 		if (this._o) {
 			this._delayShow.setDelayHide(this._o.delayOut, 'delayOut');
 		}
-/*
-		if (this._delayInInterval) {
-
-			console.log(`DelayIn Handler ${this._delayInInterval} XXX ${this._o.delayIn} ms`);
-			clearTimeout(this._delayInInterval);
-			this._delayInInterval = null;
-		}
-		if (this._ttipRef.style.display == 'none') {
-			if (this._interval) {
-				console.log(`Handler ${this._interval} XXX ${this._noMouseActiveInterval} ms`);
-				clearTimeout(this._interval);
-				this._interval = null;
-			}
-			return;
-		}
-
-		if (typeof realy === 'boolean' && realy) {
-			// hide!!!
-			this._ttipRef.style.display = 'none';
-			return;
-		}
-		if (this._ttipRef && this._ttipGroup) {
-			if (!this._fixed) {
-				// instead of hiding, lets delay for some small interval
-				window.SmartTooltip._checkMouseMoving(this._o.delayOut);
-			}
-        }
-*/
     }
     hideTT() {
-        this._ttipRef.style.display = 'none';
+		if (!this._fixed || (this._o && this._o.showMode !== 'fixed')) {
+			this._ttipRef.style.display = 'none';
+		}
     }
 }
 
