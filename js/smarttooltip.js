@@ -985,7 +985,7 @@ class TemplateDefs {
 	// This function append template to register id, or store thid id in similars map
 	// In case it appends the template for the first time (template contains 'loading...' instead of definition)
 	// it will replase an id with fake one and after that store the original as similar to this faked one and returns ttipdef.
-	// In case of name is null this function will just copy new options to similar id in case of it exists in similars and returns ttipdef. 
+	// In case of name is null this function will just copy new options to similar id in case of it exists in similars and returns ttipdef.
 	// in anoter case it returns null.
 	set(id, name, template, opt) {
 		let sdef = null;
@@ -1092,7 +1092,7 @@ class CustomProperties {
 
     /**
      * build and returns an options object siutable for show tooltip function
-	 * 
+	 *
 	 * input: {
 	 * 	paramKey: value,	// custom prop is param-key
 	 *  paramKey: value		// custorm property is var-param-key
@@ -1111,7 +1111,7 @@ class CustomProperties {
      * }
      *
      * @param {object} opt options object to be converted
-	 * @param {boolean} knownOnly the flag that enables (if it equals to false) to convert all properties to css vars (needed for web-components) 
+	 * @param {boolean} knownOnly the flag that enables (if it equals to false) to convert all properties to css vars (needed for web-components)
      * @returns {object} options with known structure
      *
      */
@@ -1194,27 +1194,27 @@ class CustomProperties {
                 template += '  }\n';
                 template += '&lt;/style>\n';
 				template += '&lt;smart-ui-tooltip class-names="need-tooltip">Yout browser does not support custom elements.&lt/smart-ui-tooltip>\n';
-				template += '&lt;div class="need-tooltip" data-sttip-tooltip="The text to be shown as title in tooltip window">any content&lt;/div>'
+				template += '&lt;div class="need-tooltip" data-sttip-tooltip="The text to be shown as title in tooltip window">any content&lt;/div>';
                 break;
 			case 'def-json_btn':
 				cssOpt = CustomProperties.buidOptionsAndCssVars(opt, false);
-				template = `options = {\n`;
+				template = 'options = {\n';
 				for (let key in cssOpt) {
 					template += `  "${key}": "${cssOpt[key]}"\n`;
 				}
-                template += `};\n`;
+                template += '};\n';
                 break;
             case 'def-object-params_btn':
 				cssOpt = CustomProperties.buidOptionsAndCssVars(opt);
-				template = `// inside 'mouseover' event\n`;
-				template += `const data = {\n  x: evt.clientX,\n  y: evt.clientY,\n  id: evt.target.id;\n`;
-				template += `  options: {\n`;
+				template = '// inside "mouseover" event\n';
+				template += 'const data = {\n  x: evt.clientX,\n  y: evt.clientY,\n  id: evt.target.id;\n';
+				template += '  options: {\n';
 				if (typeof cssOpt.cssVars === 'object') {
-					template += `    cssVars: {\n`
+					template += '    cssVars: {\n';
 					for (let key in cssOpt.cssVars) {
-						template += `      ${key}: ${cssOpt.cssVars[key]};\n`
+						template += `      ${key}: ${cssOpt.cssVars[key]};\n`;
 					}
-					template += `    },\n`;
+					template += '    },\n';
 				}
 				for (let key in cssOpt) {
 					if (key !== 'cssVars') {
@@ -1225,12 +1225,12 @@ class CustomProperties {
 						}
 					}
 				}
-				template += `  },\n`;
-				template += `  title: {},\n`;
-				template += `  targets: [{}]\n};\n`;
-				template += `SmartTooltip.showTooltip(data, evt);\n\n`;
-				template += `// Inside 'mousemove' event:\nSmartTooltip.moveTooltip(evt);\n`;
-				template += `// Inside 'mouseout' event:\nSmartTooltip.hideTooltip(evt);\n\n\n`;
+				template += '  },\n';
+				template += '  title: {},\n';
+				template += '  targets: [{}]\n};\n';
+				template += 'SmartTooltip.showTooltip(data, evt);\n\n';
+				template += '// Inside "mousemove" event:\nSmartTooltip.moveTooltip(evt);\n';
+				template += '// Inside "mouseout" event:\nSmartTooltip.hideTooltip(evt);\n\n\n';
 				break;
             case 'def-svg_widget_btn':
                 template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
@@ -1278,7 +1278,7 @@ class CustomProperties {
 									// in form {left, top, right, bottom}
 
 			'delay-in',				// The time delay interval before tooltip window will be shown on the screen. The default is 250 (ms). (0 - 1000)
-			'delay-out',  			// The time delay interval when tooltip window will be hided. The default is 250 (ms). (0 - 2000) 
+			'delay-out',  			// The time delay interval when tooltip window will be hided. The default is 250 (ms). (0 - 2000)
 									// This delayed interval will counted after mouse pointer will out from the element.
 			'delay-on',				// The time delay interval when tooltip window will disappear from screen after non-activity of mouse pointer.
 									// The default value is 2000 (ms) (500 - 60000)
@@ -1530,7 +1530,7 @@ class SmartTooltip {
 	/**
 	 * Instantinate SmartTooltip and show tooltip near specified element
 	 * @param {object} data Contains all infor for building and showing tooltip:
-	 * data: {x, y, id, options:{}, title:{}, targets:{}} 
+	 * data: {x, y, id, options:{}, title:{}, targets:{}}
 	 */
 	static showTooltip(data) {
 		// create SmartTooltip only once! the 'window' is a global object, so don't store the reference on SmartTooltip inside your class!
@@ -1838,7 +1838,9 @@ class SmartTooltip {
 	}
 
 	_intervalTimer() {
-		this._delayIn.dec();
+        if (this._delayShow.is()) {
+            this._delayShow.dec();
+        }
 	}
 
 	constructor(role = null, div = null, root) {
@@ -1846,60 +1848,161 @@ class SmartTooltip {
 		this._interval = null;
 		this._intervalTimerDelay = 50;
 		this._intervalTimer = this._intervalTimer.bind(this);
-		this.showTT = this.showTT.bind(this);
+        this.showTT = this.showTT.bind(this);
+        this.hideTT = this.hideTT.bind(this);
 		this._it = setInterval(this._intervalTimer, this._intervalTimerDelay);
 
-		this._delayIn = {
+        this._delayShow = {
 			cb:	this.showTT,
 			freq: 0,		// _intervalTimer interval == 50
 			counter: 0,
-			delayIn: 0,		// delay
-			id:	null,		// id
-			state: false,	// false - not occures
-			data:	null,	// reference on data to show
-			clear: function(own = null) {
-				this.counter = 0;
-				this.state = false;
-				this.id = null;
-				this.data = null;
-				this.freq = null;
-				if(!own) {
-					console.log('DelayIn: Clear without Out');
+			delay: 0,		// delay
+			id:	null,		// id of source element
+            ready: false,	// false - not setted flag
+            setted: false,
+            data:	null,	// reference on data to show
+            hide: {
+                cb: this.hideTT,
+                freq: 0,        // _intervalTimer interval == 50
+                counter: 0,     // decremented counter
+                delay: 0,       // delay
+                id: null,       // id of source element
+                ready: false,
+                setted: false,   // false - not setted flag
+                reason: '',      // 'delayOut' or 'delayOn' identificatore
+                clear: function (own = null) {
+                    if (this.setted) {
+                        this.setted = false;
+                        this.counter = 0;
+                        this.reday = false;
+                        this.id = null;
+                        this.freq = null;
+                        if (!own) {
+                            console.log(`delayHide: ${this.reason} cleared before out of interval`);
+                        }
+                        this.reason = '';
+                    } else if (!own) {
+                        console.error('delayHide: trying to clear unsetted!');
+                    }
+                },
+                reset: function () {
+                    if (this.setted && !this.ready) {
+                        this.counter = this.delay;
+                        console.log(`delayHide: ${this.reason} reset to new cicle interval ${this.delay * this.freq}ms`);
+                    } else {
+                        console.error('delayHide: trying to reset unsetted delayShow!');
+                    }
+                },
+                is: function () {
+                    return this.setted;
+                },
+                set: function (id, delay, reason, freq) {
+                    this.reason = reason;
+                    this.freq = freq;
+                    this.delay = delay / freq;
+                    this.counter = this.delay;
+                    this.id = id;
+                    this.ready = false;
+                    this.setted = true;
+
+                    console.log(`delayHide: ${this.reason} interval ${this.delay * this.freq}ms is setted.`);
+                    return this;
+                },
+                changeDelay: function (delay, reason) {
+                    if (this.setted && !this.ready) {
+                        this.delay = delay / this.freq;
+                        this.counter = this.delay;
+                        this.reason = reason;
+                        console.log(`delayHide: ${this.reason} changed delay to new interval ${this.delay * this.freq}ms`);
+                    } else {
+                        console.error('delayHide: trying to change unsetted delayShow!');
+                    }
+                },
+                dec: function () {
+                    if (this.setted) {
+                        if (!this.ready) {
+                            this.counter -= 1;
+                            if (this.counter <= 0) {
+                                this.ready = true;
+                                this.cb();
+                                console.log(`delayHide: ${this.reason} interval ${this.delay * this.freq}ms is out!`);
+                            }
+                        }
+                    } else {
+                        console.error('delayHide: try to count without setting!');
+                    }
+                }
+            },
+
+			clear: function (own = null) {
+                if (this.setted) {
+                    this.setted = false;
+                    this.counter = 0;
+                    this.ready = false;
+                    this.id = null;
+                    this.data = null;
+                    this.freq = null;
+                    this.hide.clear(own);
+                    console.log('delayShow: cleared!');
+                } else if (!own) {
+					console.error('delayShow: trying to clear unsetted!');
 				}
-				return this;
 			},
-			reset: function() {
-				this.counter = this.delay;
+			reset: function () {
+                if (this.setted) {
+                    if (!this.ready) {
+                        this.counter = this.delay;
+                        this.ready = false;
+                        console.log(`delayShow: reset to new cicle interval ${this.delay * this.freq}ms`);
+                    } else {
+                        this.hide.reset();
+                    }
+                } else {
+                    console.error('delayShow: trying to reset unsetted delayShow!');
+                }
 			},
-			is: function() {
-				return this.state;
+			resetDelayHide: function () {
+                this.hide.reset();
 			},
-			set: function(id, delay, data, freq) {
+			is: function () {
+				return this.setted;
+            },
+            isSettedDelayHide: function () {
+                return this.hide.is();
+            },
+			set: function (id, delayShow, data, delayHide, reason, freq) {
 				this.freq = freq;
-				this.delay = delay / freq;
+				this.delay = delayShow / freq;
 				this.counter = this.delay;
 				this.id = id;
-				this.state = true;
-				this.data = data;
-				
-				console.log('DelayIn: Set')
+                this.data = data;
+                this.hide.set(id, delayHide, reason, freq);
+                this.ready = false;
+				this.setted = true;
+
+				console.log(`delayShow: interval ${this.delay * this.freq}ms is setted.`);
 				return this;
-			},
-			dec: function() {
-				if (this.state) {
-					this.counter -= 1;
-					if (this.counter <= 0) {
-						this.cb(this.data);
-						console.log(`DelayIn: Interval ${this.delay * this.freq}ms is out!`);
-						this.clear('own');
-					}
-				}
-			} 
+            },
+            setDelayHide(delay, reason) {
+                this.hide.changeDelay(delay, reason);
+            },
+			dec: function () {
+				if (this.setted) {
+                    if (!this.ready) {
+                        this.counter -= 1;
+                        if (this.counter <= 0) {
+                            this.ready = true;
+                            this.cb(this.data);
+                            console.log(`delayShow: interval ${this.delay * this.freq}ms is out!`);
+                        }
+                    } else if (this.hide.is()) {
+                        this.hide.dec();
+                    }
+				} else {
+                    console.error('delayShow: try to count without setting!');
+                }
+			}
 		};
-		// just for test
-		// this._delayIn.set("id1", 10);
-
-
 
 		if (role && div && root) {
 			// create additional instance of SmartTooltip (for demo purpose) and not register it in window namespace
@@ -2104,7 +2207,8 @@ class SmartTooltip {
 					if (evt.target.classList.contains('sub-target')) {
 							this._setOverEffect('sttip-legend-rect', 'resetall', 'sttip-lightgray');
 					} else {
-						this._checkMouseMoving(this._o.delayOut);
+                        this._renewDelayOnPath(this._o.delayOut);
+                        this._delayShow.setDelayHide(this._o.delayOut, 'delayOut');
 					}
 				});
 
@@ -2113,8 +2217,9 @@ class SmartTooltip {
 					if (evt.buttons == 1) {
 						return;
 					}
-					this._renewDelayOnPath();
-					this._checkMouseMoving(this._o.delayOn);
+					this._renewDelayOnPath(this._o.delayOn);
+                    this._delayShow.setDelayHide(this._o.delayOn, 'delayOn');
+					// this._checkMouseMoving(this._o.delayOn);
 				});
 
 				this._ttipGroup.addEventListener('click', function (evt) {
@@ -2168,19 +2273,22 @@ class SmartTooltip {
     }
 
 	_checkMouseMoving(delay = null) {
+        return;
+
+
 		if (this._interval) {
 			console.log(`Handler ${this._interval} XXX ${this._noMouseActiveInterval} ms`);
 			clearTimeout(this._interval);
 			this._interval = null;
 		}
 		if (this._o.showMode === 'fixed'  || this._fixed) {
-			console.log(`Nothing todo here in fixed mode`);
+			console.log('Nothing todo here in fixed mode');
 			return;
 		}
 
 		this._noMouseActiveInterval = delay || this._o.delayOn;
 
-		
+
 		if (this._interval) {
 			console.log(`Handler ${this._interval} XXX ${this._noMouseActiveInterval} ms`);
 			clearTimeout(this._interval);
@@ -2197,19 +2305,28 @@ class SmartTooltip {
 			console.log(`Handler ${this._interval} : ${this._noMouseActiveInterval} ms delay is out, hide tooltip window now!`);
 			window.SmartTooltip.hide(true);
 			window.SmartTooltip._interval = null;
-			return;
-		}, this._noMouseActiveInterval); 
+		}, this._noMouseActiveInterval);
 		console.log(`Handler ${this._interval} <= ${this._noMouseActiveInterval} ms`);
 	}
 
-	_renewDelayOnPath() {
-		if(this._ttipDelayPath.getAttribute('display') === 'none') {
+	_renewDelayOnPath(howMuch) {
+        if (typeof this._ttipDelayPath === 'undefined') {
+            return;
+        }
+
+		if (this._ttipDelayPath.getAttribute('display') === 'none') {
 			return;
 		}
-		const length = this._svg.style.getPropertyValue('--delay-on-length');
-		var newone = this._ttipDelayPath.cloneNode(true);
-		this._ttipBoundGroup.replaceChild(newone, this._ttipDelayPath);
-		this._ttipDelayPath = newone;
+        const length = this._svg.style.getPropertyValue('--delay-on-length');
+        let delayTime = this._svg.style.getPropertyValue('--delay-on-time');
+        const newDelay = `${howMuch / 1000}s`;
+        if (delayTime != newDelay) {
+            this._svg.style.setProperty('--delay-on-time', newDelay);
+        }
+
+		const newOne = this._ttipDelayPath.cloneNode(true);
+		this._ttipBoundGroup.replaceChild(newOne, this._ttipDelayPath);
+		this._ttipDelayPath = newOne;
 
 		this._ttipDelayPath.style.strokeDashoffset = 0;
 		this._ttipDelayPath.getBoundingClientRect();
@@ -2400,8 +2517,6 @@ class SmartTooltip {
 	// see block started with "if (typeof data.options === 'object')" in function show(..)
 	// in case of id specified, store this options for specific element
 	setOptions(options, id = null) {
-		let optRef = null,
-			ttdef;
 		if (!id || id == '') {
 			if (typeof options === 'object') {
 				// merge own options with new options
@@ -2411,8 +2526,8 @@ class SmartTooltip {
 				// }
 				return this._ownOptions;
 			}
-		} else { 
-			this._definitions.set(id, null, null, options);
+		}
+		return (this._definitions.set(id, null, null, options));
 			// // merge new options with options inside definitions
 			// ttdef = this._definitions.get(id);
 			// if (ttdef) {
@@ -2425,7 +2540,6 @@ class SmartTooltip {
 			// 		}
 			// 	}
 			// }
-		}
 	}
 
 
@@ -2434,7 +2548,12 @@ class SmartTooltip {
 		if (this._ttipRef.getAttribute('display') === 'none') {
 			// not visible, so nothing todo
 			return;
-		}
+        }
+        if (evt.type !== 'fakeEvent') {
+            console.log('fake event!');
+            this._renewDelayOnPath(this._o.delayOut);
+            this._delayShow.reset();
+        }
 
 		if (typeof evt === 'object') {
 			let x = evt.x, y = evt.y;
@@ -2469,9 +2588,9 @@ class SmartTooltip {
                     x += (offsetX - 50);
                     this._ttipRef.style.left = x;
 				}
-				if (typeof evt.type !== 'undefined' && evt.type !== 'fakeEvent') {
-					this._checkMouseMoving(this._o.delayOn);
-				}
+				// if (typeof evt.type !== 'undefined' && evt.type !== 'fakeEvent') {
+				// 	this._checkMouseMoving(this._o.delayOn);
+				// }
             }
 		}
 	}
@@ -2502,7 +2621,8 @@ class SmartTooltip {
 					// now I need to replace template definition on new one.
 					ttipdef = TemplateDefs.getInternalTemplate(data.options.template);
 					if (ttipdef) {
-						ttipdef = this._definitions.set(data.id, data.options.template, ttipdef.template, (typeof data.options ? data.options : ttipdef.opt));
+                        const o = typeof data.options === 'object' ? data.options : ttipdef.opt;
+						ttipdef = this._definitions.set(data.id, data.options.template, ttipdef.template, o);
 					}
 				} else if (typeof data.options !== 'undefined') {
 					// update options!
@@ -2524,8 +2644,9 @@ class SmartTooltip {
 				ttipdef = this._definitions.getByName(templName);
 				if (!ttipdef) {
 					ttipdef = TemplateDefs.getInternalTemplate(templName);
-				}
-				ttipdef = this._definitions.set(data.id, templName, ttipdef.template, (typeof data.options ? data.options : ttipdef.opt));
+                }
+                const o = typeof data.options === 'object' ? data.options : ttipdef.opt;
+				ttipdef = this._definitions.set(data.id, templName, ttipdef.template, o);
 			}
 			if (!ttipdef) {
 				this._ttipGroup = null;
@@ -2537,7 +2658,7 @@ class SmartTooltip {
 					clearTimeout(window.SmartTooltip._interval);
 				}
 			}
-			
+
 			// done already!! // update definition options
 			// if (typeof data.options === 'object') {
 			// 	this.setOptions(data.options, data.id);
@@ -2549,7 +2670,7 @@ class SmartTooltip {
 		}
 
 		if (!this._demo) {
-			this._delayIn.set(data.id, this._o.delayIn, data, this._intervalTimerDelay);
+			this._delayShow.set(data.id, this._o.delayIn, data, this._o.delayOn, 'delayOn', this._intervalTimerDelay);
 		} else {
 			this.showTT(data);
 		}
@@ -3059,16 +3180,17 @@ class SmartTooltip {
 					this._svg.setAttributeNS(null, 'width', ttipBoundGroupBR.width);
 					this._svg.setAttributeNS(null, 'height', ttipBoundGroupBR.height);
 
-					if (!this._demo) { // demo tooltip does not use this functionality
-						window.SmartTooltip._checkMouseMoving(this._o.delayOn);
-					}
+					// if (!this._demo) { // demo tooltip does not use this functionality
+					// 	window.SmartTooltip._checkMouseMoving(this._o.delayOn);
+					// }
 				}
 			// }, this._demo ? 0 : this._o.delayIn);
-			console.log(`DelayIn Handler ${this._delayInInterval} <= ${this._o.delayIn} ms`);
+			//console.log(`DelayIn Handler ${this._delayInInterval} <= ${this._o.delayIn} ms`);
 		}
 	}
 	hide(realy = false) {
-		this._delayIn.clear();
+        this._delayShow.setDelayHide(this._o.delayOut, 'delayOut');
+/*
 		if (this._delayInInterval) {
 
 			console.log(`DelayIn Handler ${this._delayInInterval} XXX ${this._o.delayIn} ms`);
@@ -3094,8 +3216,12 @@ class SmartTooltip {
 				// instead of hiding, lets delay for some small interval
 				window.SmartTooltip._checkMouseMoving(this._o.delayOut);
 			}
-		}
-	}
+        }
+*/
+    }
+    hideTT() {
+        this._ttipRef.style.display = 'none';
+    }
 }
 
 class SmartTooltipElement extends HTMLElement {
@@ -3150,7 +3276,6 @@ class SmartTooltipElement extends HTMLElement {
 
             const data = Object.assign({}, demoData);
             data.options = Object.assign({}, options);
-            const evt = null;
 			this._demoTooltip.show(data);
 		}
 	}
