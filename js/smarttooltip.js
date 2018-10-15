@@ -51,6 +51,7 @@ const PARENT    = 'parent';
 const MAXV      = 'maxw';
 const TEMPLATE  = 'template';
 const XPOS      = 'xpos';
+const TINTERVAL = 50;
 
 class TemplateDefs {
 	static getInternalTemplate(templateName = '') {
@@ -1215,7 +1216,7 @@ class CustomProperties {
 			'enable-storage',		// allows to disable or enable (default) an ability to store in localStorage pinMe functionality
 
 			'sort-by',				// sort parameter for multiple data. May contains one of the data parameters name: 'asis', 'name', 'value', 'color', 'state'. the default is 'value'
-			'sort-dir',				// sorting direction parameter. the default value is '1', wich means from low to high. Possible values: -1, 0, 1.
+			'sort-dir',				// sorting direction parameter. the default value is '1', wich means from low to high. Possible values: 0, 1.
 
 			'template',				// default value for this property is 'pie', wich means the using of internal SmartTooltip pie template definition.
 									// The custom template may be specified as full url name, for example 'templates/vert_bars.svg'. The case of specified name without
@@ -1225,7 +1226,7 @@ class CustomProperties {
 									// By default this value has 'data-tooltip' for custom HTML element and 'targets' for SVG-based element. Not yet implemented.
 			'output-mode',			// 'what to show?' parameter. Possible values are: 'all-targets' and 'curTarget'. The default is 'all-targets'. Not Yet implemented.
 			'start-from',			// this property describes one of three started showing modes: 'float', 'pinned', 'fixed'. By default it equals 'float' and this means
-									// that user may change it as he wish. In case of optional parameter 'options.showMode', or attribute 'show-mode' specified,
+									// that user may change it as he wish. In case of optional parameter 'options.showMode', or attribute 'show-mode' specified (exclude "inherit" value),
 									// user cannot change apperance of tooltip window!
 			'show-mode',			// optional parameter describes show mode and overides 'start-from'
 			'location',				// this parameter describes the location of source element and initiate the tooltip. sourceElement.getBoundingClientRect() must fill it
@@ -1233,15 +1234,15 @@ class CustomProperties {
 									// this parameter may contains the client rectangle coordinates of correspondent element, for tooltip positioning in pinned mode
 									// in form {left, top, right, bottom}
 
-			'delay-in',				// The time delay interval before tooltip window will be shown on the screen. The default is 250 (ms). (0 - 1000)
-			'delay-out',  			// The time delay interval when tooltip window will be hided. The default is 250 (ms). (0 - 2000)
+			'delay-in',				// The time delay interval before tooltip window will be shown on the screen. The default is 300 (ms). From 0 upto 1000, step 100
+			'delay-out',  			// The time delay interval when tooltip window will be hided. The default is 200 (ms). From 0 upto 2000, step 100
 									// This delayed interval will counted after mouse pointer will out from the element.
 			'transition-in',		// Not yet implemented: Opacity transition in process of showing tooltip window. The default value is 0 means immidiatly showing.
 			'transition-out',		// Not yet implemented: Opacity transition in process of disappearing of tooltip window. The defaul value is immidiatly hiding.
 			'is-run',				// runtime status indicator. The default value is 0 - 'stopped' in opposite to 1 - 'runned'.
 			'frame-scale',			// template scale parameter. The default is 0.8
 			'is-shadow',			// enables shadows around of tooltip window. The default value is 1.
-
+			'var-tooltip-max-width',
 			'var-font-family',
 			'var-font-size',
 			'var-font-stretch',
@@ -1280,17 +1281,18 @@ class CustomProperties {
 			dataSection:			'data-tooltip',
 			outputMode:				'all-targets',
 			startFrom:				'float',
-			showMode:				'',
+			showMode:				'inherit',
 			location:				null,
 			position:				'rt',
-			delayIn:				250,
-			delayOut:				250,
+			delayIn:				300,
+			delayOut:				200,
 			transitionIn:			0,
 			transitionOut:			0,
 			frameScale:				0.8,
 			isShadow:				1,
 			isRun:					0,
 
+			varTooltipMaxWidth:		360,
 			varFontFamily:			'Arial, DIN Condensed, Noteworthy, sans-serif',
 			varFontSize:			'12px',
 			varFontStretch:			'condensed',
@@ -1332,9 +1334,9 @@ class CustomProperties {
 			'transitionIn',
 			'transitionOut',
 			'fillOpacity',
-			'frameOpacity',
-			'borderWidth',
-			'borderRadius',
+			'varFrameOpacity',
+			'varBorderWidth',
+			'varBorderRadius',
 			'titleTextWrap',
 			'descrTextWrap',
 			'isShadow'
@@ -1719,26 +1721,27 @@ class SmartTooltip {
 	 * 		colors/color - sort by color,
 	 * 		names/name - sort by legend or name,
 	 * 		any other word 	- sort by this 'word parameter. For example: link
+	 * @param {number} sortDir Data sorting direction. 1 means from low to hight(down), 0 - from high to low (up)
 	 *
 	 * Be careful: this function changes an array data!
 	 */
-	static sortDataByParam(data = [], sortParam = 'asis') {
+	static sortDataByParam(data = [], sortParam = 'asis', sortDir = 1) {
 		switch (sortParam) {
 			case 'asis':
 				break;
 			// sort by name and ignore lower and upper case
 			case 'name':
 			case 'names': {
-				data.sort(function (a, b) {
+				data.sort((a, b) => {
 					let aName = a.legend || a.name;
 					let bName = b.legend || b.name;
 					const nameA = aName.toUpperCase(); // ignore upper and lowercase
 					const nameB = bName.toUpperCase(); // ignore upper and lowercase
 					if (nameA < nameB) {
-						return -1;
+						return sortDir ? -1 : 1;
 					}
 					if (nameA > nameB) {
-						return 1;
+						return sortDir ? 1 : -1;
 					}
 					return 0;
 				});
@@ -1746,12 +1749,12 @@ class SmartTooltip {
 			}
 			case 'value':
 			case 'values': {
-				data.sort(function (a, b) {
+				data.sort((a, b) => {
 					if (Number(a.value) > Number(b.value)) {
-						return 1;
+						return sortDir ? 1 : -1;
 					}
 					if (Number(a.value) < Number(b.value)) {
-						return -1;
+						return sortDir ? -1 : 1;
 					}
 					return 0;
 				});
@@ -1759,31 +1762,31 @@ class SmartTooltip {
 			}
 			case 'color':
 			case 'colors': {
-				data.sort(function (a, b) {
-					if (a.color > b.color) { return 1; }
-					if (a.color < b.color) { return -1; }
+				data.sort((a, b) => {
+					if (a.color > b.color) { return sortDir ? 1 : -1; }
+					if (a.color < b.color) { return sortDir ? -1 : 1; }
 					return 0;
 				});
 				break;
 			}
 			case 'state':
 			case 'states': {
-				data.sort(function (a, b) {
+				data.sort((a, b) => {
 					if (!a.state || !b.state) {
-						if (a.color > b.color) { return 1; }
-						if (a.color < b.color) { return -1; }
+						if (a.color > b.color) { return sortDir ? 1 : -1; }
+						if (a.color < b.color) { return sortDir ? -1 : 1; }
 					} else {
-						if (Number(a.state) > Number(b.state)) { return 1; }
-						if (Number(a.state) < Number(b.state)) { return -1; }
+						if (Number(a.state) > Number(b.state)) { return sortDir ? 1 : -1; }
+						if (Number(a.state) < Number(b.state)) { return sortDir ? -1 : 1; }
 					}
 					return 0;
 				});
 				break;
 			}
 			default: {
-				data.sort(function (a, b) {
-					if (a[sortParam] > b[sortParam]) { return 1; }
-					if (a[sortParam] < b[sortParam]) { return -1; }
+				data.sort((a, b) => {
+					if (a[sortParam] > b[sortParam]) { return sortDir ? 1 : -1; }
+					if (a[sortParam] < b[sortParam]) { return sortDir ? -1 : 1; }
 					return 0;
 				});
 			}
@@ -1800,11 +1803,10 @@ class SmartTooltip {
 		this._defOptions = CustomProperties.defOptions();
 		this._delayInInterval = null;
 		this._interval = null;
-		this._intervalTimerDelay = 50;
 		this._intervalTimer = this._intervalTimer.bind(this);
         this.showTT = this.showTT.bind(this);
         this.hideTT = this.hideTT.bind(this);
-		this._it = setInterval(this._intervalTimer, this._intervalTimerDelay);
+		this._it = setInterval(this._intervalTimer, TINTERVAL);
 
         this._delayShow = {
 			cb:	this.showTT,
@@ -2069,7 +2071,7 @@ class SmartTooltip {
 		let x = parseInt(div.style.left, 10),
 			y = parseInt(div.style.top, 10);
 		if (Math.abs(div._currentX - div._startX) > 5 || Math.abs(div._currentY - div._startY) > 5) {
-			if (window.SmartTooltip._o.showMode === '' && window.SmartTooltip._pinned) {
+			if (window.SmartTooltip._o.showMode === 'inherit' && window.SmartTooltip._pinned) {
 				// save coordinates without scroll sizes!
 				const scroll = SmartTooltip.getScroll();
 				x -= scroll.X;
@@ -2239,7 +2241,7 @@ class SmartTooltip {
 					this._ttipPinMe.classList.add('sttip-pinned');
 				}
 			}
-			if (typeof options.showMode === 'string' && options.showMode.length) {
+			if (typeof options.showMode === 'string' && options.showMode.length && options.showMode !== 'inherit') {
 				// hide pinMe button in case of tooltip for specific element has optional showMode
 				this._ttipPinMe.setAttribute('display', 'none');
 				this._o.showMode = options.showMode;
@@ -2418,14 +2420,25 @@ class SmartTooltip {
 
 	// needMoveForNewId - Id of new owner control, found in data.id
 	move(evt, needMoveForNewId = 0, ownerRect) {
-		if (this._ttipRef.getAttribute('display') === 'none') {
-			// not visible, so nothing todo
+		if (!this._ttipRef || !this._ttipGroup) {
+			return;
+		}
+
+		if (this._ttipRef.getAttribute('display') === 'none' || this._ttipRef.style.getPropertyValue('display') ==='none') {
+			this._delayShow.reset();
+			// not visible, so nothing todo more
 			return;
         }
-        if (evt.type !== 'fakeEvent') {
+        if (evt.type === 'fakeEvent') {
             console.log('fake event!');
-            this._delayShow.reset();
-        }
+		}
+
+		if (evt.type !== 'fakeEvent') {
+			if (this._delayShow.id != evt.target.id) {
+				//this._delayShow.clear();
+				this.hideTT();	// hide immidiately!
+			}
+		}
 
 		if (typeof evt === 'object') {
 			let x = evt.x, y = evt.y;
@@ -2444,7 +2457,7 @@ class SmartTooltip {
                 } else {
                     // offset the tooltip window by 6 pixels to right and down from mouse pointer
                     x += 30;
-                    y += 0;
+                    y += 20;
                 }
                 // caclulate an absolute location
                 const scroll = SmartTooltip.getScroll();
@@ -2458,8 +2471,10 @@ class SmartTooltip {
                 let offsetX = window.innerWidth - divRect.right;
                 if (offsetX < 0) {
                     x += (offsetX - 50);
-                    this._ttipRef.style.left = x;
+                    this._ttipRef.style.left = `${x}px`;
 				}
+
+				console.log(`x=${x} y=${y}`);
             }
 		}
 	}
@@ -2473,8 +2488,7 @@ class SmartTooltip {
 			this.showTT(data);
 		} else {
 			const delayIn = data.options.delayIn || this._ownOptions.delayIn || this._defOptions.delayIn;
-			const delayOut = data.options.delayOut || this._ownOptions.delayOut || this._defOptions.delayOut;
-			this._delayShow.set(data.id, delayIn, data, 0, '', this._intervalTimerDelay);
+			this._delayShow.set(data.id, delayIn, data, 0, '', TINTERVAL);
 		}
 	}
 
@@ -2544,496 +2558,478 @@ class SmartTooltip {
 				}
 			}
 
-			// done already!! // update definition options
-			// if (typeof data.options === 'object') {
-			// 	this.setOptions(data.options, data.id);
-			// }
-
 			// merge default options with custom
 			this._o = Object.assign({}, CustomProperties.defOptions(), this._ownOptions, ttipdef.opt);
-			this._ttipTemplate = ttipdef.template;
-		}
 
-		if (this._o) {
-			// check delayIn parameter and delay the showing if needed
-			// this._delayInInterval = setTimeout(() => {
-				// console.log(`DelayIn Handler ${this._delayInInterval} : ${this._o.delayIn}ms delay is out, show tooltip now!`);
+			// reload
+			this._initialized = false;
+			this._root.innerHTML = ttipdef.template;
+			this._svg = this._root.firstElementChild;
 
-				// reload
-				this._initialized = false;
-				this._root.innerHTML = this._ttipTemplate;
-				this._svg = this._root.firstElementChild;
+			if (this._o.template === 'iframe') {
+				this._iframe = this._root.lastElementChild;
+			} else {
+				this._iframe = null;
+			}
 
-				if (this._o.template === 'iframe') {
-					this._iframe = this._root.lastElementChild;
-				} else {
-					this._iframe = null;
+			this._ttipGroup 	   = this._root.getElementById('tooltip-group');
+			this._ttipPinMe		   = this._root.getElementById('pinMe');
+			this._ttipFrameBGroup  = this._root.getElementById('frmBtns');
+				this._ttipHelpMe   = this._root.getElementById('helpMe');
+				this._ttipCloseMe  = this._root.getElementById('closeMe');
+
+			this._ttipFrame        = this._root.getElementById('tooltip-frame');
+			this._ttipLegendGroup  = this._root.getElementById('legend-group');
+			this._ttipLegendFrame  = this._root.getElementById('legend-frame');
+			this._ttipLegendStroke = this._root.getElementById('legend-stroke');
+			this._sttipLegendTextStroke = this._root.getElementById('legend-text-stroke');
+			this._ttipLegendRect   = this._root.getElementById('legend-rect');
+			this._ttipLegendColor  = this._root.getElementById('legend-color');
+			this._ttipLegendName   = this._root.getElementById('legend-name');
+			this._ttipLegendValue  = this._root.getElementById('legend-value');
+			this._ttipRunIndicator = this._root.getElementById('run-indicator');
+			this._ttipDiagram      = this._root.getElementById('diagram');
+			this._ttipDiagramGroup = this._root.getElementById('diagram-group');
+			this._ttipValue        = this._root.getElementById('tooltip-value');
+			this._ttipDescrGroup   = this._root.getElementById('descr-group');
+			this._ttipTitle        = this._root.getElementById('tooltip-title');
+			this._ttipDescription  = this._root.getElementById('tooltip-description');
+			this._ttipTitleGroup   = this._root.getElementById('title-group');
+			this._ttipScaleGroup   = this._root.getElementById('scale-group');
+			this._ttipBoundGroup   = this._root.getElementById('bound-group');
+			this._ttipValue50      = this._root.getElementById('value-50');
+			this._ttipValue100     = this._root.getElementById('value-100');
+			this._ttipFakeIFrame   = this._root.getElementById('fake-iframe');
+			this._ttipImageLink    = this._root.getElementById('image-link');
+
+			if (!this._demo) { // demo tooltip does not use this functionality
+				// init events
+				this._initEvents();
+			}
+
+			if (!this._demo && this.storage) { // demo tooltip does not use this functionality
+				this.storage.enable = Number(this._o.enableStorage);
+			}
+
+			// set pinned and fixed mode by 'startFrom' parameter
+			this._pinned = this._fixed = false;
+			if (this._o.startFrom === 'pinned') {
+				this._pinned = true;
+				this._fixed = false;
+			}
+			if (this._o.startFrom === 'fixed') {
+				this._pinned = true;
+				this._fixed = true;
+			}
+			if (!this._demo && this.storage) { // demo tooltip does not use this functionality
+				// now get 'pinned' and 'fixed' modes from local storage
+				const pinned = (this.storage.read('SmartTooltip.pinned') === 'true');
+				const fixed  = this.storage.read('SmartTooltip.x');
+				this._pinned = pinned || this._pinned;
+				this._fixed  = fixed || this._fixed;
+			}
+			// set apropriated class on 'pinMe' button
+			if (this._ttipPinMe && this._pinned) {
+				if (this._fixed) {
+					this._ttipPinMe.classList.add('sttip-custom');
+				}
+				this._ttipPinMe.classList.add('sttip-pinned');
+			}
+
+			if (this._ttipRef && this._ttipGroup) {
+				let ttipBoundGroupBR, sText;
+
+				// move buttons group (helpMe and closeMe) to the 0,0 position for next right positioning
+				if (this._ttipFrameBGroup) {
+					this._ttipFrameBGroup.setAttribute('transform', 'translate(0, 0)');
 				}
 
-				this._ttipGroup 	   = this._root.getElementById('tooltip-group');
-				this._ttipPinMe		   = this._root.getElementById('pinMe');
-				this._ttipFrameBGroup  = this._root.getElementById('frmBtns');
-					this._ttipHelpMe   = this._root.getElementById('helpMe');
-					this._ttipCloseMe  = this._root.getElementById('closeMe');
+				this._ttipRef.style.display = '';
+				// apply optional parameters to this._o (options)
+				if (typeof data.options === 'object') {
+					this._applyCustomOptions(data.options, data.id);
 
-				this._ttipFrame        = this._root.getElementById('tooltip-frame');
-				this._ttipLegendGroup  = this._root.getElementById('legend-group');
-				this._ttipLegendFrame  = this._root.getElementById('legend-frame');
-				this._ttipLegendStroke = this._root.getElementById('legend-stroke');
-				this._sttipLegendTextStroke = this._root.getElementById('legend-text-stroke');
-				this._ttipLegendRect   = this._root.getElementById('legend-rect');
-				this._ttipLegendColor  = this._root.getElementById('legend-color');
-				this._ttipLegendName   = this._root.getElementById('legend-name');
-				this._ttipLegendValue  = this._root.getElementById('legend-value');
-				this._ttipRunIndicator = this._root.getElementById('run-indicator');
-				this._ttipDiagram      = this._root.getElementById('diagram');
-				this._ttipDiagramGroup = this._root.getElementById('diagram-group');
-				this._ttipValue        = this._root.getElementById('tooltip-value');
-				this._ttipDescrGroup   = this._root.getElementById('descr-group');
-				this._ttipTitle        = this._root.getElementById('tooltip-title');
-				this._ttipDescription  = this._root.getElementById('tooltip-description');
-				this._ttipTitleGroup   = this._root.getElementById('title-group');
-				this._ttipScaleGroup   = this._root.getElementById('scale-group');
-				this._ttipBoundGroup   = this._root.getElementById('bound-group');
-				this._ttipValue50      = this._root.getElementById('value-50');
-				this._ttipValue100     = this._root.getElementById('value-100');
-				this._ttipFakeIFrame   = this._root.getElementById('fake-iframe');
-				this._ttipImageLink    = this._root.getElementById('image-link');
-
-				if (!this._demo) { // demo tooltip does not use this functionality
-					// init events
-					this._initEvents();
-				}
-
-				// // update definition options
-				// if (typeof data.options === 'object') {
-				// 	this.setOptions(data.options, data.id);
-				// }
-
-				// // merge default options with custom
-				// this._o = Object.assign({}, CustomProperties.defOptions(), this._ownOptions, ttipdef.opt);
-
-				if (!this._demo && this.storage) { // demo tooltip does not use this functionality
-					this.storage.enable = Number(this._o.enableStorage);
-				}
-
-				// set pinned and fixed mode by 'startFrom' parameter
-				this._pinned = this._fixed = false;
-				if (this._o.startFrom === 'pinned') {
-					this._pinned = true;
-					this._fixed = false;
-				}
-				if (this._o.startFrom === 'fixed') {
-					this._pinned = true;
-					this._fixed = true;
-				}
-				if (!this._demo && this.storage) { // demo tooltip does not use this functionality
-					// now get 'pinned' and 'fixed' modes from local storage
-					const pinned = (this.storage.read('SmartTooltip.pinned') === 'true');
-					const fixed  = this.storage.read('SmartTooltip.x');
-					this._pinned = pinned || this._pinned;
-					this._fixed  = fixed || this._fixed;
-				}
-				// set apropriated class on 'pinMe' button
-				if (this._ttipPinMe && this._pinned) {
-					if (this._fixed) {
-						this._ttipPinMe.classList.add('sttip-custom');
-					}
-					this._ttipPinMe.classList.add('sttip-pinned');
-				}
-
-				if (this._ttipRef && this._ttipGroup) {
-					let ttipBoundGroupBR, sText;
-
-					// move buttons group (helpMe and closeMe) to the 0,0 position for next right positioning
-					if (this._ttipFrameBGroup) {
-						this._ttipFrameBGroup.setAttribute('transform', 'translate(0, 0)');
-					}
-
-					this._ttipRef.style.display = '';
-					// apply optional parameters to this._o (options)
-					if (typeof data.options === 'object') {
-						this._applyCustomOptions(data.options, data.id);
-
-						this._svg.removeAttribute('style');
-						if (typeof data.options.cssVars === 'object') {
-							const css = data.options.cssVars;
-							for (let key in css) {
-								this._svg.style.setProperty(key, css[key]);
-							}
+					this._svg.removeAttribute('style');
+					if (typeof data.options.cssVars === 'object') {
+						const css = data.options.cssVars;
+						for (let key in css) {
+							this._svg.style.setProperty(key, css[key]);
 						}
 					}
+				}
 
 
-					// calculate the maximum width of tooltip window
-					let startX = 0, maxWidth, textWidth, prevElemRef = null;
-					if (this._ttipTitleGroup) {
-						// the dataset parameter 'xpos' defines the start X position of title, description and value elements
-						startX = parseInt(this._ttipTitleGroup.dataset[XPOS], 10);
+				// calculate the maximum width of tooltip window
+				let startX = 0, maxWidth, textWidth, prevElemRef = null;
+				if (this._ttipTitleGroup) {
+					// the dataset parameter 'xpos' defines the start X position of title, description and value elements
+					startX = parseInt(this._ttipTitleGroup.dataset[XPOS], 10);
+				}
+				const ttipWidth = getComputedStyle(this._ttipFrame).getPropertyValue('--sttip-var-tooltip-max-width');
+				if (ttipWidth) {
+					this._ttipFrame.setAttribute('width', ttipWidth);
+				}
+				maxWidth = parseInt(this._ttipFrame.getAttribute('width'), 10);
+				if (startX) {
+					// before calculating lets check the future position of title
+					if (this._ttipLegendGroup && typeof data.targets === 'object' && data.targets.length) {
+						maxWidth -= startX;
+					} else {
+						maxWidth -= 20;
 					}
-					maxWidth = parseInt(this._ttipFrame.getAttribute('width'), 10);
-					if (startX) {
-						// before calculating lets check the future position of title
-						if (this._ttipLegendGroup && typeof data.targets === 'object' && data.targets.length) {
-							maxWidth -= startX;
-						} else {
-							maxWidth -= 20;
+				}
+
+				// render title section of data
+				if (typeof data.title === 'object') {
+					// title and description are automaticaly wraps its text
+					// the max width for wrapping is calculated as max width of tooltip window (from template)
+					// or correspondent lower optional parameter 'titleTextWrap' and 'descrTextWrap'
+					// title - legend or name
+					if (this._ttipTitle) {
+						if (typeof data.title.titleFormat === 'string') {
+							this._o.titleFormat = data.title.titleFormat;
 						}
+						sText = SmartTooltip.formatString(this._o.titleFormat, data.title);
+						// before inserting text, lets check the wrap width optional parameter
+						if (this._o.titleTextWrap) {
+							textWidth = Math.min(maxWidth, this._o.titleTextWrap);
+						}
+						if (sText) {
+							SmartTooltip.wrapText(sText, this._ttipTitle, textWidth || maxWidth, this._o.titleTextAlign);
+						}
+						prevElemRef = this._ttipTitle;
 					}
 
-					// render title section of data
-					if (typeof data.title === 'object') {
-						// title and description are automaticaly wraps its text
-						// the max width for wrapping is calculated as max width of tooltip window (from template)
-						// or correspondent lower optional parameter 'titleTextWrap' and 'descrTextWrap'
-						// title - legend or name
-						if (this._ttipTitle) {
-							if (typeof data.title.titleFormat === 'string') {
-								this._o.titleFormat = data.title.titleFormat;
-							}
-							sText = SmartTooltip.formatString(this._o.titleFormat, data.title);
-							// before inserting text, lets check the wrap width optional parameter
-							if (this._o.titleTextWrap) {
-								textWidth = Math.min(maxWidth, this._o.titleTextWrap);
-							}
-							if (sText) {
-								SmartTooltip.wrapText(sText, this._ttipTitle, textWidth || maxWidth, this._o.titleTextAlign);
-							}
-							prevElemRef = this._ttipTitle;
-						}
-
-						// render description - formatted value
-						if (this._ttipDescription) {
-								// before drawing this part, lets check the position of previous element and move down!
-								if (prevElemRef) {
-									const gap = Number(this._ttipDescription.attributes.y.value) - Number(prevElemRef.attributes.y.value);
-									const height = prevElemRef.getBoundingClientRect().height;
-									let offset = height - gap;
-									this._ttipDescription.attributes.y.value = Number(this._ttipDescription.attributes.y.value) + offset;
-									prevElemRef = this._ttipDescription;
-								}
-								if (typeof data.title.descrFormat === 'string') {
-								this._o.descrFormat = data.title.descrFormat;
-							}
-							sText = SmartTooltip.formatString(this._o.descrFormat, data.title);
-							// before inserting text, lets check the wrap width optional parameter
-							if (this._o.descrTextWrap) {
-								textWidth = Math.min(maxWidth, this._o.descrTextWrap);
-							}
-							if (sText) {
-								SmartTooltip.wrapText(sText, this._ttipDescription, textWidth || maxWidth, this._o.descrTextAlign);
-							}
-							prevElemRef = this._ttipDescription;
-						}
-
-						if (this._ttipFakeIFrame) {
-							// before drawing lets do the similar trick with own position
+					// render description - formatted value
+					if (this._ttipDescription) {
+							// before drawing this part, lets check the position of previous element and move down!
 							if (prevElemRef) {
-								const gap = Number(this._ttipFakeIFrame.attributes.y.value) - Number(prevElemRef.attributes.y.value);
+								const gap = Number(this._ttipDescription.attributes.y.value) - Number(prevElemRef.attributes.y.value);
 								const height = prevElemRef.getBoundingClientRect().height;
 								let offset = height - gap;
-								this._ttipFakeIFrame.attributes.y.value = Number(this._ttipFakeIFrame.attributes.y.value) + offset;
+								this._ttipDescription.attributes.y.value = Number(this._ttipDescription.attributes.y.value) + offset;
+								prevElemRef = this._ttipDescription;
 							}
-							const top = this._ttipFakeIFrame.getAttribute('y');
-							this._iframe.style.setProperty('top', `${top}px`);
-							if (typeof data.title.link !== 'undefined') {
-								this._iframe.setAttribute('src', data.title.link);
-							}
-							prevElemRef = this._ttipFakeIFrame;
+							if (typeof data.title.descrFormat === 'string') {
+							this._o.descrFormat = data.title.descrFormat;
 						}
-						if (this._ttipImageLink) {
-							// before drawing lets do the similar trick with own position
-							if (prevElemRef) {
-								const gap = Number(this._ttipImageLink.attributes.y.value) - Number(prevElemRef.attributes.y.value);
-								const height = prevElemRef.getBoundingClientRect().height;
-								let offset = height - gap;
-								this._ttipImageLink.attributes.y.value = Number(this._ttipImageLink.attributes.y.value) + offset;
-							}
-							if (typeof data.title.link !== 'undefined') {
-								this._ttipImageLink.setAttribute('xlink:href', data.title.link);
-							}
-							prevElemRef = this._ttipImageLink;
+						sText = SmartTooltip.formatString(this._o.descrFormat, data.title);
+						// before inserting text, lets check the wrap width optional parameter
+						if (this._o.descrTextWrap) {
+							textWidth = Math.min(maxWidth, this._o.descrTextWrap);
 						}
-
-
-						// render value as colored rectangle with width proportional to value
-						if (this._ttipValue) {
-							// before drawing lets do the similar trick with own position
-							if (prevElemRef) {
-								const gap = Number(this._ttipValue.attributes.y.value) - Number(prevElemRef.attributes.y.value);
-								const height = prevElemRef.getBoundingClientRect().height;
-								let offset = height - gap;
-								if (this._ttipScaleGroup) {
-									this._ttipScaleGroup.setAttributeNS(null, 'transform', `translate(0, ${offset})`);
-								} else {
-									this._ttipValue.attributes.y.value = Number(this._ttipValue.attributes.y.value) + offset;
-								}
-							}
-							// render value indicator and it's scale
-							if (typeof data.title.value !== 'undefined') {
-								this._ttipValue.style.fill = data.title.color || '#666666';
-
-								// value indicator (rect in 'pie' template must to have dataset parameter MAXV that defines the length of scale)!
-								let valueWidth = parseInt(this._ttipValue.dataset[MAXV], 10);
-								let onepct = valueWidth / 100;
-								// next if-else block use the next logic:
-								// if you want to show an absolute value, you must! to specify the maximum value
-								// in case the maximum is not specified, there are two cases:
-								// 1. in case of value greather than 100, this is an absolute value and I will show it just as a maximum value
-								// 2. in another case it is a percent from 100%, so I will show it as percents and append the character '%' after value '100' on the scale
-								if (typeof data.title.max !== 'undefined' && data.title.max !== null) {
-									onepct = valueWidth / data.title.max;
-									if (this._ttipValue50 && this._ttipValue100) {
-										this._ttipValue50.textContent = (data.title.max / 2).toFixed(0);
-										this._ttipValue100.textContent = data.title.max;
-									}
-								} else if (data.title.value > 100) {
-									onepct = valueWidth / data.title.value;
-									if (this._ttipValue50 && this._ttipValue100) {
-										this._ttipValue50.textContent = (data.title.value / 2).toFixed(0);
-										this._ttipValue100.textContent = data.title.value;
-									}
-								} else if (this._ttipValue50 && this._ttipValue100) {
-										this._ttipValue50.textContent = '50';
-										this._ttipValue100.textContent = '100%';
-								}
-
-								// set the width of rectangle in proportional to value
-								this._ttipValue.setAttribute('width', data.title.value * onepct || 0);
-								// append or remove the appropriated class name and dataset attribute 'linkto' with specified link url
-								if (data.title.link) {
-									this._ttipValue.classList.add('sttip-linked');
-									this._ttipValue.dataset[LINKTO] = data.title.link;
-								} else {
-									this._ttipValue.classList.remove('sttip-linked');
-									this._ttipValue.dataset[LINKTO] = '';
-								}
-								// store 'uuid' in dataset attribute for next reference (for sorting and selecting)
-								if (data.title.uuid) {
-									this._ttipValue.dataset[UUID] = data.title.uuid;
-								} else {
-									this._ttipValue.dataset[UUID] = '';
-								}
-							} else if (this._ttipScaleGroup) { // in case of value was not specified, hide all scale group!
-								this._ttipScaleGroup.style.display = 'none';
-							}
-							prevElemRef = this._ttipValue;
+						if (sText) {
+							SmartTooltip.wrapText(sText, this._ttipDescription, textWidth || maxWidth, this._o.descrTextAlign);
 						}
+						prevElemRef = this._ttipDescription;
 					}
 
-					// render 'targets' as legend table and pie diagram
-					if (this._ttipLegendGroup) {
-						if (typeof data.targets === 'object' && data.targets.length) {
-							// create the temporary array for working with it (sorting,...)
-							const targets = Array.from(data.targets);
-							// const targets = { ...data.targets }; - cannot be used here, because I use internal Array functions in sorting!
-
-							// now sort it by optional parameter 'sortBy'
-							SmartTooltip.sortDataByParam(targets, this._o.sortBy || 'value');
-							if (targets.length) {
-								if (this._ttipTitleGroup) {
-									this._ttipTitleGroup.setAttributeNS(null, 'transform', 'translate(0, 0)');
-								}
-
-								let y = 0;
-								// show template
-								if (this._ttipLegendGroup && this._ttipLegendStroke) {
-									// calculate max length for first (name) and second (value) columns
-									let C1 = {maxL: 0, maxInd: -1, rows: []},
-										C2 = {maxL: 0, maxInd: -1, rows: []},
-										gap = 10,
-										text;
-									for (let index = 0; index < targets.length; index++) {
-										if (this._ttipLegendName) {
-											if (typeof targets[index].legendFormat === 'string') {
-												this._o.legendFormat = targets[index].legendFormat;
-											}
-											text = SmartTooltip.formatString(this._o.legendFormat, targets[index]);
-											if (text.length > C1.maxL) {
-												C1.maxL = text.length;
-												C1.maxInd = index;
-											}
-											C1.rows.push(text);
-										}
-										if (this._ttipLegendValue) {
-											if (typeof targets[index].legendValFormat === 'string') {
-												this._o.legendValFormat = targets[index].legendValFormat;
-											}
-											text = SmartTooltip.formatString(this._o.legendValFormat, targets[index]);
-											if (text.length > C2.maxL) {
-												C2.maxL = text.length;
-												C2.maxInd = index;
-											}
-											C2.rows.push(text);
-										}
-									}
-									// now, set legend stroke width to maximum length as C1.max + gap + C2.max
-									let xC1 = 0, xC2 = 0, maxC1Length, maxStrokeWidth = 0, strokeGap = 10;
-									if (C1.maxInd > -1) {
-										xC1 = this._ttipLegendName.getBBox().x;
-										this._ttipLegendName.textContent = C1.rows[C1.maxInd];
-										maxC1Length = this._ttipLegendName.getComputedTextLength();
-									}
-									if (C2.maxInd > -1) {
-										this._ttipLegendValue.textContent = C2.rows[C2.maxInd];
-										xC2 = xC1 + maxC1Length + gap;
-										this._ttipLegendValue.setAttributeNS(null, 'x', xC2);
-
-										maxStrokeWidth = this._sttipLegendTextStroke.getBoundingClientRect().width;
-									}
-
-									for (let index = 0; index < targets.length; index++) {
-										let target = targets[index];
-										if (this._ttipLegendColor) {
-											this._ttipLegendColor.style.fill = target.color;
-										}
-										if (this._ttipLegendName) {
-											this._ttipLegendName.textContent = C1.rows[index];
-										}
-										if (this._ttipLegendValue) {
-											this._ttipLegendValue.textContent = C2.rows[index];
-										}
-
-										if (this._ttipLegendRect) {
-											this._ttipLegendRect.dataset[LINKTO] = target.link || '';
-											this._ttipLegendRect.dataset[UUID] = target.uuid || '';
-											this._ttipLegendRect.dataset[PARENT] = target.parent || '';
-											this._ttipLegendRect.setAttributeNS(null, 'width', maxStrokeWidth + strokeGap);
-										}
-										const ls = this._ttipLegendStroke.cloneNode(true);
-										ls.setAttributeNS(null, 'id', `legend-stroke-${index + 1}`);
-										ls.classList.add('clone-ls');
-										if (target.current) {
-											ls.classList.add('sttip-current');
-										} else {
-											ls.classList.remove('sttip-current');
-										}
-										if (target.link) {
-											ls.classList.add('sttip-linked');
-										} else {
-											ls.classList.remove('sttip-linked');
-										}
-										ls.setAttributeNS(null, 'transform', `translate(0, ${y})`);
-										this._ttipLegendGroup.appendChild(ls);
-										y = (index + 1) * 34;	// mistical number is a storke height from template
-									}
-									// hide template
-									this._ttipLegendStroke.style.display = 'none';
-								}
-								this._drawDiagramm(targets);
-							}
-						} else {
-							// hide legend group and diagram in case of no targets and move the title group to the legend group position
-							if (this._ttipLegendGroup) {
-								this._ttipLegendGroup.style.display = 'none';
-							}
-							if (this._ttipDiagram) {
-								this._ttipDiagram.style.display = 'none';
-							}
-							if (this._ttipDiagramGroup) {
-								this._ttipDiagramGroup.style.display = 'none';
-							}
-
-							const legendGroupX = this._ttipLegendGroup ? (parseInt(this._ttipLegendGroup.dataset[XPOS], 10)) : 0;
-							const titleGroupX  = this._ttipTitleGroup ? (parseInt(this._ttipTitleGroup.dataset[XPOS], 10)) : 0;
-							if (this._ttipTitleGroup) {
-								this._ttipTitleGroup.setAttributeNS(null, 'transform', `translate(-${titleGroupX - legendGroupX}, 0)`);
-							}
-						}
-					}
-
-					// tooltip window positioning
-					if (typeof data.x === 'number' && typeof data.y === 'number') {
-						if (this._demo) {
-							this._ttipRef.style.left = `${data.x}px`;
-							this._ttipRef.style.top = `${data.y}px`;
-						} else {
-							let forId = 0;
-							if (this._shownFor != data.id) {
-								this._shownFor = data.id;
-								forId = this._shownFor;
-							}
-							// before moving to position of forId element, check the local storage x and y coordinates
-							// and move to these coordinates (the tooltip window was moved by user interaction to sutable place (i hope))
-							// but all this happens only in case of 'fixed' mode!!!
-							let left = 0, top = 0;
-							if (this._fixed) {
-								if (forId) {
-									left = Number(this.storage.read('SmartTooltip.x'));
-									top = Number(this.storage.read('SmartTooltip.y'));
-								}
-							}
-							if (left && top) { // move here!
-								const scroll = SmartTooltip.getScroll();
-								// append current scroll positions to saved coordinates (was stored without its on 'endDrag)
-								left += scroll.X;
-								top += scroll.Y;
-
-								this._ttipRef.style.left = left;
-								this._ttipRef.style.top = top;
-							} else {
-								const fakeEvt = {
-									x: data.x,
-									y: data.y,
-									type: 'fakeEvent'
-								};
-								this.move(fakeEvt, forId, this._o.location);
-							}
-						}
-					}
-
-					// resize the frame rectange of toolip window
-					// hide button 'closeMe' in 'float' mode and show it in 'pinned' and 'custom' modes
-					if (this._ttipCloseMe) {
-						this._ttipCloseMe.parentNode.removeAttribute('display');
-						if (!this._pinned && !this._fixed) {
-							this._ttipCloseMe.parentNode.setAttribute('display', 'none');
-						}
-					}
-					// calculate the bounding size of rendered tooltip window and resize the main frame rectangle
-					// 10 pixels added to the bounding width and height are the gaps!
-					ttipBoundGroupBR = this._ttipBoundGroup.getBoundingClientRect();
-					// this._ttipFrame.setAttributeNS(null, 'width', ttipBoundGroupBR.width + 10);
-					this._ttipFrame.setAttributeNS(null, 'height', ttipBoundGroupBR.height + 10);
-
-					// add if enabled shadow effect
-					if (this._o.isShadow) {
-						this._ttipFrame.classList.add('sttip-shadowed');
-					}
-
-					let btnX;
-					if (this._ttipFrameBGroup) { // move buttons 'helpMe' and 'closeMe' to the right side of frame
-						ttipBoundGroupBR = this._ttipFrame.getBoundingClientRect();
-						const btnRect = this._ttipFrameBGroup.getBoundingClientRect();
-						btnX = ttipBoundGroupBR.width - (btnRect.width + 4); /* the gap */
-						this._ttipFrameBGroup.setAttribute('transform', `translate(${btnX}, 4)`);
-					}
-					// zoom tooltip window to optional parameter 'frameScale'
-					this._ttipGroup.setAttribute('transform', `scale(${this._o.frameScale})`);
-
-					// after scaling: in case of 'iframe' - template zoom ifame also
 					if (this._ttipFakeIFrame) {
-						// get fake rectangle coordinates and size and convert its to client
-						const fakeRc = this._ttipFakeIFrame.getBoundingClientRect();
-						let pt = this._svg.createSVGPoint();
-						pt.x = fakeRc.x;
-						pt.y = fakeRc.y;
-						pt = pt.matrixTransform(this._svg.getScreenCTM().inverse());
-						// reposition and scaling the frame
-						this._iframe.style.setProperty('top', `${pt.y}px`);
-						this._iframe.style.setProperty('left', `${pt.x}px`);
-						this._iframe.style.setProperty('width', `${fakeRc.width}px`);
-						this._iframe.style.setProperty('height', `${fakeRc.height}px`);
+						// before drawing lets do the similar trick with own position
+						if (prevElemRef) {
+							const gap = Number(this._ttipFakeIFrame.attributes.y.value) - Number(prevElemRef.attributes.y.value);
+							const height = prevElemRef.getBoundingClientRect().height;
+							let offset = height - gap;
+							this._ttipFakeIFrame.attributes.y.value = Number(this._ttipFakeIFrame.attributes.y.value) + offset;
+						}
+						const top = this._ttipFakeIFrame.getAttribute('y');
+						this._iframe.style.setProperty('top', `${top}px`);
+						if (typeof data.title.link !== 'undefined') {
+							this._iframe.setAttribute('src', data.title.link);
+						}
+						prevElemRef = this._ttipFakeIFrame;
+					}
+					if (this._ttipImageLink) {
+						// before drawing lets do the similar trick with own position
+						if (prevElemRef) {
+							const gap = Number(this._ttipImageLink.attributes.y.value) - Number(prevElemRef.attributes.y.value);
+							const height = prevElemRef.getBoundingClientRect().height;
+							let offset = height - gap;
+							this._ttipImageLink.attributes.y.value = Number(this._ttipImageLink.attributes.y.value) + offset;
+						}
+						if (typeof data.title.link !== 'undefined') {
+							this._ttipImageLink.setAttribute('xlink:href', data.title.link);
+						}
+						prevElemRef = this._ttipImageLink;
 					}
 
-					// after scaling: get real size of #toolip-group and resize the root SVG
-					ttipBoundGroupBR = this._ttipGroup.getBoundingClientRect();
-					this._svg.setAttributeNS(null, 'width', ttipBoundGroupBR.width);
-					this._svg.setAttributeNS(null, 'height', ttipBoundGroupBR.height);
+
+					// render value as colored rectangle with width proportional to value
+					if (this._ttipValue) {
+						// before drawing lets do the similar trick with own position
+						if (prevElemRef) {
+							const gap = Number(this._ttipValue.attributes.y.value) - Number(prevElemRef.attributes.y.value);
+							const height = prevElemRef.getBoundingClientRect().height;
+							let offset = height - gap;
+							if (this._ttipScaleGroup) {
+								this._ttipScaleGroup.setAttributeNS(null, 'transform', `translate(0, ${offset})`);
+							} else {
+								this._ttipValue.attributes.y.value = Number(this._ttipValue.attributes.y.value) + offset;
+							}
+						}
+						// render value indicator and it's scale
+						if (typeof data.title.value !== 'undefined') {
+							this._ttipValue.style.fill = data.title.color || '#666666';
+
+							// value indicator (rect in 'pie' template must to have dataset parameter MAXV that defines the length of scale)!
+							let valueWidth = parseInt(this._ttipValue.dataset[MAXV], 10);
+							let onepct = valueWidth / 100;
+							// next if-else block use the next logic:
+							// if you want to show an absolute value, you must! to specify the maximum value
+							// in case the maximum is not specified, there are two cases:
+							// 1. in case of value greather than 100, this is an absolute value and I will show it just as a maximum value
+							// 2. in another case it is a percent from 100%, so I will show it as percents and append the character '%' after value '100' on the scale
+							if (typeof data.title.max !== 'undefined' && data.title.max !== null) {
+								onepct = valueWidth / data.title.max;
+								if (this._ttipValue50 && this._ttipValue100) {
+									this._ttipValue50.textContent = (data.title.max / 2).toFixed(0);
+									this._ttipValue100.textContent = data.title.max;
+								}
+							} else if (data.title.value > 100) {
+								onepct = valueWidth / data.title.value;
+								if (this._ttipValue50 && this._ttipValue100) {
+									this._ttipValue50.textContent = (data.title.value / 2).toFixed(0);
+									this._ttipValue100.textContent = data.title.value;
+								}
+							} else if (this._ttipValue50 && this._ttipValue100) {
+									this._ttipValue50.textContent = '50';
+									this._ttipValue100.textContent = '100%';
+							}
+
+							// set the width of rectangle in proportional to value
+							this._ttipValue.setAttribute('width', data.title.value * onepct || 0);
+							// append or remove the appropriated class name and dataset attribute 'linkto' with specified link url
+							if (data.title.link) {
+								this._ttipValue.classList.add('sttip-linked');
+								this._ttipValue.dataset[LINKTO] = data.title.link;
+							} else {
+								this._ttipValue.classList.remove('sttip-linked');
+								this._ttipValue.dataset[LINKTO] = '';
+							}
+							// store 'uuid' in dataset attribute for next reference (for sorting and selecting)
+							if (data.title.uuid) {
+								this._ttipValue.dataset[UUID] = data.title.uuid;
+							} else {
+								this._ttipValue.dataset[UUID] = '';
+							}
+						} else if (this._ttipScaleGroup) { // in case of value was not specified, hide all scale group!
+							this._ttipScaleGroup.style.display = 'none';
+						}
+						prevElemRef = this._ttipValue;
+					}
 				}
-			// }, this._demo ? 0 : this._o.delayIn);
-			//console.log(`DelayIn Handler ${this._delayInInterval} <= ${this._o.delayIn} ms`);
-			
+
+				// render 'targets' as legend table and pie diagram
+				if (this._ttipLegendGroup) {
+					if (typeof data.targets === 'object' && data.targets.length) {
+						// create the temporary array for working with it (sorting,...)
+						const targets = Array.from(data.targets);
+						// const targets = { ...data.targets }; - cannot be used here, because I use internal Array functions in sorting!
+
+						// now sort it by optional parameter 'sortBy'
+						SmartTooltip.sortDataByParam(targets, this._o.sortBy || 'value', this._o.sortDir || 1);
+						if (targets.length) {
+							if (this._ttipTitleGroup) {
+								this._ttipTitleGroup.setAttributeNS(null, 'transform', 'translate(0, 0)');
+							}
+
+							let y = 0;
+							// show template
+							if (this._ttipLegendGroup && this._ttipLegendStroke) {
+								// calculate max length for first (name) and second (value) columns
+								let C1 = {maxL: 0, maxInd: -1, rows: []},
+									C2 = {maxL: 0, maxInd: -1, rows: []},
+									gap = 10,
+									text;
+								for (let index = 0; index < targets.length; index++) {
+									if (this._ttipLegendName) {
+										if (typeof targets[index].legendFormat === 'string') {
+											this._o.legendFormat = targets[index].legendFormat;
+										}
+										text = SmartTooltip.formatString(this._o.legendFormat, targets[index]);
+										if (text.length > C1.maxL) {
+											C1.maxL = text.length;
+											C1.maxInd = index;
+										}
+										C1.rows.push(text);
+									}
+									if (this._ttipLegendValue) {
+										if (typeof targets[index].legendValFormat === 'string') {
+											this._o.legendValFormat = targets[index].legendValFormat;
+										}
+										text = SmartTooltip.formatString(this._o.legendValFormat, targets[index]);
+										if (text.length > C2.maxL) {
+											C2.maxL = text.length;
+											C2.maxInd = index;
+										}
+										C2.rows.push(text);
+									}
+								}
+								// now, set legend stroke width to maximum length as C1.max + gap + C2.max
+								let xC1 = 0, xC2 = 0, maxC1Length, maxStrokeWidth = 0, strokeGap = 10;
+								if (C1.maxInd > -1) {
+									xC1 = this._ttipLegendName.getBBox().x;
+									this._ttipLegendName.textContent = C1.rows[C1.maxInd];
+									maxC1Length = this._ttipLegendName.getComputedTextLength();
+								}
+								if (C2.maxInd > -1) {
+									this._ttipLegendValue.textContent = C2.rows[C2.maxInd];
+									xC2 = xC1 + maxC1Length + gap;
+									this._ttipLegendValue.setAttributeNS(null, 'x', xC2);
+
+									maxStrokeWidth = this._sttipLegendTextStroke.getBoundingClientRect().width;
+								}
+
+								for (let index = 0; index < targets.length; index++) {
+									let target = targets[index];
+									if (this._ttipLegendColor) {
+										this._ttipLegendColor.style.fill = target.color;
+									}
+									if (this._ttipLegendName) {
+										this._ttipLegendName.textContent = C1.rows[index];
+									}
+									if (this._ttipLegendValue) {
+										this._ttipLegendValue.textContent = C2.rows[index];
+									}
+
+									if (this._ttipLegendRect) {
+										this._ttipLegendRect.dataset[LINKTO] = target.link || '';
+										this._ttipLegendRect.dataset[UUID] = target.uuid || '';
+										this._ttipLegendRect.dataset[PARENT] = target.parent || '';
+										this._ttipLegendRect.setAttributeNS(null, 'width', maxStrokeWidth + strokeGap);
+									}
+									const ls = this._ttipLegendStroke.cloneNode(true);
+									ls.setAttributeNS(null, 'id', `legend-stroke-${index + 1}`);
+									ls.classList.add('clone-ls');
+									if (target.current) {
+										ls.classList.add('sttip-current');
+									} else {
+										ls.classList.remove('sttip-current');
+									}
+									if (target.link) {
+										ls.classList.add('sttip-linked');
+									} else {
+										ls.classList.remove('sttip-linked');
+									}
+									ls.setAttributeNS(null, 'transform', `translate(0, ${y})`);
+									this._ttipLegendGroup.appendChild(ls);
+									y = (index + 1) * 34;	// mistical number is a storke height from template
+								}
+								// hide template
+								this._ttipLegendStroke.style.display = 'none';
+							}
+							this._drawDiagramm(targets);
+						}
+					} else {
+						// hide legend group and diagram in case of no targets and move the title group to the legend group position
+						if (this._ttipLegendGroup) {
+							this._ttipLegendGroup.style.display = 'none';
+						}
+						if (this._ttipDiagram) {
+							this._ttipDiagram.style.display = 'none';
+						}
+						if (this._ttipDiagramGroup) {
+							this._ttipDiagramGroup.style.display = 'none';
+						}
+
+						const legendGroupX = this._ttipLegendGroup ? (parseInt(this._ttipLegendGroup.dataset[XPOS], 10)) : 0;
+						const titleGroupX  = this._ttipTitleGroup ? (parseInt(this._ttipTitleGroup.dataset[XPOS], 10)) : 0;
+						if (this._ttipTitleGroup) {
+							this._ttipTitleGroup.setAttributeNS(null, 'transform', `translate(-${titleGroupX - legendGroupX}, 0)`);
+						}
+					}
+				}
+
+				// tooltip window positioning
+				if (typeof data.x === 'number' && typeof data.y === 'number') {
+					if (this._demo) {
+						this._ttipRef.style.left = `${data.x}px`;
+						this._ttipRef.style.top = `${data.y}px`;
+					} else {
+						let forId = 0;
+						if (this._shownFor != data.id) {
+							this._shownFor = data.id;
+							forId = this._shownFor;
+						}
+						// before moving to position of forId element, check the local storage x and y coordinates
+						// and move to these coordinates (the tooltip window was moved by user interaction to sutable place (i hope))
+						// but all this happens only in case of 'fixed' mode!!!
+						let left = 0, top = 0;
+						if (this._fixed) {
+							if (forId) {
+								left = Number(this.storage.read('SmartTooltip.x'));
+								top = Number(this.storage.read('SmartTooltip.y'));
+							}
+						}
+						const scroll = SmartTooltip.getScroll();
+						if (left && top) { // move here!
+							// const scroll = SmartTooltip.getScroll();
+							// append current scroll positions to saved coordinates (was stored without its on 'endDrag)
+							left += scroll.X;
+							top += scroll.Y;
+
+							this._ttipRef.style.left = `${left}px`;
+							this._ttipRef.style.top = `${top}px`;
+						} else {
+							const fakeEvt = {
+								x: data.x + scroll.X,
+								y: data.y + scroll.Y,
+								type: 'fakeEvent'
+							};
+							this.move(fakeEvt, forId, this._o.location);
+						}
+					}
+				}
+
+				// resize the frame rectange of toolip window
+				// hide button 'closeMe' in 'float' mode and show it in 'pinned' and 'custom' modes
+				if (this._ttipCloseMe) {
+					this._ttipCloseMe.parentNode.removeAttribute('display');
+					if (!this._pinned && !this._fixed) {
+						this._ttipCloseMe.parentNode.setAttribute('display', 'none');
+					}
+				}
+				// calculate the bounding size of rendered tooltip window and resize the main frame rectangle
+				// 10 pixels added to the bounding width and height are the gaps!
+				ttipBoundGroupBR = this._ttipBoundGroup.getBoundingClientRect();
+				// this._ttipFrame.setAttributeNS(null, 'width', ttipBoundGroupBR.width + 10);
+				this._ttipFrame.setAttributeNS(null, 'height', ttipBoundGroupBR.height + 10);
+
+				// add if enabled shadow effect
+				if (this._o.isShadow) {
+					this._ttipFrame.classList.add('sttip-shadowed');
+				}
+
+				let btnX;
+				if (this._ttipFrameBGroup) { // move buttons 'helpMe' and 'closeMe' to the right side of frame
+					ttipBoundGroupBR = this._ttipFrame.getBoundingClientRect();
+					const btnRect = this._ttipFrameBGroup.getBoundingClientRect();
+					btnX = ttipBoundGroupBR.width - (btnRect.width + 4); /* the gap */
+					this._ttipFrameBGroup.setAttribute('transform', `translate(${btnX}, 4)`);
+				}
+				// zoom tooltip window to optional parameter 'frameScale'
+				this._ttipGroup.setAttribute('transform', `scale(${this._o.frameScale})`);
+
+				// after scaling: in case of 'iframe' - template zoom ifame also
+				if (this._ttipFakeIFrame) {
+					// get fake rectangle coordinates and size and convert its to client
+					const fakeRc = this._ttipFakeIFrame.getBoundingClientRect();
+					let pt = this._svg.createSVGPoint();
+					pt.x = fakeRc.x;
+					pt.y = fakeRc.y;
+					pt = pt.matrixTransform(this._svg.getScreenCTM().inverse());
+					// reposition and scaling the frame
+					this._iframe.style.setProperty('top', `${pt.y}px`);
+					this._iframe.style.setProperty('left', `${pt.x}px`);
+					this._iframe.style.setProperty('width', `${fakeRc.width}px`);
+					this._iframe.style.setProperty('height', `${fakeRc.height}px`);
+				}
+
+				// after scaling: get real size of #toolip-group and resize the root SVG
+				ttipBoundGroupBR = this._ttipGroup.getBoundingClientRect();
+				this._svg.setAttributeNS(null, 'width', ttipBoundGroupBR.width);
+				this._svg.setAttributeNS(null, 'height', ttipBoundGroupBR.height);
+			}
 		}
 	}
 
@@ -3044,9 +3040,10 @@ class SmartTooltip {
 		}
     }
     hideTT() {
-		if (!this._fixed || (this._o && this._o.showMode !== 'fixed')) {
-			this._ttipRef.style.display = 'none';
+		if (this._fixed || (this._o && this._o.showMode === 'fixed')) {
+			return;
 		}
+		this._ttipRef.style.display = 'none';
     }
 }
 
