@@ -52,7 +52,7 @@ const MAXV      = 'maxw';
 const TEMPLATE  = 'template';
 const XPOS      = 'xpos';
 const TINTERVAL = 50;
-const DELAYON   = 60000;	// inactivity period on tooltip window. After that interval tooltip window will be hided
+const DELAYON   = 30000;	// inactivity period on tooltip window. After that interval tooltip window will be hided
 
 class TemplateDefs {
 	static getInternalTemplate(templateName = '') {
