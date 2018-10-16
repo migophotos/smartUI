@@ -930,13 +930,17 @@ class TemplateDefs {
 										// the function get(id) will returns the  real definition from similar id
 	}
 	register(id, name) {
-		const sdef = this.getByName(name);
+        return;
+/*
+        this._templates.set(id, {name: name, template: 'loading...'});
+        const sdef = this.getByName(name);
 		if (sdef) {
 			this._similars.set(id, sdef.id);
 		} else {
 			this._templates.set(id, {name: name, template: 'loading...'});
 			this._options.set(id, {});
-		}
+        }
+*/
 	}
 
 	// This function append template to register id, or store thid id in similars map
@@ -952,11 +956,13 @@ class TemplateDefs {
 				this._options.set(id, JSON.parse(JSON.stringify(opt)));
 				this._similars.set(id, sdef.id);
 			} else {
+                this._templates.delete(id); // delete temporary registered
+
 				const fakeId = `fake-${this._templates.size}`;
 				this._options.set(fakeId, {});
 				this._templates.set(fakeId, {name: name, template: template});
-				this._options.set(id, JSON.parse(JSON.stringify(opt)));
-				this._similars.set(id, fakeId);
+                this._options.set(id, JSON.parse(JSON.stringify(opt)));
+                this._similars.set(id, fakeId);
 			}
 		} else {
 			let sid = this._similars.get(id);
@@ -1362,7 +1368,7 @@ class CustomProperties {
 	 * @param {*} prop
 	 */
 	static customProp2Param(prop) {
-		const CAMELIZE = /[\-\:]([a-z])/g;
+		const CAMELIZE = /[-:]([a-z])/g;
 		const capitalize = function (token) {
 			return token[1].toUpperCase();
 		};
@@ -1793,24 +1799,31 @@ class SmartTooltip {
 		}
 	}
 
-	_intervalTimer() {
-        if (this._delayShow.is()) {
-            this._delayShow.dec();
-        }
-	}
+    // _mousePosUpdate(evt) {
+    //     this._mousePos.x = evt.pageX;
+    //     this._mousePos.y = evt.pageY;
+    //     console.log(`mouse at x:${evt.pageX}, y:${evt.pageY}`);
+    // }
 
 	constructor(role = null, div = null, root) {
 		this._defOptions = CustomProperties.defOptions();
 		this._delayInInterval = null;
-		this._interval = null;
-		this._intervalTimer = this._intervalTimer.bind(this);
+        this._interval = null;
+        // this._mousePos = {};
+		// this._mousePosUpdate = this._mousePosUpdate.bind(this);
         this.showTT = this.showTT.bind(this);
         this.hideTT = this.hideTT.bind(this);
-		this._it = setInterval(this._intervalTimer, TINTERVAL);
+		this._it = setInterval(() => {
+            if (this._delayShow.is()) {
+                this._delayShow.dec();
+            }
+        }, TINTERVAL);
+        // document.addEventListener('mouseenter', this._mousePosUpdate, false);
+        // document.addEventListener('mousemove', this._mousePosUpdate, false);
 
         this._delayShow = {
 			cb:	this.showTT,
-			freq: 0,		// _intervalTimer interval == 50
+			freq: 0,		// TINTERVAL
 			counter: 0,
 			delay: 0,		// delay
 			id:	null,		// id of source element
@@ -1819,7 +1832,7 @@ class SmartTooltip {
             data:	null,	// reference on data to show
             hide: {
                 cb: this.hideTT,
-                freq: 0,        // _intervalTimer interval == 50
+                freq: 0,        // TINTERVAL
                 counter: 0,     // decremented counter
                 delay: 0,       // delay
                 id: null,       // id of source element
@@ -1850,7 +1863,7 @@ class SmartTooltip {
 					this.id = id;
 					this.freq = freq;
 					if (delay) {
-	                    this.delay = delay / freq;
+                        this.delay = delay / freq;
 						this.reason = reason;
 						this.counter = this.delay;
 						this.ready = false;
@@ -1875,7 +1888,7 @@ class SmartTooltip {
                             if (this.counter <= 0) {
                                 this.ready = true;
                                 this.cb();
-                                console.log(`delayHide: ${this.reason} interval ${this.delay * this.freq}ms is out!`);
+                                // console.log(`delayHide: ${this.reason} interval ${this.delay * this.freq}ms is out!`);
                             }
                         }
 					}
@@ -1894,11 +1907,15 @@ class SmartTooltip {
 				}
 			},
 			// reset counters
-			reset: function () {
+			reset: function (pos) {
                 if (this.setted) {
 					this.counter = this.delay;
 					this.ready = false;
-					this.hide.reset();
+                    this.hide.reset();
+                    if (this.data && typeof pos === 'object') {
+                        this.data.x = pos.x;
+                        this.data.y = pos.y;
+                    }
 				}
 			},
 			resetDelayHide: function () {
@@ -1925,7 +1942,7 @@ class SmartTooltip {
             setDelayHide(delay, reason) {
 				if (this.setted) {
 					this.ready = true;
-	                this.hide.changeDelay(delay, reason);
+                    this.hide.changeDelay(delay, reason);
 				}
 			},
 			dec: function () {
@@ -1934,13 +1951,15 @@ class SmartTooltip {
                         this.counter -= 1;
                         if (this.counter <= 0) {
                             this.ready = true;
+                            // this.data.x = window.SmartTooltip._mousePos.x;
+                            // this.data.y = window.SmartTooltip._mousePos.y;
                             this.cb(this.data);
-                            console.log(`delayShow: interval ${this.delay * this.freq}ms is out!`);
+                            // console.log(`delayShow: interval ${this.delay * this.freq}ms is out!`);
                         }
                     } else if (this.hide.is()) {
                         this.hide.dec();
                     }
-				} 
+				}
 			}
 		};
 
@@ -2418,25 +2437,21 @@ class SmartTooltip {
 	}
 
 
-	// needMoveForNewId - Id of new owner control, found in data.id
-	move(evt, needMoveForNewId = 0, ownerRect) {
+	// in case of needMoveForNewId not null the pinned! tooltip window will be positioned to pinned coordinates!
+	move(evt, needMoveForNewId = null, ownerRect) {
 		if (!this._ttipRef || !this._ttipGroup) {
 			return;
 		}
 
-		if (this._ttipRef.getAttribute('display') === 'none' || this._ttipRef.style.getPropertyValue('display') ==='none') {
-			this._delayShow.reset();
+		if (this._ttipRef.getAttribute('display') === 'none' || this._ttipRef.style.getPropertyValue('display') === 'none') {
+			this._delayShow.reset({x: evt.x, y: evt.y});
 			// not visible, so nothing todo more
 			return;
         }
-        if (evt.type === 'fakeEvent') {
-            console.log('fake event!');
-		}
 
 		if (evt.type !== 'fakeEvent') {
 			if (this._delayShow.id != evt.target.id) {
-				//this._delayShow.clear();
-				this.hideTT();	// hide immidiately!
+				this.hideTT();	// hide immediately!
 			}
 		}
 
@@ -2450,10 +2465,47 @@ class SmartTooltip {
             }
 
             if (this._ttipRef && this._ttipGroup) {
-                // in case of moving of pinned tooltip, calculate it's new coordinate by positioning it at the right side of owner control
-                if (needMoveForNewId && typeof ownerRect === 'object') {
-                    x = ownerRect.right + 16;
-                    y = ownerRect.top;
+                // in case of moving of pinned tooltip, calculate it's new coordinate by positioning it.
+                // check '_o.position' parameter for needed positioning side
+                const divRect = this._ttipRef.getBoundingClientRect();
+                // divRect.height *= this._o.frameScale;
+                // divRect.width *= this._o.frameScale;
+
+                if (this._pinned && needMoveForNewId && typeof ownerRect === 'object') {
+                    switch (this._o.position) {
+                        case 'cu':
+                            x = (ownerRect.left + (ownerRect.width / 2)) - (divRect.width / 2);
+                            y = ownerRect.top - divRect.height - 2;
+                            break;
+                        case 'cd':
+                            x = (ownerRect.left + (ownerRect.width / 2)) - (divRect.width / 2);
+                            y = ownerRect.bottom + 2;
+                            break;
+                        case 'ru':
+                            x = ownerRect.right + 16;
+                            y = ownerRect.top - divRect.height;
+                            break;
+                        case 'rt':
+                            x = ownerRect.right + 16;
+                            y = ownerRect.top;
+                            break;
+                        case 'rd':
+                            x = ownerRect.right + 16;
+                            y = ownerRect.bottom + 2;
+                            break;
+                        case 'lu':
+                            x = ownerRect.left - 16 - divRect.width;
+                            y = ownerRect.top - divRect.height - 2;
+                            break;
+                        case 'lt':
+                            x = ownerRect.left - 16 - divRect.width;
+                            y = ownerRect.top;
+                            break;
+                        case 'ld':
+                            x = ownerRect.left - 16 - divRect.width;
+                            y = ownerRect.bottom;
+                            break;
+                    }
                 } else {
                     // offset the tooltip window by 6 pixels to right and down from mouse pointer
                     x += 30;
@@ -2467,21 +2519,18 @@ class SmartTooltip {
                 this._ttipRef.style.left = `${x}px`;
                 this._ttipRef.style.top = `${y}px`;
 
-                const divRect = this._ttipRef.getBoundingClientRect();
                 let offsetX = window.innerWidth - divRect.right;
                 if (offsetX < 0) {
                     x += (offsetX - 50);
                     this._ttipRef.style.left = `${x}px`;
 				}
-
-				console.log(`x=${x} y=${y}`);
             }
 		}
 	}
 
 	/**
 	 * Show toolip.data = { x, y, title: {color, value, name, descr}, targets: [sub-targets], ...options}
-	 * @param {object} data 
+	 * @param {object} data
 	 */
 	show(data) {
 		if (this._demo) {
@@ -2492,8 +2541,7 @@ class SmartTooltip {
 		}
 	}
 
-	showTT(data) 
-	{
+	showTT(data) {
 		if (!this._definitions || typeof data !== 'object' || typeof data.id === 'undefined' || data.id === '' || data.id == null) {
 			console.error('Can not show tooltip for unknown id!');
 			return;
@@ -2939,19 +2987,21 @@ class SmartTooltip {
 						}
 					}
 				}
-
+                const fakeMove = {fakeEvt: null, forId: null, ownerRect: null};
 				// tooltip window positioning
 				if (typeof data.x === 'number' && typeof data.y === 'number') {
 					if (this._demo) {
 						this._ttipRef.style.left = `${data.x}px`;
 						this._ttipRef.style.top = `${data.y}px`;
 					} else {
-						let forId = 0;
-						if (this._shownFor != data.id) {
-							this._shownFor = data.id;
-							forId = this._shownFor;
-						}
-						// before moving to position of forId element, check the local storage x and y coordinates
+						// let forId = 0;
+                        let forId = data.id;
+						// if (this._shownFor != data.id) {
+						// 	this._shownFor = data.id;
+						// 	forId = this._shownFor;
+						// }
+
+                        // before moving to position of forId element, check the local storage x and y coordinates
 						// and move to these coordinates (the tooltip window was moved by user interaction to sutable place (i hope))
 						// but all this happens only in case of 'fixed' mode!!!
 						let left = 0, top = 0;
@@ -2963,7 +3013,6 @@ class SmartTooltip {
 						}
 						const scroll = SmartTooltip.getScroll();
 						if (left && top) { // move here!
-							// const scroll = SmartTooltip.getScroll();
 							// append current scroll positions to saved coordinates (was stored without its on 'endDrag)
 							left += scroll.X;
 							top += scroll.Y;
@@ -2975,8 +3024,11 @@ class SmartTooltip {
 								x: data.x + scroll.X,
 								y: data.y + scroll.Y,
 								type: 'fakeEvent'
-							};
-							this.move(fakeEvt, forId, this._o.location);
+                            };
+                            // this.move(fakeEvt, forId, this._o.location);
+                            fakeMove.fakeEvt = fakeEvt;
+                            fakeMove.forId = forId;
+                            fakeMove.ownerRect = this._o.location;
 						}
 					}
 				}
@@ -3029,7 +3081,11 @@ class SmartTooltip {
 				ttipBoundGroupBR = this._ttipGroup.getBoundingClientRect();
 				this._svg.setAttributeNS(null, 'width', ttipBoundGroupBR.width);
 				this._svg.setAttributeNS(null, 'height', ttipBoundGroupBR.height);
-			}
+
+                if (fakeMove.forId) {
+                    this.move(fakeMove.fakeEvt, fakeMove.forId, fakeMove.ownerRect);
+                }
+            }
 		}
 	}
 
