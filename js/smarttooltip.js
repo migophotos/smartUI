@@ -52,6 +52,7 @@ const MAXV      = 'maxw';
 const TEMPLATE  = 'template';
 const XPOS      = 'xpos';
 const TINTERVAL = 50;
+const DELAYON   = 60000;	// inactivity period on tooltip window. After that interval tooltip window will be hided
 
 class TemplateDefs {
 	static getInternalTemplate(templateName = '') {
@@ -1051,34 +1052,57 @@ class CustomProperties {
 	 */
 	static getPrefix() {
 		return '--sttip-';
-    }
+	}
+	
+	/**
+	 * converts JSON representation of options into the options parameters object siutable for show() call
+	 */
+	static JsonToOptions(jsonOpt) {
+		const options = {
+			cssVars: {}
+		};
+		if (typeof jsonOpt === 'string' && jsonOpt.length) {
+			const tmpOpt = JSON.parse(jsonOpt);
+			for (let key in tmpOpt) {
+				const paramName = key.replace('--sttip-', '');
+				if (paramName.startsWith('var-')) {
+					options.cssVars[key] = tmpOpt[key];
+				} else {
+					options[CustomProperties.customProp2Param(paramName)] = tmpOpt[key];
+				}
+			}
+			CustomProperties.convertNumericProps(options);
+			return options;
+		}
+		return null;
+	}
 
     /**
-     * build and returns an options object siutable for show tooltip function
+     * build and returns an options object siutable for 'show()' function
 	 *
 	 * input: {
 	 * 	paramKey: value,	// custom prop is param-key
 	 *  paramKey: value		// custorm property is var-param-key
 	 * }
-	 * knownOnly = true;
+	 * varsOnly = true;
      * output: {
      *  paramKey: value,	// custom prop is param-key
      *  cssVars: {
      *      sttip-var-param-key: value,		// custom property is var-param-key
      *  }
      * }
-	 * knownOnly = false;
+	 * varsOnly = false;
      * output: {
      * 		sttip-var-param-key: value,		// custom property is param-key
      * 		sttip-var-param-key: value,		// custom property is var-param-key
      * }
      *
      * @param {object} opt options object to be converted
-	 * @param {boolean} knownOnly the flag that enables (if it equals to false) to convert all properties to css vars (needed for web-components)
-     * @returns {object} options with known structure
+	 * @param {boolean} varsOnly the flag that enables (if it equals to false) to convert all properties to css vars (used in web-components)
+     * @returns {object} options in form siutable for show() function
      *
      */
-    static buidOptionsAndCssVars(opt, knownOnly = true) {
+    static buidOptionsAndCssVars(opt, varsOnly = true) {
 		const options = {
 			// location: evt.target.getBoundingClientRect(),
 			cssVars: {}
@@ -1087,7 +1111,7 @@ class CustomProperties {
 		// convert properties started with 'var-' to css values
 		const customProp = CustomProperties.getCustomProperties();
 		for (let n = 0; n < customProp.length; n++) {
-			if (customProp[n].startsWith('var-') || !knownOnly) {
+			if (customProp[n].startsWith('var-') || !varsOnly) {
 				let cssKey = `${CustomProperties.getPrefix()}${customProp[n]}`;
 				let oKey = CustomProperties.customProp2Param(`${customProp[n]}`);
 				let cssVal = opt[oKey];
@@ -1109,7 +1133,7 @@ class CustomProperties {
 				}
 			}
 		}
-		if (!knownOnly) {
+		if (!varsOnly) {
 			return options.cssVars;
 		}
 
@@ -1139,6 +1163,12 @@ class CustomProperties {
         return changes;
     }
 
+	/**
+	 * Build text representation of changed options for specific templates
+	 * @param {object} opt Options
+	 * @param {string} templateId Specific template name. 
+	 * The one from next: 'def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'
+	 */
     static serializeOptions(opt, templateId) {
 		let template = '';
 		let cssOpt = null;
@@ -1161,11 +1191,13 @@ class CustomProperties {
                 break;
 			case 'def-json_btn':
 				cssOpt = CustomProperties.buidOptionsAndCssVars(opt, false);
-				template = 'options = {\n';
-				for (let key in cssOpt) {
-					template += `  "${key}": "${cssOpt[key]}"\n`;
-				}
-                template += '};\n';
+				template = `options = '${JSON.stringify(cssOpt)}'`;
+				template += '\n\n';
+				template += 
+				`// later, use CustomProperties.JsonToOptions(options); to convert JSON string
+// into 'options' object, sutable for SmartToolip.showTooltip() call.`
+				// beutify it by 'lf'
+				//template = template.replace(/,/g, ',\\\n');
                 break;
             case 'def-object-params_btn':
 				cssOpt = CustomProperties.buidOptionsAndCssVars(opt);
@@ -1175,16 +1207,16 @@ class CustomProperties {
 				if (typeof cssOpt.cssVars === 'object') {
 					template += '    cssVars: {\n';
 					for (let key in cssOpt.cssVars) {
-						template += `      ${key}: ${cssOpt.cssVars[key]};\n`;
+						template += `      '${key}': '${cssOpt.cssVars[key]}',\n`;
 					}
 					template += '    },\n';
 				}
 				for (let key in cssOpt) {
 					if (key !== 'cssVars') {
 						if (typeof cssOpt[key] === 'string') {
-							template += `    ${key}: '${cssOpt[key]}';\n`;
+							template += `    ${key}: '${cssOpt[key]}',\n`;
 						} else {
-							template += `    ${key}: ${cssOpt[key]};\n`;
+							template += `    ${key}: ${cssOpt[key]},\n`;
 						}
 					}
 				}
@@ -1200,7 +1232,8 @@ class CustomProperties {
                 break;
         }
         return template;
-    }
+	}
+	
 	/**
 	 * Returns an array of custom properties. Each of the custom property has corresponding declarative attribute in form first-second == prefix-first-second
 	 * and option parameter with name "firstSecond".
@@ -1336,7 +1369,6 @@ class CustomProperties {
 			'sortDir',
 			'delayIn',
 			'delayOut',
-			'delayOn',
 			'transitionIn',
 			'transitionOut',
 			'fillOpacity',
@@ -1374,7 +1406,10 @@ class CustomProperties {
 		};
 		return prop.replace(CAMELIZE, capitalize);
 	}
-
+	/**
+	 * Returns an array of custom properties in form of parameter names.
+	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
+	 */
 	static getParams() {
 		const props = CustomProperties.getCustomProperties();		// get an array of custom properties
 		const paramsArray = [];
@@ -1383,7 +1418,10 @@ class CustomProperties {
 		}
 		return paramsArray;
     }
-
+	/**
+	 * Translate by html lang attribute texts inside 'data.title' and 'data.options' sections
+	 * @param {object} data 
+	 */
     static tryToTranslate(data) {
         const title   = data.title;
         const options = data.options;
@@ -1423,8 +1461,15 @@ class CustomProperties {
                 options.legendValFormat = _(options.legendValFormat);
             }
         }
-    }
-
+	}
+	
+	/**
+	 * Register (add event listeners) an array of elements by its id
+	 * @param {object} doc current document (page document by default)
+	 * @param {array} ids an array of elements id that will be registered (mousemove, mouseover and mouseout event listeners will be added)
+	 * Each element may require the specific template by specifing its name (for example 'simple') in attribute '--sttip-template', 
+	 * or dataset attribute in form 'data-template'. If template name is not specified, the default one, 'pie' will be used.
+	 */
 	static registerElementsByIds(doc, ids = []) {
 		const curDocument = doc || document;
 		if (ids.length) {
@@ -1446,6 +1491,13 @@ class CustomProperties {
 			}
 		}
 	}
+	/**
+	 * Register (add event listeners) an array of elements by its class name
+	 * @param {object} doc current document (page document by default)
+	 * @param {array} cls an array of class names of elements that will be registered (mousemove, mouseover and mouseout event listeners will be added)
+	 * Each element may require the specific template by specifing its name (for example 'simple') in attribute '--sttip-template', 
+	 * or dataset attribute in form 'data-template'. If template name is not specified, the default one, 'pie' will be used.
+	 */
 	static registerElementsByClassName(doc, cls = []) {
 		const curDocument = doc || document;
 		const ids = [], tmpls = [];
@@ -1838,7 +1890,7 @@ class SmartTooltip {
                 id: null,       // id of source element
                 ready: false,
                 setted: false,   // false - not setted flag
-                reason: '',      // 'delayOut' or 'delayOn' identificatore
+                reason: '',      // 'delayOut' id
                 clear: function (own = null) {
                     if (this.setted) {
                         this.setted = false;
@@ -1881,6 +1933,13 @@ class SmartTooltip {
                     this.ready = false;
                     this.setted = true;
                 },
+				clearDelay: function() {
+                    this.setted = false;
+                    this.ready = false;
+					this.delay = 0;
+					this.counter = 0;
+					this.reason = '';
+				},
                 dec: function () {
                     if (this.setted) {
                         if (!this.ready) {
@@ -1895,7 +1954,7 @@ class SmartTooltip {
                 }
             },
 			// clear all!
-			clear: function () {
+			clear() {
                 if (this.setted) {
                     this.setted = false;
                     this.counter = 0;
@@ -1907,7 +1966,7 @@ class SmartTooltip {
 				}
 			},
 			// reset counters
-			reset: function (pos) {
+			reset(pos) {
                 if (this.setted) {
 					this.counter = this.delay;
 					this.ready = false;
@@ -1918,16 +1977,16 @@ class SmartTooltip {
                     }
 				}
 			},
-			resetDelayHide: function () {
+			resetDelayHide() {
                 this.hide.reset();
 			},
-			is: function () {
+			is() {
 				return this.setted;
             },
-            isSettedDelayHide: function () {
+            isSettedDelayHide() {
                 return this.hide.is();
             },
-			set: function (id, delayShow, data, delayHide, reason, freq) {
+			set(id, delayShow, data, delayHide, reason, freq) {
 				this.freq = freq;
 				this.delay = delayShow / freq;
 				this.counter = this.delay;
@@ -1945,7 +2004,10 @@ class SmartTooltip {
                     this.hide.changeDelay(delay, reason);
 				}
 			},
-			dec: function () {
+			clearDelayHide() {
+				this.hide.clearDelay();
+			},
+			dec() {
 				if (this.setted) {
                     if (!this.ready) {
                         this.counter -= 1;
@@ -2134,7 +2196,7 @@ class SmartTooltip {
 	}
 
 
-	// initialize smarttooltip event listeners, used for pin tooltip
+	// initialize smarttooltip event listeners, used for pinMe functionality
 	_initEvents() {
 		if (!this._initialized) {
 			this._initialized = 0;
@@ -2145,12 +2207,13 @@ class SmartTooltip {
 			this._interval = null;
 			if (this._ttipGroup) {
 				this._initialized++;
+				// block contextmenu
 				this._ttipGroup.addEventListener('contextmenu', function (evt) {
 					evt.preventDefault();
 				});
-
+				// listen for start dragging of tooltip window
 				this._ttipGroup.addEventListener('mousedown', this._startDrag);
-
+				//listen for mouse hover over targets in legend
 				this._ttipGroup.addEventListener('mouseover', (evt) => {
 					if (evt.target.classList.contains('sttip-legend-rect')) {
 							this._setOverEffect('sub-target', evt.target.dataset[UUID], 'sttip-hover');
@@ -2159,6 +2222,7 @@ class SmartTooltip {
 							this._setOverEffect('sttip-legend-rect', evt.target.dataset[UUID], 'sttip-lightgray');
 					}
 				});
+				// listen for mouseout from targets in legend
 				this._ttipGroup.addEventListener('mouseout', (evt) => {
 					if (evt.target.classList.contains('sttip-legend-rect')) {
 							this._setOverEffect('sub-target', 'resetall', 'sttip-hover');
@@ -2169,13 +2233,13 @@ class SmartTooltip {
                         this._delayShow.setDelayHide(this._o.delayOut, 'delayOut');
 					}
 				});
-
+				// listen for mouse moving above tooltip window
 				this._ttipGroup.addEventListener('mousemove', (evt) => {
 					evt.preventDefault();
 					if (evt.buttons == 1) {
 						return;
 					}
-                    this._delayShow.setDelayHide(this._o.delayOn, 'delayOn');
+                    this._delayShow.setDelayHide(DELAYON, `${DELAYON}`);
 				});
 
 				this._ttipGroup.addEventListener('click', function (evt) {
@@ -2227,7 +2291,8 @@ class SmartTooltip {
 			this._initialized = (this._initialized > 0);
 		}
     }
-
+	// additional processing for such parameters
+	// options.startFrom, options.showMode, options.isRun
 	_applyCustomOptions(options = null, forId) {
 		if (options) {
 			if (typeof options.startFrom === 'string') {
@@ -2288,8 +2353,8 @@ class SmartTooltip {
 
 	/**
 	 * Load tooltip template specified by 'tmplFileName' definition for element specified by its id
-	 * @param {*} id Uniq element's id, or an array or elements. In this case, the next parameter
-	 * @param {*} tmplFileName May contains the full file name with '.svg' extention, or predefined name of internal template.
+	 * @param {string} id Uniq element's id, or an array or elements. In this case, the next parameter
+	 * @param {string} tmplFileName May contains the full file name with '.svg' extention, or predefined name of internal template.
 	 * Currently, four internal templates are implemented: 'simple', 'pie', 'image', 'iframe'
 	 */
 	init(id, tmplFileName = null) {
@@ -2415,29 +2480,20 @@ class SmartTooltip {
 			if (typeof options === 'object') {
 				// merge own options with new options
 				this._ownOptions = Object.assign({}, this._ownOptions, options);
-				// for (let key in options) {
-				// 	this._ownOptions[key] = options[key];
-				// }
 				return this._ownOptions;
 			}
 		}
 		return (this._definitions.set(id, null, null, options));
-			// // merge new options with options inside definitions
-			// ttdef = this._definitions.get(id);
-			// if (ttdef) {
-			// 	optRef = ttdef.opt;
-			// }
-			// if (optRef) {
-			// 	if (typeof options === 'object') {
-			// 		for (let key in options) {
-			// 			optRef[key] = options[key];
-			// 		}
-			// 	}
-			// }
 	}
 
 
-	// in case of needMoveForNewId not null the pinned! tooltip window will be positioned to pinned coordinates!
+	/**
+	 * Move tooltip
+	 * in case of needMoveForNewId not null the pinned! tooltip window will be positioned to pinned coordinates!
+	 * @param {object} evt x, y, type parameters are used
+	 * @param {string} needMoveForNewId id of target element's that will be repositioned
+	 * @param {object} ownerRect target element's own rectangle
+	 */
 	move(evt, needMoveForNewId = null, ownerRect) {
 		if (!this._ttipRef || !this._ttipGroup) {
 			return;
@@ -2529,7 +2585,7 @@ class SmartTooltip {
 	}
 
 	/**
-	 * Show toolip.data = { x, y, title: {color, value, name, descr}, targets: [sub-targets], ...options}
+	 * Show toolip  data = { x, y, id, title: {color, value, name, descr, tooltip, link}, targets: [sub-targets], ...options}
 	 * @param {object} data
 	 */
 	show(data) {
@@ -2540,7 +2596,7 @@ class SmartTooltip {
 			this._delayShow.set(data.id, delayIn, data, 0, '', TINTERVAL);
 		}
 	}
-
+	// this function called from 'this._delayShow.dec()' when 'delayIn' interval ended
 	showTT(data) {
 		if (!this._definitions || typeof data !== 'object' || typeof data.id === 'undefined' || data.id === '' || data.id == null) {
 			console.error('Can not show tooltip for unknown id!');
@@ -3089,12 +3145,15 @@ class SmartTooltip {
 		}
 	}
 
-
+	/**
+	 * Hide tooltip
+	 */
 	hide() {
 		if (this._o) {
 			this._delayShow.setDelayHide(this._o.delayOut, 'delayOut');
 		}
-    }
+	}
+	// this function called from 'this._delayShow.hide.dec()' when 'delayOut' interval ended
     hideTT() {
 		if (this._fixed || (this._o && this._o.showMode === 'fixed')) {
 			return;
@@ -3150,6 +3209,16 @@ class SmartTooltipElement extends HTMLElement {
 
 	showDemoTooltip(demoData) {
 		if (this._demoTooltip) {
+			// not work correctrly! todo: check it!
+			// const diff = CustomProperties.diffProperties(this._o);
+			// const options = CustomProperties.buidOptionsAndCssVars(diff);
+			
+			// CustomProperties.convertNumericProps(options);
+
+            // const data = Object.assign({}, demoData);
+            // data.options = Object.assign({}, options);
+
+
 			const options = CustomProperties.buidOptionsAndCssVars(this._o);
 			CustomProperties.convertNumericProps(options);
 
