@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron')
+const path = require('path');
   
   // Храните глобальную ссылку на объект окна, если вы этого не сделаете, окно будет
   // автоматически закрываться, когда объект JavaScript собирает мусор.
@@ -7,7 +8,13 @@ const { app, BrowserWindow } = require('electron')
   
   function createWindow () {
     // Создаёт окно браузера.
-    win = new BrowserWindow({title:'SmartWidgets Editor', width:1500, height:900});
+    win = new BrowserWindow(
+    {
+      title:'SmartWidgets Editor',
+      icon: 'favicon.png',
+      width:1500, 
+      height:900
+    });
   
     // и загрузит index.html приложение.
     win.loadFile('index.html');
