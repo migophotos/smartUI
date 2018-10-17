@@ -2,15 +2,14 @@ const { app, BrowserWindow } = require('electron')
   
   // Храните глобальную ссылку на объект окна, если вы этого не сделаете, окно будет
   // автоматически закрываться, когда объект JavaScript собирает мусор.
-  let win
+  let win = null;
   
   function createWindow () {
     // Создаёт окно браузера.
-    win = new BrowserWindow({title:'SmartWidgets Editor', width:1500, height:900})
-    //win.loadURL('http://develop.ego-studio.com/webui/widgets/smartTooltip/')
+    win = new BrowserWindow({title:'SmartWidgets Editor', width:1500, height:900});
   
     // и загрузит index.html приложение.
-    win.loadFile('index.html')
+    win.loadFile('index.html');
   
     // Открыть средства разработчика.
     //win.webContents.openDevTools()
@@ -21,13 +20,13 @@ const { app, BrowserWindow } = require('electron')
       // в массиве, если ваше приложение поддерживает несколько окон в это время,
       // тогда вы должны удалить соответствующий элемент.
       win = null
-    })
+    });
   }
   
   // Этот метод будет вызываться, когда Electron закончит 
   // инициализацию и готов к созданию окон браузера.
   // Некоторые интерфейсы API могут использоваться только после возникновения этого события.
-  app.on('ready', createWindow)
+  app.on('ready', createWindow);
   
   // Выйти, когда все окна будут закрыты.
   app.on('window-all-closed', () => {
@@ -36,7 +35,7 @@ const { app, BrowserWindow } = require('electron')
     if (process.platform !== 'darwin') {
       app.quit()
     }
-  })
+  });
   
   app.on('activate', () => {
      // На MacOS обычно пересоздают окно в приложении,
@@ -44,7 +43,7 @@ const { app, BrowserWindow } = require('electron')
     if (win === null) {
       createWindow()
     }
-  })
+  });
   
   // В этом файле вы можете включить код другого основного процесса 
   // вашего приложения. Можно также поместить их в отдельные файлы и применить к ним require.

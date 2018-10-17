@@ -1,0 +1,93 @@
+{
+	"targets": [
+		{
+			"type": "description",
+			"uuid": "full path MD5",
+			"name": "target name",
+			"value": "targets value in %, in case of existing parent will be calculated as 100 - value",
+			"color": "targets color, in case of existing childs will used for rest part",
+			"parent": "parent name, or empty",
+			"childs": "an array of children targets"
+		},
+		{
+			"uuid": "uuid_T4",
+			"name": "T4",
+			"value": "15",
+			"color": "gray",
+			"link": "http://www.google.com/?t4",
+			"parent": "",
+			"childs": ["uuid_T5", "uuid_T6"]
+		},
+		{
+			"uuid": "uuid_T5",
+			"name": "T5",
+			"value": "20",
+			"color": "blue",
+			"link": "http://www.google.com/?t5",
+			"parent": "uuid_T4"
+		},
+		{
+			"uuid": "uuid_T6",
+			"name": "T6",
+			"value": "10",
+			"color": "red",
+			"link": "http://www.google.com/?t6",
+			"parent": "uuid_T4"
+		},
+		{
+			"uuid": "uuid_T7",
+			"name": "T7",
+			"value": "5",
+			"color": "green",
+			"link": "http://www.google.com/?t7",
+			"parent": "uuid_T4"
+		},
+		{
+			"uuid": "uuid_T8",
+			"name": "T8",
+			"value": "5",
+			"color": "green",
+			"link": "http://www.google.com/?t7",
+			"parent": "uuid_T4"
+		},
+		{
+			"uuid": "uuid_T9",
+			"name": "T9",
+			"value": "10",
+			"color": "red",
+			"link": "http://www.google.com/?t6",
+			"parent": "uuid_T4"
+		},
+		{
+			"uuid": "uuid_T10",
+			"name": "T10",
+			"value": "5",
+			"color": "green",
+			"link": "http://www.google.com/?t7",
+			"parent": "uuid_T4"
+		},
+		{
+			"uuid": "uuid_T11",
+			"name": "T11",
+			"value": "17",
+			"color": "green",
+			"link": "http://www.google.com/?t7",
+			"parent": "uuid_T4"
+		},
+		{
+			"uuid": "uuid_T12",
+			"name": "Очень длинное название, чтобы проверить правильность расчета длины of this length string",
+			"value": "68",
+			"color": "magenta",
+			"link": "http://www.google.com/?t7",
+			"parent": "uuid_T4"
+		}
+
+
+
+	],
+	"error": {
+		"message": "null",
+		"code": "0"
+	}
+}

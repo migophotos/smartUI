@@ -125,6 +125,11 @@
                 float: left;
                 cursor: pointer;
             }
+            #thelogo {
+                display: inline-block;
+
+            }
+
             smart-ui-spacer {
                 display: block;
                 float: left;
@@ -206,7 +211,6 @@
             .btn:hover, .slctd {
                 color: rgba( 102,227,255, 1 );
             }
-
             .widgets-btn, .categories-btn, .selector-btn {
                 cursor: pointer;
                 display: inline-block;
@@ -249,7 +253,9 @@
         <!-- </div> -->
             <div id="header" style="pointer-events:all;">
                 <div class="btn-container">
+                    <smart-ui-button class="about-btn" id="thelogo" state="on" image-width="64" image-height="64" image="favicon.png"></smart-ui-button>
                     <smart-ui-spacer class="hor-big"></smart-ui-spacer>
+
                     <smart-ui-button class="widgets-btn" id="smarttoolip_btn" targets="smarttooltip_cat,smarttooltip_opt,smarttooltip_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/tooltip_on.svg" imageOff="images/tooltip_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartTooltip"></smart-ui-button>
                     <smart-ui-spacer class="hor-small"></smart-ui-spacer>
                     <smart-ui-button class="widgets-btn" id="smartpie_btn" targets="smartpie_cat,smartpie_opt,smarttpie_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/pie_on.svg" imageOff="images/pie_off.svg"  data-sttip-tooltip="Настроить параметры виджета SmartPie"></smart-ui-button>
@@ -454,9 +460,9 @@
             </div>
         </div>
 
-        <!-- <script src="js/prism.js"></script>
-        <script src="js/utopia.js"></script> -->
-        <script src="js/smarttooltip.js"></script>
+        <!-- <script src="js/utopia.js"></script> -->
+        <script src="widgets/smartTooltip/smarttooltip.js"></script>
+        <script src="widgets/smartPie/smartpie.js"></script>
         <script src="js/smartUI.js"></script>
 
         <script>

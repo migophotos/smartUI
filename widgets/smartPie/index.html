@@ -1,0 +1,121 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    </head>
+    <body>
+        <svg class="defs-only" width="0" height="0" aria-hidden="true" focusable="false">
+            <symbol id="checkbox-outline" viewBox="0 0 10 10" overflow="visible">
+                <path stroke="currentColor" fill="none" d="M1,1 Q5,2 9,1 Q8,5 9,9 Q5,8 1,9 Q2,5 1,1Z" />
+            </symbol>
+            <symbol id="checkbox-checkmark" viewBox="0 0 10 10" overflow="visible">
+                <path stroke="seaGreen" fill="none" stroke-width="2px" stroke-linecap="round" filter="drop-shadow(0.5px 0.5px 0.3px rgba(0,0,0,0.5))" d="M2,5 L5,8 Q6,4 9,2" />
+            </symbol>
+        </svg>
+        <style>
+            smart-pie {
+                display: inline-block;
+				border-radius: 10px;
+				padding: 10px;								
+
+            }
+            smart-pie {
+                --smartwdg-bgk: yellow;
+            }
+            smart-pie#sm11 {
+                --smartwdg-ftm-fill: rgb(233, 231, 231); /* change CSS custom property*/
+            }
+            smart-pie:hover {   /* draw shadow when hover over any smart-pie */
+                 box-shadow: 0 3px 3px #ccc;
+            }
+            smart-ui-tooltip { /* send values of custom properties into JavaScript for custom Element 'smart-tooltip  */
+                --sttip-title-format: "$NAME$";
+                --sttip-descr-format: "$VALUE$";
+                --sttip-legend-format: "$LEGEND$";
+                --sttip-legend-val-format: "$VALUE$";
+                --sttip-is-run: "false";
+                --sttip-frame-scale: "0.6";
+                --sttip-sort-by: 'values';
+            }
+            smart-pie { /* To use values of custom properties in JavaScript just like standart properties
+                         getComputedStyle(element).getPropertVal("--custom-property-name")
+                        */
+                --smartpie-fill: gray;
+                --smartpie-lcolor: #666;
+                --smartpie-radius: 50;
+                --smartpie-interval: 4500;
+                --smartpie-run: 1;
+                --smartpie-stroke: lightgray;
+                --smartpie-width: 3;
+                --smartpie-type: rel;
+                --smartpie-sortby: states;
+                --smartpie-legend: 1;
+                --smartpie-emulate: 1;
+                --smartpie-ttip-type: SmartTooltip;
+                --smartpie-ttip-template: internal;
+                --smartpie-ttip-content: showAll;
+            }
+
+        </style>
+        <smart-pie background id="sm12" fill="gray" lcolor="#666" radius="50" interval="4500" run="1" stroke="lightgray" width="3" type="rel" sortby="states" legend="1" emulate="1" ></smart-pie>
+        <smart-pie id="sm11" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="rel" sortby="values" legend="1" emulate="1" ></smart-pie>
+
+        <smart-pie id="sm01" fill="lightgray" lcolor="#666" radius="100" interval="3000" run="1" stroke="lightgray" width="2" type="1.6" sortby="values" legend="0" ttiptmpl="./../smartTooltip/tooltip_vert_bar.svg"></smart-pie>
+
+        <div id="gauge-1" style="position: absolute; left: 100px; top: 600px;">
+            <svg id="dbSVG">
+                <g id="g1-dbSVG">
+                    <rect id="r1" x="10" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4";  />
+                </g>
+                <g id="bulbWDJ">
+                        <rect id="r2" x="400" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4";  />
+                    </g>
+                </svg>
+        </div>
+
+        <custom-elem id="custElem" data-alias="CustomElements" data-smart-tooltip="style="></custom-elem>
+
+        <smart-ui-tooltip id="sttip">SmartToolip will be initialized here</smart-ui-tooltip>
+
+        <script src="./../smartTooltip/smarttooltip.js"></script>
+        <script src="smartpie.js"></script>
+        <script src="smartdiagram.js"></script>
+
+
+        <script>
+            var el = document.getElementById("g1-dbSVG");
+            var options = {
+                context: el.ownerSVGElement,
+                mode: 'svg',
+                run: 0,
+                lcolor: "purple",
+                stroke: "lightgray",
+                interval: 5000,
+                startAngle: 135,
+                endAngle: 45,
+                legend: 0
+            };
+            window.SmartPies.initCtrl("g1-dbSVG", options);
+        </script>
+        <script src="smartwidget.js"></script>
+        <script>
+            var el = document.getElementById("bulbWDJ");
+            var options = {
+                context: el.ownerSVGElement,
+                mode: 'svg',
+                run: 0,
+                interval: 5000,
+                legend: 0,
+                template: 'bulb.svg'
+            };
+            SmartWidgets.init();
+            window.SmartWidgets.initCtrl("bulbWDJ", options);
+        </script>
+        <script src="swconfig.js"></script>
+        <script>
+        if (!window.SWConfig) {
+			window.SWConfig = new SWConfig();
+		}
+        </script>
+    </body>
+</html>

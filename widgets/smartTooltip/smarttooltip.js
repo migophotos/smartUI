@@ -1191,19 +1191,49 @@ class CustomProperties {
                 break;
 			case 'def-json_btn':
 				cssOpt = CustomProperties.buidOptionsAndCssVars(opt, false);
-				template = `options = '${JSON.stringify(cssOpt)}'`;
+				const jstr = `'${JSON.stringify(cssOpt)}'`;
+				const bjstr = jstr.replace(/,/g, ',\\\n    ');
+
+				template = `${jstr}`;
 				template += '\n\n';
 				template += 
 				`// later, use CustomProperties.JsonToOptions(options); to convert JSON string
-// into 'options' object, sutable for SmartToolip.showTooltip() call.`
-				// beutify it by 'lf'
-				//template = template.replace(/,/g, ',\\\n');
+// into 'options' object, sutable for SmartToolip.showTooltip() call. Fof example:
+
+const el = document.getElementById("jsn");
+el.addEventListener('mouseout', (evt) => {
+	SmartTooltip.hideTooltip(evt);
+});    
+el.addEventListener('mousemove', (evt) => {
+	SmartTooltip.moveTooltip(evt);
+});
+el.addEventListener('mouseover', (evt) => {
+	const opt = ${bjstr};
+	const options = CustomProperties.JsonToOptions(opt);
+
+	opt.location = evt.target.getBoundingClientRect();
+	const data = { 
+		id: evt.target.id,
+		x: evt.clientX,
+		y: evt.clientY,
+		options: options,
+		title: {
+			uuid: evt.target.id,
+			name: 'Current value',
+			value: 150,
+			max: 300,
+			color: 'rgb(19, 233, 19)'
+		}
+	};
+	SmartTooltip.showTooltip(data, evt);
+});            
+`
                 break;
             case 'def-object-params_btn':
 				cssOpt = CustomProperties.buidOptionsAndCssVars(opt);
 				template = '// inside "mouseover" event\n';
 				template += 'const data = {\n  x: evt.clientX,\n  y: evt.clientY,\n  id: evt.target.id;\n';
-				template += '  options: {\n';
+				template += '  options: {\n    location: evt.target.getBoundingClientRect();\n';
 				if (typeof cssOpt.cssVars === 'object') {
 					template += '    cssVars: {\n';
 					for (let key in cssOpt.cssVars) {

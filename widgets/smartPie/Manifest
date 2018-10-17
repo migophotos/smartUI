@@ -1,0 +1,14 @@
+#
+# Directory description file
+#
+# type (d|f) name path options (exclude=light,foo include=all)
+# if include is not specified then all is assumed
+# if exclude is not specified then none is assumed
+# path is - if files should not be moved
+#
+f answer.json			   -
+f smartpie.manifest.js     -
+f smartpie.js              -
+f example.html             -
+f smartpie.readme.txt      -
+
