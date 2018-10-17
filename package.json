@@ -1,0 +1,19 @@
+{
+  "name": "swib",
+  "version": "1.0.0",
+  "description": "SmartWidget Interactive Builder (SWIB) - is a WYSIWYG editor for family of sciptable widgets.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+
+  "author": {
+    "name": "Michael Goyberg",
+    "email": "guiappdev@gmail.com"
+  },
+  "repository": "https://github.com/migophotos/smartUI",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^3.0.4"
+  }
+}
