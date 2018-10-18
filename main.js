@@ -1,57 +1,40 @@
-const { app, BrowserWindow } = require('electron')
+/* eslint-disable indent */
+
+const {app, BrowserWindow} = require('electron');
 const path = require('path');
-  
-  // Храните глобальную ссылку на объект окна, если вы этого не сделаете, окно будет
-  // автоматически закрываться, когда объект JavaScript собирает мусор.
-  let win = null;
-  let sttipExample = null;
-  
-  function createWindow () {
-    // Создаёт окно браузера.
-    win = new BrowserWindow(
-    {
-      title:'SmartWidgets Editor',
-      icon: 'favicon.png',
-      width:1500, 
-      height:900
+
+// store reference on win as a global object to prevent eating it by garbage collector!
+let win = null;
+let sttipExample = null;
+
+function createWindow() {
+    win = new BrowserWindow({
+        title: 'SmartWidgets Editor',
+        icon: 'favicon.png',
+        width: 1500,
+        height: 900
     });
-  
-    // и загрузит index.html приложение.
     win.loadFile('index.html');
-  
-    // Открыть средства разработчика.
-    //win.webContents.openDevTools()
-  
-    // Вызывается, когда окно будет закрыто.
+
+    // win.webContents.openDevTools()
+
     win.on('closed', () => {
-      // Разбирает объект окна, обычно вы можете хранить окна     
-      // в массиве, если ваше приложение поддерживает несколько окон в это время,
-      // тогда вы должны удалить соответствующий элемент.
-      win = null
+        win = null;
     });
-  }
-  
-  // Этот метод будет вызываться, когда Electron закончит 
-  // инициализацию и готов к созданию окон браузера.
-  // Некоторые интерфейсы API могут использоваться только после возникновения этого события.
-  app.on('ready', createWindow);
-  
-  // Выйти, когда все окна будут закрыты.
-  app.on('window-all-closed', () => {
-    // Оставаться активным до тех пор, пока пользователь не выйдет полностью с помощью Cmd + Q,
-    // это обычное дело для приложений и их строки меню на macOS
+}
+
+// Electron is ready for windows creating
+app.on('ready', createWindow);
+
+app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-      app.quit()
+        app.quit();
     }
-  });
-  
-  app.on('activate', () => {
-     // На MacOS обычно пересоздают окно в приложении,
-     // после того, как на иконку в доке нажали, и других открытых окон нету.
+});
+
+app.on('activate', () => {
     if (win === null) {
-      createWindow()
+        createWindow();
     }
-  });
-  
-  // В этом файле вы можете включить код другого основного процесса 
-  // вашего приложения. Можно также поместить их в отдельные файлы и применить к ним require.
+});
+

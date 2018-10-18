@@ -6,7 +6,6 @@
   "scripts": {
     "start": "electron ."
   },
-
   "author": {
     "name": "Michael Goyberg",
     "email": "guiappdev@gmail.com"
@@ -14,6 +13,9 @@
   "repository": "https://github.com/migophotos/smartUI",
   "license": "ISC",
   "devDependencies": {
+    "electron": "^3.0.4"
+  },
+  "dependencies": {
     "electron": "^3.0.4"
   }
 }
