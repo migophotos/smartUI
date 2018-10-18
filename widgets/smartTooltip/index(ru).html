@@ -71,7 +71,7 @@
             --sttip-delay-out: 1000;
 			--sttip-title-text-align: center;
             /* --sttip-enable-storage: 0; */
-            --sttip-show-mode: pinned;
+            --sttip-show-mode: fixed;
             --sttip-template: iframe;
             --sttip-frame-scale: 1;
         }
@@ -118,17 +118,35 @@
             не отличается от "simple". Так-же как и "simple" он имеет поля title и description. В дополнение, он имеет встроенный HTML элемент iframe, данные в который передаются с помощью аттрибута data-sttip-link</div>
         <div><br>
         <div>Шаблон <label id="iframe-02" class="iframe-tmpl" data-sttip-tooltip="Где-то на краю земли..." data-sttip-link="https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C55.75372%2C0.00030577182769775396%2C51.478569861898606&layer=mapnik">iframe</label>
-            не отличается от "simple". Так-же как и "simple" он имеет поля title и description. В дополнение, он имеет встроенный HTML элемент iframe, данные в который передаются с помощью аттрибута data-sttip-link</div>
+            не отличается от "simple". Так-же как и "simple" он имеет поля title и description. В дополнение, он имеет встроенный HTML элемент iframe, данные в который передаются с помощью аттрибута data-sttip-link
+            Для данного шаблона рекомендуется установить параметр "<b><code>options.showMode</code></b>" в значение "fixed" для отключения автоматического закрывания окна подсказки.
+        </div>
+
         <div><br>
 
-                <b>View mode</b> - режимы отображения. Последовательное нажатие на данный элемент управления переводит подсказку в один из следующих режимов отображения:
+        <b>View mode</b> - режимы отображения. Последовательное нажатие на данный элемент управления переводит подсказку в один из следующих режимов отображения:
         <ul>
-        <li>плавающий</li> - Окно подсказки появляется и следует за курсором, передвигающимся над элементом.
-        Автоматически прячется через заданный промежуток времени. Кнопка "close" не отображается.
-        <li>приколотый</li> - Окно подсказки появляется справа от элемента и не прячется до принудительного закрытия кнопкой "close".
-        <li>фиксированный</li> - Окно подсказки появляется в заданной пользователем позиции на экране. Не прячется до принудительного закрытия кнопкой "close".
+        <li>плавающий</li> - Окно подсказки появляется и следует за курсором, передвигающимся над элементом. Прячется автоматически, по выходе указателя мыши за пределы окна подсказки.
+        <li>приколотый</li> - Окно подсказки появляется согласно значению параметра "<b><code>options.position</code></b>". Прячется автоматически, по выходе указателя мыши за пределы окна подсказки, либо при отсутствии движения указателя мыши в течении 30 секунд.
+        Принудительно, окно подсказки может быть закрыто, нажатием на кнопку "close".
+        <li>фиксированный</li> - Окно подсказки появляется в абсолютной позиции экрана, заданной пользователем при помощи перетаскивания приклотого окна в нужную позицию. Не прячется до принудительного закрытия кнопкой "close".
+        Обратный переход из фиксированного состояния в приколотый осуществляется с помощью нажатия на данный элемент управления.
+
         </ul>
-        Выбранный режим сохраняется в локальном хранилище браузера и восстанавливается при перезагрузке страницы.<br><br>
+
+        Выбранный режим сохраняется в локальном хранилище браузера и восстанавливается при перезагрузке страницы. Отключить сохранениt режима можно, установив параметр "<b><code>options.enableStorage</code></b>" в значение "0".<br><br>
+        Важно подчеркнуть, что подсказки, отображающиеся для всех элементов страницы наследуют режим отображения. Для того, чтобы изменить поведение подсказки для отдельных элементов страницы,
+         существует опциональный параметр "<b><code>options.showMode</code></b>". Этот параметр может принимать одно из четырех значений:
+         <ul>
+            <li>inherit (унаследованный)</li> - Поведение окна подсказки соответсвует описанному выше.
+            <li>float (плавающий)</li> - Окно подсказки появляется и следует за курсором, передвигающимся над элементом.
+            Прячется автоматически, по выходе указателя мыши за пределы окна подсказки. Кнопка "close" и переключатель "View Mode" не отображаются.
+            <li>pinned (приколотый)</li> - Окно подсказки появляется согласно значению параметра "<b><code>options.position</code></b>". Прячется автоматически, по выходе указателя мыши за пределы окна подсказки, либо по нажатию на кнопку "close".
+            Переключатель "View Mode" не отображается.
+            <li>fixed (фиксированный)</li> - Окно подсказки появляется согласно значению параметра "<b><code>options.position</code></b>". Окно подсказки не прячется до нажатия на кнопку "close".
+            Переключатель "View Mode" не отображается.
+        </ul>
+
         <b>help</b> - кнопка, открывающая панель помощи и настроек<br>
         <b>close</b> - кнопка, позволяющая принудительно закрыть окно подсказки.<br>
         </div>
@@ -279,10 +297,22 @@
             // the client rectangle coordinates of correspondent element.
             // this coordinates will used for place 'the pinned' tooltip near this element
             // you may specify here any screen coordinates for positioning SmartTooltip window
-            // only top and right parameters used for calculating currently.
+            location: '',
+            // Position of 'pinned', or 'fixed' tooltip window. Default is 'rt' - Right Top
             // The position of tooltip window will be moved by 16 px at right side of specified 'right' parameter.
-            // In case of this parameter not specified, the 'pinned' tooltip will be positioned near mouse cursor (30px to right and 10px down).
-            position: '',
+            // Possible values are:
+            'ru',   - Right Up
+            'rt',   - Right Top
+            'rb',   - Right Bottom
+            'cb'    - Center Bottom
+            'lb'    - Left Bottom
+            'lt',   - Left Top
+            'lu',   - Left Up
+            'cu'    - Center Up
+
+            // In case of this parameter not specified, the 'pinned' or 'fixed' tooltip will be positioned near mouse cursor (30px to right and 10px down).
+            position: 'rt',
+
 
             // run indicator is a small circle near the legend. It's fill color is green, when this parameter equals true and red when false.
             isRun: true / false
@@ -315,8 +345,9 @@
                                   user cannot change apperance of tooltip window!
             showMode: ''        - optional parameter, describes show mode and overides 'start-from'
 
-            delayOut: 250,      - the time delay interval when tooltip window will be hided. The default is 250 (ms). This delayed interval will counted after mouse pointer will out from the element
-            delayOn: 2000,      - the time delay interval when tooltip window will disappear from screen after non-activity of mouse pointer. The default value is 2000 (ms)
+            delayOut: 200,      - the time delay interval when tooltip window will be hided. The default is 200 (ms). This delayed interval will counted after mouse pointer will out from the element
+            delayIn:  300,      - the time delay interval when tooltip window will be shown. The default is 300 (ms). This delayed interval will counted after mouse pointer will over the element
+                                  Mouse moving over element restarts this delay.
 
             // The next section of parameters allows you to override the look and fill of SmartTooltip window for each specific element on the HTML page
             // There is no need to define all the style variables, you can specify only some of them or do not specify anything at all, if you like the look and fill of the built-in template.
@@ -376,7 +407,7 @@
         Статические функции <code>SmartTooltip.moveTooltip(evt)</code> и <code>SmartTooltip.hideTooltip(evt)</code> вызываются из тела обработчика событий <code>mousemove</code> <code>mouseout</code> соответственно.<br>
         Важное дополнение: эти функции запрещено вызывать до первого вызова, инициализирующих элемент, функций!
         </p>
-        <p>Существует еще один способ задания вида элемента подсказки - с помощью строки в <b><label id="jsn">JSON-формате</label></b>. 
+        <p>Существует еще один способ задания вида элемента подсказки - с помощью строки в <b><label id="jsn">JSON-формате</label></b>.
             Например следующий фрагмент кода будет отображать окно подсказки, сверху над элементом:<br>
             Данное окно подсказки использует шаблон 'pie' по умолчанию, включающий в себя заголовок, описание и индикатор. В заголовке выводится текст, передаваемый в параметре 'data.title.name'<br>
             В описании выводится значение, передаваемое в параметре 'data.title.value'. Заголовок и описание выравниваются по ширине окна подсказки, равному  296 пикселей. Окно зуммируется с коэффициэнтом 0,7<br>
@@ -384,7 +415,7 @@
             <pre><code>
             el.addEventListener('mouseout', (evt) => {
                 SmartTooltip.hideTooltip(evt);
-            });    
+            });
             el.addEventListener('mousemove', (evt) => {
                 SmartTooltip.moveTooltip(evt);
             });
@@ -392,7 +423,7 @@
                 const options = '{"--sttip-title-format":"$NAME$","--sttip-descr-format":"$VALUE$","--sttip-descr-text-align":"center","--sttip-enable-storage":"0","--sttip-show-mode":"pinned","--sttip-position":"cu","--sttip-frame-scale":"0.7","--sttip-var-tooltip-max-width":"296","--sttip-var-font-color":"#ffffff","--sttip-var-title-size":"26px","--sttip-var-descr-size":"20px","--sttip-var-frame-fill":"#ffa222","--sttip-var-frame-opacity":"1"}';<br>
                 const opt = CustomProperties.JsonToOptions(options);
                 opt.location = evt.target.getBoundingClientRect();
-                const data = { 
+                const data = {
                     id: evt.target.id,
                     x: evt.clientX,
                     y: evt.clientY,
@@ -412,7 +443,7 @@
                 const el = document.getElementById("jsn");
                 el.addEventListener('mouseout', (evt) => {
                     SmartTooltip.hideTooltip(evt);
-                });    
+                });
                 el.addEventListener('mousemove', (evt) => {
                     SmartTooltip.moveTooltip(evt);
                 });
@@ -422,7 +453,7 @@
                     const opt = CustomProperties.JsonToOptions(options);
                     opt.location = evt.target.getBoundingClientRect();
 
-                    const data = { 
+                    const data = {
                         id: evt.target.id,
                         x: evt.clientX,
                         y: evt.clientY,
@@ -436,7 +467,7 @@
                         }
                     };
                     SmartTooltip.showTooltip(data, evt);
-                });            
+                });
             </script>
         </p>
     </div>

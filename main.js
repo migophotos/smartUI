@@ -15,6 +15,7 @@ function createWindow() {
         height: 900
     });
     win.loadFile('index.html');
+    //win.loadFile('widgets/smartTooltip/index(ru).html');
 
     // win.webContents.openDevTools()
 

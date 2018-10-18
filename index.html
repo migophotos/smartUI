@@ -466,6 +466,21 @@
         <script src="js/smartUI.js"></script>
 
         <script>
+            const {remote} = require('electron')
+            const {Menu, MenuItem} = remote
+
+            const menu = new Menu()
+            menu.append(new MenuItem({label: 'MenuItem1', click() { console.log('item 1 clicked') }}))
+            menu.append(new MenuItem({type: 'separator'}))
+            menu.append(new MenuItem({label: 'MenuItem2', type: 'checkbox', checked: true}))
+
+            window.addEventListener('contextmenu', (e) => {
+                e.preventDefault()
+                menu.popup({window: remote.getCurrentWindow()})
+            }, false)
+        </script>
+
+        <script>
             (function() {
                 let changedOptions = {};
                 const demoTooltipEl = document.getElementById('demoTooltipW');
@@ -529,7 +544,7 @@
                 //     });
                 // }
 
-                let el, els;
+                let el, els, allBtns;
                 els = document.getElementsByClassName("widgets-btn");
                 for (let el of els) {
                     el.attributes['data-sttip-tooltip.textContent'] = _(el.attributes['data-sttip-tooltip.textContent']);
@@ -566,7 +581,7 @@
                 els = document.getElementsByClassName('selector-btn');
                 for (let el of els) {
                     el.addEventListener('click', (evt) => {
-                        let allBtns = document.getElementsByClassName('selector-btn');
+                        allBtns = document.getElementsByClassName('selector-btn');
                         for (let btn of allBtns) {
                             let wdgs = btn.attributes.targets.value.split(',');
                             const state = btn.attributes['current-state'].value;
@@ -574,16 +589,14 @@
                                 document.getElementById(wdgs[n]).style.setProperty('display', (state === 'on' ? 'block' : 'none'));
                             }
                         }
-                        // let containerEl = document.getElementById(evt.target.attributes.targets.value);
-                        // const optString = CustomProperties.serializeOptions(changedOptions, evt.target.id);
-                        // containerEl.innerHTML = `<code>${optString}</code>`;
                     });
                 }
+
                 // switch targets after clicks on categories buttons
                 els = document.getElementsByClassName('categories-btn');
                 for (let el of els) {
                     el.addEventListener('click', (evt) => {
-                        let allBtns = document.getElementsByClassName('categories-btn');
+                        allBtns = document.getElementsByClassName('categories-btn');
                         for (let btn of allBtns) {
                             let wdgs = btn.attributes.targets.value.split(',');
                             const state = btn.attributes['current-state'].value;
@@ -597,7 +610,7 @@
                 els = document.getElementsByClassName('widgets-btn');
                 for (let el of els) {
                     el.addEventListener('click', (evt) => {
-                        let allBtns = document.getElementsByClassName('widgets-btn');
+                        allBtns = document.getElementsByClassName('widgets-btn');
                         for (let btn of allBtns) {
                             let wdgs = btn.attributes.targets.value.split(',');
                             const state = btn.attributes['current-state'].value;
