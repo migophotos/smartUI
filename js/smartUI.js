@@ -48,7 +48,7 @@ class utils {
  * Каждый элемент представляет собой custom control
  *
  */
-class SmartSelector extends HTMLElement {
+class SmartUiSelector extends HTMLElement {
     constructor() {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
@@ -200,11 +200,11 @@ class SmartSelector extends HTMLElement {
 
 }
 if (!customElements.get('smart-ui-selector')) {
-    customElements.define('smart-ui-selector', SmartSelector);
+    customElements.define('smart-ui-selector', SmartUiSelector);
 }
 
 
-class SmartEditText extends HTMLElement {
+class SmartUiEditText extends HTMLElement {
     constructor() {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
@@ -384,11 +384,11 @@ class SmartEditText extends HTMLElement {
 
 }
 if (!customElements.get('smart-ui-edittext')) {
-    customElements.define('smart-ui-edittext', SmartEditText);
+    customElements.define('smart-ui-edittext', SmartUiEditText);
 }
 
 
- class SmartEditSlider extends HTMLElement {
+ class SmartUiEditSlider extends HTMLElement {
     constructor() {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
@@ -674,9 +674,9 @@ if (!customElements.get('smart-ui-edittext')) {
 
 }
 if (!customElements.get('smart-ui-editslider')) {
-    customElements.define('smart-ui-editslider', SmartEditSlider);
+    customElements.define('smart-ui-editslider', SmartUiEditSlider);
 }
-/** SmartButton realizes button, checkbox, radiobutton in group
+/** SmartUiButton realizes button, checkbox, radiobutton in group
  *  <smart-ui-button
  *      class="widgets-btn" - class name of radiobuttons group in case of type equal 'radio', in other cases just a class name
  *      id="btn-01"         - unique id
@@ -695,7 +695,7 @@ if (!customElements.get('smart-ui-editslider')) {
  * When user clicks on this button this element generates an event 'click' and store own state in parameter this.state and inside attribute 'current-state'
 
  */
-class SmartButton extends HTMLElement {
+class SmartUiButton extends HTMLElement {
     constructor() {
         super();
         this._o     = null; // options
@@ -867,10 +867,10 @@ class SmartButton extends HTMLElement {
     }
 }
 if (!customElements.get('smart-ui-button')) {
-    customElements.define('smart-ui-button', SmartButton);
+    customElements.define('smart-ui-button', SmartUiButton);
 }
 
-class SmartCheckBox extends HTMLElement {
+class SmartUiCheckBox extends HTMLElement {
     constructor() {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
@@ -1025,10 +1025,10 @@ class SmartCheckBox extends HTMLElement {
 
 
 if (!customElements.get('smart-ui-checkbox')) {
-    customElements.define('smart-ui-checkbox', SmartCheckBox);
+    customElements.define('smart-ui-checkbox', SmartUiCheckBox);
 }
 
-class SmartColorBox extends HTMLElement {
+class SmartUiColorBox extends HTMLElement {
     constructor() {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
@@ -1225,5 +1225,5 @@ class SmartColorBox extends HTMLElement {
     }
 }
 if (!customElements.get('smart-ui-colorbox')) {
-    customElements.define('smart-ui-colorbox', SmartColorBox);
+    customElements.define('smart-ui-colorbox', SmartUiColorBox);
 }
