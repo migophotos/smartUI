@@ -53,8 +53,7 @@ class SmartUiSelector extends HTMLElement {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
 		if (!this._shadowDOM) {
-            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
-            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+            throw new Error('Unfortunately, your browser does not support shadow DOM v1.');
         }
         this._shadowDOM.innerHTML = `
             <style>
@@ -129,7 +128,6 @@ class SmartUiSelector extends HTMLElement {
                 select:focus {
                     outline: none;
                 }
-
             </style>
             <div class="smartcontainer">
                 <div class="icon svgcontainer">
@@ -209,8 +207,7 @@ class SmartUiEditText extends HTMLElement {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
 		if (!this._shadowDOM) {
-            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
-            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+            throw new Error('Unfortunately, your browser does not support shadow DOM v1.');
         }
         this._shadowDOM.innerHTML = `
             <style>
@@ -393,8 +390,7 @@ if (!customElements.get('smart-ui-edittext')) {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
 		if (!this._shadowDOM) {
-            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
-            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+            throw new Error('Unfortunately, your browser does not support shadow DOM v1.');
         }
         this._shadowDOM.innerHTML = `
             <style>
@@ -705,8 +701,7 @@ class SmartUiButton extends HTMLElement {
 
         this._shadowDOM = this.attachShadow({mode: 'open'});
 		if (!this._shadowDOM) {
-            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
-            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+            throw new Error('Unfortunately, your browser does not support shadow DOM v1.');
         }
         this._shadowDOM.innerHTML = `
             <style>
@@ -875,8 +870,7 @@ class SmartUiCheckBox extends HTMLElement {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
 		if (!this._shadowDOM) {
-            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
-            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+            throw new Error('Unfortunately, your browser does not support shadow DOM v1.');
         }
         this._shadowDOM.innerHTML = `
             <style>
@@ -1033,8 +1027,7 @@ class SmartUiColorBox extends HTMLElement {
         super();
         this._shadowDOM = this.attachShadow({mode: 'open'});
 		if (!this._shadowDOM) {
-            throw new Error(`Unfortunately, your browser does not support shadow DOM v1.
-            Think about switching to a last release of Chrome browser that supports all new technologies!`);
+            throw new Error('Unfortunately, your browser does not support shadow DOM v1.');
         }
         this._shadowDOM.innerHTML = `
             <style>
