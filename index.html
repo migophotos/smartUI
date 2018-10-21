@@ -292,6 +292,7 @@
                                     <smart-ui-selector name="sttip-param" param="position" title="Приколотое расположение" value=""
                                     valuelist="ru,rt,rd,lu,lt,ld,cu,cd"
                                     labellist="Справа Выше,Справа По верху,Справа Ниже,Слева Выше,Слева По верху,Слева Ниже,По центру Выше,По центру Ниже" image="images/position_off.svg"></smart-ui-selector>
+                                    <smart-ui-editslider name="sttip-param" param="var-tooltip-max-width" title="Ширина окна подсказки" value="" units="px" min="100" max="600" step="1" image="images/wrap-width-off.svg">edit control with slider</smart-ui-editslider>
 
                                     <smart-ui-editslider name="sttip-param" param="frame-scale" title="Масштабирование окна подсказки" value="" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
                                     <smart-ui-editslider name="sttip-param" param="delay-in" title="Задержка показа на входе" value="" units="ms" min="0" max="1000" step="100" image="images/delay_in_off.svg">edit control with slider</smart-ui-editslider>
@@ -312,10 +313,10 @@
                             <div id="title-params_pan" class="overlay" style="max-height: 766px; display: none;">
                                 <h2>Параметры отображения заголовка</h2>
                                 <div style="display: block;">
-                                    <smart-ui-editslider name="sttip-param" param="var-tooltip-max-width" title="Ширина окна подсказки" value="" units="px" min="100" max="600" step="1" image="images/wrap-width-off.svg">edit control with slider</smart-ui-editslider>
                                     <smart-ui-editslider name="sttip-param" param="title-text-wrap" title="Ширина выравнивания заголовка" value="" units="px" min="0" max="600" step="1" image="images/wrap-width-off.svg">edit control with slider</smart-ui-editslider>
                                     <smart-ui-edittext   name="sttip-param" param="title-format" title="Форматирование заголовка" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
                                     <smart-ui-selector   name="sttip-param" param="title-text-align" title="Выравнивание заголовка" value="" valueList="left,center,right,justify" labelList="Слева,По центру,Справа,Выровнено" image="images/align_text_off.svg"></smart-ui-selector>
+                                    <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                                     <smart-ui-editslider name="sttip-param" param="descr-text-wrap" title="Ширина выравнивания описания" value="" units="px" min="0" max="600" step="1" image="images/wrap-width-off.svg">edit control with slider</smart-ui-editslider>
                                     <smart-ui-edittext   name="sttip-param" param="descr-format" title="Форматирование описания" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
                                     <smart-ui-selector   name="sttip-param" param="descr-text-align" title="Выравнивание описания" value="" valueList="left,center,right,justify" labelList="Слева,По центру,Справа,Выровнено" image="images/align_text_off.svg"></smart-ui-selector>
@@ -337,8 +338,9 @@
                                     <div style="display: block;">
                                         <smart-ui-edittext name="sttip-param" param="var-font-family" title="Семейство шрифтов" value="" image="images/font_family_off.svg"></smart-ui-edittext>
                                         <smart-ui-selector name="sttip-param" param="var-font-stretch" title="Ширина начертания шрифта" value="" valueList="extra-condensed,ultra-condensed,condensed,normal,expanded,extra-expanded,ultra-expanded" image="images/font_stretch_off.svg"></smart-ui-selector>
-                                        <smart-ui-editslider name="sttip-param" param="var-font-size" title="Размер шрифта" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
+                                        <!-- <smart-ui-editslider name="sttip-param" param="var-font-size" title="Размер шрифта" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider> -->
                                         <smart-ui-colorbox name="sttip-param" param="var-font-color" title="Цвет шрифта" value="#000000" image="images/select_color3_off.svg"></smart-ui-colorbox>
+                                        <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                                         <smart-ui-editslider name="sttip-param" param="var-title-size" title="Размер шрифта заголовка" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
                                         <smart-ui-editslider name="sttip-param" param="var-descr-size" title="Размер шрифта описания" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
                                         <smart-ui-editslider name="sttip-param" param="var-legend-size" title="Размер шрифта легенды" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
