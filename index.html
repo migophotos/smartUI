@@ -238,7 +238,7 @@
                             <label class="demotext">По окончании настройки, скопируйте параметры</label><br>
                             <label class="demotext">виджета в нижней части экрана, в требуемом</label><br>
                             <label class="demotext">вам формате.</label>
-                            <p><label id="simple-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="simple" data-sttip-tooltip="Просто подсказка">simple</label></p>
+                            <p><label id="simple-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="simple" data-sttip-name="Title String of text" data-sttip-descr="Description String of text">simple</label></p>
                             <p><label id="pie-01" class="ttip-target"
                                 data-sttip-show-mode="pinned"
                                 data-sttip-template="pie"
@@ -246,13 +246,71 @@
                                 data-sttip-value="150"
                                 data-sttip-max="200"
                                 data-sttip-var-tooltip-max-width="282"
-                                data-sttip-name="Круговая диаграмма"
-                                data-sttip-descr="The main signal is:"
+                                data-sttip-name="Title String of text"
+                                data-sttip-descr="Description String of text"
                                 >pie</label></p>
-                            <p><label id="image-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="image" data-sttip-tooltip="Картинка!" data-sttip-link="images/colorwill.png">image</label></p>
-                            <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-tooltip="Ссылка на ресурс" data-sttip-link="index.html">iframe</label>
+                            <p><label id="image-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="image" data-sttip-name="Title String of text" data-sttip-descr="Description String of text" data-sttip-link="images/colorwill.png">image</label></p>
+                            <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-name="Title String of text" data-sttip-descr="Description String of text" data-sttip-link="index.html">iframe</label>
                         </div>
-                        <div class="widget-example" id="smarttpie_examp" style="display: none; background: rgb(174, 255, 255);"></div>
+                        <div class="widget-example" id="smarttpie_examp" style="display: none;">
+                            <style>
+                                /* https://www.smashingmagazine.com/2016/11/css-grids-flexbox-box-alignment-new-layout-standard/ */
+                                .pie-ex-container {
+                                    display: flex;
+                                    flex-direction: column;
+                                    /* height: 15em; */
+                                    align-items: center;
+                                }
+                                .pie-ex-items {
+                                }
+                                .pie-items {
+                                    display: flex;
+                                    /* width: calc(30%); */
+                                }
+                                smart-pie.pie-item {
+                                    float: left;
+                                    margin: 0 10px;
+                                    --smartwdg-over-fill: lightgreen;
+                                    --smartpie-fill: gray;
+                                    --smartpie-lcolor: #666;
+                                    --smartpie-radius: 50;
+                                    --smartpie-interval: 4500;
+                                    --smartpie-run: 1;
+                                    --smartpie-stroke: lightgray;
+                                    --smartpie-width: 3;
+                                    --smartpie-type: rel;
+                                    --smartpie-sort-by: states;
+                                    --smartpie-emulate: 1;
+                                }
+                                .pie-w-leg {
+                                    --smartpie-legend: 1;
+                                }
+                                .pie-m-leg {
+                                    --smartpie-legend: 0;
+                                }
+
+                            </style>
+                            <div class="pie-ex-container">
+                                <div class="pie-ex-items">
+                                    <div class="pie-items">
+                                        <smart-pie class="pie-w-leg pie-item" id="sample-01" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="rel" sort-by="values" emulate="1" ></smart-pie>
+                                        <smart-pie class="pie-w-leg pie-item" id="sample-02" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.0" sort-by="states" emulate="1" ></smart-pie>
+                                        <smart-pie class="pie-w-leg pie-item" id="sample-03" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.1" sort-by="states" emulate="1" ></smart-pie>
+                                    </div>
+                                </div>
+                                <div class="pie-ex-items">
+                                    <div class="pie-items">
+                                        <smart-pie class="pie-m-leg pie-item" id="sample-04" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="flat" sort-by="values" emulate="1" ></smart-pie>
+                                        <smart-pie class="pie-m-leg pie-item" id="sample-05" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="zWhatch" sort-by="states" emulate="1" ></smart-pie>
+                                        <smart-pie class="pie-m-leg pie-item" id="sample-06" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="donut" sort-by="states" emulate="1" ></smart-pie>
+                                        <smart-pie class="pie-m-leg pie-item" id="sample-07" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.2" sort-by="states" emulate="1" ></smart-pie>
+                                        <smart-pie class="pie-m-leg pie-item" id="sample-08" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.3" sort-by="states" emulate="1" ></smart-pie>
+                                        <smart-pie class="pie-m-leg pie-item" id="sample-09" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.4" sort-by="states" emulate="1" ></smart-pie>
+                                        <smart-pie class="pie-m-leg pie-item" id="sample-10" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.5" sort-by="states" emulate="1" ></smart-pie>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="widget-example" id="smartgauge_examp" style="display: none; background: rgb(237, 174, 255);"></div>
                     </div>
                 </div>
@@ -399,6 +457,7 @@
         </div>
         <script src="js/smartUI.js"></script>
         <script src="widgets/smartTooltip/smarttooltip.js"></script>
+        <script src="widgets/smartPie/smartpie.js"></script>
 
         <script>
                 const {remote} = require('electron')
@@ -448,17 +507,23 @@
                                 } else {
                                     data.title.link = undefined;
                                 }
-                                // get changed options only
+                                // update demo tooltip
+                                demoTooltipEl.showDemoTooltip(data);
+                                // get changed options only and update source panels
                                 changedOptions = CustomProperties.diffProperties(demoTooltipEl._o);
                                 // serialize it and update the content of apropriated containers
-                                ['def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn'].forEach((id) => {
+                                ['def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'].forEach((id) => {
                                     let srcTypeSelectorBtn = document.getElementById(id);
                                     let scrTargetContainer = document.getElementById(srcTypeSelectorBtn.attributes.targets.value);
-                                    let options = CustomProperties.serializeOptions(changedOptions, id);
-                                    scrTargetContainer.innerHTML = `<code>${options}</code>`;
+                                    let options = '';
+                                    if (id == 'def-svg_widget_btn') {
+                                        options = demoTooltipEl._demoTooltip._svg ? demoTooltipEl._demoTooltip._svg.outerHTML : '';
+                                        scrTargetContainer.textContent = `${options}`;
+                                    } else {
+                                        options = CustomProperties.serializeOptions(changedOptions, id);
+                                        scrTargetContainer.innerHTML = `<code>${options}</code>`;
+                                    }
                                 });
-
-                                demoTooltipEl.showDemoTooltip(data);
                             }
                         }
                     }

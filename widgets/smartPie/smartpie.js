@@ -336,9 +336,12 @@ class SmartPie extends HTMLElement {
 		// Shallow-cloning, using spread operator (excluding prototype)
 		this._o = { ...SmartPie.defOptions() };
 
+        // overwrite by external styles!
+        this._o.legend = Number(getComputedStyle(this).getPropertyValue('--smartpie-legend').trimLeft());
+
 		for (let attr of this.attributes) {
 			this._o[attr.name] = attr.value;
-		}
+        }
 
 		this._o.mode = options.mode;
 
@@ -378,7 +381,7 @@ class SmartPie extends HTMLElement {
 
 			}
 			:host(:hover) {
-				--smartwdg-ftm-fill: black;
+				--smartwdg-ftm-fill: var(--smartwdg-over-fill, white);
 			}
 			:host([disabled]) { /* style when host has disabled attribute. */
 				pointer-events: none;
