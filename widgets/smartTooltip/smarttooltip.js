@@ -1191,7 +1191,7 @@ class CustomProperties {
 				template += '&lt;smart-ui-tooltip class-names="need-tooltip">Yout browser does not support custom elements.&lt/smart-ui-tooltip>\n';
 				template += '&lt;div class="need-tooltip" data-sttip-tooltip="The text to be shown as title in tooltip window">any content&lt;/div>';
                 break;
-			case 'def-json_btn':
+			case 'def-json_btn': {
 				cssOpt = CustomProperties.buidOptionsAndCssVars(opt, false);
 				const jstr = `'${JSON.stringify(cssOpt)}'`;
 				const bjstr = jstr.replace(/,/g, ',\\\n    ');
@@ -1231,6 +1231,7 @@ el.addEventListener('mouseover', (evt) => {
 });
 `
                 break;
+            }
             case 'def-object-params_btn':
 				cssOpt = CustomProperties.buidOptionsAndCssVars(opt);
 				template = '// inside "mouseover" event\n';
@@ -1280,9 +1281,9 @@ el.addEventListener('mouseover', (evt) => {
 			'legend-val-format',	// ---
 
 			'title-text-wrap',		// sets the line width (line-width attribute) for wrapped text. in case of 0 the width attribute from <rect id="tooltip-frame"> in template is used. the defaul is 0
-			'title-text-align',		// align for wrapped text. One from 4 values: 'left', 'center', 'right', 'justify'. The default is 'left'
+			'title-text-align',		// align for wrapped text. One from 4 values: 'left', 'center', 'right', 'justify'. The default is 'center'
 			'descr-text-wrap',		// sets the line width (line-width attribute) for wrapped text. in case of 0 the width attribute from <rect id="tooltip-frame"> in template is used. the defaul is 0
-			'descr-text-align',		// align for wrapped text. One from 4 values: 'left', 'center', 'right', 'justify'. The default is 'left'
+			'descr-text-align',		// align for wrapped text. One from 4 values: 'left', 'center', 'right', 'justify'. The default is 'center'
 
 			'enable-storage',		// allows to disable or enable (default) an ability to store in localStorage pinMe functionality
 
@@ -1344,7 +1345,7 @@ el.addEventListener('mouseover', (evt) => {
 			titleTextWrap:			0,
 			titleTextAlign:			'center',
 			descrTextWrap:			0,
-			descrTextAlign:			'justify',
+			descrTextAlign:			'center',
 			enableStorage:			1,
 			sortBy:					'value',
 			sortDir:				1,
