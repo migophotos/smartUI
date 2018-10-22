@@ -3156,6 +3156,9 @@ class SmartTooltip {
                 if (this._ttipFakeIFrame) {
                     this._foIFrame.attributes.width.value = ttipBoundGroupBR.width - 20;
                 }
+                if (this._ttipImageLink) {
+                    this._ttipImageLink.attributes.width.value = ttipBoundGroupBR.width - 20;
+                }
 				// zoom tooltip window to optional parameter 'frameScale'
 				this._ttipGroup.setAttribute('transform', `scale(${this._o.frameScale})`);
 
