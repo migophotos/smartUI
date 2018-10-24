@@ -643,20 +643,16 @@ class SmartPie extends HTMLElement {
 			SmartTooltip.initTooltip(this._o.id, this._o.ttiptmpl);
 		}
 
-		// show SmartWidget Config window
-		setTimeout(() => { window.SWConfig.show({x:200, y:350});}, 1000);
-
-		this._body.addEventListener('transitionend', (ev) => {
-			if (ev.propertyName === 'r') {
-				// console.log(`${this._o.id}: anim ended`);
-				this._body.setAttribute("r", this._normRadius);
-				this._body.setAttribute("display", "none")
-				this._body.setAttribute('stroke-opacity', 1);
-				this._body.setAttribute('fill-opacity', 1);
-				setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
-			}
-		});
-
+		// this._body.addEventListener('transitionend', (ev) => {
+		// 	if (ev.propertyName === 'r') {
+		// 		// console.log(`${this._o.id}: anim ended`);
+		// 		this._body.setAttribute("r", this._normRadius);
+		// 		this._body.setAttribute("display", "none")
+		// 		this._body.setAttribute('stroke-opacity', 1);
+		// 		this._body.setAttribute('fill-opacity', 1);
+		// 		setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
+		// 	}
+		// });
 	}
 
 	// connect and disconnect from html
