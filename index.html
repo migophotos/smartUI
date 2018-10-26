@@ -13,8 +13,6 @@
 
         <link rel="stylesheet" href="css/themes/prism.css" data-noprefix />
         <script src="js/vocabulary.js"></script>
-        <!-- https://github.com/WebComponents/webcomponentsjs#how-to-use -->
-        <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
 
 
         <style>
@@ -252,24 +250,68 @@
                             <p><label id="image-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="image" data-sttip-name="Title String of text" data-sttip-descr="Description String of text" data-sttip-link="images/colorwill.png">image</label></p>
                             <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-name="Title String of text" data-sttip-descr="Description String of text" data-sttip-link="index.html">iframe</label>
                         </div>
+                        <div class="widget-example" id="smartgauge_examp" style="display: none;">
+                        </div>
                         <div class="widget-example" id="smarttpie_examp" style="display: none;">
                             <style>
-                                /* https://www.smashingmagazine.com/2016/11/css-grids-flexbox-box-alignment-new-layout-standard/ */
-                                .pie-ex-container {
-                                    display: flex;
-                                    flex-direction: column;
-                                    /* height: 15em; */
-                                    align-items: center;
+                                :root {
+                                    --bg--red:#E74C3C;
+                                    --bg--green: #26A65B;
+                                    --bg--orange:#F89406;
+                                    --bg--purple: #8E44AD;
+                                    --bg--lightgray: lightgray;
                                 }
-                                .pie-ex-items {
+                                .ml {
+                                    column-count: 3;
+                                    -webkit-column-count: 3;
+                                    column-gap: 0;
+                                    -webkit-column-gap: 0;
+                                    position: relative;
                                 }
-                                .pie-items {
-                                    display: flex;
-                                    /* width: calc(30%); */
+                                .ml * {
+                                    box-sizing: border-box;
+                                }
+                                .ml-p {
+                                    margin: 0;
+                                    padding: 5px;
+                                    break-inside: avoid;
+                                    page-break-inside: avoid;
+                                    -webkit-column-break-inside: avoid;
+                                }
+                                .ml-p_content {
+                                    padding: 5px;
+                                    border-radius: 10px;
+                                    text-align: center;
+                                    width: 100%;
+                                    transition: background-color 0.6s;
+                                    background-color: var(--bg--lightgray, lightgray);
+                                }
+                                .ml-p_content:hover {
+                                    background-color: var(--bg--green, lightgray);
+                                }
+
+                                .ml-p_content p {
+                                    color: rgba(51, 51, 51, 0.8);
+                                    transition: bcolor 0.6s;
+                                    margin: 0;
+                                }
+                                .ml-p_content:hover p{
+                                    color: rgba( 255,255,255, 0.8 );
+                                }
+
+                                .bg--red {
+                                    background-color: #E74C3C;
+                                }
+                                .bg--green {
+                                    background-color: #26A65B;
+                                }
+                                .bg--purple {
+                                    background-color: #8E44AD;
+                                }
+                                .bg--orange {
+                                    background-color: #F89406;
                                 }
                                 smart-pie.pie-item {
-                                    float: left;
-                                    margin: 0 10px;
                                     --smartwdg-over-fill: lightgreen;
                                     --smartpie-fill: gray;
                                     --smartpie-lcolor: #666;
@@ -278,40 +320,39 @@
                                     --smartpie-run: 1;
                                     --smartpie-stroke: lightgray;
                                     --smartpie-width: 3;
-                                    --smartpie-type: rel;
                                     --smartpie-sort-by: states;
                                     --smartpie-emulate: 1;
-                                }
-                                .pie-w-leg {
-                                    --smartpie-legend: 1;
-                                }
-                                .pie-m-leg {
                                     --smartpie-legend: 0;
                                 }
 
                             </style>
-                            <div class="pie-ex-container">
-                                <div class="pie-ex-items">
-                                    <div class="pie-items">
-                                        <smart-pie class="pie-w-leg pie-item" id="sample-01" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="rel" sort-by="values" emulate="1" ></smart-pie>
-                                        <smart-pie class="pie-w-leg pie-item" id="sample-02" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.0" sort-by="states" emulate="1" ></smart-pie>
-                                        <smart-pie class="pie-w-leg pie-item" id="sample-03" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.1" sort-by="states" emulate="1" ></smart-pie>
+                            <div class="ml">
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>Type = "Relative"</p>
+                                            <smart-pie class="pie-item" id="sample-01" fill="gray" lcolor="#666" radius="70" interval="1500" run="1" stroke="lightgray" width="3" type="rel" sort-by="values" emulate="1" ></smart-pie>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="pie-ex-items">
-                                    <div class="pie-items">
-                                        <smart-pie class="pie-m-leg pie-item" id="sample-04" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="flat" sort-by="values" emulate="1" ></smart-pie>
-                                        <smart-pie class="pie-m-leg pie-item" id="sample-05" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="zWhatch" sort-by="states" emulate="1" ></smart-pie>
-                                        <smart-pie class="pie-m-leg pie-item" id="sample-06" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="donut" sort-by="states" emulate="1" ></smart-pie>
-                                        <smart-pie class="pie-m-leg pie-item" id="sample-07" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.2" sort-by="states" emulate="1" ></smart-pie>
-                                        <smart-pie class="pie-m-leg pie-item" id="sample-08" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.3" sort-by="states" emulate="1" ></smart-pie>
-                                        <smart-pie class="pie-m-leg pie-item" id="sample-09" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.4" sort-by="states" emulate="1" ></smart-pie>
-                                        <smart-pie class="pie-m-leg pie-item" id="sample-10" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.5" sort-by="states" emulate="1" ></smart-pie>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>Type = "Flat"</p>
+                                            <smart-pie class="pie-item" id="sample-02" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.0" sort-by="values" emulate="1" ></smart-pie>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>Type = "Auto, One child"</p>
+                                            <smart-pie class="pie-item" id="sample-03" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.1" sort-by="values" emulate="1" ></smart-pie>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="widget-example" id="smartgauge_examp" style="display: none; background: rgb(237, 174, 255);"></div>
                     </div>
                 </div>
                 <div class="side-panel">
