@@ -252,7 +252,7 @@
                         </div>
                         <div class="widget-example" id="smartgauge_examp" style="display: none;">
                         </div>
-                        <div class="widget-example" id="smarttpie_examp" style="display: none;">
+                        <div class="widget-example" id="smarttpie_examp" style="display: none; position: relative;">
                             <style>
                                 :root {
                                     --bg--red:#E74C3C;
@@ -264,15 +264,15 @@
                                 .ml {
                                     column-count: 3;
                                     -webkit-column-count: 3;
-                                    column-gap: 0;
-                                    -webkit-column-gap: 0;
+                                    column-gap: 10px;
+                                    -webkit-column-gap: 10px;
                                     position: relative;
+                                    margin-top: 10px;
                                 }
                                 .ml * {
                                     box-sizing: border-box;
                                 }
                                 .ml-p {
-                                    margin: 0;
                                     padding: 5px;
                                     break-inside: avoid;
                                     page-break-inside: avoid;
@@ -283,6 +283,7 @@
                                     border-radius: 10px;
                                     text-align: center;
                                     width: 100%;
+                                    height: 50%;
                                     transition: background-color 0.6s;
                                     background-color: var(--bg--lightgray, lightgray);
                                 }
@@ -298,19 +299,27 @@
                                 .ml-p_content:hover p{
                                     color: rgba( 255,255,255, 0.8 );
                                 }
+                                .over-hidden {
+                                    opacity: 0;
+                                    pointer-events: none;
+                                    background-color: var(--bg--green);
+                                    width: 100%;
+                                    height: 100%;
+                                    position: absolute;
+                                    left: 0px;
+                                    top: 0px;
+                                    transition: opacity 1s;
+                                }
+                                .over-shown {
+                                    opacity: 1;
+                                    pointer-events: all;
+                                }
 
-                                .bg--red {
-                                    background-color: #E74C3C;
+
+                                .ml-p_content-ctrl {
+                                    cursor: pointer;
                                 }
-                                .bg--green {
-                                    background-color: #26A65B;
-                                }
-                                .bg--purple {
-                                    background-color: #8E44AD;
-                                }
-                                .bg--orange {
-                                    background-color: #F89406;
-                                }
+
                                 smart-pie.pie-item {
                                     --smartwdg-over-fill: lightgreen;
                                     --smartpie-fill: gray;
@@ -330,15 +339,15 @@
                                 <div class="ml-p">
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
-                                            <p>Type = "Relative"</p>
-                                            <smart-pie class="pie-item" id="sample-01" fill="gray" lcolor="#666" radius="70" interval="1500" run="1" stroke="lightgray" width="3" type="rel" sort-by="values" emulate="1" ></smart-pie>
+                                            <p>"Relative"</p>
+                                            <smart-pie class="pie-item" id="sample-01" fill="gray" lcolor="#666" radius="70" interval="1500" run="1" stroke="lightgray" width="3" type="rel" sort-by="values" emulate="0" server="http://localhost/webui/lib/widgets/smartPie/" ></smart-pie>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
-                                            <p>Type = "Flat"</p>
+                                            <p>"Flat"</p>
                                             <smart-pie class="pie-item" id="sample-02" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.0" sort-by="values" emulate="1" ></smart-pie>
                                         </div>
                                     </div>
@@ -346,12 +355,64 @@
                                 <div class="ml-p">
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
-                                            <p>Type = "Auto, One child"</p>
+                                            <p>"Auto, One child"</p>
                                             <smart-pie class="pie-item" id="sample-03" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.1" sort-by="values" emulate="1" ></smart-pie>
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Auto, Two children"</p>
+                                            <smart-pie class="pie-item" id="sample-04" fill="gray" lcolor="#666" radius="70" interval="1500" run="1" stroke="lightgray" width="3" type="1.2" sort-by="values" emulate="1" ></smart-pie>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Auto, Three children"</p>
+                                            <smart-pie class="pie-item" id="sample-05" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.3" sort-by="values" emulate="0" server="http://localhost/webui/lib/widgets/smartPie/" ></smart-pie>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Auto, Four Children"</p>
+                                            <smart-pie class="pie-item" id="sample-06" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="1.4" sort-by="values" emulate="0" server="http://localhost/webui/lib/widgets/smartPie/" ></smart-pie>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Flat Segment"</p>
+                                            <smart-pie class="pie-item" id="sample-07" fill="gray" lcolor="#666" radius="70" interval="1500" run="1" stroke="lightgray" width="3" type="1.0" sort-by="values" emulate="0" server="http://localhost/webui/lib/widgets/smartPie/" ></smart-pie>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"zWatch"</p>
+                                            <smart-pie class="pie-item" id="sample-08" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="zwatch" sort-by="values" emulate="1" ></smart-pie>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Donut"</p>
+                                            <smart-pie class="pie-item" id="sample-09" fill="gray" lcolor="#666" radius="70" interval="4500" run="1" stroke="lightgray" width="3" type="donut" sort-by="values" emulate="1" ></smart-pie>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
+                            <div id="over-panel" class="over-hidden"></div>
                         </div>
                     </div>
                 </div>
@@ -525,6 +586,9 @@
                     // try to translate
 
 
+                    // show smartpie window
+
+
                     // show smarttooltip window
                     function showDemoTooltip () {
                         if (typeof demoTooltipEl.showDemoTooltip !== 'undefined') {
@@ -598,6 +662,19 @@
                     els = document.getElementsByClassName('demotext');
                     for (let el of els) {
                         el.textContent = _(el.textContent);
+                    }
+
+                    const over_panel = document.getElementById('over-panel');
+                    over_panel.addEventListener('click', (evt) => {
+                        over_panel.classList.remove('over-shown');
+                    });
+
+                    // click on one pie example
+                    els = document.getElementsByClassName('ml-p_content-ctrl');
+                    for (let el of els) {
+                        el.addEventListener('click', (evt) => {
+                            over_panel.classList.add('over-shown');
+                        });
                     }
 
                     // translate title attributes in-place
