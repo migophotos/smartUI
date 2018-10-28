@@ -29,6 +29,13 @@ class SmartPies {
 		return df;
 	}
 
+	static initSmartPies(context = {}) {
+		if (!window.SmartPies) {
+			window.SmartPies = new SmartPies();
+		}
+		window.SmartPies.init(context);
+	}
+
 	// creates svg element, sets attributes and append it to parent, if it not null
 	// the new element returned
 	// usage example: createElement('circle',{cx:50,cy:50,r:10})
@@ -155,8 +162,6 @@ class SmartPies {
 		});
 	}
 
-
-
 	_intervalTimer() {
 		this._interval = setInterval(() => {
 			for (let entry of this._heap.entries()) {
@@ -185,12 +190,12 @@ class SmartPies {
 		this.document = dashboardContext.document || document;
 		this.editorAPI = dashboardContext.editorAPI || null;
 		this.runtimeAPI = dashboardContext.runtimeAPI || null;
-		this._initialized = true;
-		// start continius interval timer
-		this._intervalTimer();
-
+		if (!this._initialized) {
+			// start continious interval timer
+			this._intervalTimer();
+			this._initialized = true;
+		}
 	}
-
 
 	get (id) {
 		return this._heap.get(id);
@@ -202,7 +207,7 @@ class SmartPies {
 	initCtrl(id, options) {
 		let pie = this.get(id);
 		if (!pie) {
-			pie = new SmartPie(id, options);
+			pie = new SmartPieElement(id, options);
 			if (pie) {
 				pie.init(options);
 			}
@@ -270,7 +275,7 @@ class SmartPies {
 
 };
 
-class SmartPie extends HTMLElement {
+class SmartPie {
 	static defOptions() {
 		return {
 			type:'flat' 		/* donut, rel(relatives), flat, zWhatch or 1.0, 1.1, 1.2, 1.3, 1.4, ..., 1.n, 1.all */,
@@ -298,8 +303,17 @@ class SmartPie extends HTMLElement {
 			ttiptype: 'curTarget'
 		}
 	}
-	static numericProp() {
-		return [
+	/**
+	 * Converts known numeric property (ies) to numbers
+	 * @param {object} optObj reference to an options object
+	 * @param {string} prop the property name which value needs (in case of it known) to be validated. If null, all properties will be validated.
+	 */
+	static convertNumericProps(optObj = {}, prop = null) {
+		if (typeof optObj !== 'object') {
+			throw new ReferenceError("options object hasn't been initialized!");
+		}
+
+		const numericProps =  [
 			'radius',
 			'width',
 			'interval',
@@ -310,19 +324,33 @@ class SmartPie extends HTMLElement {
 			'startAngle',
 			'endAngle'
 		];
+		let count = 0;
+		for (let np of numericProps) {
+			if (prop) {
+				if (np === prop && optObj.hasOwnProperty(prop)) {
+					optObj[prop] = Number(optObj[prop]);
+					count++;
+					break;
+				}
+			} else if (optObj.hasOwnProperty(np)) {
+					optObj[np] = Number(optObj[np]);
+					count++;
+			}
+		}
+		return (count > 0);
 	}
 
+}
+
+class SmartPieElement extends HTMLElement {
 	constructor(id, options= { mode:'html' }) {
 		super();
 
 		// create SmartPies collection only once!
-		if (!window.SmartPies) {
-			window.SmartPies = new SmartPies();
-			window.SmartPies.init();
-		}
+		SmartPies.initSmartPies();
 
 		this._root		= null; // must be initialized!
-		this._svgroot	= null;	// svg root element with id = contId--SmartPie
+		this._svgroot	= null;	// svg root element with id = contId--stpie
 		this._svgdoc	= null;
 		this._data		= null;	// last data as Set
 		this._legend	= null;	// reference on legend
@@ -467,32 +495,8 @@ class SmartPie extends HTMLElement {
 			}
 			this._o.id 		= this.getAttribute('id') || id;
 
-			// this._o.type 		= this.getAttribute('type') || this._o.type;
-			// this._o.sortby		= this.getAttribute('sortby') || this._o.sortby;
-			// this._o.legend		= this.getAttribute('legend') || this._o.legend;
-			// this._o.legendColor = this.getAttribute('legen-color') || this._o.legendColor;
-			// this._o.ttiptmpl	= this.getAttribute('ttiptmpl') || this._o.ttiptmpl;
-			// this._o.server		= this.getAttribute('server') || this._o.server;
-			// this._o.targets		= this.getAttribute('targets') || this._o.targets;
-			// this._o.user		= this.getAttribute('user') || this._o.user;
-			// this._o.interval	= this.getAttribute('interval') || this._o.interval;
-			// this._o.animate		= this.getAttribute('animate') || this._o.animate;
-			// this._o.emulate		= this.getAttribute('emulate') || this._o.emulate;
-			// this._o.ttiptype 	= this.getAttribute('ttiptype') || this._o.ttiptype;
-
-			// this._o.radius = this.getAttribute('radius') || this._o.radius;
-			// this._o.innerRadius = this.getAttribute('innerRadius') || this._o.innerRadius;
-			// this._o.startAngle = this.getAttribute('startAngle') || this._o.startAngle;
-			// this._o.endAngle = this.getAttribute('endAngle') || this._o.endAngle;
-			// this._o.fill = this.getAttribute('fill') || this._o.fill;
-			// this._o.stroke = this.getAttribute('stroke') || this._o.stroke;
-			// this._o.width = this.getAttribute('width') || this._o.width;
-			// this._o.opacity = this.getAttribute('opacity') || this._o.opacity;
-
 			// convert to numbers known props
-			for (let na of SmartPie.numericProp()) {
-				this._o[na] = Number(this._o[na]);
-			}
+			SmartPie.convertNumericProps(this._o);
 
 			// calculate normalized radius
 			this._recalculteNormRadius();
@@ -511,7 +515,7 @@ class SmartPie extends HTMLElement {
 			<style>${txtStyle}</style>
 			<svg
 				xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-				id="${this._o.id}--SmartPie"
+				id="${this._o.id}--stpie"
 				height="${this._o.rect.height}"
 				width="${this._o.rect.width}"
 				viewBox="0 0 ${this._o.rect.width} ${this._o.rect.height}"
@@ -547,9 +551,7 @@ class SmartPie extends HTMLElement {
 			this._o.opacity = options.opacity || this._o.opacity;
 
 			// convert to numbers known properties
-			for (let na of SmartPie.numericProp()) {
-				this._o[na] = Number(this._o[na]);
-			}
+			SmartPie.convertNumericProps(this._o);
 
 			this._root = options.context || null;
 			if (this._root) {
@@ -630,7 +632,7 @@ class SmartPie extends HTMLElement {
 		// passiveG group is a legend. hide it if no legend!
 		this._passiveG.setAttribute('display', (this._o.legend ? 'block': 'none'));
 
-		// store containerId: ref on SmartPie element inside SmartPies collection for JS access
+		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
 		window.SmartPies.set(this._o.id, this);
 	}
 	init(options) {
@@ -1630,7 +1632,7 @@ class SmartPie extends HTMLElement {
 		data.options.cssVars = {
 			'--sttip-var-tooltip-max-width': '290',
 		};
-		// data.options.position = 'cb';
+		data.options.position = 'rt';
 		// Call static function, that will instantinate SmartTooltip if needed.
 		// In this case the default template will be used. In case you want to use
 		// the custom template for SmartTooltip, you must to call static function
@@ -1730,4 +1732,4 @@ class SmartPie extends HTMLElement {
 		}
 	}
 }
-window.customElements.define('smart-pie', SmartPie);
+window.customElements.define('smart-pie', SmartPieElement);

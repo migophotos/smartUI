@@ -337,13 +337,19 @@
                                     --smartpie-legend: 0;
                                 }
                                 .stpie-example-grid {
-                                    display: grid;
+                                    /* display: grid; */
                                     height: 100%;
                                     grid-template-columns: 0.4fr 2.2fr 0.4fr;
                                     grid-template-rows: 0.7fr 1.6fr 0.7fr;
                                     grid-gap: 1px 1px;
                                     grid-template-areas: ". stpie-example-descr ." ". stpie-example-cont ." ". . .";
                                     }
+                                .stpie-example-grid--shown {
+                                    display: grid;
+                                }
+                                .stpie-example-grid--hidden {
+                                    display: none;
+                                }
                                 .stpie-example-descr { grid-area: stpie-example-descr; }
                                 .stpie-example-cont { grid-area: stpie-example-cont; }
                                 .stpie-example-descr p {
@@ -351,6 +357,11 @@
                                     color: rgba( 255,255,255, 0.8 );
                                     transition: bcolor 0.6s;
                                     margin-top: 10px;
+                                    text-align: center;
+                                }
+                                .stpie-example-cont smart-pie {
+                                    display: inherit;
+                                    /* may be changed to left or right for showing legend on the opposite side */
                                     text-align: center;
                                 }
 
@@ -433,12 +444,12 @@
 
                             </div>
                             <div id="over-panel" class="over-hidden">
-                                <div class="stpie-example-grid">
+                                <div id="stpie-example-grid" class="stpie-example-grid stpie-example-grid--hidden">
                                     <div class="stpie-example-descr">
                                         <p id="stpie-example-descr"></p>
                                     </div>                                    
                                     <div class="stpie-example-cont">
-                                        <smart-pie class="stpie-example hidden" id="stpie-example" radius="100" type="rel" server="./widgets/smartPie/" ></smart-pie>
+                                        <smart-pie class="stpie-example" id="stpie-example" radius="100" type="rel" server="./widgets/smartPie/" ></smart-pie>
                                     </div>
                                 </div>
                             </div>
@@ -696,8 +707,9 @@
                     const over_panel = document.getElementById('over-panel');
                     over_panel.addEventListener('click', (evt) => {
                         over_panel.classList.remove('over-shown');
-                        tmp = document.getElementById('stpie-example');
-                        tmp.classList.add('hidden');
+                        tmp = document.getElementById('stpie-example-grid');
+                        tmp.classList.add('stpie-example-grid--hidden');
+                        tmp.classList.remove('stpie-example-grid--shown');
                     });
 
                     // click on one pie example
@@ -709,9 +721,13 @@
                                 const selType = sel.getAttribute('type');
                                 tmp = document.getElementById('stpie-example');
                                 tmp.setAttribute('type', selType);
-                                tmp.classList.remove('hidden');
+
                                 tmp = document.getElementById('stpie-example-descr');
                                 tmp.textContent = `Pie Type: "${selType}"`;
+
+                                tmp = document.getElementById('stpie-example-grid');
+                                tmp.classList.remove('stpie-example-grid--hidden');
+                                tmp.classList.add('stpie-example-grid--shown');
                             }
                             over_panel.classList.add('over-shown');
                         });
