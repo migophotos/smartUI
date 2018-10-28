@@ -275,7 +275,7 @@ class SmartPie extends HTMLElement {
 		return {
 			type:'flat' 		/* donut, rel(relatives), flat, zWhatch or 1.0, 1.1, 1.2, 1.3, 1.4, ..., 1.n, 1.all */,
 			sortby:"asis" 		/* asis, states, values, colors, names */,
-			radius: 0,
+			radius: 50,
 			innerRadius: 0,
 			startAngle: 0,
 			endAngle: 0,
@@ -287,6 +287,7 @@ class SmartPie extends HTMLElement {
 			legendColor: '#666',
 			lang:	'ru',
 			rootElement: null,	// in case of HTML - shadowDOM will be created, in case of SVG - SVGElement (container)
+			run: 0,
 			server: '',
 			targets: ['answer.json'],
 			user: '',
@@ -328,7 +329,7 @@ class SmartPie extends HTMLElement {
 		this._body		= null;	// body circle with id = contId--body
 		this._activeG	= null;	// group of active segments with id = contId--actG
 		this._passiveG	= null;	// group of passive elements, such as legend and etc, with id = contID--pasG
-		this._run 		= false; // state of dinamic update parameter.
+		this._run 		= true; // state of dinamic update parameter.
 		this._normRadius= 0;
 		this._intervalCounter = 0;
 
@@ -451,9 +452,9 @@ class SmartPie extends HTMLElement {
 				stroke-dasharray: 2 2;
 				stroke: var(--legend-frm-border-color);
 			}
-			path.main-target:hover, path.sub-target:hover {
-				mask: url(#mask-stripe);
-			}
+			// path.main-target:hover, path.sub-target:hover {
+			// 	mask: url(#mask-stripe);
+			// }
 			.selected {
 				mask: url(#mask-stripe);
 			}
@@ -1278,7 +1279,7 @@ class SmartPie extends HTMLElement {
 			g_el = SmartPies.addElement('g', {class:'main-segment', id:`${this._o.id}--${i}--main-segment`}, this._activeG, this._svgdoc);
 			g_el.addEventListener("click", this._onClick);
 			g_el.addEventListener("mouseover", this._onShowTooltip);
-			g_el.addEventListener("mousemove", this._onMoveTooltip);
+			// g_el.addEventListener("mousemove", this._onMoveTooltip);
 			g_el.addEventListener("mouseout", this._onHideTooltip);
 
 			// create 'main' segment and its legend stroke
@@ -1377,7 +1378,7 @@ class SmartPie extends HTMLElement {
 			g_el = SmartPies.addElement('g', {class:'main-segment', id:`${this._o.id}--${i}--main-segment`}, this._activeG, this._svgdoc);
 			g_el.addEventListener("click", this._onClick);
 			g_el.addEventListener("mouseover", this._onShowTooltip);
-			g_el.addEventListener("mousemove", this._onMoveTooltip);
+			// g_el.addEventListener("mousemove", this._onMoveTooltip);
 			g_el.addEventListener("mouseout", this._onHideTooltip);
 
 			let val = data[i];
@@ -1436,7 +1437,7 @@ class SmartPie extends HTMLElement {
 			g_el = SmartPies.addElement('g', {class:'main-segment', id:`${this._o.id}--${i}--main-segment`}, this._activeG, this._svgdoc);
 			g_el.addEventListener("click", this._onClick);
 			g_el.addEventListener("mouseover", this._onShowTooltip);
-			g_el.addEventListener("mousemove", this._onMoveTooltip);
+			// g_el.addEventListener("mousemove", this._onMoveTooltip);
 			g_el.addEventListener("mouseout", this._onHideTooltip);
 
 			let val = aData[i];
@@ -1622,8 +1623,14 @@ class SmartPie extends HTMLElement {
 			}
 		}
 		data.options.isRun = pie._run;
-		data.options.tRect = pie._bodyShad.getBoundingClientRect();
-		data.options.sortby = pie._o.sortby;
+		data.options.location = pie._bodyShad.getBoundingClientRect();
+		data.options.sortBy = pie._o.sortby;
+		data.options.delayOut = 2000;
+		data.options.showMode = 'pinned';
+		data.options.cssVars = {
+			'--sttip-var-tooltip-max-width': '290',
+		};
+		// data.options.position = 'cb';
 		// Call static function, that will instantinate SmartTooltip if needed.
 		// In this case the default template will be used. In case you want to use
 		// the custom template for SmartTooltip, you must to call static function
