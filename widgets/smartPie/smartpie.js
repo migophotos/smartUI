@@ -76,15 +76,15 @@ class SmartPies {
 	};
 
 	// calculate and draw segment by center. radius, start and end angles
-	static polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-		var angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+	static polarToCartesian(centerX, centerY, radius, angleInDegrees, rotation) {
+		var angleInRadians = ((angleInDegrees + rotation) * Math.PI) / 180.0;
 
 		return {
 			x: centerX + (radius * Math.cos(angleInRadians)),
 			y: centerY + (radius * Math.sin(angleInRadians))
 		};
 	}
-	static describeArc(isLarge, x, y, radius, startAngle, endAngle, isSector=true) {
+	static describeArc(isLarge, x, y, radius, startAngle, endAngle, rotation, isSector=true) {
 		let largeArc = 1;
 		let arcSweep = 0;
 
@@ -95,8 +95,8 @@ class SmartPies {
 		// 	largeArc = 0;
 		// }
 
-		const start = this.polarToCartesian(x, y, radius, s);
-		const end = this.polarToCartesian(x, y, radius, e);
+		const start = SmartPies.polarToCartesian(x, y, radius, s, rotation);
+		const end = SmartPies.polarToCartesian(x, y, radius, e, rotation);
 
 		arcSweep = (e - s + (s > e) * 360 >= 180) * 1; //isLarge ? (e - s + (s > e) * 360 < 180) * 1 : (e - s + (s > e) * 360 >= 180) * 1;
 		if (isSector) {
@@ -115,29 +115,29 @@ class SmartPies {
 		return d;
 	};
 
-	static _describeArc(as=0, x, y, radius, startAngle, endAngle, isSector=true) {
-		var start = SmartPies.polarToCartesian(x, y, radius, endAngle);
-		var end = SmartPies.polarToCartesian(x, y, radius, startAngle);
-		var arcSweep;
-		if (!as)
-			arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
-		else
-			arcSweep = endAngle - startAngle <= 180 ? "1" : "0";
+	// static _describeArc(as=0, x, y, radius, startAngle, endAngle, isSector=true) {
+	// 	var start = SmartPies.polarToCartesian(x, y, radius, endAngle);
+	// 	var end = SmartPies.polarToCartesian(x, y, radius, startAngle);
+	// 	var arcSweep;
+	// 	if (!as)
+	// 		arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
+	// 	else
+	// 		arcSweep = endAngle - startAngle <= 180 ? "1" : "0";
 
-		if (isSector) {
-			return [
-				"M", start.x, start.y,
-				"A", radius, radius, 0, arcSweep, 0, end.x, end.y,
-				"L", x, y,
-				"Z"
-			].join(" ");
-		} else {
-			return [
-				"M", start.x, start.y,
-				"A", radius, radius, 0, arcSweep, 0, end.x, end.y
-			].join(" ");
-		}
-	}
+	// 	if (isSector) {
+	// 		return [
+	// 			"M", start.x, start.y,
+	// 			"A", radius, radius, 0, arcSweep, 0, end.x, end.y,
+	// 			"L", x, y,
+	// 			"Z"
+	// 		].join(" ");
+	// 	} else {
+	// 		return [
+	// 			"M", start.x, start.y,
+	// 			"A", radius, radius, 0, arcSweep, 0, end.x, end.y
+	// 		].join(" ");
+	// 	}
+	// }
 
 	// http get promis
 	static 	_httpGet(url) {
@@ -171,11 +171,11 @@ class SmartPies {
 					ic = ic - this._timeout;
 					pie.intervalCounter = ic;	// it will restored automatically to _o.interval, if <= 0
 					if (ic <= 0) {
-						let data = null, updMode = pie.emulate;	// 1 - enabled, 0 - disabled, -1 - nulled
+						let data = null, updMode = pie.isEmulate();	// 1 - enabled, 0 - disabled, -1 - nulled
 						if (updMode) {
 							data = pie.generateExData();
 							if (updMode === -1) {	// clear all data and stop emulation
-								pie.emulate = 0;
+								pie.emulate(0);
 							}
 						}
 						pie.update(data);
@@ -243,24 +243,24 @@ class SmartPies {
 		const pie = this.get(id);
 		let emMode = 0;
 		if (pie) {	// all checks inside setter "emulate"!
-			pie.emulate = mode;
+			pie.emulate(mode);
 		}
 
 	}
 	run(id) {
 		const pie = this.get(id);
 		if (pie)
-			pie.run = true;
+			pie.run(true);
 	}
 	stop(id) {
 		const pie = this.get(id);
 		if (pie)
-			pie.run = false;
+			pie.run(false);
 	}
 	update(id, data={}) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
 							// this section will be processed before progress=[]
 							 // opt or cfg objects may contain any known optional attributes,
-							 // such as: lang, type, sortBy, opacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
+							 // such as: lang, type, sortBy, varOpacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
 		const pie = this.get(id);
 		if (pie)
 			pie.update(data);
@@ -289,20 +289,20 @@ class SmartPie {
 			'view-type',		// 'donut', 'zwatch, 'pie'
 			'view-mode',		// 'compound', 'comp-100'
 
-			'rotation',			// Positive values rotate the widget in the direction of the clockwise movement, 
+			'rotation',			// Positive values rotate the widget in the direction of the clockwise movement,
 			'start-angle',		// The starting angle to start drawing the widget segment. 0 degrees are at 12 o'clock. Segment drawing direction - clockwise.
 			'end-angle',		// End angle of the widget segment rendering. When the starting and ending angles are equal, a full circle is drawn.
-			'inner-radius',		// Inner radius of a donut hole. A value of 0 replaces the value of the “viewType” 
-								// parameter from “donut” to “pie”! Any non-zero parameter value switches the 
+			'inner-radius',		// Inner radius of a donut hole. A value of 0 replaces the value of the “viewType”
+								// parameter from “donut” to “pie”! Any non-zero parameter value switches the
 								// “viewType” parameter value to “donut”. The maximum value of the parameter must
-								// not exceed the value of the “radius” parameter. 
+								// not exceed the value of the “radius” parameter.
 								// negative values - in the counterclockwise direction.
-			'radius',			// This parameter sets the radius of the widget. It should not be more than half the 
-								// height or width of the widget. During initialization or installation of parameters, 
+			'radius',			// This parameter sets the radius of the widget. It should not be more than half the
+								// height or width of the widget. During initialization or installation of parameters,
 								// all disputed parameters are checked and corrected automatically.
-			'width',			// The width of the widget. The value of the “radius” parameter will be corrected if it 
+			'width',			// The width of the widget. The value of the “radius” parameter will be corrected if it
 								// exceeds half the value of this parameter, or the parameter “height” if its value is less than this parameter.
-			'height',			// The height of the widget. The value of the “radius” parameter will be corrected if it exceeds half the value 
+			'height',			// The height of the widget. The value of the “radius” parameter will be corrected if it exceeds half the value
 								// of this parameter, or the parameter “width” if its value is less than this parameter.
 			'sort-by',			// Sort parameter for multiple data. May contains one of the data parameters name: 'asis', 'name', 'value', 'color', 'state'. the default is 'value'
 			'sort-dir',			// sorting direction parameter. the default value is '1', wich means from low to high. Possible values: 0, 1.
@@ -311,10 +311,11 @@ class SmartPie {
 			'is-tooltip',		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			'position',			// The value describes location of tooltip or legend window Default value is 'rt' which means right-top conner of element.
 			'ttip-template',	// Default value for this property is 'pie', wich means the using of internal SmartTooltip pie template definition.
-								// Currently only for types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
+								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
+			'ttip-type',		// 'alldata' or 'curtarget'
 			'is-emulate',		// Allows automatic emulation of the process of receiving an array of data.
 			'is-run',			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “provider”, “user”
-			'interval',			// Determines the interval of sending requests to the server in seconds (if the value is less than 2000) 
+			'interval',			// Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)
 			'server',
 			'provider',
@@ -325,38 +326,46 @@ class SmartPie {
 			'var-font-size',
 			'var-font-stretch',
 			'var-font-color',	// Are the font definition parameters. Will be derived from host elemet in case if not specified.
-			'var-border-color',	// Sets the widget's stroke color, legend and tooltip.
-			'var-border-width',	// Sets the width of the widget's stroke, legend (and hints, which also depend on the template).
+			'var-stroke-color',	// Sets the widget's stroke color, legend and tooltip.
+			'var-stroke-width',	// Sets the width of the widget's stroke, legend (and hints, which also depend on the template).
 			'var-fill-color',	// Sets the fill color for the widget's background, legend (and hints, which also depend on the template).
 			'var-opacity'		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
 		];
 	}
-	static defOptions() {
+	static defOptions() {	// see getCustomProperties() for descriptions
 		return {
-			type:'flat' 		/* donut, rel(relatives), flat, zWhatch or 1.0, 1.1, 1.2, 1.3, 1.4, ..., 1.n, 1.all */,
-			sortBy:"asis", 		/* asis, states, values, colors, names */
-			sortDir: 1,
-			radius: 50,
-			innerRadius: 0,
-			startAngle: 0,
-			endAngle: 0,
-			fill: 'lightgray',
-			stroke: 'lightgray',
-			width: 2,
-			opacity: 1,
-			isLegend: 1,
-			legendColor: '#666',
-			lang:	'ru',
-			rootElement: null,	// in case of HTML - shadowDOM will be created, in case of SVG - SVGElement (container)
-			run: 0,
-			server: '',
-			targets: ['answer.json'],
-			user: '',
-			interval: 2000,
-			isAnimate: 1,
-			emulate: 0,
-			ttiptmpl: '',
-			ttiptype: 'curTarget'
+			type:			'flat' 		/* donut, rel(relatives), flat, zWhatch or 1.0, 1.1, 1.2, 1.3, 1.4, ..., 1.n, 1.all */,
+
+			rotation: 		-90,
+			startAngle: 	0,
+			endAngle: 		0,
+			innerRadius: 	0,
+			radius: 		50,
+			width:			0,
+			height:			0,
+			sortBy:			"asis", 		/* asis, states, values, colors, names */
+			sortDir: 		1,
+			isAnimate: 		1,
+			isLegend: 		1,
+
+			ttipTemplate: 	'',
+			ttipType: 		'curTarget',
+			isEmulate: 		0,
+			isRun:			0,
+			interval: 		3500,
+
+			server: 		'./widgets/smartPie/',
+			targets: 		['answer.json'],
+			user: 			'',
+
+			varFontFamily:	'Arial, DIN Condensed, Noteworthy, sans-serif',
+			varFontSize:	'12px',
+			varFontStretch:	'condensed',
+			varFontColor:	'#666666',
+			varStrokeColor: 'lightgray',
+			varStrokeWidth: 2,
+			varFillColor: 	'lightgray',
+			varOpacity: 	1
 		}
 	}
 	/**
@@ -370,15 +379,21 @@ class SmartPie {
 		}
 
 		const numericProps =  [
+			'rotation',
+			'startAngle',
+			'endAngle',
+			'innerRadius',
 			'radius',
 			'width',
-			'interval',
+			'height',
+			'sortDir',
 			'isAnimate',
-			'emulate',
 			'isLegend',
-			'innerRadius',
-			'startAngle',
-			'endAngle'
+			'isEmulate',
+			'isRun',
+			'interval',
+			'varStrokeWidth',
+			'varOpacity'
 		];
 		let count = 0;
 		for (let np of numericProps) {
@@ -395,6 +410,41 @@ class SmartPie {
 		}
 		return (count > 0);
 	}
+	/**
+	 *	Converts any property in form '--prefix-first-second' to 'firstSecond' parameter
+	    example of use: 'accent-height'.replace(CAMELIZE, capitalize)
+	 * @param {*} prop
+	 */
+	static customProp2Param(prop) {
+		const CAMELIZE = /[-:]([a-z])/g;
+		const capitalize = function (token) {
+			return token[1].toUpperCase();
+		};
+		return prop.replace(CAMELIZE, capitalize);
+	}
+	/**
+	 * Returns an array of custom properties in form of parameter names in case of options equals null.
+	 * If 'options' is specified, then this functions returns the filled object.
+	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
+	 */
+	static getCustomParams(options = null) {
+		const props = SmartPie.getCustomProperties();		// get an array of custom properties
+		const paramsArray = [];
+		for (let prop of props) {
+			paramsArray.push(SmartPie.customProp2Param(prop));
+		}
+		if (!options) {
+			return paramsArray;
+		}
+		const params = {};
+		for (let prop of paramsArray) {
+			if (typeof options[prop] !== 'undefined') {
+				params[prop] = options[prop];
+			}
+		}
+		return params;
+    }
+
 
 }
 
@@ -483,7 +533,7 @@ class SmartPieElement extends HTMLElement {
 				overflow: visible;
 				vector-effect: non-scaling-stroke;
 
-				--smartwdg-legend-color: #9dc2de;
+				--smartwdg-legend-color: black;
 				--smartwdg-run-color: green;
 				--smartwdg-stop-color: red;
 
@@ -559,6 +609,7 @@ class SmartPieElement extends HTMLElement {
 			this._root = this.attachShadow({mode: 'open'});
 
 			// calculate svg rectangle and coordinates
+			// todo: check radius and correct it with width and height parameters if they exists!
 			this._o.rect = {
 				x: 0,
 				y: 0,
@@ -582,28 +633,35 @@ class SmartPieElement extends HTMLElement {
 			this._svgroot = this._root.querySelector('svg');
 			this._svgdoc  = this._svgroot.ownerDocument;
 		} else {
-			this._o.id   		= id;
-			this._o.type 		= options.type || this._o.type;
-			this._o.sortBy		= options.sortBy || this._o.sortBy;
-			this._o.isLegend		= options.isLegend || this._o.isLegend;
-			this._o.legendColor = options.legendColor || this._o.legendColor;
-			this._o.ttiptmpl   = options.ttiptmpl || this._o.ttiptmpl;
-			this._o.server		= options.server || this._o.server;
-			this._o.targets		= options.targets || this._o.targets;
-			this._o.user		= options.user || this._o.user;
-			this._o.interval	= options.interval || this._o.interval;
-			this._o.isAnimate		= options.isAnimate || this._o.isAnimate;
-			this._o.emulate		= options.emulate || this._o.emulate;
-			this._o.ttiptype	= options.ttiptype || this._o.ttiptype;
+			this._o.id   			= id;
+			this._o.type 			= options.type || this._o.type;
 
-			this._o.radius = options.radius || this._o.radius;
-			this._o.innerRadius = options.innerRadius || this._o.innerRadius;
-			this._o.startAngle = options.startAngle || this._o.startAngle;
-			this._o.endAngle = options.endAngle || this._o.endAngle;
-			this._o.fill = options.fill || this._o.fill;
-			this._o.stroke = options.stroke || this._o.stroke;
-			this._o.width = options.width || this._o.width;
-			this._o.opacity = options.opacity || this._o.opacity;
+			this._o.rotation 		= options.rotation || this._o.rotation;
+			this._o.startAngle 		= options.startAngle || this._o.startAngle;
+			this._o.endAngle 		= options.endAngle || this._o.endAngle;
+			this._o.innerRadius 	= options.innerRadius || this._o.innerRadius;
+			this._o.radius 			= options.radius || this._o.radius;
+			this._o.width 			= options.width || this._o.width;
+			this._o.height 			= options.height || this._o.height;
+			this._o.sortBy			= options.sortBy || this._o.sortBy;
+			this._o.sortDir			= options.sortDir || this._o.sortDir;
+			this._o.isAnimate		= options.isAnimate || this._o.isAnimate;
+			this._o.isLegend		= options.isLegend || this._o.isLegend;
+
+			this._o.ttipTemplate	= options.ttipTemplate || this._o.ttipTemplate;
+			this._o.ttipType		= options.ttipType || this._o.ttipType;
+			this._o.isEmulate		= options.isEmulate || this._o.isEmulate;
+			this._o.isRun 			= options.isRun || this._o.isRun;
+			this._o.interval		= options.interval || this._o.interval;
+
+			this._o.server			= options.server || this._o.server;
+			this._o.targets			= options.targets || this._o.targets;
+			this._o.user			= options.user || this._o.user;
+
+			this._o.varStrokeColor	= options.varStrokeColor || this._o.varStrokeColor;
+			this._o.varStrokeWidth	= options.varStrokeWidth || this._o.varStrokeWidth;
+			this._o.varFillColor	= options.varFillColor || this._o.varFillColor;
+			this._o.varOpacity		= options.varOpacity || this._o.varOpacity;
 
 			// convert to numbers known properties
 			SmartPie.convertNumericProps(this._o);
@@ -640,11 +698,11 @@ class SmartPieElement extends HTMLElement {
 			this._body = SmartPies.addElement('circle', {
 				id:   `${this._o.id}--body`,
 				class:`body`,
-				stroke: `${this._o.stroke}`,
-				'stroke-width': `${this._o.width}`,
-				'stroke-opacity': `${this._o.opacity}`,
-				fill: `${this._o.fill}`,
-				'fill-opacity': `${this._o.opacity}`,
+				stroke: `${this._o.varStrokeColor}`,
+				'stroke-width': `${this._o.varStrokeWidth}`,
+				'stroke-opacity': `${this._o.varOpacity}`,
+				fill: `${this._o.varFillColor}`,
+				'fill-opacity': `${this._o.varOpacity}`,
 				r: `${this._normRadius}`,
 				cx: `${this._o.rect.x + this._o.radius}`,
 				cy: `${this._o.rect.y + this._o.radius}`
@@ -664,12 +722,12 @@ class SmartPieElement extends HTMLElement {
 			this._body = SmartPies.addElement('path', {
 				id:   `${this._o.id}--body`,
 				class: `body`,
-				stroke: `${this._o.stroke}`,
-				'stroke-width': `${this._o.width}`,
-				'stroke-opacity': `${this._o.opacity}`,
-				fill: `${this._o.fill}`,
-				'fill-opacity': `${this._o.opacity}`,
-				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.endAngle)
+				stroke: `${this._o.varStrokeColor}`,
+				'stroke-width': `${this._o.varStrokeWidth}`,
+				'stroke-opacity': `${this._o.varOpacity}`,
+				fill: `${this._o.varFillColor}`,
+				'fill-opacity': `${this._o.varOpacity}`,
+				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.endAngle, this._o.rotation)
 			}, this._svgroot, this._svgdoc);
 			this._bodyShad = this._body.cloneNode();
 			this._bodyShad.removeAttribute('id');
@@ -696,21 +754,21 @@ class SmartPieElement extends HTMLElement {
 		this._body.addEventListener('click', this._onClick);
 		this.setParams(options);
 
-		if (this._o.ttiptmpl) {
+		if (this._o.ttipTemplate) {
 			// call static function (it will instantinate SmartTooltip and load template)
-			SmartTooltip.initTooltip(this._o.id, this._o.ttiptmpl);
+			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
 		}
 
-		// this._body.addEventListener('transitionend', (ev) => {
-		// 	if (ev.propertyName === 'r') {
-		// 		// console.log(`${this._o.id}: anim ended`);
-		// 		this._body.setAttribute("r", this._normRadius);
-		// 		this._body.setAttribute("display", "none")
-		// 		this._body.setAttribute('stroke-opacity', 1);
-		// 		this._body.setAttribute('fill-opacity', 1);
-		// 		setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
-		// 	}
-		// });
+		this._body.addEventListener('transitionend', (ev) => {
+			if (ev.propertyName === 'r') {
+				console.log(`${this._o.id}: anim ended`);
+				this._body.setAttribute("r", this._normRadius);
+				this._body.setAttribute("display", "none")
+				this._body.setAttribute('stroke-opacity', 1);
+				this._body.setAttribute('fill-opacity', 1);
+				setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
+			}
+		});
 	}
 
 	// connect and disconnect from html
@@ -719,9 +777,9 @@ class SmartPieElement extends HTMLElement {
 		this._legend = new Array();
 		this._body.addEventListener('click', this._onClick);
 		// load specified tooltip template
-		if (this._o.ttiptmpl) {
+		if (this._o.ttipTemplate) {
 			// call static function (it will instantinate SmartTooltip and load template)
-			SmartTooltip.initTooltip(this._o.id, this._o.ttiptmpl);
+			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
 		}
 
 
@@ -757,43 +815,65 @@ class SmartPieElement extends HTMLElement {
 			'lcolor',				// defines legend color, default is #9dc2de
 			'type',
 			'sort-by',
-			'run',
+			'is-run',
 			'interval',
 			'is-animate',
 			'server',
-			'color', 'fill', 			// set fill color
+			'color', 'var-fill-color', 			// set fill color
 			'stroke', 'border',			// set stroke color
-			'width', 'stroke-width',	// set stroke width
-			'opacity',					// set pie opacity
-			'emulate',					// emulate updates enabled/disabled/nulled: 1/0/-1
+			// 'width',					// control width
+			// 'height',					// control height
+			// 'radius',
+			'inner-radius',
+			'stroke-width',				// set stroke width
+			'var-opacity',					// set pie opacity
+			'is-emulate',					// isEmulate updates enabled/disabled/nulled: 1/0/-1
+			'rotation',
+			'start-angle',
+			'end-angle'
 		];
 	}
 	attributeChangedCallback(name, oldValue, newValue) {
 		let val = 0;
 		switch (name) {
-			case 'emulate':
-				this._o.emulate = Number(newValue);	//setter emulate
+			case 'inner-radius':
+				this._o.innerRadius = Number(newValue);
+				this._buildActive(this._data);
 				break;
-			case 'opacity':
+			case 'rotation':
+				this._o.rotation = Number(newValue);
+				this._buildActive(this._data);
+				break;
+			case 'start-angle':
+				this._o.startAngle = Number(newValue);
+				this._buildActive(this._data);
+				break;
+			case 'end-angle':
+				this._o.endAngle = Number(newValue);
+				this._buildActive(this._data);
+				break;
+			case 'is-emulate':
+				this._o.isEmulate = Number(newValue);	//setter emulate
+				break;
+			case 'var-opacity':
 				newValue = Number(newValue);
 				this._body.setAttribute('stroke-opacity', newValue);
 				this._body.setAttribute('fill-opacity', newValue);
-				this._o.opacity = newValue;
+				this._o.varOpacity = newValue;
 				break;
 			case 'color':
-			case 'fill':
+			case 'var-fill-color':
 				this._body.setAttribute('fill', newValue);
-				this._o.fill = newValue;
+				this._o.varFillColor = newValue;
 				break;
-			case 'stroke':
-			case 'border':
+			case 'stroke-color':
 				this._body.setAttribute('stroke', newValue);
-				this._o.stroke = newValue;
+				this._o.varStrokeColor = newValue;
+				this._svgroot.style.setProperty('--smartwdg-legend-color', newValue);
 				break;
-			case 'width':
 			case 'stroke-width':
 				newValue = Number(newValue);
-				this._o.width = newValue;
+				this._o.varStrokeWidth = newValue;
 
 				this._recalculteNormRadius();
 
@@ -814,12 +894,8 @@ class SmartPieElement extends HTMLElement {
 				this._o.isLegend = +newValue;
 				this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
 				break;
-			case 'lcolor':
-				this._o.legendColor = newValue;
-				this._svgroot.style.setProperty('--smartwdg-legend-color', newValue);
-				break;
-			case 'run':
-				this.run = (newValue ? newValue : false);
+			case 'is-run':
+				this.run(newValue ? newValue : false);
 				break;
 			case 'interval':
 				val = (newValue ? Number(newValue) : 0);
@@ -850,12 +926,12 @@ class SmartPieElement extends HTMLElement {
 				break;
 		}
 	}
-	// use example: let isRun = this.run;
-	get run() {
+
+	isRun() {
 		return this._run;
 	}
-	// use example: this.run = true - to start rt updateds, this.run = !this.run - to trigger start/stop
-	set run(isRun) {
+
+	run(isRun) {
 		let emMode = 0;
 		if (typeof isRun === 'string') {
 			if (isRun === '1' || isRun === 'true') {
@@ -877,7 +953,7 @@ class SmartPieElement extends HTMLElement {
 		}
 	}
 	_recalculteNormRadius() {
-		this._normRadius = this._o.radius - this._o.width/2;
+		this._normRadius = this._o.radius - this._o.varStrokeWidth/2;
 		this._normRadius = this._normRadius < 0 ? 0 : this._normRadius;
 		if (this._o.isAnimate) {
 			this._normRadius -= this._normRadius / 5;
@@ -896,11 +972,11 @@ class SmartPieElement extends HTMLElement {
 		}
 	}
 	// use example: let eu = this.emulateUpdates;
-	get emulate() {
-		return this._o.emulate;
+	isEmulate() {
+		return this._o.isEmulate;
 	}
 	// use example: this.emulate = 1, or this.emulate = '1';
-	set emulate(mode) {	// 1/0/-1 - enabled/disabled/nulled
+	emulate(mode) {	// 1/0/-1 - enabled/disabled/nulled
 		let emMode = 0;
 		if (typeof mode === 'string') {
 			if (mode === '1' || mode === 'true') {
@@ -911,7 +987,7 @@ class SmartPieElement extends HTMLElement {
 		} else {
 			emMode = mode;
 		}
-		pie._o.emulate = emMode;
+		pie._o.isEmulate = emMode;
 	}
 
 	update(data = null) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
@@ -1006,31 +1082,31 @@ class SmartPieElement extends HTMLElement {
 	}
 
 	getParams() {
-		const params = {
-			id: 		this._o.id,
-			type:		this._o.type,
-			sortBy:		this._o.sortBy,
-			isLegend:		this._o.isLegend,
-			lcolor:		this._o.legendColor,
-			radius: 	this._o.radius,
-			fill:		this._o.fill,
-			stroke: 	this._o.stroke,
-			width:  	this._o.width,
-			opacity:	this._o.opacity,
-			server:		this._o.server,
-			targets:	this._o.targets,
-			user:		this._o.user,
-			interval:	this._o.interval,
-			emulate:	this._o.emulate
-		}
-		return params;
+		return SmartPie.getCustomParams(this._o);
 	}
+
 	setParams(options={}, rebuild=true) {
 		let val, needRebuild = false;
 		for (let key in options) {
 			switch (key) {
-				case 'emulate':
-					this._o.emulate = options[key];
+				case 'inner-radius':
+					this._o.innerRadius = option[key];
+					needRebuild++;
+					break;
+				case 'rotation':
+					this._o.rotation = options[key];
+					needRebuild++;
+					break;
+				case 'startAngle':
+					this._o.startAngle = options[key];
+					needRebuild++;
+					break;
+				case 'endAngle':
+					this._o.endAngle = options[key];
+					needRebuild++;
+					break;
+				case 'isEmulate':
+					this._o.isEmulate = options[key];
 					break;
 				case 'type':
 					this._o.type = options[key];
@@ -1040,36 +1116,32 @@ class SmartPieElement extends HTMLElement {
 					this._o.sortBy = options[key];
 					needRebuild++
 					break;
-				case 'fill':
+				case 'varFillColor':
 					val = options[key];
-					this._o.fill = val;
+					this._o.varFillColor = val;
 					this._body.setAttribute('fill', val);
 					break;
-				case 'stroke':
+				case 'varStrokeColor':
 					val = options[key];
-					this._o.stroke = val;
+					this._o.varStrokeColor = val;
 					this._body.setAttribute('stroke', val);
+					let svgRoot = (this._o.mode === 'html' ? this._svgroot : this._root);
+					svgRoot.style.setProperty('--smartwdg-legend-color', val);
 					break;
-				case 'width':
-				case 'stroke-width':
+
+				case 'varStrokeWidth':
 					val = Number(options[key]);
-					this._o.width = val;
+					this._o.varStrokeWidth = val;
 					this._recalculteNormRadius();
 					this._body.setAttribute('stroke-width', val);
 					this._body.setAttribute('r', this._normRadius);
 					needRebuild++;
 					break;
-				case 'opacity':
+				case 'varOpacity':
 					val = Number(options[key]);
 					this._body.setAttribute('stroke-opacity', val);
 					this._body.setAttribute('fill-opacity', val);
-					this._o.opacity = val;
-					break;
-				case 'lcolor':
-					val = options[key];
-					let svgRoot = (this._o.mode === 'html' ? this._svgroot : this._root);
-					svgRoot.style.setProperty('--smartwdg-legend-color', val);
-					this._o.legendColor = val;
+					this._o.varOpacity = val;
 					break;
 				case 'isLegend':
 					this._o.isLegend = +options[key];
@@ -1101,11 +1173,11 @@ class SmartPieElement extends HTMLElement {
 					this._o.isAnimate ? this._body.classList.add('animated') : this._body.classList.remove('animated');
 					break;
 
-				case 'run':
-					this.run = Number(options[key]);
+				case 'isRun':
+					this.run(Number(options[key]));
 					break;
 				case 'stop':
-					this.run = 0;
+					this.run(0);
 					break;
 				case 'server':
 					this._o.server = options[key];
@@ -1351,10 +1423,10 @@ class SmartPieElement extends HTMLElement {
 				'data-uuid': `${val.uuid}`,
 				'data-linkto': `${link.linkto}`,
 				id:`${this._o.id}--${i}--main-target`,
-				"stroke-width": this._o.width,
-				stroke: (mainTargets > 1 ? val.color : this._o.stroke),
+				"stroke-width": this._o.varStrokeWidth,
+				stroke: (mainTargets > 1 ? val.color : this._o.varStrokeColor),
 				fill: val.color,
-				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, startAngle, endAngle)
+				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, startAngle, endAngle, this._o.rotation)
 			}, g_el, this._svgdoc);
 			this._addLegend({
 				class: 'main-target',
@@ -1367,7 +1439,7 @@ class SmartPieElement extends HTMLElement {
 			});
 			// calculate secondary targets value sum
 			let ssum = childTargets.reduce((acc, cur) => acc + Number(cur.value), 0);
-			let normRadius = this._normRadius - this._o.width;
+			let normRadius = this._normRadius - this._o.varStrokeWidth;
 			let secOnePCT = childTargets.length > 1 ? normRadius / ssum : normRadius / 100;
 
 			for (let n = 1; n <= childTargets.length; n++) {
@@ -1385,7 +1457,7 @@ class SmartPieElement extends HTMLElement {
 					stroke: sVal.color,
 					"stroke-width": 2,
 					fill: sVal.color,
-					d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, normRadius, startAngle, endAngle, true)
+					d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, normRadius, startAngle, endAngle, this._o.rotation, true)
 				}, g_el, this._svgdoc);
 				if (childTargets.length === 1) {
 					// draw additiional internal circle with main-target color
@@ -1395,10 +1467,10 @@ class SmartPieElement extends HTMLElement {
 						class: 'main-target',
 						'data-linkto': `${sLink.linkto}`,
 						'data-uuid': `${val.uuid}`,
-						"stroke-width": this._o.width,
-						stroke: (childTargets.length > 1 ? val.color : this._o.stroke),
+						"stroke-width": this._o.varStrokeWidth,
+						stroke: (childTargets.length > 1 ? val.color : this._o.varStrokeColor),
 						fill: val.color,
-						d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, normRadius, startAngle, endAngle)
+						d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, normRadius, startAngle, endAngle, this._o.rotation)
 					}, g_el, this._svgdoc);
 				}
 				this._addLegend({
@@ -1449,10 +1521,10 @@ class SmartPieElement extends HTMLElement {
 				'data-uuid': `${val.uuid}`,
 				id: `${this._o.id}--${i}--main-target`,
 				name: val.legend || val.name,
-				"stroke-width": this._o.width,
-				stroke: this._o.stroke,
+				"stroke-width": this._o.varStrokeWidth,
+				stroke: this._o.varStrokeColor,
 				fill: val.color,
-				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, startAngle, endAngle)
+				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, startAngle, endAngle, this._o.rotation)
 			}, g_el, this._svgdoc);
 			startAngle =+ endAngle;
 			this._addLegend({
@@ -1508,10 +1580,10 @@ class SmartPieElement extends HTMLElement {
 				'data-linkto': `${link.linkto}`,
 				'data-uuid': `${val.uuid}`,
 				id:`${this._o.id}--${i}--main-target`,
-				"stroke-width": this._o.width,
+				"stroke-width": this._o.varStrokeWidth,
 				stroke: val.color,
 				fill: val.color,
-				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, startAngle, endAngle)
+				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, startAngle, endAngle, this._o.rotation)
 			}, g_el, this._svgdoc);
 			this._addLegend({
 				class: 'main-target',
@@ -1545,7 +1617,7 @@ class SmartPieElement extends HTMLElement {
 					'data-uuid': `${sVal.uuid}`,
 					id:`${this._o.id}--${i+n}--sub-target`,
 					fill: sVal.color,
-					d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, normRadius, startAngle, endAngle, true)
+					d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, normRadius, startAngle, endAngle, this._o.rotation, true)
 				}, g_el, this._svgdoc);
 				if (saData.length === 1) {
 					// draw additiional internal circle with main-target color
@@ -1555,9 +1627,9 @@ class SmartPieElement extends HTMLElement {
 						class: 'main-target',
 						'data-linkto': `${link.linkto}`,
 						'data-uuid': `${val.uuid}`,
-						"stroke-width": this._o.width,
+						"stroke-width": this._o.varStrokeWidth,
 						fill: val.color,
-						d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, normRadius, startAngle, endAngle)
+						d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, normRadius, startAngle, endAngle, this._o.rotation)
 					}, g_el, this._svgdoc);
 				}
 				this._addLegend({
@@ -1656,7 +1728,7 @@ class SmartPieElement extends HTMLElement {
 		};
 
 		// for test only: show all data for element with id = g1-dbSVG
-		if (pie._o.ttiptype == 'allData') {
+		if (pie._o.ttipType == 'allData') {
 			data.targets = Array.from(pie._data);
 		} else {
 			for(var item of target.parentElement.children) {
@@ -1738,12 +1810,12 @@ class SmartPieElement extends HTMLElement {
 			let isRun = !pie._run;
 			if (pie._o.mode === "html") {
 				if (isRun) {
-					pie.setAttribute('run', '1');
+					pie.setAttribute('is-run', '1');
 				} else {
-					pie.removeAttribute('run');
+					pie.removeAttribute('is-run');
 				}
 			} else if (pie._o.mode === "svg") {
-				pie.run = isRun;
+				pie.run(isRun);
 			}
 			console.info('Update is' + (isRun ? ' started' : ' stoped'));
 		} else {
