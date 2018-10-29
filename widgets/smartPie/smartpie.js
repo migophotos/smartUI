@@ -260,7 +260,7 @@ class SmartPies {
 	update(id, data={}) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
 							// this section will be processed before progress=[]
 							 // opt or cfg objects may contain any known optional attributes,
-							 // such as: lang, type, sortby, opacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
+							 // such as: lang, type, sortBy, opacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
 		const pie = this.get(id);
 		if (pie)
 			pie.update(data);
@@ -276,10 +276,66 @@ class SmartPies {
 };
 
 class SmartPie {
+	/**
+	 * Returns an array of custom properties. Each of the custom property has corresponding declarative attribute in form first-second == prefix-first-second
+	 * and option parameter with name "firstSecond".
+	 * for example: '--sttip-title-format' property equals to attribute 'title-format' and options.titleFormat parameter, but
+	 * '--sttip-template' property equals to TEMPLATE attribute and options.template parameter.
+	 */
+	static getCustomProperties() {
+		return [
+			'input-data',		// the type of input data. 'percents', 'value', 'auto'. The 'auto' is default
+			'input-mode',		// how to interpret an input data. 'flat', 'rel', p-ch ('0.1, 0.2,...1.0, 1.1, ...), 'json' equivalent to 'rel'
+			'view-type',		// 'donut', 'zwatch, 'pie'
+			'view-mode',		// 'compound', 'comp-100'
+
+			'rotation',			// Positive values rotate the widget in the direction of the clockwise movement, 
+			'start-angle',		// The starting angle to start drawing the widget segment. 0 degrees are at 12 o'clock. Segment drawing direction - clockwise.
+			'end-angle',		// End angle of the widget segment rendering. When the starting and ending angles are equal, a full circle is drawn.
+			'inner-radius',		// Inner radius of a donut hole. A value of 0 replaces the value of the “viewType” 
+								// parameter from “donut” to “pie”! Any non-zero parameter value switches the 
+								// “viewType” parameter value to “donut”. The maximum value of the parameter must
+								// not exceed the value of the “radius” parameter. 
+								// negative values - in the counterclockwise direction.
+			'radius',			// This parameter sets the radius of the widget. It should not be more than half the 
+								// height or width of the widget. During initialization or installation of parameters, 
+								// all disputed parameters are checked and corrected automatically.
+			'width',			// The width of the widget. The value of the “radius” parameter will be corrected if it 
+								// exceeds half the value of this parameter, or the parameter “height” if its value is less than this parameter.
+			'height',			// The height of the widget. The value of the “radius” parameter will be corrected if it exceeds half the value 
+								// of this parameter, or the parameter “width” if its value is less than this parameter.
+			'sort-by',			// Sort parameter for multiple data. May contains one of the data parameters name: 'asis', 'name', 'value', 'color', 'state'. the default is 'value'
+			'sort-dir',			// sorting direction parameter. the default value is '1', wich means from low to high. Possible values: 0, 1.
+			'is-animate',		// Allows to animate the moment of receiving the data array.
+			'is-legend',		// Allows to display the legend on the defined side of the widget
+			'is-tooltip',		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
+			'position',			// The value describes location of tooltip or legend window Default value is 'rt' which means right-top conner of element.
+			'ttip-template',	// Default value for this property is 'pie', wich means the using of internal SmartTooltip pie template definition.
+								// Currently only for types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
+			'is-emulate',		// Allows automatic emulation of the process of receiving an array of data.
+			'is-run',			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “provider”, “user”
+			'interval',			// Determines the interval of sending requests to the server in seconds (if the value is less than 2000) 
+								// or in milliseconds (if the value is greater than 1999)
+			'server',
+			'provider',
+			'user',				// These parameters determine the URL of the request to the server
+
+			'var-is-shadow',	// Allows shadow for widget, legend and tooltip
+			'var-font-family',
+			'var-font-size',
+			'var-font-stretch',
+			'var-font-color',	// Are the font definition parameters. Will be derived from host elemet in case if not specified.
+			'var-border-color',	// Sets the widget's stroke color, legend and tooltip.
+			'var-border-width',	// Sets the width of the widget's stroke, legend (and hints, which also depend on the template).
+			'var-fill-color',	// Sets the fill color for the widget's background, legend (and hints, which also depend on the template).
+			'var-opacity'		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
+		];
+	}
 	static defOptions() {
 		return {
 			type:'flat' 		/* donut, rel(relatives), flat, zWhatch or 1.0, 1.1, 1.2, 1.3, 1.4, ..., 1.n, 1.all */,
-			sortby:"asis" 		/* asis, states, values, colors, names */,
+			sortBy:"asis", 		/* asis, states, values, colors, names */
+			sortDir: 1,
 			radius: 50,
 			innerRadius: 0,
 			startAngle: 0,
@@ -288,7 +344,7 @@ class SmartPie {
 			stroke: 'lightgray',
 			width: 2,
 			opacity: 1,
-			legend: 1,
+			isLegend: 1,
 			legendColor: '#666',
 			lang:	'ru',
 			rootElement: null,	// in case of HTML - shadowDOM will be created, in case of SVG - SVGElement (container)
@@ -297,7 +353,7 @@ class SmartPie {
 			targets: ['answer.json'],
 			user: '',
 			interval: 2000,
-			animate: 1,
+			isAnimate: 1,
 			emulate: 0,
 			ttiptmpl: '',
 			ttiptype: 'curTarget'
@@ -317,9 +373,9 @@ class SmartPie {
 			'radius',
 			'width',
 			'interval',
-			'animate',
+			'isAnimate',
 			'emulate',
-			'legend',
+			'isLegend',
 			'innerRadius',
 			'startAngle',
 			'endAngle'
@@ -366,7 +422,7 @@ class SmartPieElement extends HTMLElement {
 		this._o = { ...SmartPie.defOptions() };
 
         // overwrite by external styles!
-        this._o.legend = Number(getComputedStyle(this).getPropertyValue('--smartpie-legend').trimLeft());
+        this._o.isLegend = Number(getComputedStyle(this).getPropertyValue('--smartpie-is-legend').trimLeft());
 
 		for (let attr of this.attributes) {
 			this._o[attr.name] = attr.value;
@@ -374,7 +430,6 @@ class SmartPieElement extends HTMLElement {
 
 		this._o.mode = options.mode;
 
-		this.src = {};
 		const txtDefs = `
 			<filter id="drop-shadow">
 				<feGaussianBlur in="SourceAlpha" stdDeviation="2.2"/>
@@ -507,8 +562,8 @@ class SmartPieElement extends HTMLElement {
 			this._o.rect = {
 				x: 0,
 				y: 0,
-				width:  this._o.legend ? this._o.radius *2 + 220 : this._o.radius * 2,
-				height: this._o.legend ? this._o.radius * 2 + 50 : this._o.radius * 2
+				width:  this._o.isLegend ? this._o.radius *2 + 220 : this._o.radius * 2,
+				height: this._o.isLegend ? this._o.radius * 2 + 50 : this._o.radius * 2
 			};
 
 			this._root.innerHTML = `
@@ -529,15 +584,15 @@ class SmartPieElement extends HTMLElement {
 		} else {
 			this._o.id   		= id;
 			this._o.type 		= options.type || this._o.type;
-			this._o.sortby		= options.sortby || this._o.sortby;
-			this._o.legend		= options.legend || this._o.legend;
+			this._o.sortBy		= options.sortBy || this._o.sortBy;
+			this._o.isLegend		= options.isLegend || this._o.isLegend;
 			this._o.legendColor = options.legendColor || this._o.legendColor;
 			this._o.ttiptmpl   = options.ttiptmpl || this._o.ttiptmpl;
 			this._o.server		= options.server || this._o.server;
 			this._o.targets		= options.targets || this._o.targets;
 			this._o.user		= options.user || this._o.user;
 			this._o.interval	= options.interval || this._o.interval;
-			this._o.animate		= options.animate || this._o.animate;
+			this._o.isAnimate		= options.isAnimate || this._o.isAnimate;
 			this._o.emulate		= options.emulate || this._o.emulate;
 			this._o.ttiptype	= options.ttiptype || this._o.ttiptype;
 
@@ -622,7 +677,7 @@ class SmartPieElement extends HTMLElement {
 			this._svgroot.insertBefore(this._bodyShad, this._body);
 		}
 
-		if (this._o.animate) {
+		if (this._o.isAnimate) {
 			this._body.classList.add('animated');
 		}
 
@@ -630,7 +685,7 @@ class SmartPieElement extends HTMLElement {
 		this._passiveG	= SmartPies.addElement('g', {id: `${this._o.id}--pasG`}, this._svgroot, this._svgdoc);
 
 		// passiveG group is a legend. hide it if no legend!
-		this._passiveG.setAttribute('display', (this._o.legend ? 'block': 'none'));
+		this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
 
 		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
 		window.SmartPies.set(this._o.id, this);
@@ -698,13 +753,13 @@ class SmartPieElement extends HTMLElement {
 	// attributes changing processing
 	static get observedAttributes() {
 		return [
-			'legend',					// 1/0 - show/hide legend
+			'is-legend',					// 1/0 - show/hide legend
 			'lcolor',				// defines legend color, default is #9dc2de
 			'type',
-			'sortby',
+			'sort-by',
 			'run',
 			'interval',
-			'animate',
+			'is-animate',
 			'server',
 			'color', 'fill', 			// set fill color
 			'stroke', 'border',			// set stroke color
@@ -751,13 +806,13 @@ class SmartPieElement extends HTMLElement {
 				this._o.type = newValue;
 				this._buildActive(this._data);
 				break;
-			case 'sortby':
-				this._o.sortby = newValue;
+			case 'sort-by':
+				this._o.sortBy = newValue;
 				this._buildActive(this._data);
 				break;
-			case 'legend':
-				this._o.legend = +newValue;
-				this._passiveG.setAttribute('display', (this._o.legend ? 'block': 'none'));
+			case 'is-legend':
+				this._o.isLegend = +newValue;
+				this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
 				break;
 			case 'lcolor':
 				this._o.legendColor = newValue;
@@ -770,7 +825,7 @@ class SmartPieElement extends HTMLElement {
 				val = (newValue ? Number(newValue) : 0);
 				let minInterval = 500;
 				let animAddText = 'This';
-				if (this._o.animate) {
+				if (this._o.isAnimate) {
 					minInterval = 3000
 					animAddText = 'In case of animation this';
 				}
@@ -781,14 +836,14 @@ class SmartPieElement extends HTMLElement {
 				}
 				this._o.interval = val;
 				break;
-			case 'animate':
+			case 'is-animate':
 				val = (newValue ? Number(newValue) : 0);
 				if (val) {	// in case of animation enabled, duration of interval must be greater than 3 sec!
 					this._o.interval = (this._o.interval < 3000 ? 3000 : this._o.interval);
 					this._recalculteNormRadius();
 				}
-				this._o.animate = val;
-				this._o.animate ? this._body.classList.add('animated') : this._body.classList.remove('animated');
+				this._o.isAnimate = val;
+				this._o.isAnimate ? this._body.classList.add('animated') : this._body.classList.remove('animated');
 				break;
 			case 'server':
 				this._o.server = newValue;
@@ -824,7 +879,7 @@ class SmartPieElement extends HTMLElement {
 	_recalculteNormRadius() {
 		this._normRadius = this._o.radius - this._o.width/2;
 		this._normRadius = this._normRadius < 0 ? 0 : this._normRadius;
-		if (this._o.animate) {
+		if (this._o.isAnimate) {
 			this._normRadius -= this._normRadius / 5;
 		}
 	}
@@ -862,12 +917,12 @@ class SmartPieElement extends HTMLElement {
 	update(data = null) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
 	// this section will be processed before progress=[]
 	// opt or cfg objects may contain any known optional attributes,
-	// such as: type, sortby, opacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
+	// such as: type, sortBy, opacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
 		// console.log(`update data for ${this._o.id}`);
 		if (!data) { // do realtime updates here!
 			SmartPies._httpGet(this._o.server + this._o.targets[0])
 			.then(response => {
-				if (this._o.animate) {
+				if (this._o.isAnimate) {
 					this._body.setAttribute("r", this._normRadius + this._normRadius/5);
 					this._body.setAttribute('fill-opacity', 0);
 					this._body.setAttribute('stroke-opacity', 0);
@@ -896,7 +951,7 @@ class SmartPieElement extends HTMLElement {
 			}
 			let needRebuild = this.setParams(options, false);
 			if (typeof data.targets === 'object' && typeof data.targets.length === 'number' && data.targets.length) {
-				if (this._o.animate) {
+				if (this._o.isAnimate) {
 					this._body.setAttribute("r", this._normRadius + this._normRadius/5);
 					this._body.setAttribute('fill-opacity', 0);
 					this._body.setAttribute('stroke-opacity', 0);
@@ -954,8 +1009,8 @@ class SmartPieElement extends HTMLElement {
 		const params = {
 			id: 		this._o.id,
 			type:		this._o.type,
-			sortby:		this._o.sortby,
-			legend:		this._o.legend,
+			sortBy:		this._o.sortBy,
+			isLegend:		this._o.isLegend,
 			lcolor:		this._o.legendColor,
 			radius: 	this._o.radius,
 			fill:		this._o.fill,
@@ -981,8 +1036,8 @@ class SmartPieElement extends HTMLElement {
 					this._o.type = options[key];
 					needRebuild++;
 					break;
-				case 'sortby':
-					this._o.sortby = options[key];
+				case 'sortBy':
+					this._o.sortBy = options[key];
 					needRebuild++
 					break;
 				case 'fill':
@@ -1016,16 +1071,16 @@ class SmartPieElement extends HTMLElement {
 					svgRoot.style.setProperty('--smartwdg-legend-color', val);
 					this._o.legendColor = val;
 					break;
-				case 'legend':
-					this._o.legend = +options[key];
-					this._passiveG.setAttribute('display', (this._o.legend ? 'block': 'none'));
+				case 'isLegend':
+					this._o.isLegend = +options[key];
+					this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
 					break;
 
 				case 'interval':
 					val = Number(options[key]);
 					let minInterval = 500;
 					let animAddText = 'This';
-					if (this._o.animate) {
+					if (this._o.isAnimate) {
 						minInterval = 3000
 						animAddText = 'In case of animation this';
 					}
@@ -1036,14 +1091,14 @@ class SmartPieElement extends HTMLElement {
 					}
 					this._o.interval = val;
 					break;
-				case 'animate':
+				case 'isAnimate':
 					val = Number(options[key]);
 					if (val) {	// in case of animation enabled, duration of interval must be greater than 3 sec!
 						this._o.interval = (this._o.interval < 3000 ? 3000 : this._o.interval);
 						this._recalculteNormRadius();
 					}
-					this._o.animate = val;
-					this._o.animate ? this._body.classList.add('animated') : this._body.classList.remove('animated');
+					this._o.isAnimate = val;
+					this._o.isAnimate ? this._body.classList.add('animated') : this._body.classList.remove('animated');
 					break;
 
 				case 'run':
@@ -1210,8 +1265,8 @@ class SmartPieElement extends HTMLElement {
 			}
 		}
 	}
-	// filter data array by data.parent parameter and returns a new array with founded targets sorted by 'sortby' parameter
-	_filterDataByParent(data=[], sortby='asis', parent='') {
+	// filter data array by data.parent parameter and returns a new array with founded targets sorted by 'sortBy' parameter
+	_filterDataByParent(data=[], sortBy='asis', parent='') {
 		function filterByParent(item) {
 			if (typeof item.parent !== 'undefined' && item.parent !== parent) {
 				return false;
@@ -1219,7 +1274,7 @@ class SmartPieElement extends HTMLElement {
 			return true;
 		}
 		let filtered_data =  data.filter(filterByParent);
-		this._sortDataByParam(filtered_data, sortby);
+		this._sortDataByParam(filtered_data, sortBy);
 
 		return filtered_data;
 	}
@@ -1231,12 +1286,12 @@ class SmartPieElement extends HTMLElement {
 	 * 	...
 	 * ]
 	 * @param {*} data 		input array of data objects for each target
-	 * @param {*} sortby 	sorting parameter
+	 * @param {*} sortBy 	sorting parameter
 	 * @param {*} indexes 	indexes array
 	 * 	filter for types such as: '1.0', '1.1', '1.n', '0.n', ..., (1.2.3) in future
 		-==== NOT YET IMPLEMENTED ====-
 	 */
-	_filterDataByIndexes(data, sortby, indexes) {
+	_filterDataByIndexes(data, sortBy, indexes) {
 		const a = 0;
 		const fda = [];
 		for (let i = 0; i < indexes.length; i++) {
@@ -1253,7 +1308,7 @@ class SmartPieElement extends HTMLElement {
 	_renderRelativesPie(data=[], extention='') {
 		// find all targets without parent
 		let el, g_el, onePCT, startAngle = 0;
-		let mainTargets = this._filterDataByParent(data, this._o.sortby);
+		let mainTargets = this._filterDataByParent(data, this._o.sortBy);
 		// calc one percent weight
 		if (mainTargets.length === 1) {
 			onePCT = 3.6;	// grads for one percent
@@ -1276,7 +1331,7 @@ class SmartPieElement extends HTMLElement {
 
 		for (let i = 0; i < mainTargets.length; i++) {
 			// get childrens array
-			let childTargets = this._filterDataByParent(data, this._o.sortby, mainTargets[i].uuid);
+			let childTargets = this._filterDataByParent(data, this._o.sortBy, mainTargets[i].uuid);
 			// create group for main target and its children
 			g_el = SmartPies.addElement('g', {class:'main-segment', id:`${this._o.id}--${i}--main-segment`}, this._activeG, this._svgdoc);
 			g_el.addEventListener("click", this._onClick);
@@ -1362,7 +1417,7 @@ class SmartPieElement extends HTMLElement {
 
 	}
 	_renderFlatPie(data = [], onePCT, extention='') {
-		this._sortDataByParam(data, this._o.sortby);
+		this._sortDataByParam(data, this._o.sortBy);
 
 		let el, g_el;
 		let startAngle = 0;
@@ -1415,7 +1470,7 @@ class SmartPieElement extends HTMLElement {
 		const sCounter = Number(this._o.type.split('.')[1]);
 		const mCounter = Number(this._o.type.split('.')[0]);
 
-		const filteredData = this._filterDataByIndexes(data, this._o.sortby, [mCounter, sCounter, 3, 4, 5]);
+		const filteredData = this._filterDataByIndexes(data, this._o.sortBy, [mCounter, sCounter, 3, 4, 5]);
 
 		// render main targets
 		let el, g_el;
@@ -1626,7 +1681,7 @@ class SmartPieElement extends HTMLElement {
 		}
 		data.options.isRun = pie._run;
 		data.options.location = pie._bodyShad.getBoundingClientRect();
-		data.options.sortBy = pie._o.sortby;
+		data.options.sortBy = pie._o.sortBy;
 		data.options.delayOut = 2000;
 		data.options.showMode = 'pinned';
 		data.options.cssVars = {
