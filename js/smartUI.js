@@ -1002,7 +1002,7 @@ class SmartUiCheckBox extends HTMLElement {
                 this._btn.setAttribute('height', imageHeight);
             }
 
-            this._o.vaue = this._o.value || 'on';
+            this._o.value = this._o.value || 'on';
             this._btn.setAttribute('state', this._o.value);
 
             this._btn.addEventListener('click', (evt) => {
