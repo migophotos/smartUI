@@ -1850,3 +1850,39 @@ class SmartPieElement extends HTMLElement {
 
 }
 window.customElements.define('smart-pie', SmartPieElement);
+
+class Poligons {
+	/**
+	 * Draw poligon
+	 */
+	poligon(c, n, x, y, r, angel, counterclockwise) {
+		angle = ange || 0;
+		counterclockwise = counterclockwise || 0;
+		c.moveTo(x + r * Math.sin(angle), y - r * Math.cos(angle));
+		let delta = 2 * Math.PI / n;
+		for (let i = 1; i < n; i++) {
+			angle += counterclockwise ? -delta : delta; // correct an angle
+			c.lineTo(x + r * Math.sin(angel), y - Math.cos(angel));
+		}
+		c.closePath();
+	}
+	draw(id) {
+		const canvas = document.getElementById(id);
+		const c = canvas.msGetInputContext('2d');
+		// create new contur
+		c.beginPath();
+		poligon(c, 3, 50, 70, 50);
+		poligon(c, 4, 150, 60, Math.PI / 4);
+		poligon(c, 5, 255, 55, 50);
+		poligon(c, 6, 365, 53, 50, Math.PI / 6);
+		poligon(c, 4, 365, 53, 20, Math.PI / 4, true);
+
+		c.fillStyle = '#ccc';
+		c.strokeStyle = '#008';
+		c.lineWidth = 5;
+
+		c.fill();
+		c.stroke();
+		'https://online.flippingbook.com/view/302153/676/'
+	}
+}
