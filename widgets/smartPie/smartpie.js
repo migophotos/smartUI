@@ -166,7 +166,7 @@ class SmartPies {
 		this._interval = setInterval(() => {
 			for (let entry of this._heap.entries()) {
 				let pie = entry[1];
-				if (pie._run) { // realtime updates are enabled
+				if (pie._o.isRun) { // realtime updates are enabled
 					let ic = pie.intervalCounter;
 					ic = ic - this._timeout;
 					pie.intervalCounter = ic;	// it will restored automatically to _o.interval, if <= 0
@@ -284,6 +284,7 @@ class SmartPie {
 	 */
 	static getCustomProperties() {
 		return [
+			'type',				// temporary for backward compatibility with old version
 			'input-data',		// the type of input data. 'percents', 'value', 'auto'. The 'auto' is default
 			'input-mode',		// how to interpret an input data. 'flat', 'rel', p-ch ('0.1, 0.2,...1.0, 1.1, ...), 'json' equivalent to 'rel'
 			'view-type',		// 'donut', 'zwatch, 'pie'
@@ -318,7 +319,7 @@ class SmartPie {
 			'interval',			// Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)
 			'server',
-			'provider',
+			'targets',
 			'user',				// These parameters determine the URL of the request to the server
 
 			'var-is-shadow',	// Allows shadow for widget, legend and tooltip
@@ -463,7 +464,6 @@ class SmartPieElement extends HTMLElement {
 		this._body		= null;	// body circle with id = contId--body
 		this._activeG	= null;	// group of active segments with id = contId--actG
 		this._passiveG	= null;	// group of passive elements, such as legend and etc, with id = contID--pasG
-		this._run 		= true; // state of dinamic update parameter.
 		this._normRadius= 0;
 		this._intervalCounter = 0;
 
@@ -810,125 +810,23 @@ class SmartPieElement extends HTMLElement {
     }
 	// attributes changing processing
 	static get observedAttributes() {
-		return [
-			'is-legend',					// 1/0 - show/hide legend
-			'lcolor',				// defines legend color, default is #9dc2de
-			'type',
-			'sort-by',
-			'is-run',
-			'interval',
-			'is-animate',
-			'server',
-			'color', 'var-fill-color', 			// set fill color
-			'stroke', 'border',			// set stroke color
-			// 'width',					// control width
-			// 'height',					// control height
-			// 'radius',
-			'inner-radius',
-			'stroke-width',				// set stroke width
-			'var-opacity',					// set pie opacity
-			'is-emulate',					// isEmulate updates enabled/disabled/nulled: 1/0/-1
-			'rotation',
-			'start-angle',
-			'end-angle'
-		];
+		return SmartPie.getCustomProperties();
 	}
 	attributeChangedCallback(name, oldValue, newValue) {
-		let val = 0;
-		switch (name) {
-			case 'inner-radius':
-				this._o.innerRadius = Number(newValue);
-				this._buildActive(this._data);
-				break;
-			case 'rotation':
-				this._o.rotation = Number(newValue);
-				this._buildActive(this._data);
-				break;
-			case 'start-angle':
-				this._o.startAngle = Number(newValue);
-				this._buildActive(this._data);
-				break;
-			case 'end-angle':
-				this._o.endAngle = Number(newValue);
-				this._buildActive(this._data);
-				break;
-			case 'is-emulate':
-				this._o.isEmulate = Number(newValue);	//setter emulate
-				break;
-			case 'var-opacity':
-				newValue = Number(newValue);
-				this._body.setAttribute('stroke-opacity', newValue);
-				this._body.setAttribute('fill-opacity', newValue);
-				this._o.varOpacity = newValue;
-				break;
-			case 'color':
-			case 'var-fill-color':
-				this._body.setAttribute('fill', newValue);
-				this._o.varFillColor = newValue;
-				break;
-			case 'stroke-color':
-				this._body.setAttribute('stroke', newValue);
-				this._o.varStrokeColor = newValue;
-				this._svgroot.style.setProperty('--smartwdg-legend-color', newValue);
-				break;
-			case 'stroke-width':
-				newValue = Number(newValue);
-				this._o.varStrokeWidth = newValue;
+		// update own property
+		const paramName = SmartPie.customProp2Param(name);
+		const o = {};
+		o[paramName] = newValue;
 
-				this._recalculteNormRadius();
-
-				this._body.setAttribute('stroke-width', newValue);
-				this._body.setAttribute('r', this._normRadius);
-
-				this._buildActive(this._data);
-				break;
-			case 'type':
-				this._o.type = newValue;
-				this._buildActive(this._data);
-				break;
-			case 'sort-by':
-				this._o.sortBy = newValue;
-				this._buildActive(this._data);
-				break;
-			case 'is-legend':
-				this._o.isLegend = +newValue;
-				this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
-				break;
-			case 'is-run':
-				this.run(newValue ? newValue : false);
-				break;
-			case 'interval':
-				val = (newValue ? Number(newValue) : 0);
-				let minInterval = 500;
-				let animAddText = 'This';
-				if (this._o.isAnimate) {
-					minInterval = 3000
-					animAddText = 'In case of animation this';
-				}
-				if (val < minInterval) {
-					val = minInterval;
-					console.log(`It is not recommended to set the data update interval too short.
-					${animAddText} value was forcibly limited to ${minInterval} ms!!`);
-				}
-				this._o.interval = val;
-				break;
-			case 'is-animate':
-				val = (newValue ? Number(newValue) : 0);
-				if (val) {	// in case of animation enabled, duration of interval must be greater than 3 sec!
-					this._o.interval = (this._o.interval < 3000 ? 3000 : this._o.interval);
-					this._recalculteNormRadius();
-				}
-				this._o.isAnimate = val;
-				this._o.isAnimate ? this._body.classList.add('animated') : this._body.classList.remove('animated');
-				break;
-			case 'server':
-				this._o.server = newValue;
-				break;
-		}
+		// validate it (if in list of known numeric)
+		CustomProperties.convertNumericProps(o, paramName);
+		// all specific work will be done inside setParams(..) in SmartPie object
+		const stpieObj = window.SmartPies.get(this._o.id);
+		stpieObj.setParams(o);
 	}
 
 	isRun() {
-		return this._run;
+		return this._o.isRun;
 	}
 
 	run(isRun) {
@@ -938,12 +836,12 @@ class SmartPieElement extends HTMLElement {
 				emMode = 1;
 			}
 		} else {
-			emMode = isRun;
+			emMode = isRun ? 1 : 0;
 		}
-
-		this._run = emMode;
-		this._setRunIndicator(this._run);
+		this._o.isRun = emMode;
+		this._setRunIndicator(emMode);
 	}
+	// enable/disable 'run indicator'. isRun waits for 0/1
 	_setRunIndicator(isRun) {
 		if(!this._runIndicator) {
 			this._runIndicator = this._root.getElementById('runIndicator');
@@ -971,11 +869,9 @@ class SmartPieElement extends HTMLElement {
 			this._intervalCounter = n;
 		}
 	}
-	// use example: let eu = this.emulateUpdates;
 	isEmulate() {
 		return this._o.isEmulate;
 	}
-	// use example: this.emulate = 1, or this.emulate = '1';
 	emulate(mode) {	// 1/0/-1 - enabled/disabled/nulled
 		let emMode = 0;
 		if (typeof mode === 'string') {
@@ -1215,7 +1111,7 @@ class SmartPieElement extends HTMLElement {
 				class: 'legend-frame shadowed',
 				x: 0, y:0, width:0, height:0
 			}, g, this._svgdoc);
-			this._runIndicator = SmartPies.addElement('circle', {id: 'runIndicator', class: (this._run ? 'run':'stop'), r: 3, cx: 5, cy: 5}, g, this._svgdoc);
+			this._runIndicator = SmartPies.addElement('circle', {id: 'runIndicator', class: (this._o.isRun ? 'run' : 'stop'), r: 3, cx: 5, cy: 5}, g, this._svgdoc);
 
 			g.addEventListener("click", this._onClick);
 			g.addEventListener("mouseover", this._onLegendOver);
@@ -1751,7 +1647,7 @@ class SmartPieElement extends HTMLElement {
 				}
 			}
 		}
-		data.options.isRun = pie._run;
+		data.options.isRun = pie._o.isRun;
 		data.options.location = pie._bodyShad.getBoundingClientRect();
 		data.options.sortBy = pie._o.sortBy;
 		data.options.delayOut = 2000;
@@ -1807,7 +1703,7 @@ class SmartPieElement extends HTMLElement {
 			pie.setAttribute('type', pie._o.type);
 			console.info('Set type to ' + pie._o.type);
 		} else if (event.shiftKey) {
-			let isRun = !pie._run;
+			let isRun = !pie._o.isRun;
 			if (pie._o.mode === "html") {
 				if (isRun) {
 					pie.setAttribute('is-run', '1');
