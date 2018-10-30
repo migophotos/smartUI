@@ -8,20 +8,13 @@
  */
 class SmartPies {
 	constructor() {
-		this._version = '2.0';
+		this._version = '1.0';
 		this._heap = new Map();
 		this._initialized = false;
 		this._timeout = 100;
 	}
 	static isNewSite() {
 		 return (typeof Ext != 'undefined' && typeof Site != 'undefined');
-	}
-	// get href link paramter to new or old site
-	static getLink(link) {
-		if (!SmartPies.isNewSite() || !link || link == '') {
-			return link;
-		}
-		return window.location.pathname + link.replace('/grapher.cgi?', '?');
 	}
 
 	static get defaultDataFormat() { // deault data format section
@@ -172,8 +165,8 @@ class SmartPies {
 	_intervalTimer() {
 		this._interval = setInterval(() => {
 			for (let entry of this._heap.entries()) {
-				let pie = entry[1].getCtrl();
-				if (pie && pie._o.isRun) { // realtime updates are enabled
+				let pie = entry[1];
+				if (pie._o.isRun) { // realtime updates are enabled
 					let ic = pie.intervalCounter;
 					ic = ic - this._timeout;
 					pie.intervalCounter = ic;	// it will restored automatically to _o.interval, if <= 0
@@ -193,12 +186,10 @@ class SmartPies {
 	}
 
 	init(dashboardContext = {}) {
-		if (dashboardContext) {
-			this.lang = dashboardContext.lang || "ru";
-			this.document = dashboardContext.document || document;
-			this.editorAPI = dashboardContext.editorAPI || null;
-			this.runtimeAPI = dashboardContext.runtimeAPI || null;
-		}
+		this.lang = dashboardContext.lang || "ru";
+		this.document = dashboardContext.document || document;
+		this.editorAPI = dashboardContext.editorAPI || null;
+		this.runtimeAPI = dashboardContext.runtimeAPI || null;
 		if (!this._initialized) {
 			// start continious interval timer
 			this._intervalTimer();
@@ -207,11 +198,7 @@ class SmartPies {
 	}
 
 	get (id) {
-		const ref = this._heap.get(id);
-		if (ref) {
-			return ref.getCtrl();
-		}
-		return null;
+		return this._heap.get(id);
 	}
 	set(id, obj) {
 		this._heap.set(id, obj);
@@ -220,7 +207,7 @@ class SmartPies {
 	initCtrl(id, options) {
 		let pie = this.get(id);
 		if (!pie) {
-			pie = new SmartPie(id, options);
+			pie = new SmartPieElement(id, options);
 			if (pie) {
 				pie.init(options);
 			}
@@ -249,14 +236,16 @@ class SmartPies {
 		return false;
 	}
 	showParams(id, options, callbackInfo) {
-		console.log('Function deprecated. Please dont use it more!');
+
 	}
 
 	emulate(id, mode) { // 0/-1/1 - disabled/nulled/enabled
 		const pie = this.get(id);
-		if (pie) {	// all checks inside!
+		let emMode = 0;
+		if (pie) {	// all checks inside setter "emulate"!
 			pie.emulate(mode);
 		}
+
 	}
 	run(id) {
 		const pie = this.get(id);
@@ -266,7 +255,7 @@ class SmartPies {
 	stop(id) {
 		const pie = this.get(id);
 		if (pie)
-			pie.run(0);
+			pie.run(false);
 	}
 	update(id, data={}) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
 							// this section will be processed before progress=[]
@@ -276,6 +265,14 @@ class SmartPies {
 		if (pie)
 			pie.update(data);
 	}
+	// get href link paramter to new or old site
+	static getLink(link) {
+		if (!SmartPies.isNewSite() || !link || link == '') {
+			return link;
+		}
+		return window.location.pathname + link.replace('/grapher.cgi?', '?');
+	}
+
 };
 
 class SmartPie {
@@ -287,7 +284,7 @@ class SmartPie {
 	 */
 	static getCustomProperties() {
 		return [
-			'type',				// temporary for backward compatibility vith v1.0
+			'type',				// temporary for backward compatibility with old version
 			'input-data',		// the type of input data. 'percents', 'value', 'auto'. The 'auto' is default
 			'input-mode',		// how to interpret an input data. 'flat', 'rel', p-ch ('0.1, 0.2,...1.0, 1.1, ...), 'json' equivalent to 'rel'
 			'view-type',		// 'donut', 'zwatch, 'pie'
@@ -322,7 +319,7 @@ class SmartPie {
 			'interval',			// Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)
 			'server',
-			'provider',
+			'targets',
 			'user',				// These parameters determine the URL of the request to the server
 
 			'var-is-shadow',	// Allows shadow for widget, legend and tooltip
@@ -350,9 +347,9 @@ class SmartPie {
 			sortBy:			"asis", 		/* asis, states, values, colors, names */
 			sortDir: 		1,
 			isAnimate: 		1,
-			isLegend: 		0,
+			isLegend: 		1,
 
-			ttipTemplate: 	'pie',
+			ttipTemplate: 	'',
 			ttipType: 		'curTarget',
 			isEmulate: 		0,
 			isRun:			0,
@@ -366,9 +363,9 @@ class SmartPie {
 			varFontSize:	'12px',
 			varFontStretch:	'condensed',
 			varFontColor:	'#666666',
-			varStrokeColor: 'red',
+			varStrokeColor: 'lightgray',
 			varStrokeWidth: 2,
-			varFillColor: 	'rgb(255, 205, 136)',
+			varFillColor: 	'lightgray',
 			varOpacity: 	1
 		}
 	}
@@ -430,10 +427,6 @@ class SmartPie {
 	 * Returns an array of custom properties in form of parameter names in case of options equals null.
 	 * If 'options' is specified, then this functions returns the filled object.
 	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
-	 * and in case of specified options:
-	 * params = {
-	 * 	firstSecondThird: options.firstSecondThird
-	 * } will be returned
 	 */
 	static getCustomParams(options = null) {
 		const props = SmartPie.getCustomProperties();		// get an array of custom properties
@@ -451,11 +444,42 @@ class SmartPie {
 			}
 		}
 		return params;
-	}
+    }
 
-	constructor(id, options = null) {
-		// init SmartPies and store dashboard context parameters
-		SmartPies.initSmartPies(options ? options.dashboardContext || null : null);
+
+}
+
+class SmartPieElement extends HTMLElement {
+	constructor(id, options= { mode:'html' }) {
+		super();
+
+		// create SmartPies collection only once!
+		SmartPies.initSmartPies();
+
+		this._root		= null; // must be initialized!
+		this._svgroot	= null;	// svg root element with id = contId--stpie
+		this._svgdoc	= null;
+		this._data		= null;	// last data as Set
+		this._legend	= null;	// reference on legend
+		this._body		= null;	// body circle with id = contId--body
+		this._activeG	= null;	// group of active segments with id = contId--actG
+		this._passiveG	= null;	// group of passive elements, such as legend and etc, with id = contID--pasG
+		this._normRadius= 0;
+		this._intervalCounter = 0;
+
+		// this._o = Object.assign({}, SmartPie.defOptions());
+		// Shallow-cloning, using spread operator (excluding prototype)
+		this._o = { ...SmartPie.defOptions() };
+
+        // overwrite by external styles!
+        this._o.isLegend = Number(getComputedStyle(this).getPropertyValue('--smartpie-is-legend').trimLeft());
+
+		for (let attr of this.attributes) {
+			this._o[attr.name] = attr.value;
+        }
+
+		this._o.mode = options.mode;
+
 		const txtDefs = `
 			<filter id="drop-shadow">
 				<feGaussianBlur in="SourceAlpha" stdDeviation="2.2"/>
@@ -477,7 +501,34 @@ class SmartPie {
 				<rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-stripe)" />
 			</mask>
 		`;
+
 		const txtStyle = `
+			:host {
+				all: initial;	/* 1st rule so subsequent properties are reset. */
+				contain: content;	/* set containment to layout + style + paint for improving performance (see "css-containment") */
+				opacity: 1;
+				will-change: opacity;
+				transition: opacity 500ms ease-in-out;
+			}
+			:host([background]) { /* custom property for 'slotted' hook == background */
+				background: var(--smartwdg-bgk, #9E9E9E);
+
+			}
+			:host(:hover) {
+				--smartwdg-ftm-fill: var(--smartwdg-over-fill, white);
+			}
+			:host([disabled]) { /* style when host has disabled attribute. */
+				pointer-events: none;
+				opacity: 0.4;
+			}
+			/* I don't know what can I do with this */
+			:host(.blue) {
+				color: blue; /* color host when it has class="blue" */
+			}
+			:host(.pink) > #tabs {
+				color: pink; /* color internal #tabs node when host has class="pink". */
+			}
+
 			svg {
 				overflow: visible;
 				vector-effect: non-scaling-stroke;
@@ -541,39 +592,256 @@ class SmartPie {
 				mask: url(#mask-stripe);
 			}
 		`;
-		// merge default options with specified
-		const opt = options || {};
-		this._o = Object.assign({}, SmartPie.defOptions(), opt);
 
+		if (options.mode === 'html') {
+			const supportsShadowDOMV1 = !!HTMLElement.prototype.attachShadow;
+			if (!supportsShadowDOMV1) {
+				throw new Error('Unfortunately, your browser does not support shadow DOM v1. Think about switching to a Chrome browser that supports all new technologies!');
+			}
+			this._o.id 		= this.getAttribute('id') || id;
 
-		this._mode 		= options.mode || null;
-		this._o.id 		= id;	// <g id> inside of <svg>
-		this._root		= options.context || null;	// svg root element with id = contId--stpie
-		this._svgroot	= this._root.getElementById(this._o.id);
-		this._svgdoc	= this._svgroot.ownerDocument;
+			// convert to numbers known props
+			SmartPie.convertNumericProps(this._o);
 
-		this._data		= null;	// last data as Set
-		this._legend	= null;	// reference on legend
-		this._body		= null;	// body circle with id = contId--body
-		this._activeG	= null;	// group of active segments with id = contId--actG
-		this._passiveG	= null;	// group of passive elements, such as legend and etc, with id = contID--pasG
-		this._normRadius= 0;
-		this._intervalCounter = 0;
+			// calculate normalized radius
+			this._recalculteNormRadius();
 
-		const style = SmartPies.addElement('style', {}, this._svgroot, this._svgdoc);
-		const node = this._svgdoc.createTextNode(txtStyle);
-		style.appendChild(node);
-		const defs = SmartPies.addElement('defs', {}, this._svgroot, this._svgdoc);
-		defs.innerHTML = `${txtDefs}`;
-		if (!this._mode) {	// in case of html insertion, the options.mode == 'html' is defined
-			// store containerId: ref on SmartPie element inside SmartPies collection for JS access
-			window.SmartPies.set(this._o.id, this);
+			this._root = this.attachShadow({mode: 'open'});
+
+			// calculate svg rectangle and coordinates
+			// todo: check radius and correct it with width and height parameters if they exists!
+			this._o.rect = {
+				x: 0,
+				y: 0,
+				width:  this._o.isLegend ? this._o.radius *2 + 220 : this._o.radius * 2,
+				height: this._o.isLegend ? this._o.radius * 2 + 50 : this._o.radius * 2
+			};
+
+			this._root.innerHTML = `
+			<style>${txtStyle}</style>
+			<svg
+				xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+				id="${this._o.id}--stpie"
+				height="${this._o.rect.height}"
+				width="${this._o.rect.width}"
+				viewBox="0 0 ${this._o.rect.width} ${this._o.rect.height}"
+			>
+				<defs>${txtDefs}</defs>
+			</svg>
+			`;
+
+			this._svgroot = this._root.querySelector('svg');
+			this._svgdoc  = this._svgroot.ownerDocument;
+		} else {
+			this._o.id   			= id;
+			this._o.type 			= options.type || this._o.type;
+
+			this._o.rotation 		= options.rotation || this._o.rotation;
+			this._o.startAngle 		= options.startAngle || this._o.startAngle;
+			this._o.endAngle 		= options.endAngle || this._o.endAngle;
+			this._o.innerRadius 	= options.innerRadius || this._o.innerRadius;
+			this._o.radius 			= options.radius || this._o.radius;
+			this._o.width 			= options.width || this._o.width;
+			this._o.height 			= options.height || this._o.height;
+			this._o.sortBy			= options.sortBy || this._o.sortBy;
+			this._o.sortDir			= options.sortDir || this._o.sortDir;
+			this._o.isAnimate		= options.isAnimate || this._o.isAnimate;
+			this._o.isLegend		= options.isLegend || this._o.isLegend;
+
+			this._o.ttipTemplate	= options.ttipTemplate || this._o.ttipTemplate;
+			this._o.ttipType		= options.ttipType || this._o.ttipType;
+			this._o.isEmulate		= options.isEmulate || this._o.isEmulate;
+			this._o.isRun 			= options.isRun || this._o.isRun;
+			this._o.interval		= options.interval || this._o.interval;
+
+			this._o.server			= options.server || this._o.server;
+			this._o.targets			= options.targets || this._o.targets;
+			this._o.user			= options.user || this._o.user;
+
+			this._o.varStrokeColor	= options.varStrokeColor || this._o.varStrokeColor;
+			this._o.varStrokeWidth	= options.varStrokeWidth || this._o.varStrokeWidth;
+			this._o.varFillColor	= options.varFillColor || this._o.varFillColor;
+			this._o.varOpacity		= options.varOpacity || this._o.varOpacity;
+
+			// convert to numbers known properties
+			SmartPie.convertNumericProps(this._o);
+
+			this._root = options.context || null;
+			if (this._root) {
+				this._svgroot = this._root.getElementById(this._o.id);
+				this._svgdoc  = this._svgroot.ownerDocument;
+
+				const style = SmartPies.addElement('style', {}, this._svgroot, this._svgdoc);
+				const node = this._svgdoc.createTextNode(txtStyle);
+				style.appendChild(node);
+
+				const defs = SmartPies.addElement('defs', {}, this._svgroot, this._svgdoc);
+				defs.innerHTML = `${txtDefs}`;
+
+				// find coordinate for widget insertion
+				const rc = this._svgroot.firstElementChild;
+				this._o.rect = rc.getBBox();
+				rc.setAttribute("display", "none");
+				this._o.radius  = Math.min(this._o.rect.width, this._o.rect.height) / 2;
+				// calculate normalized radius
+				this._recalculteNormRadius();
+			}
+		};
+		if (!this._root) {
+			console.error('_root must tobe initialized!');
+			return;
 		}
+
+		// append base elements to svg
+		if (this._o.endAngle == this._o.startAngle) {
+			this.asf = 0;
+			this._body = SmartPies.addElement('circle', {
+				id:   `${this._o.id}--body`,
+				class:`body`,
+				stroke: `${this._o.varStrokeColor}`,
+				'stroke-width': `${this._o.varStrokeWidth}`,
+				'stroke-opacity': `${this._o.varOpacity}`,
+				fill: `${this._o.varFillColor}`,
+				'fill-opacity': `${this._o.varOpacity}`,
+				r: `${this._normRadius}`,
+				cx: `${this._o.rect.x + this._o.radius}`,
+				cy: `${this._o.rect.y + this._o.radius}`
+			}, this._svgroot, this._svgdoc);
+			this._bodyShad = this._body.cloneNode();
+			this._bodyShad.removeAttribute('id');
+			this._bodyShad.setAttribute("class", "shadowed");
+			this._svgroot.insertBefore(this._bodyShad, this._body);
+		} else {
+			this.asf = (this._o.startAngle > this._o.endAngle ? 1 : 0);
+			// draw segment from startAngle to endAngle
+			const centerPt = {
+				x: this._o.rect.x + this._o.radius,
+				y: this._o.rect.y + this._o.radius,
+			}
+
+			this._body = SmartPies.addElement('path', {
+				id:   `${this._o.id}--body`,
+				class: `body`,
+				stroke: `${this._o.varStrokeColor}`,
+				'stroke-width': `${this._o.varStrokeWidth}`,
+				'stroke-opacity': `${this._o.varOpacity}`,
+				fill: `${this._o.varFillColor}`,
+				'fill-opacity': `${this._o.varOpacity}`,
+				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.endAngle, this._o.rotation)
+			}, this._svgroot, this._svgdoc);
+			this._bodyShad = this._body.cloneNode();
+			this._bodyShad.removeAttribute('id');
+			this._bodyShad.setAttribute("class", "shadowed");
+			this._svgroot.insertBefore(this._bodyShad, this._body);
+		}
+
+		if (this._o.isAnimate) {
+			this._body.classList.add('animated');
+		}
+
+		this._activeG	= SmartPies.addElement('g', {id: `${this._o.id}--actG`}, this._svgroot, this._svgdoc);
+		this._passiveG	= SmartPies.addElement('g', {id: `${this._o.id}--pasG`}, this._svgroot, this._svgdoc);
+
+		// passiveG group is a legend. hide it if no legend!
+		this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
+
+		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
+		window.SmartPies.set(this._o.id, this);
+	}
+	init(options) {
+		this._data = new Set();
+		this._legend = new Array();
+		this._body.addEventListener('click', this._onClick);
+		this.setParams(options);
+
+		if (this._o.ttipTemplate) {
+			// call static function (it will instantinate SmartTooltip and load template)
+			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
+		}
+
+		this._body.addEventListener('transitionend', (ev) => {
+			if (ev.propertyName === 'r') {
+				console.log(`${this._o.id}: anim ended`);
+				this._body.setAttribute("r", this._normRadius);
+				this._body.setAttribute("display", "none")
+				this._body.setAttribute('stroke-opacity', 1);
+				this._body.setAttribute('fill-opacity', 1);
+				setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
+			}
+		});
 	}
 
-	/// Internal functions. Please don't use from outside!
+	// connect and disconnect from html
+    connectedCallback() {
+		this._data = new Set();
+		this._legend = new Array();
+		this._body.addEventListener('click', this._onClick);
+		// load specified tooltip template
+		if (this._o.ttipTemplate) {
+			// call static function (it will instantinate SmartTooltip and load template)
+			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
+		}
 
-	// Enable/Disable 'run indicator'. isRun waits for 0/1
+
+		this._body.addEventListener('transitionend', (ev) => {
+			if (ev.propertyName === 'r') {
+				// console.log(`${this._o.id}: anim ended`);
+				this._body.setAttribute("r", this._normRadius);
+				this._body.setAttribute("display", "none")
+				this._body.setAttribute('stroke-opacity', 1);
+				this._body.setAttribute('fill-opacity', 1);
+				setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
+			}
+		});
+
+    }
+    disconnectedCallback() {
+		// remove element from smartpies.heap!!
+		//....todo
+
+		this._data.clear();
+		this._legend.length = 0;
+		this._body.removeEventListener('click', this._onClick);
+		this._body.removeEventListener('transitionend');
+
+		this._activeG  	= null;
+		this._passiveG 	= null;
+		this._body 		= null;
+    }
+	// attributes changing processing
+	static get observedAttributes() {
+		return SmartPie.getCustomProperties();
+	}
+	attributeChangedCallback(name, oldValue, newValue) {
+		// update own property
+		const paramName = SmartPie.customProp2Param(name);
+		const o = {};
+		o[paramName] = newValue;
+
+		// validate it (if in list of known numeric)
+		CustomProperties.convertNumericProps(o, paramName);
+		// all specific work will be done inside setParams(..) in SmartPie object
+		const stpieObj = window.SmartPies.get(this._o.id);
+		stpieObj.setParams(o);
+	}
+
+	isRun() {
+		return this._o.isRun;
+	}
+
+	run(isRun) {
+		let emMode = 0;
+		if (typeof isRun === 'string') {
+			if (isRun === '1' || isRun === 'true') {
+				emMode = 1;
+			}
+		} else {
+			emMode = isRun ? 1 : 0;
+		}
+		this._o.isRun = emMode;
+		this._setRunIndicator(emMode);
+	}
+	// enable/disable 'run indicator'. isRun waits for 0/1
 	_setRunIndicator(isRun) {
 		if(!this._runIndicator) {
 			this._runIndicator = this._root.getElementById('runIndicator');
@@ -582,7 +850,6 @@ class SmartPie {
 			this._runIndicator.classList.value = isRun ? 'run' : 'stop';
 		}
 	}
-	// The normalized radius of pie must be recalculated after changing some optional parameters, such as: radius and stroke-width
 	_recalculteNormRadius() {
 		this._normRadius = this._o.radius - this._o.varStrokeWidth/2;
 		this._normRadius = this._normRadius < 0 ? 0 : this._normRadius;
@@ -590,6 +857,241 @@ class SmartPie {
 			this._normRadius -= this._normRadius / 5;
 		}
 	}
+	// use example: let ic = this.intervalCounter;
+	get intervalCounter() {
+		return this._intervalCounter;
+	}
+	// use example: this.intervalCounter -= 100;
+	set intervalCounter(n) {
+		if (n <= 0) {
+			this._intervalCounter = this._o.interval;
+		} else {
+			this._intervalCounter = n;
+		}
+	}
+	isEmulate() {
+		return this._o.isEmulate;
+	}
+	emulate(mode) {	// 1/0/-1 - enabled/disabled/nulled
+		let emMode = 0;
+		if (typeof mode === 'string') {
+			if (mode === '1' || mode === 'true') {
+				emMode = 1;
+			} else if (mode === '-1') {
+				emMode = -1;
+			}
+		} else {
+			emMode = mode;
+		}
+		pie._o.isEmulate = emMode;
+	}
+
+	update(data = null) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
+	// this section will be processed before progress=[]
+	// opt or cfg objects may contain any known optional attributes,
+	// such as: type, sortBy, opacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
+		// console.log(`update data for ${this._o.id}`);
+		if (!data) { // do realtime updates here!
+			SmartPies._httpGet(this._o.server + this._o.targets[0])
+			.then(response => {
+				if (this._o.isAnimate) {
+					this._body.setAttribute("r", this._normRadius + this._normRadius/5);
+					this._body.setAttribute('fill-opacity', 0);
+					this._body.setAttribute('stroke-opacity', 0);
+				}
+				var data = JSON.parse(response);
+				this._data.clear();
+				this._data = new Set(data.targets);
+				for(let value of this._data) {
+					if (value.type === 'description') {
+						this._data.delete(value);
+						break;
+					}
+				}
+				this._buildActive(this._data);
+			})
+			.catch(error => {
+				console.error(error); // Error: Not Found
+			});
+		} else { // show external or emulated data
+			let options = null;
+			if (typeof data.cfg === 'object') {
+				options = data.cfg;
+			}
+			if (typeof data.opt === 'object') {
+				options = data.opt;
+			}
+			let needRebuild = this.setParams(options, false);
+			if (typeof data.targets === 'object' && typeof data.targets.length === 'number' && data.targets.length) {
+				if (this._o.isAnimate) {
+					this._body.setAttribute("r", this._normRadius + this._normRadius/5);
+					this._body.setAttribute('fill-opacity', 0);
+					this._body.setAttribute('stroke-opacity', 0);
+				}
+				this._data = new Set(data.targets);
+				needRebuild++
+			}
+			if (needRebuild) {
+				this._buildActive(this._data);
+			}
+		}
+	}
+
+	generateExData() {
+		var dataEx = {
+			"opt": {
+				"lcolor": "red",
+				"width": "3"
+			},
+			"targets": [
+				{
+					"uuid": "uuid_ex_Target1",
+					"legend":  "Missing at work",
+					"value": "42",
+					"color": "green",
+					"link": "http://www.google.com/?target1",
+					"parent": ""
+				},
+				{
+					"uuid": "uuid_ex_Target2",
+					"legend":  "On sick-list (people)",
+					"value": "27",
+					"color": "yellow",
+					"link": "http://www.google.com/?target2",
+					"parent": "uuid_ex_Target1"
+				},
+				{
+					"uuid": "uuid_ex_Target3",
+					"legend":  "On a business trip (people)",
+					"value": "15",
+					"color": "red",
+					"link": "http://www.google.com/?target3",
+					"parent": "uuid_ex_Target1"
+				}
+			],
+			"error": {
+				"message": "null",
+				"code": "0"
+			}
+		}
+		return dataEx;
+	}
+
+	getParams() {
+		return SmartPie.getCustomParams(this._o);
+	}
+
+	setParams(options={}, rebuild=true) {
+		let val, needRebuild = false;
+		for (let key in options) {
+			switch (key) {
+				case 'inner-radius':
+					this._o.innerRadius = option[key];
+					needRebuild++;
+					break;
+				case 'rotation':
+					this._o.rotation = options[key];
+					needRebuild++;
+					break;
+				case 'startAngle':
+					this._o.startAngle = options[key];
+					needRebuild++;
+					break;
+				case 'endAngle':
+					this._o.endAngle = options[key];
+					needRebuild++;
+					break;
+				case 'isEmulate':
+					this._o.isEmulate = options[key];
+					break;
+				case 'type':
+					this._o.type = options[key];
+					needRebuild++;
+					break;
+				case 'sortBy':
+					this._o.sortBy = options[key];
+					needRebuild++
+					break;
+				case 'varFillColor':
+					val = options[key];
+					this._o.varFillColor = val;
+					this._body.setAttribute('fill', val);
+					break;
+				case 'varStrokeColor':
+					val = options[key];
+					this._o.varStrokeColor = val;
+					this._body.setAttribute('stroke', val);
+					let svgRoot = (this._o.mode === 'html' ? this._svgroot : this._root);
+					svgRoot.style.setProperty('--smartwdg-legend-color', val);
+					break;
+
+				case 'varStrokeWidth':
+					val = Number(options[key]);
+					this._o.varStrokeWidth = val;
+					this._recalculteNormRadius();
+					this._body.setAttribute('stroke-width', val);
+					this._body.setAttribute('r', this._normRadius);
+					needRebuild++;
+					break;
+				case 'varOpacity':
+					val = Number(options[key]);
+					this._body.setAttribute('stroke-opacity', val);
+					this._body.setAttribute('fill-opacity', val);
+					this._o.varOpacity = val;
+					break;
+				case 'isLegend':
+					this._o.isLegend = +options[key];
+					this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
+					break;
+
+				case 'interval':
+					val = Number(options[key]);
+					let minInterval = 500;
+					let animAddText = 'This';
+					if (this._o.isAnimate) {
+						minInterval = 3000
+						animAddText = 'In case of animation this';
+					}
+					if (val < minInterval) {
+						val = minInterval;
+						console.log(`It is not recommended to set the data update interval too short.
+						${animAddText} value was forcibly limited to ${minInterval} ms!!`);
+					}
+					this._o.interval = val;
+					break;
+				case 'isAnimate':
+					val = Number(options[key]);
+					if (val) {	// in case of animation enabled, duration of interval must be greater than 3 sec!
+						this._o.interval = (this._o.interval < 3000 ? 3000 : this._o.interval);
+						this._recalculteNormRadius();
+					}
+					this._o.isAnimate = val;
+					this._o.isAnimate ? this._body.classList.add('animated') : this._body.classList.remove('animated');
+					break;
+
+				case 'isRun':
+					this.run(Number(options[key]));
+					break;
+				case 'stop':
+					this.run(0);
+					break;
+				case 'server':
+					this._o.server = options[key];
+					break;
+				case 'targets':
+					this._o.targets = options[key];
+					break;
+				case 'user':
+					this._o.user = options[key];
+					break;
+			}
+		}
+		if (rebuild && needRebuild) {
+			this._buildActive(this._data);
+		}
+		return needRebuild;
+	}
+
 	_clearLegend() {
 		if (this._legend) {
 			this._legend.length = 0;
@@ -1040,10 +1542,8 @@ class SmartPie {
 			startAngle =+ endAngle;
 		}
 	}
+
 	_buildActive(data = null) {
-		if (!this._activeG) { // yet not ready
-			return;
-		}
 		while(this._activeG.childNodes.length) {
 			this._activeG.firstElementChild.removeEventListener("click", this._onClick);
 			this._activeG.firstElementChild.removeEventListener("mouseover", this._onShowTooltip);
@@ -1109,7 +1609,6 @@ class SmartPie {
 		}
 		return null;
 	}
-
 	// event listeners
 	_onShowTooltip(evt) {
 		let target = evt.target;
@@ -1255,634 +1754,5 @@ class SmartPie {
 			}
 		}
 	}
-
-
-	/// API
-	getCtrl() {
-		return this;
-	}
-
-	init(options = null) {
-		if (!this._mode) {
-			// find coordinate for widget insertion
-			const rc = this._svgroot.firstElementChild;
-			this._o.rect = rc.getBBox();
-			rc.setAttribute("display", "none");
-			this._o.radius  = Math.min(this._o.rect.width, this._o.rect.height) / 2;
-		} else {
-			// calculate svg rectangle and coordinates
-			// todo: check radius and correct it with width and height parameters if they exists!
-			this._o.rect = {
-				x: 0,
-				y: 0,
-				width:  this._o.isLegend ? this._o.radius *2 + 220 : this._o.radius * 2,
-				height: this._o.isLegend ? this._o.radius * 2 + 50 : this._o.radius * 2
-			};
-		}
-		// calculate normalized radius
-		this._recalculteNormRadius();
-
-		// append base elements to svg
-		if (this._o.endAngle == this._o.startAngle) {
-			this.asf = 0;
-			this._body = SmartPies.addElement('circle', {
-				id:   `${this._o.id}--body`,
-				class:`body`,
-				stroke: `${this._o.varStrokeColor}`,
-				'stroke-width': `${this._o.varStrokeWidth}`,
-				'stroke-opacity': `${this._o.varOpacity}`,
-				fill: `${this._o.varFillColor}`,
-				'fill-opacity': `${this._o.varOpacity}`,
-				r: `${this._normRadius}`,
-				cx: `${this._o.rect.x + this._o.radius}`,
-				cy: `${this._o.rect.y + this._o.radius}`
-			}, this._svgroot, this._svgdoc);
-			this._bodyShad = this._body.cloneNode();
-			this._bodyShad.removeAttribute('id');
-			this._bodyShad.setAttribute("class", "shadowed");
-			this._svgroot.insertBefore(this._bodyShad, this._body);
-		} else {
-			this.asf = (this._o.startAngle > this._o.endAngle ? 1 : 0);
-			// draw segment from startAngle to endAngle
-			const centerPt = {
-				x: this._o.rect.x + this._o.radius,
-				y: this._o.rect.y + this._o.radius,
-			}
-
-			this._body = SmartPies.addElement('path', {
-				id:   `${this._o.id}--body`,
-				class: `body`,
-				stroke: `${this._o.varStrokeColor}`,
-				'stroke-width': `${this._o.varStrokeWidth}`,
-				'stroke-opacity': `${this._o.varOpacity}`,
-				fill: `${this._o.varFillColor}`,
-				'fill-opacity': `${this._o.varOpacity}`,
-				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.endAngle, this._o.rotation)
-			}, this._svgroot, this._svgdoc);
-			this._bodyShad = this._body.cloneNode();
-			this._bodyShad.removeAttribute('id');
-			this._bodyShad.setAttribute("class", "shadowed");
-			this._svgroot.insertBefore(this._bodyShad, this._body);
-		}
-
-		if (this._o.isAnimate) {
-			this._body.classList.add('animated');
-		}
-
-		this._activeG	= SmartPies.addElement('g', {id: `${this._o.id}--actG`}, this._svgroot, this._svgdoc);
-		this._passiveG	= SmartPies.addElement('g', {id: `${this._o.id}--pasG`}, this._svgroot, this._svgdoc);
-
-		// passiveG group is a legend. hide it if no legend!
-		this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
-
-		this._data = new Set();
-		this._legend = new Array();
-
-		if (this._o.ttipTemplate) {
-			// call static function (it will instantinate SmartTooltip and load template)
-			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
-		}
-
-		this._body.addEventListener('click', this._onClick);
-		this._body.addEventListener('transitionend', (ev) => {
-			if (ev.propertyName === 'r') {
-				console.log(`${this._o.id}: anim ended`);
-				this._body.setAttribute("r", this._normRadius);
-				this._body.setAttribute("display", "none")
-				this._body.setAttribute('stroke-opacity', 1);
-				this._body.setAttribute('fill-opacity', 1);
-				setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
-			}
-		});
-	}
-
-	/**
-	 * Returns the run state of SmartPie object
-	 */
-	isRun() {
-		return this._o.isRun;
-	}
-	/**
-	 * Changes the 'run' state ob SmartPie object
-	 * @param {*} isRun
-	 */
-	run(isRun) {
-		let emMode = 0;
-		if (typeof isRun === 'string') {
-			if (isRun === '1' || isRun === 'true') {
-				emMode = 1;
-			}
-		} else {
-			emMode = isRun ? 1 : 0;
-		}
-		this._o.isRun = emMode;
-		this._setRunIndicator(emMode);
-	}
-	// use example: let ic = this.intervalCounter;
-	get intervalCounter() {
-		return this._intervalCounter;
-	}
-	// use example: this.intervalCounter -= 100;
-	set intervalCounter(n) {
-		if (n <= 0) {
-			this._intervalCounter = this._o.interval;
-		} else {
-			this._intervalCounter = n;
-		}
-	}
-	isEmulate() {
-		return this._o.isEmulate;
-	}
-	emulate(mode) {	// 1/0/-1 - enabled/disabled/nulled
-		let emMode = 0;
-		if (typeof mode === 'string') {
-			if (mode === '1' || mode === 'true') {
-				emMode = 1;
-			} else if (mode === '-1') {
-				emMode = -1;
-			}
-		} else {
-			emMode = mode;
-		}
-		this._o.isEmulate = emMode;
-	}
-	update(data = null) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
-							// this section will be processed before progress=[]
-							// opt or cfg objects may contain any known optional attributes,
-							// such as: type, sortBy, opacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
-		if (!data) { // do realtime updates here!
-			SmartPies._httpGet(this._o.server + this._o.targets[0])
-			.then(response => {
-				if (this._o.isAnimate) {
-					this._body.setAttribute("r", this._normRadius + this._normRadius/5);
-					this._body.setAttribute('fill-opacity', 0);
-					this._body.setAttribute('stroke-opacity', 0);
-				}
-				var data = JSON.parse(response);
-				this._data.clear();
-				this._data = new Set(data.targets);
-				for(let value of this._data) {
-					if (value.type === 'description') {
-						this._data.delete(value);
-						break;
-					}
-				}
-				this._buildActive(this._data);
-			})
-			.catch(error => {
-				console.error(error); // Error: Not Found
-			});
-		} else { // show external or emulated data
-			let options = null;
-			if (typeof data.cfg === 'object') {
-				options = data.cfg;
-			}
-			if (typeof data.opt === 'object') {
-				options = data.opt;
-			}
-			let needRebuild = this.setParams(options, false);
-			if (typeof data.targets === 'object' && typeof data.targets.length === 'number' && data.targets.length) {
-				if (this._o.isAnimate) {
-					this._body.setAttribute("r", this._normRadius + this._normRadius/5);
-					this._body.setAttribute('fill-opacity', 0);
-					this._body.setAttribute('stroke-opacity', 0);
-				}
-				this._data = new Set(data.targets);
-				needRebuild++
-			}
-			if (needRebuild) {
-				this._buildActive(this._data);
-			}
-		}
-	}
-	generateExData() {
-		var dataEx = {
-			"opt": {
-				"lcolor": "red",
-				"width": "3"
-			},
-			"targets": [
-				{
-					"uuid": "uuid_ex_Target1",
-					"legend":  "Missing at work",
-					"value": "42",
-					"color": "green",
-					"link": "http://www.google.com/?target1",
-					"parent": ""
-				},
-				{
-					"uuid": "uuid_ex_Target2",
-					"legend":  "On sick-list (people)",
-					"value": "27",
-					"color": "yellow",
-					"link": "http://www.google.com/?target2",
-					"parent": "uuid_ex_Target1"
-				},
-				{
-					"uuid": "uuid_ex_Target3",
-					"legend":  "On a business trip (people)",
-					"value": "15",
-					"color": "red",
-					"link": "http://www.google.com/?target3",
-					"parent": "uuid_ex_Target1"
-				}
-			],
-			"error": {
-				"message": "null",
-				"code": "0"
-			}
-		}
-		return dataEx;
-	}
-	getParams() {
-		return SmartPie.getCustomParams(this._o);
-	}
-	setParams(options={}, rebuild=true) {
-		let val, needRebuild = false;
-		for (let key in options) {
-			switch (key) {
-				case 'inner-radius':
-					this._o.innerRadius = option[key];
-					needRebuild++;
-					break;
-				case 'rotation':
-					this._o.rotation = options[key];
-					needRebuild++;
-					break;
-				case 'startAngle':
-					this._o.startAngle = options[key];
-					needRebuild++;
-					break;
-				case 'endAngle':
-					this._o.endAngle = options[key];
-					needRebuild++;
-					break;
-				case 'isEmulate':
-					this._o.isEmulate = options[key];
-					break;
-				case 'type':
-					this._o.type = options[key];
-					needRebuild++;
-					break;
-				case 'sortBy':
-					this._o.sortBy = options[key];
-					needRebuild++
-					break;
-				case 'varFillColor':
-					val = options[key];
-					this._o.varFillColor = val;
-					this._body.setAttribute('fill', val);
-					break;
-				case 'varStrokeColor':
-					val = options[key];
-					this._o.varStrokeColor = val;
-					this._body.setAttribute('stroke', val);
-					let svgRoot = (this._o.mode === 'html' ? this._svgroot : this._root);
-					svgRoot.style.setProperty('--smartwdg-legend-color', val);
-					break;
-
-				case 'varStrokeWidth':
-					val = Number(options[key]);
-					this._o.varStrokeWidth = val;
-					this._recalculteNormRadius();
-					this._body.setAttribute('stroke-width', val);
-					this._body.setAttribute('r', this._normRadius);
-					needRebuild++;
-					break;
-				case 'varOpacity':
-					val = Number(options[key]);
-					this._body.setAttribute('stroke-opacity', val);
-					this._body.setAttribute('fill-opacity', val);
-					this._o.varOpacity = val;
-					break;
-				case 'isLegend':
-					this._o.isLegend = +options[key];
-					if (this._passiveG) {
-						this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
-					}
-					break;
-
-				case 'interval':
-					val = Number(options[key]);
-					let minInterval = 500;
-					let animAddText = 'This';
-					if (this._o.isAnimate) {
-						minInterval = 3000
-						animAddText = 'In case of animation this';
-					}
-					if (val < minInterval) {
-						val = minInterval;
-						console.log(`It is not recommended to set the data update interval too short.
-						${animAddText} value was forcibly limited to ${minInterval} ms!!`);
-					}
-					this._o.interval = val;
-					break;
-				case 'isAnimate':
-					val = Number(options[key]);
-					if (val) {	// in case of animation enabled, duration of interval must be greater than 3 sec!
-						this._o.interval = (this._o.interval < 3000 ? 3000 : this._o.interval);
-						this._recalculteNormRadius();
-					}
-					this._o.isAnimate = val;
-					this._o.isAnimate ? this._body.classList.add('animated') : this._body.classList.remove('animated');
-					break;
-
-				case 'isRun':
-					this.run(Number(options[key]));
-					break;
-				case 'stop':
-					this.run(0);
-					break;
-				case 'server':
-					this._o.server = options[key];
-					break;
-				case 'targets':
-					this._o.targets = options[key];
-					break;
-				case 'user':
-					this._o.user = options[key];
-					break;
-			}
-		}
-		if (rebuild && needRebuild) {
-			this._buildActive(this._data);
-		}
-		return needRebuild;
-	}
-}
-
-class SmartPieElement extends HTMLElement {
-	constructor(id, options= { mode:'html' }) {
-		super();
-
-		// create SmartPies collection only once!
-		SmartPies.initSmartPies();
-
-        // overwrite by external styles!
-        // this._o.isLegend = Number(getComputedStyle(this).getPropertyValue('--smartpie-is-legend').trimLeft());
-
-		// for (let attr of this.attributes) {
-		// 	this._o[attr.name] = attr.value;
-        // }
-		// this._o.mode = options.mode;
-		const txtStyle = `
-			:host {
-				all: initial;	/* 1st rule so subsequent properties are reset. */
-				contain: content;	/* set containment to layout + style + paint for improving performance (see "css-containment") */
-				opacity: 1;
-				will-change: opacity;
-				transition: opacity 500ms ease-in-out;
-			}
-			:host([background]) { /* custom property for 'slotted' hook == background */
-				background: var(--smartwdg-bgk, #9E9E9E);
-
-			}
-			:host(:hover) {
-				--smartwdg-ftm-fill: var(--smartwdg-over-fill, white);
-			}
-			:host([disabled]) { /* style when host has disabled attribute. */
-				pointer-events: none;
-				opacity: 0.4;
-			}
-			/* I don't know what can I do with this */
-			:host(.blue) {
-				color: blue; /* color host when it has class="blue" */
-			}
-			:host(.pink) > #tabs {
-				color: pink; /* color internal #tabs node when host has class="pink". */
-			}
-
-		`;
-
-		const supportsShadowDOMV1 = !!HTMLElement.prototype.attachShadow;
-		if (!supportsShadowDOMV1) {
-			throw new Error('Unfortunately, your browser does not support shadow DOM v1. Think about switching to a Chrome browser that supports all new technologies!');
-		}
-		this._id = this.getAttribute('id') || id;
-
-		// // convert to numbers known props
-		// SmartPie.convertNumericProps(this._o);
-
-		// // calculate normalized radius
-		// this._recalculteNormRadius();
-
-		this._root = this.attachShadow({mode: 'open'});
-
-			// // calculate svg rectangle and coordinates
-			// // todo: check radius and correct it with width and height parameters if they exists!
-			// this._o.rect = {
-			// 	x: 0,
-			// 	y: 0,
-			// 	width:  this._o.isLegend ? this._o.radius *2 + 220 : this._o.radius * 2,
-			// 	height: this._o.isLegend ? this._o.radius * 2 + 50 : this._o.radius * 2
-			// };
-
-			// height="${this._o.rect.height}"
-			// width="${this._o.rect.width}"
-			// viewBox="0 0 ${this._o.rect.width} ${this._o.rect.height}"
-			const svgId = `${this.id}--stpie`;
-			this._root.innerHTML = `
-				<style>${txtStyle}</style>
-				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${svgId}">
-					<g id="${svgId}-g">
-                    	<rect id="${svgId}-g-r" x="10" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4"></rect>
-                	</g>
-				</svg>
-			`;
-			this._svgroot = this._root.querySelector('svg');
-			// now create the smart pie!
-			this._stpie = new SmartPie(`${svgId}-g`, {context: this._svgroot, mode: 'html'});
-			// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
-			window.SmartPies.set(this._id, this);
-
-		// } else {
-		// 	this._o.id   			= id;
-		// 	this._o.type 			= options.type || this._o.type;
-
-		// 	this._o.rotation 		= options.rotation || this._o.rotation;
-		// 	this._o.startAngle 		= options.startAngle || this._o.startAngle;
-		// 	this._o.endAngle 		= options.endAngle || this._o.endAngle;
-		// 	this._o.innerRadius 	= options.innerRadius || this._o.innerRadius;
-		// 	this._o.radius 			= options.radius || this._o.radius;
-		// 	this._o.width 			= options.width || this._o.width;
-		// 	this._o.height 			= options.height || this._o.height;
-		// 	this._o.sortBy			= options.sortBy || this._o.sortBy;
-		// 	this._o.sortDir			= options.sortDir || this._o.sortDir;
-		// 	this._o.isAnimate		= options.isAnimate || this._o.isAnimate;
-		// 	this._o.isLegend		= options.isLegend || this._o.isLegend;
-
-		// 	this._o.ttipTemplate	= options.ttipTemplate || this._o.ttipTemplate;
-		// 	this._o.ttipType		= options.ttipType || this._o.ttipType;
-		// 	this._o.isEmulate		= options.isEmulate || this._o.isEmulate;
-		// 	this._o.isRun 			= options.isRun || this._o.isRun;
-		// 	this._o.interval		= options.interval || this._o.interval;
-
-		// 	this._o.server			= options.server || this._o.server;
-		// 	this._o.targets			= options.targets || this._o.targets;
-		// 	this._o.user			= options.user || this._o.user;
-
-		// 	this._o.varStrokeColor	= options.varStrokeColor || this._o.varStrokeColor;
-		// 	this._o.varStrokeWidth	= options.varStrokeWidth || this._o.varStrokeWidth;
-		// 	this._o.varFillColor	= options.varFillColor || this._o.varFillColor;
-		// 	this._o.varOpacity		= options.varOpacity || this._o.varOpacity;
-
-		// 	// convert to numbers known properties
-		// 	SmartPie.convertNumericProps(this._o);
-
-		// 	this._root = options.context || null;
-		// 	if (this._root) {
-		// 		this._svgroot = this._root.getElementById(this._o.id);
-		// 		this._svgdoc  = this._svgroot.ownerDocument;
-
-		// 		const style = SmartPies.addElement('style', {}, this._svgroot, this._svgdoc);
-		// 		const node = this._svgdoc.createTextNode(txtStyle);
-		// 		style.appendChild(node);
-
-		// 		const defs = SmartPies.addElement('defs', {}, this._svgroot, this._svgdoc);
-		// 		defs.innerHTML = `${txtDefs}`;
-
-		// 		// find coordinate for widget insertion
-		// 		const rc = this._svgroot.firstElementChild;
-		// 		this._o.rect = rc.getBBox();
-		// 		rc.setAttribute("display", "none");
-		// 		this._o.radius  = Math.min(this._o.rect.width, this._o.rect.height) / 2;
-		// 		// calculate normalized radius
-		// 		this._recalculteNormRadius();
-		// 	}
-		// };
-		// if (!this._root) {
-		// 	console.error('_root must tobe initialized!');
-		// 	return;
-		// }
-
-		// // append base elements to svg
-		// if (this._o.endAngle == this._o.startAngle) {
-		// 	this.asf = 0;
-		// 	this._body = SmartPies.addElement('circle', {
-		// 		id:   `${this._o.id}--body`,
-		// 		class:`body`,
-		// 		stroke: `${this._o.varStrokeColor}`,
-		// 		'stroke-width': `${this._o.varStrokeWidth}`,
-		// 		'stroke-opacity': `${this._o.varOpacity}`,
-		// 		fill: `${this._o.varFillColor}`,
-		// 		'fill-opacity': `${this._o.varOpacity}`,
-		// 		r: `${this._normRadius}`,
-		// 		cx: `${this._o.rect.x + this._o.radius}`,
-		// 		cy: `${this._o.rect.y + this._o.radius}`
-		// 	}, this._svgroot, this._svgdoc);
-		// 	this._bodyShad = this._body.cloneNode();
-		// 	this._bodyShad.removeAttribute('id');
-		// 	this._bodyShad.setAttribute("class", "shadowed");
-		// 	this._svgroot.insertBefore(this._bodyShad, this._body);
-		// } else {
-		// 	this.asf = (this._o.startAngle > this._o.endAngle ? 1 : 0);
-		// 	// draw segment from startAngle to endAngle
-		// 	const centerPt = {
-		// 		x: this._o.rect.x + this._o.radius,
-		// 		y: this._o.rect.y + this._o.radius,
-		// 	}
-
-		// 	this._body = SmartPies.addElement('path', {
-		// 		id:   `${this._o.id}--body`,
-		// 		class: `body`,
-		// 		stroke: `${this._o.varStrokeColor}`,
-		// 		'stroke-width': `${this._o.varStrokeWidth}`,
-		// 		'stroke-opacity': `${this._o.varOpacity}`,
-		// 		fill: `${this._o.varFillColor}`,
-		// 		'fill-opacity': `${this._o.varOpacity}`,
-		// 		d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.endAngle, this._o.rotation)
-		// 	}, this._svgroot, this._svgdoc);
-		// 	this._bodyShad = this._body.cloneNode();
-		// 	this._bodyShad.removeAttribute('id');
-		// 	this._bodyShad.setAttribute("class", "shadowed");
-		// 	this._svgroot.insertBefore(this._bodyShad, this._body);
-		// }
-
-		// if (this._o.isAnimate) {
-		// 	this._body.classList.add('animated');
-		// }
-
-		// this._activeG	= SmartPies.addElement('g', {id: `${this._o.id}--actG`}, this._svgroot, this._svgdoc);
-		// this._passiveG	= SmartPies.addElement('g', {id: `${this._o.id}--pasG`}, this._svgroot, this._svgdoc);
-
-		// // passiveG group is a legend. hide it if no legend!
-		// this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
-
-	}
-	getCtrl() {
-		return this._stpie;
-	}
-
-	// attributes changing processing
-	static get observedAttributes() {
-		return SmartPie.getCustomProperties();
-	}
-	attributeChangedCallback(name, oldValue, newValue) {
-		// update own property
-		const paramName = SmartPie.customProp2Param(name);
-		const o = {};
-		o[paramName] = newValue;
-
-		// validate it (if in list of known numeric)
-		CustomProperties.convertNumericProps(o, paramName);
-		// all specific work will be done inside setParams(..) in SmartPie object
-		this._stpie.setParams(o);
-	}
-
-	// connect and disconnect from html
-    connectedCallback() {
-		// connected! now  lets create the content of smart pie....
-		this._stpie.init()
-    }
-    disconnectedCallback() {
-		// remove element from smartpies.heap!!
-		//....todo
-
-		// this._data.clear();
-		// this._legend.length = 0;
-		// this._body.removeEventListener('click', this._onClick);
-		// this._body.removeEventListener('transitionend');
-
-		// this._activeG  	= null;
-		// this._passiveG 	= null;
-		// this._body 		= null;
-    }
-
 }
 window.customElements.define('smart-pie', SmartPieElement);
-
-class Poligons {
-	/**
-	 * Draw poligon
-	 */
-	poligon(c, n, x, y, r, angel, counterclockwise) {
-		angle = ange || 0;
-		counterclockwise = counterclockwise || 0;
-		c.moveTo(x + r * Math.sin(angle), y - r * Math.cos(angle));
-		let delta = 2 * Math.PI / n;
-		for (let i = 1; i < n; i++) {
-			angle += counterclockwise ? -delta : delta; // correct an angle
-			c.lineTo(x + r * Math.sin(angel), y - Math.cos(angel));
-		}
-		c.closePath();
-	}
-	draw(id) {
-		const canvas = document.getElementById(id);
-		const c = canvas.msGetInputContext('2d');
-		// create new contur
-		c.beginPath();
-		poligon(c, 3, 50, 70, 50);
-		poligon(c, 4, 150, 60, Math.PI / 4);
-		poligon(c, 5, 255, 55, 50);
-		poligon(c, 6, 365, 53, 50, Math.PI / 6);
-		poligon(c, 4, 365, 53, 20, Math.PI / 4, true);
-
-		c.fillStyle = '#ccc';
-		c.strokeStyle = '#008';
-		c.lineWidth = 5;
-
-		c.fill();
-		c.stroke();
-		'https://online.flippingbook.com/view/302153/676/'
-	}
-}
