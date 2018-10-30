@@ -172,8 +172,8 @@ class SmartPies {
 	_intervalTimer() {
 		this._interval = setInterval(() => {
 			for (let entry of this._heap.entries()) {
-				let pie = entry[1];
-				if (pie._o.isRun) { // realtime updates are enabled
+				let pie = entry[1].getCtrl();
+				if (pie && pie._o.isRun) { // realtime updates are enabled
 					let ic = pie.intervalCounter;
 					ic = ic - this._timeout;
 					pie.intervalCounter = ic;	// it will restored automatically to _o.interval, if <= 0
@@ -193,10 +193,12 @@ class SmartPies {
 	}
 
 	init(dashboardContext = {}) {
-		this.lang = dashboardContext.lang || "ru";
-		this.document = dashboardContext.document || document;
-		this.editorAPI = dashboardContext.editorAPI || null;
-		this.runtimeAPI = dashboardContext.runtimeAPI || null;
+		if (dashboardContext) {
+			this.lang = dashboardContext.lang || "ru";
+			this.document = dashboardContext.document || document;
+			this.editorAPI = dashboardContext.editorAPI || null;
+			this.runtimeAPI = dashboardContext.runtimeAPI || null;
+		}
 		if (!this._initialized) {
 			// start continious interval timer
 			this._intervalTimer();
@@ -205,7 +207,11 @@ class SmartPies {
 	}
 
 	get (id) {
-		return this._heap.get(id);
+		const ref = this._heap.get(id);
+		if (ref) {
+			return ref.getCtrl();
+		}
+		return null;
 	}
 	set(id, obj) {
 		this._heap.set(id, obj);
@@ -214,7 +220,7 @@ class SmartPies {
 	initCtrl(id, options) {
 		let pie = this.get(id);
 		if (!pie) {
-			pie = new SmartPieElement(id, options);
+			pie = new SmartPie(id, options);
 			if (pie) {
 				pie.init(options);
 			}
@@ -281,6 +287,7 @@ class SmartPie {
 	 */
 	static getCustomProperties() {
 		return [
+			'type',				// temporary for backward compatibility vith v1.0
 			'input-data',		// the type of input data. 'percents', 'value', 'auto'. The 'auto' is default
 			'input-mode',		// how to interpret an input data. 'flat', 'rel', p-ch ('0.1, 0.2,...1.0, 1.1, ...), 'json' equivalent to 'rel'
 			'view-type',		// 'donut', 'zwatch, 'pie'
@@ -343,9 +350,9 @@ class SmartPie {
 			sortBy:			"asis", 		/* asis, states, values, colors, names */
 			sortDir: 		1,
 			isAnimate: 		1,
-			isLegend: 		1,
+			isLegend: 		0,
 
-			ttipTemplate: 	'',
+			ttipTemplate: 	'pie',
 			ttipType: 		'curTarget',
 			isEmulate: 		0,
 			isRun:			0,
@@ -359,9 +366,9 @@ class SmartPie {
 			varFontSize:	'12px',
 			varFontStretch:	'condensed',
 			varFontColor:	'#666666',
-			varStrokeColor: 'lightgray',
+			varStrokeColor: 'red',
 			varStrokeWidth: 2,
-			varFillColor: 	'lightgray',
+			varFillColor: 	'rgb(255, 205, 136)',
 			varOpacity: 	1
 		}
 	}
@@ -534,9 +541,15 @@ class SmartPie {
 				mask: url(#mask-stripe);
 			}
 		`;
-		this._id 		= id;	// <g id> inside of <svg>
+		// merge default options with specified
+		const opt = options || {};
+		this._o = Object.assign({}, SmartPie.defOptions(), opt);
+
+
+		this._mode 		= options.mode || null;
+		this._o.id 		= id;	// <g id> inside of <svg>
 		this._root		= options.context || null;	// svg root element with id = contId--stpie
-		this._svgroot	= this._root.getElementById(this._id);
+		this._svgroot	= this._root.getElementById(this._o.id);
 		this._svgdoc	= this._svgroot.ownerDocument;
 
 		this._data		= null;	// last data as Set
@@ -546,18 +559,15 @@ class SmartPie {
 		this._passiveG	= null;	// group of passive elements, such as legend and etc, with id = contID--pasG
 		this._normRadius= 0;
 		this._intervalCounter = 0;
-		// merge default options with specified
-		const opt = options || {};
-		this._o = Object.assign({}, SmartPie.defOptions(), opt);
 
 		const style = SmartPies.addElement('style', {}, this._svgroot, this._svgdoc);
 		const node = this._svgdoc.createTextNode(txtStyle);
 		style.appendChild(node);
 		const defs = SmartPies.addElement('defs', {}, this._svgroot, this._svgdoc);
 		defs.innerHTML = `${txtDefs}`;
-		if (typeof options.mode === 'undefined') {	// in case of html insertion, the options.mode == 'html' is defined
+		if (!this._mode) {	// in case of html insertion, the options.mode == 'html' is defined
 			// store containerId: ref on SmartPie element inside SmartPies collection for JS access
-			window.SmartPies.set(this._id, this);
+			window.SmartPies.set(this._o.id, this);
 		}
 	}
 
@@ -1031,6 +1041,9 @@ class SmartPie {
 		}
 	}
 	_buildActive(data = null) {
+		if (!this._activeG) { // yet not ready
+			return;
+		}
 		while(this._activeG.childNodes.length) {
 			this._activeG.firstElementChild.removeEventListener("click", this._onClick);
 			this._activeG.firstElementChild.removeEventListener("mouseover", this._onShowTooltip);
@@ -1245,19 +1258,92 @@ class SmartPie {
 
 
 	/// API
+	getCtrl() {
+		return this;
+	}
+
 	init(options = null) {
+		if (!this._mode) {
+			// find coordinate for widget insertion
+			const rc = this._svgroot.firstElementChild;
+			this._o.rect = rc.getBBox();
+			rc.setAttribute("display", "none");
+			this._o.radius  = Math.min(this._o.rect.width, this._o.rect.height) / 2;
+		} else {
+			// calculate svg rectangle and coordinates
+			// todo: check radius and correct it with width and height parameters if they exists!
+			this._o.rect = {
+				x: 0,
+				y: 0,
+				width:  this._o.isLegend ? this._o.radius *2 + 220 : this._o.radius * 2,
+				height: this._o.isLegend ? this._o.radius * 2 + 50 : this._o.radius * 2
+			};
+		}
+		// calculate normalized radius
+		this._recalculteNormRadius();
+
+		// append base elements to svg
+		if (this._o.endAngle == this._o.startAngle) {
+			this.asf = 0;
+			this._body = SmartPies.addElement('circle', {
+				id:   `${this._o.id}--body`,
+				class:`body`,
+				stroke: `${this._o.varStrokeColor}`,
+				'stroke-width': `${this._o.varStrokeWidth}`,
+				'stroke-opacity': `${this._o.varOpacity}`,
+				fill: `${this._o.varFillColor}`,
+				'fill-opacity': `${this._o.varOpacity}`,
+				r: `${this._normRadius}`,
+				cx: `${this._o.rect.x + this._o.radius}`,
+				cy: `${this._o.rect.y + this._o.radius}`
+			}, this._svgroot, this._svgdoc);
+			this._bodyShad = this._body.cloneNode();
+			this._bodyShad.removeAttribute('id');
+			this._bodyShad.setAttribute("class", "shadowed");
+			this._svgroot.insertBefore(this._bodyShad, this._body);
+		} else {
+			this.asf = (this._o.startAngle > this._o.endAngle ? 1 : 0);
+			// draw segment from startAngle to endAngle
+			const centerPt = {
+				x: this._o.rect.x + this._o.radius,
+				y: this._o.rect.y + this._o.radius,
+			}
+
+			this._body = SmartPies.addElement('path', {
+				id:   `${this._o.id}--body`,
+				class: `body`,
+				stroke: `${this._o.varStrokeColor}`,
+				'stroke-width': `${this._o.varStrokeWidth}`,
+				'stroke-opacity': `${this._o.varOpacity}`,
+				fill: `${this._o.varFillColor}`,
+				'fill-opacity': `${this._o.varOpacity}`,
+				d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.endAngle, this._o.rotation)
+			}, this._svgroot, this._svgdoc);
+			this._bodyShad = this._body.cloneNode();
+			this._bodyShad.removeAttribute('id');
+			this._bodyShad.setAttribute("class", "shadowed");
+			this._svgroot.insertBefore(this._bodyShad, this._body);
+		}
+
+		if (this._o.isAnimate) {
+			this._body.classList.add('animated');
+		}
+
+		this._activeG	= SmartPies.addElement('g', {id: `${this._o.id}--actG`}, this._svgroot, this._svgdoc);
+		this._passiveG	= SmartPies.addElement('g', {id: `${this._o.id}--pasG`}, this._svgroot, this._svgdoc);
+
+		// passiveG group is a legend. hide it if no legend!
+		this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
+
 		this._data = new Set();
 		this._legend = new Array();
-		
-
-		this._body.addEventListener('click', this._onClick);
-		//this.setParams(options);
 
 		if (this._o.ttipTemplate) {
 			// call static function (it will instantinate SmartTooltip and load template)
 			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
 		}
 
+		this._body.addEventListener('click', this._onClick);
 		this._body.addEventListener('transitionend', (ev) => {
 			if (ev.propertyName === 'r') {
 				console.log(`${this._o.id}: anim ended`);
@@ -1471,7 +1557,9 @@ class SmartPie {
 					break;
 				case 'isLegend':
 					this._o.isLegend = +options[key];
-					this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
+					if (this._passiveG) {
+						this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
+					}
 					break;
 
 				case 'interval':
@@ -1596,7 +1684,6 @@ class SmartPieElement extends HTMLElement {
 			this._root.innerHTML = `
 				<style>${txtStyle}</style>
 				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${svgId}">
-					<defs>${txtDefs}</defs>
 					<g id="${svgId}-g">
                     	<rect id="${svgId}-g-r" x="10" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4"></rect>
                 	</g>
@@ -1606,7 +1693,7 @@ class SmartPieElement extends HTMLElement {
 			// now create the smart pie!
 			this._stpie = new SmartPie(`${svgId}-g`, {context: this._svgroot, mode: 'html'});
 			// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
-			window.SmartPies.set(this._o.id, this);
+			window.SmartPies.set(this._id, this);
 
 		// } else {
 		// 	this._o.id   			= id;
@@ -1722,6 +1809,9 @@ class SmartPieElement extends HTMLElement {
 		// this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
 
 	}
+	getCtrl() {
+		return this._stpie;
+	}
 
 	// attributes changing processing
 	static get observedAttributes() {
@@ -1730,56 +1820,32 @@ class SmartPieElement extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		// update own property
 		const paramName = SmartPie.customProp2Param(name);
-		const o = {
-			paramName: newValue
-		};
+		const o = {};
+		o[paramName] = newValue;
+
 		// validate it (if in list of known numeric)
 		CustomProperties.convertNumericProps(o, paramName);
 		// all specific work will be done inside setParams(..) in SmartPie object
-		const stpieObj = window.SmartPies.get(this._id);
-		stpieObj.setParams(o);
+		this._stpie.setParams(o);
 	}
 
 	// connect and disconnect from html
     connectedCallback() {
 		// connected! now  lets create the content of smart pie....
 		this._stpie.init()
-
-
-		this._data = new Set();
-		this._legend = new Array();
-		this._body.addEventListener('click', this._onClick);
-		// load specified tooltip template
-		if (this._o.ttipTemplate) {
-			// call static function (it will instantinate SmartTooltip and load template)
-			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
-		}
-
-
-		this._body.addEventListener('transitionend', (ev) => {
-			if (ev.propertyName === 'r') {
-				// console.log(`${this._o.id}: anim ended`);
-				this._body.setAttribute("r", this._normRadius);
-				this._body.setAttribute("display", "none")
-				this._body.setAttribute('stroke-opacity', 1);
-				this._body.setAttribute('fill-opacity', 1);
-				setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
-			}
-		});
-
     }
     disconnectedCallback() {
 		// remove element from smartpies.heap!!
 		//....todo
 
-		this._data.clear();
-		this._legend.length = 0;
-		this._body.removeEventListener('click', this._onClick);
-		this._body.removeEventListener('transitionend');
+		// this._data.clear();
+		// this._legend.length = 0;
+		// this._body.removeEventListener('click', this._onClick);
+		// this._body.removeEventListener('transitionend');
 
-		this._activeG  	= null;
-		this._passiveG 	= null;
-		this._body 		= null;
+		// this._activeG  	= null;
+		// this._passiveG 	= null;
+		// this._body 		= null;
     }
 
 }
