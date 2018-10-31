@@ -291,7 +291,7 @@ class SmartPie {
 			'input-data',		// the type of input data. 'percents', 'value', 'auto'. The 'auto' is default
 			'input-mode',		// how to interpret an input data. 'flat', 'rel', p-ch ('0.1, 0.2,...1.0, 1.1, ...), 'json' equivalent to 'rel'
 			'view-type',		// 'donut', 'zwatch, 'pie'
-			'view-mode',		// 'compound', 'comp-100'
+			'view-mode',		// 'comp', 'comp-100'
 
 			'rotation',			// Positive values rotate the widget in the direction of the clockwise movement,
 			'start-angle',		// The starting angle to start drawing the widget segment. 0 degrees are at 12 o'clock. Segment drawing direction - clockwise.
@@ -311,6 +311,7 @@ class SmartPie {
 			'sort-by',			// Sort parameter for multiple data. May contains one of the data parameters name: 'asis', 'name', 'value', 'color', 'state'. the default is 'value'
 			'sort-dir',			// sorting direction parameter. the default value is '1', wich means from low to high. Possible values: 0, 1.
 			'is-animate',		// Allows to animate the moment of receiving the data array.
+			'is-link',			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			'is-legend',		// Allows to display the legend on the defined side of the widget
 			'is-tooltip',		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			'position',			// The value describes location of tooltip or legend window Default value is 'rt' which means right-top conner of element.
@@ -340,6 +341,11 @@ class SmartPie {
 		return {
 			type:			'flat' 		/* donut, rel(relatives), flat, zWhatch or 1.0, 1.1, 1.2, 1.3, 1.4, ..., 1.n, 1.all */,
 
+			inputData:		'auto',
+			inputMode:		'rel',		// as type
+			viewType:		'pie',
+			viewMode:		'comp',
+
 			rotation: 		-90,
 			startAngle: 	0,
 			endAngle: 		0,
@@ -350,8 +356,10 @@ class SmartPie {
 			sortBy:			"asis", 		/* asis, states, values, colors, names */
 			sortDir: 		1,
 			isAnimate: 		1,
+			isLink:			1,
 			isLegend: 		0,
 
+			isTooltip:		1,
 			ttipTemplate: 	'pie',
 			ttipType: 		'curTarget',
 			isEmulate: 		0,
@@ -392,9 +400,11 @@ class SmartPie {
 			'height',
 			'sortDir',
 			'isAnimate',
+			'isLink',
 			'isLegend',
 			'isEmulate',
 			'isRun',
+			'isTooltip',
 			'interval',
 			'varStrokeWidth',
 			'varOpacity'
@@ -454,6 +464,15 @@ class SmartPie {
 	}
 
 	constructor(id, options = null) {
+		this._onShowTooltip = this._onShowTooltip.bind(this);
+		this._onMoveTooltip = this._onMoveTooltip.bind(this);
+		this._onHideTooltip = this._onHideTooltip.bind(this);
+		this._onLegendOver = this._onLegendOver.bind(this);
+		this._onLegendOut = this._onLegendOut.bind(this);
+		this._onClick = this._onClick.bind(this);
+		this._transitionEnd = this._transitionEnd.bind(this);
+
+
 		// init SmartPies and store dashboard context parameters
 		SmartPies.initSmartPies(options ? options.dashboardContext || null : null);
 		const txtDefs = `
@@ -544,7 +563,8 @@ class SmartPie {
 		// merge default options with specified
 		const opt = options || {};
 		this._o = Object.assign({}, SmartPie.defOptions(), opt);
-
+		// validate all properties
+		SmartPie.convertNumericProps(this._o);
 
 		this._mode 		= options.mode || null;
 		this._o.id 		= id;	// <g id> inside of <svg>
@@ -560,14 +580,18 @@ class SmartPie {
 		this._normRadius= 0;
 		this._intervalCounter = 0;
 
-		const style = SmartPies.addElement('style', {}, this._svgroot, this._svgdoc);
+		const style = SmartPies.addElement('style', {}, this._root, this._svgdoc);
 		const node = this._svgdoc.createTextNode(txtStyle);
 		style.appendChild(node);
-		const defs = SmartPies.addElement('defs', {}, this._svgroot, this._svgdoc);
+		const defs = SmartPies.addElement('defs', {}, this._root, this._svgdoc);
 		defs.innerHTML = `${txtDefs}`;
-		if (!this._mode) {	// in case of html insertion, the options.mode == 'html' is defined
+		// in case of html insertion, the options.mode == 'html' is defined and
+		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
+		// in case of creating SmartPie object from Javascript, lets do all needed work in one place...
+		if (!this._mode) {
 			// store containerId: ref on SmartPie element inside SmartPies collection for JS access
 			window.SmartPies.set(this._o.id, this);
+			this.init();
 		}
 	}
 
@@ -663,7 +687,7 @@ class SmartPie {
 		let ls_tn= SmartPies.addElement('text', {'text-anchor':'left', x:24, y:14, 'pointer-events':'none', text:`${legdef.name}`}, ls_g, this._svgdoc)
 		let ls_tv= SmartPies.addElement('text', {'text-anchor':'left', x:180, y:14, 'pointer-events':'none', text:`${legdef.value}${legdef.ext}`}, ls_g, this._svgdoc)
 	}
-	/* be careful: this function changes an array data! */
+	/* be careful: this function changes an array of data! */
 	_sortDataByParam(data = [], sortParam="asis") {
 		const me = this;
 		switch (sortParam) {
@@ -1112,6 +1136,9 @@ class SmartPie {
 
 	// event listeners
 	_onShowTooltip(evt) {
+		if (!this._o.isTooltip) {
+			return;
+		}
 		let target = evt.target;
 		const ta = target.id.split('--');
 		const pie = window.SmartPies.get(ta[0]);
@@ -1174,8 +1201,8 @@ class SmartPie {
 	}
 
 	_onClick(event) {
-		let aTarget = event.target.id.split('--');
-		const pie = window.SmartPies.get(aTarget[0]);
+		event.preventDefault();
+		const pie = this;
 		if (event.metaKey || event.ctrlKey) {
 			switch (pie._o.type) {
 				case 'donut':
@@ -1201,25 +1228,29 @@ class SmartPie {
 					pie._o.type = mn + '.' + sec;
 					break;
 			}
-			pie.setAttribute('type', pie._o.type);
+			pie.setParam('type', pie._o.type);
 			console.info('Set type to ' + pie._o.type);
 		} else if (event.shiftKey) {
 			let isRun = !pie._o.isRun;
-			if (pie._o.mode === "html") {
-				if (isRun) {
-					pie.setAttribute('is-run', '1');
-				} else {
-					pie.removeAttribute('is-run');
-				}
-			} else if (pie._o.mode === "svg") {
-				pie.run(isRun);
-			}
+			pie.run(isRun);
+
+			// if (pie._o.mode === "html") {
+			// 	if (isRun) {
+			// 		pie.setAttribute('is-run', '1');
+			// 	} else {
+			// 		pie.removeAttribute('is-run');
+			// 	}
+			// } else if (pie._o.mode === "svg") {
+			// 	pie.run(isRun);
+			// }
 			console.info('Update is' + (isRun ? ' started' : ' stoped'));
-		} else {
+		} else if (this._o.isLink) {
 			let elRef = null;
 			let linkto = '';
-			if (aTarget[aTarget.length-1] === 'legend-rect') {
-				elRef = pie._legend[aTarget[1]].ref;
+			// don't use id to targeting, use dataset attributes instead. 
+			const legendIndex  = this.target.dataset['legendIndex'];
+			if (legendIndex) {
+				elRef = pie._legend[legendIndex].ref;
 			} else {
 				elRef = event.target;
 			}
@@ -1255,6 +1286,16 @@ class SmartPie {
 			}
 		}
 	}
+	_transitionEnd(ev) {
+		if (ev.propertyName === 'r') {
+			console.log(`${this._o.id}: anim ended`);
+			this._body.setAttribute("r", this._normRadius);
+			this._body.setAttribute("display", "none")
+			this._body.setAttribute('stroke-opacity', 1);
+			this._body.setAttribute('fill-opacity', 1);
+			setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
+		}
+	}
 
 
 	/// API
@@ -1263,6 +1304,12 @@ class SmartPie {
 	}
 
 	init(options = null) {
+		if (options) {
+			// validate and merge with own options
+			SmartPie.convertNumericProps(options);
+			this._o = Object.assign({}, this._o, options);
+		}
+
 		const rc = this._svgroot.firstElementChild;
 		this._o.rect = rc.getBBox();
 		rc.setAttribute("display", "none");
@@ -1294,7 +1341,8 @@ class SmartPie {
 				'fill-opacity': `${this._o.varOpacity}`,
 				r: `${this._normRadius}`,
 				cx: `${this._o.rect.x + this._o.radius}`,
-				cy: `${this._o.rect.y + this._o.radius}`
+				cy: `${this._o.rect.y + this._o.radius}`,
+				style: `r:${this._normRadius};`
 			}, this._svgroot, this._svgdoc);
 			this._bodyShad = this._body.cloneNode();
 			this._bodyShad.removeAttribute('id');
@@ -1343,16 +1391,7 @@ class SmartPie {
 		}
 
 		this._body.addEventListener('click', this._onClick);
-		this._body.addEventListener('transitionend', (ev) => {
-			if (ev.propertyName === 'r') {
-				console.log(`${this._o.id}: anim ended`);
-				this._body.setAttribute("r", this._normRadius);
-				this._body.setAttribute("display", "none")
-				this._body.setAttribute('stroke-opacity', 1);
-				this._body.setAttribute('fill-opacity', 1);
-				setTimeout(() => { this._body.setAttribute("display", "block") }, 50);
-			}
-		});
+		this._body.addEventListener('transitionend', this._transitionEnd);
 	}
 
 	/**
@@ -1413,6 +1452,8 @@ class SmartPie {
 			SmartPies._httpGet(this._o.server + this._o.targets[0])
 			.then(response => {
 				if (this._o.isAnimate) {
+					this._body.setAttribute('style', `/* r:${this._normRadius}; */`);
+					
 					this._body.setAttribute("r", this._normRadius + this._normRadius/5);
 					this._body.setAttribute('fill-opacity', 0);
 					this._body.setAttribute('stroke-opacity', 0);
@@ -1442,6 +1483,8 @@ class SmartPie {
 			let needRebuild = this.setParams(options, false);
 			if (typeof data.targets === 'object' && typeof data.targets.length === 'number' && data.targets.length) {
 				if (this._o.isAnimate) {
+					this._body.setAttribute('style', `/* r:${this._normRadius}; */`);
+
 					this._body.setAttribute("r", this._normRadius + this._normRadius/5);
 					this._body.setAttribute('fill-opacity', 0);
 					this._body.setAttribute('stroke-opacity', 0);
@@ -1496,6 +1539,16 @@ class SmartPie {
 	getParams() {
 		return SmartPie.getCustomParams(this._o);
 	}
+	setParam(name, value) {
+		const opt = {};
+		opt[name] = value;
+		// convert to numbers known properties
+		SmartPie.convertNumericProps(opt, name);
+
+		if (this._body) {
+			this.setParams(opt);
+		}
+	}
 	setParams(options={}, rebuild=true) {
 		let val, needRebuild = false;
 		for (let key in options) {
@@ -1539,7 +1592,13 @@ class SmartPie {
 					let svgRoot = (this._o.mode === 'html' ? this._svgroot : this._root);
 					svgRoot.style.setProperty('--smartwdg-legend-color', val);
 					break;
-
+				case 'radius':
+					val = Number(options[key]);
+					this._recalculteNormRadius();
+					this._body.setAttribute('stroke-width', val);
+					this._body.setAttribute('r', this._normRadius);
+					needRebuild++;
+					break;
 				case 'varStrokeWidth':
 					val = Number(options[key]);
 					this._o.varStrokeWidth = val;
@@ -1658,6 +1717,7 @@ class SmartPieElement extends HTMLElement {
 			throw new Error('Unfortunately, your browser does not support shadow DOM v1. Think about switching to a Chrome browser that supports all new technologies!');
 		}
 		this._id = this.getAttribute('id') || id;
+		this._o = {};
 
 		// // convert to numbers known props
 		// SmartPie.convertNumericProps(this._o);
@@ -1667,32 +1727,20 @@ class SmartPieElement extends HTMLElement {
 
 		this._root = this.attachShadow({mode: 'open'});
 
-			// // calculate svg rectangle and coordinates
-			// // todo: check radius and correct it with width and height parameters if they exists!
-			// this._o.rect = {
-			// 	x: 0,
-			// 	y: 0,
-			// 	width:  this._o.isLegend ? this._o.radius *2 + 220 : this._o.radius * 2,
-			// 	height: this._o.isLegend ? this._o.radius * 2 + 50 : this._o.radius * 2
-			// };
-
-			// height="${this._o.rect.height}"
-			// width="${this._o.rect.width}"
-			// viewBox="0 0 ${this._o.rect.width} ${this._o.rect.height}"
-			const svgId = `${this.id}--stpie`;
-			this._root.innerHTML = `
-				<style>${txtStyle}</style>
-				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${svgId}">
-					<g id="${svgId}-g">
-                    	<rect id="${svgId}-g-r" x="10" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4"></rect>
-                	</g>
-				</svg>
-			`;
-			this._svgroot = this._root.querySelector('svg');
-			// now create the smart pie!
-			this._stpie = new SmartPie(`${svgId}-g`, {context: this._svgroot, mode: 'html'});
-			// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
-			window.SmartPies.set(this._id, this);
+		const svgId = `${this.id}--stpie`;
+		this._root.innerHTML = `
+			<style>${txtStyle}</style>
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${svgId}">
+				<g id="${svgId}-g">
+					<rect id="${svgId}-g-r" x="10" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4"></rect>
+				</g>
+			</svg>
+		`;
+		this._svgroot = this._root.querySelector('svg');
+		// now create the smart pie!
+		this._stpie = new SmartPie(`${svgId}-g`, {context: this._svgroot, mode: 'html'});
+		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
+		window.SmartPies.set(this._id, this);
 
 		// } else {
 		// 	this._o.id   			= id;
@@ -1819,19 +1867,14 @@ class SmartPieElement extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		// update own property
 		const paramName = SmartPie.customProp2Param(name);
-		const o = {};
-		o[paramName] = newValue;
-
-		// validate it (if in list of known numeric)
-		SmartPie.convertNumericProps(o, paramName);
-		// all specific work will be done inside setParams(..) in SmartPie object
-		this._stpie.setParams(o);
+		this._o[paramName] = newValue;
+		this._stpie.setParam(paramName, newValue);
 	}
 
 	// connect and disconnect from html
     connectedCallback() {
-		// connected! now  lets create the content of smart pie....
-		this._stpie.init();
+		// all specific work will be done inside
+		this._stpie.init(this._o);
 		// resize own svg
 		this._svgroot.setAttribute('height', this._stpie._o.rect.height);
 		this._svgroot.setAttribute('width', this._stpie._o.rect.width);

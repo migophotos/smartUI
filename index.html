@@ -315,6 +315,7 @@
                                 }
                                 .over-shown {
                                     opacity: 1;
+                                    cursor: pointer;
                                     pointer-events: all;
                                 }
 
@@ -361,6 +362,8 @@
                                 }
                                 .stpie-example-cont smart-pie {
                                     display: inherit;
+                                    border: 2px gray solid;
+                                    cursor: default;
                                     /* may be changed to left or right for showing legend on the opposite side */
                                     text-align: center;
                                 }
@@ -371,7 +374,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"Relative"</p>
-                                            <smart-pie class="pie-item" id="sample-01" type="rel" rotation="180" is-run="1" ></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-01" type="rel" rotation="180" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -379,7 +382,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"Flat"</p>
-                                            <smart-pie class="pie-item" id="sample-02" type="1.0" is-emulate="0" rotation="180" is-run="1"  ></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-02" type="1.0" is-emulate="0" rotation="180" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -387,7 +390,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"Auto, One child"</p>
-                                            <smart-pie class="pie-item" id="sample-03" type="1.1" is-emulate="1" is-run="1" ></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-03" type="1.1" is-emulate="1" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -396,7 +399,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"Auto, Two children"</p>
-                                            <smart-pie class="pie-item" id="sample-04" type="1.2" is-emulate="1" is-run="1" ></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-04" type="1.2" is-emulate="1" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -404,7 +407,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"Auto, Three children"</p>
-                                            <smart-pie class="pie-item" id="sample-05" type="1.3" is-run="1" ></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-05" type="1.3" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -412,7 +415,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"Auto, Four Children"</p>
-                                            <smart-pie class="pie-item" id="sample-06" type="1.4" is-run="1" ></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-06" type="1.4" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -421,7 +424,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"Flat Segment"</p>
-                                            <smart-pie class="pie-item" id="sample-07" type="1.0" is-run="1" ></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-07" type="1.0" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -429,7 +432,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"zWatch"</p>
-                                            <smart-pie class="pie-item" id="sample-08" type="zwatch" is-run="1" is-emulate="1" ></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-08" type="zwatch" is-run="1" is-emulate="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -437,7 +440,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"Donut"</p>
-                                            <smart-pie class="pie-item" id="sample-09" type="donut" is-run="1" is-emulate="1" ></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-09" type="donut" is-run="1" is-emulate="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -449,7 +452,7 @@
                                         <p id="stpie-example-descr"></p>
                                     </div>
                                     <div class="stpie-example-cont">
-                                        <smart-pie class="stpie-example" id="stpie-example" radius="100" type="rel" is-run="1" is-legend="1"></smart-pie>
+                                        <smart-pie class="stpie-example" id="stpie-example" radius="120" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                     </div>
                                 </div>
                             </div>
@@ -708,6 +711,11 @@
 
                     const over_panel = document.getElementById('over-panel');
                     over_panel.addEventListener('click', (evt) => {
+                        evt.preventDefault();
+                        if (evt.target.id == 'stpie-example') {
+                            return;
+                        }
+
                         over_panel.classList.remove('over-shown');
                         tmp = document.getElementById('stpie-example-grid');
                         tmp.classList.add('stpie-example-grid--hidden');
@@ -718,6 +726,7 @@
                     els = document.getElementsByClassName('ml-p_content-ctrl');
                     for (let el of els) {
                         el.addEventListener('click', (evt) => {
+                            evt.preventDefault();
                             sel = evt.currentTarget.querySelector('smart-pie');
                             if (sel) {
                                 const selType = sel.getAttribute('type');
