@@ -530,6 +530,9 @@ class SmartPie {
 			.animated {
 				transition:all 1s;
 			}
+			.animated:hover {
+				r: 0;
+			}
 
 			text {
 				font-family: Avenir, Helvetica, sans-serif;
@@ -1371,6 +1374,17 @@ class SmartPie {
 			this._bodyShad.setAttribute("class", "shadowed");
 			this._svgroot.insertBefore(this._bodyShad, this._body);
 		}
+		this._body.addEventListener('transitionend', (ev) => {
+			// if (ev.propertyName === 'r') {
+				console.log(`${this._o.id}: anim ended`);
+				this._body.setAttribute("r", this._normRadius);
+				this._body.setAttribute("display", "none")
+				this._body.setAttribute('stroke-opacity', 1);
+				this._body.setAttribute('fill-opacity', 1);
+				setTimeout(() => { this._body.setAttribute("display", "block") }, 150);
+			// }
+	
+		});// this._transitionEnd);
 
 		if (this._o.isAnimate) {
 			this._body.classList.add('animated');
@@ -1391,7 +1405,6 @@ class SmartPie {
 		}
 
 		this._body.addEventListener('click', this._onClick);
-		this._body.addEventListener('transitionend', this._transitionEnd);
 	}
 
 	/**
