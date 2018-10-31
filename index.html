@@ -364,8 +364,17 @@
                                     display: inherit;
                                     border: 2px gray solid;
                                     cursor: default;
-                                    /* may be changed to left or right for showing legend on the opposite side */
+
+                                }
+                                /* may be changed to left or right for showing legend on the opposite side */
+                                .no-legend {
                                     text-align: center;
+                                }
+                                .legend-rightside {
+                                    text-align: left;
+                                }
+                                .legend-leftside {
+                                    text-align: left;
                                 }
 
                             </style>
@@ -452,7 +461,7 @@
                                         <p id="stpie-example-descr"></p>
                                     </div>
                                     <div class="stpie-example-cont">
-                                        <smart-pie class="stpie-example" id="stpie-example" radius="120" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
+                                        <smart-pie class="stpie-example no-legend" id="stpie-example" radius="120" is-run="1" is-tooltip="0" is-link="0" is-legend="1"></smart-pie>
                                     </div>
                                 </div>
                             </div>

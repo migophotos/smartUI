@@ -528,7 +528,7 @@ class SmartPie {
 				cursor: pointer;
 			}
 			.animated {
-				transition:all 1s;
+				transition:all 1.5s;
 			}
 			.animated:hover {
 				r: 0;
@@ -1250,7 +1250,7 @@ class SmartPie {
 		} else if (this._o.isLink) {
 			let elRef = null;
 			let linkto = '';
-			// don't use id to targeting, use dataset attributes instead. 
+			// don't use id to targeting, use dataset attributes instead.
 			const legendIndex  = this.target.dataset['legendIndex'];
 			if (legendIndex) {
 				elRef = pie._legend[legendIndex].ref;
@@ -1375,15 +1375,15 @@ class SmartPie {
 			this._svgroot.insertBefore(this._bodyShad, this._body);
 		}
 		this._body.addEventListener('transitionend', (ev) => {
-			// if (ev.propertyName === 'r') {
+			if (ev.propertyName === 'r') {
 				console.log(`${this._o.id}: anim ended`);
 				this._body.setAttribute("r", this._normRadius);
 				this._body.setAttribute("display", "none")
 				this._body.setAttribute('stroke-opacity', 1);
 				this._body.setAttribute('fill-opacity', 1);
 				setTimeout(() => { this._body.setAttribute("display", "block") }, 150);
-			// }
-	
+			}
+
 		});// this._transitionEnd);
 
 		if (this._o.isAnimate) {
@@ -1466,7 +1466,7 @@ class SmartPie {
 			.then(response => {
 				if (this._o.isAnimate) {
 					this._body.setAttribute('style', `/* r:${this._normRadius}; */`);
-					
+
 					this._body.setAttribute("r", this._normRadius + this._normRadius/5);
 					this._body.setAttribute('fill-opacity', 0);
 					this._body.setAttribute('stroke-opacity', 0);
@@ -1754,120 +1754,6 @@ class SmartPieElement extends HTMLElement {
 		this._stpie = new SmartPie(`${svgId}-g`, {context: this._svgroot, mode: 'html'});
 		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
 		window.SmartPies.set(this._id, this);
-
-		// } else {
-		// 	this._o.id   			= id;
-		// 	this._o.type 			= options.type || this._o.type;
-
-		// 	this._o.rotation 		= options.rotation || this._o.rotation;
-		// 	this._o.startAngle 		= options.startAngle || this._o.startAngle;
-		// 	this._o.endAngle 		= options.endAngle || this._o.endAngle;
-		// 	this._o.innerRadius 	= options.innerRadius || this._o.innerRadius;
-		// 	this._o.radius 			= options.radius || this._o.radius;
-		// 	this._o.width 			= options.width || this._o.width;
-		// 	this._o.height 			= options.height || this._o.height;
-		// 	this._o.sortBy			= options.sortBy || this._o.sortBy;
-		// 	this._o.sortDir			= options.sortDir || this._o.sortDir;
-		// 	this._o.isAnimate		= options.isAnimate || this._o.isAnimate;
-		// 	this._o.isLegend		= options.isLegend || this._o.isLegend;
-
-		// 	this._o.ttipTemplate	= options.ttipTemplate || this._o.ttipTemplate;
-		// 	this._o.ttipType		= options.ttipType || this._o.ttipType;
-		// 	this._o.isEmulate		= options.isEmulate || this._o.isEmulate;
-		// 	this._o.isRun 			= options.isRun || this._o.isRun;
-		// 	this._o.interval		= options.interval || this._o.interval;
-
-		// 	this._o.server			= options.server || this._o.server;
-		// 	this._o.targets			= options.targets || this._o.targets;
-		// 	this._o.user			= options.user || this._o.user;
-
-		// 	this._o.varStrokeColor	= options.varStrokeColor || this._o.varStrokeColor;
-		// 	this._o.varStrokeWidth	= options.varStrokeWidth || this._o.varStrokeWidth;
-		// 	this._o.varFillColor	= options.varFillColor || this._o.varFillColor;
-		// 	this._o.varOpacity		= options.varOpacity || this._o.varOpacity;
-
-		// 	// convert to numbers known properties
-		// 	SmartPie.convertNumericProps(this._o);
-
-		// 	this._root = options.context || null;
-		// 	if (this._root) {
-		// 		this._svgroot = this._root.getElementById(this._o.id);
-		// 		this._svgdoc  = this._svgroot.ownerDocument;
-
-		// 		const style = SmartPies.addElement('style', {}, this._svgroot, this._svgdoc);
-		// 		const node = this._svgdoc.createTextNode(txtStyle);
-		// 		style.appendChild(node);
-
-		// 		const defs = SmartPies.addElement('defs', {}, this._svgroot, this._svgdoc);
-		// 		defs.innerHTML = `${txtDefs}`;
-
-		// 		// find coordinate for widget insertion
-		// 		const rc = this._svgroot.firstElementChild;
-		// 		this._o.rect = rc.getBBox();
-		// 		rc.setAttribute("display", "none");
-		// 		this._o.radius  = Math.min(this._o.rect.width, this._o.rect.height) / 2;
-		// 		// calculate normalized radius
-		// 		this._recalculteNormRadius();
-		// 	}
-		// };
-		// if (!this._root) {
-		// 	console.error('_root must tobe initialized!');
-		// 	return;
-		// }
-
-		// // append base elements to svg
-		// if (this._o.endAngle == this._o.startAngle) {
-		// 	this.asf = 0;
-		// 	this._body = SmartPies.addElement('circle', {
-		// 		id:   `${this._o.id}--body`,
-		// 		class:`body`,
-		// 		stroke: `${this._o.varStrokeColor}`,
-		// 		'stroke-width': `${this._o.varStrokeWidth}`,
-		// 		'stroke-opacity': `${this._o.varOpacity}`,
-		// 		fill: `${this._o.varFillColor}`,
-		// 		'fill-opacity': `${this._o.varOpacity}`,
-		// 		r: `${this._normRadius}`,
-		// 		cx: `${this._o.rect.x + this._o.radius}`,
-		// 		cy: `${this._o.rect.y + this._o.radius}`
-		// 	}, this._svgroot, this._svgdoc);
-		// 	this._bodyShad = this._body.cloneNode();
-		// 	this._bodyShad.removeAttribute('id');
-		// 	this._bodyShad.setAttribute("class", "shadowed");
-		// 	this._svgroot.insertBefore(this._bodyShad, this._body);
-		// } else {
-		// 	this.asf = (this._o.startAngle > this._o.endAngle ? 1 : 0);
-		// 	// draw segment from startAngle to endAngle
-		// 	const centerPt = {
-		// 		x: this._o.rect.x + this._o.radius,
-		// 		y: this._o.rect.y + this._o.radius,
-		// 	}
-
-		// 	this._body = SmartPies.addElement('path', {
-		// 		id:   `${this._o.id}--body`,
-		// 		class: `body`,
-		// 		stroke: `${this._o.varStrokeColor}`,
-		// 		'stroke-width': `${this._o.varStrokeWidth}`,
-		// 		'stroke-opacity': `${this._o.varOpacity}`,
-		// 		fill: `${this._o.varFillColor}`,
-		// 		'fill-opacity': `${this._o.varOpacity}`,
-		// 		d: SmartPies.describeArc(this.asf, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.endAngle, this._o.rotation)
-		// 	}, this._svgroot, this._svgdoc);
-		// 	this._bodyShad = this._body.cloneNode();
-		// 	this._bodyShad.removeAttribute('id');
-		// 	this._bodyShad.setAttribute("class", "shadowed");
-		// 	this._svgroot.insertBefore(this._bodyShad, this._body);
-		// }
-
-		// if (this._o.isAnimate) {
-		// 	this._body.classList.add('animated');
-		// }
-
-		// this._activeG	= SmartPies.addElement('g', {id: `${this._o.id}--actG`}, this._svgroot, this._svgdoc);
-		// this._passiveG	= SmartPies.addElement('g', {id: `${this._o.id}--pasG`}, this._svgroot, this._svgdoc);
-
-		// // passiveG group is a legend. hide it if no legend!
-		// this._passiveG.setAttribute('display', (this._o.isLegend ? 'block': 'none'));
-
 	}
 	getCtrl() {
 		return this._stpie;
@@ -1882,6 +1768,15 @@ class SmartPieElement extends HTMLElement {
 		const paramName = SmartPie.customProp2Param(name);
 		this._o[paramName] = newValue;
 		this._stpie.setParam(paramName, newValue);
+		if (paramName === 'isLegend') {
+			if (newValue === '1') {
+				this.classList.remove('no-legend');
+				this.classList.add('legend-rightside');
+			} else {
+				this.classList.remove('legend-rightside');
+				this.classList.add('no-legend');
+			}
+		}
 	}
 
 	// connect and disconnect from html
