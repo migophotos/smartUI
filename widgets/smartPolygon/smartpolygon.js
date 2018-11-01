@@ -45,7 +45,7 @@ class SmartPolygon {
 	static getCustomProperties() {
 		return [
             'orient',           // Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
-            'align',            // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
+            'aligning',         // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
             'rotation',         // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
             'start-angle',      // Degrees. Default is 45
 			'radius',			// This parameter sets the radius of inscribed circle. It should not be more than half the
@@ -73,8 +73,20 @@ class SmartPolygon {
             'provider',
             'user',				// These parameters determine the URL of the request to the server
 
-            'is-fill-bkg',      // Enables fill and color the background of polygon. Default is 1
-            'if-fill-stroke',   // Enables draw colored stroke around of polygon. Default is 0
+			'color-rule',		// Same as 'value-rule', but set color only, do not use value at all.
+			'value-rule',		// Specifies what will be painted when the value is drawn: line or background
+								// Possible values are: 'stroke', 'fill', 'both'. Default is 'fill'.
+								// The following four parameters also affect rendering. 
+								// The following addition rule is used: the missing parameter is drawn. 
+								// That is, if it is indicated that the value affects the background ('rule'='fill'), 
+								// then for the lines, the color of the line and the corresponding flag are used. 
+								// Conversely, if the value affects the line ('rule'='stroke'), 
+								// then the corresponding color and flag are used to fill the background.
+								// In the case of 'rule'='both', additional parameters are not used.
+			'is-fill-bkg',      // Enables fill and color the background of polygon. Default is 1
+			'is-fill-stroke',   // Enables draw colored stroke around of polygon. Default is 0
+			'var-stroke-color',
+			'var-fill-color',
 			'var-is-shadow',	// Allows shadow for widget, legend and tooltip
             'var-stroke-width',	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			'var-opacity'		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
@@ -83,7 +95,7 @@ class SmartPolygon {
     static defOptions() {
         return {
             orient: 'hor',      // Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
-            align: 'right',     // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
+            aligning: 'right',  // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
             rotation: 0,      // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
             startAngle: 45,     // Degrees. Default is 45
 			radius: 50,			// This parameter sets the radius of inscribed circle. It should not be more than half the
@@ -100,7 +112,7 @@ class SmartPolygon {
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
             maxValue: 0,        // the maximum value. If 0 then 100% is a maximum.
             isStar: 0,          // Enables drawing start instead of regular polygon
-			isAnimate: 1,		// Allows to animate the moment of receiving the data array.
+			isAnimate: 0,		// Allows to animate the moment of receiving the data array.
 			isLink: 1,			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			isTooltip: 1,		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			isEmulate: 1,		// Allows automatic emulation of the process of data receiving.
@@ -111,9 +123,11 @@ class SmartPolygon {
             targets: ['answer.json'],
             user: '',
                     
-            isFillBkg: 1,       // Enables fill and color the background of polygon. Default is 1
-            isFillStroke: 0,    // Enables draw colored stroke around of polygon. Default is 0
-            varStrokeColor: 'red',
+			colorRule: 'none',
+			valueRule: 'fill',
+			isFillBkg: 1,       // Enables fill and color the background of polygon. Default is 1
+            isFillStroke: 1,    // Enables draw stroke around of polygon. Default is 1
+            varStrokeColor: 'black',
             varFillColor: 'rgb(255, 205, 136)',
 			varIsShadow: 1,     // Allows shadow for widget, legend and tooltip
             varStrokeWidth: 1,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
@@ -215,12 +229,14 @@ class SmartPolygon {
         this._data      = null; // last received from data provider
         this._body      = null; // the polygons body
         this._active    = null; // the active element (circle in clip)
-        this._intervalCounter = 0;
+		this._intervalCounter = 0;
+		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
         const style = SmartPolygons.addElement('style', {}, this._root, this._svgdoc);
         style.textContent = txtStyle;
         this._defs = SmartPolygons.addElement('defs', {}, this._root, this._svgdoc);
-        this._defs.innerHTML = window.SmartPolygons.defs;
+		this._defs.innerHTML = window.SmartPolygons.defs;
+		this._active = SmartPolygons.addElement('clipPath', {id: 'activeRect'}, this._root, this._svgdoc);
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
 		// in case of creating SmartPolygon object from Javascript, lets do all needed work in one place...
@@ -240,40 +256,151 @@ class SmartPolygon {
 		}
 	}
     _buildActive(data = null) {
-        if (!this._active) {    // yet not ready
-            return;
-        }
-        const elem = this._active.firstElementChild;
-        if (elem) {
-			elem.removeEventListener("click", this._onClick);
-			elem.removeEventListener("mouseover", this._onShowTooltip);
-			elem.removeEventListener("mousemove", this._onMoveTooltip);
-            elem.removeEventListener("mouseout", this._onHideTooltip);
-            this._active.removeChild(this._activeG.firstElementChild);
-        }
-        
-    }
-    _buildBody() {
+		if (!this._inited) {
+			console.log('_build() -> Nothing todo, not yet initialized!');
+			return;
+		}
+
+        if (this._active) {
+			// remove old clip rectangle
+			const elem = this._active.firstElementChild;
+			if (elem) {
+				this._active.removeChild(this._active.firstElementChild);
+			}
+		}
+		const activeRect = {
+			x: this._o.rect.x,
+			y: this._o.rect.y,
+			width: this._o.rect.width,
+			height: this._o.rect.height,
+		};
+		// calculte the value
+		if (data) {
+			let dta = Array.from(data);
+			if (dta.length) {
+				const dt = dta[0];
+				const maxValue = parseInt(dt.max, 10) || this._o.maxValue;
+				const max100 = this._o.orient === 'hor' ? activeRect.width : activeRect.height;
+				let onePCT = maxValue ? max100 / maxValue : max100 / 100;
+				if (this._o.orient === 'hor') {
+					activeRect.width = parseFloat(dt.value) * onePCT;
+					if (this._o.aligning === 'left') {
+						activeRect.x = (activeRect.x + this._o.rect.width) - activeRect.width;
+					}
+				} else {
+					activeRect.height = parseFloat(dt.value) * onePCT;
+					if (this._o.aligning == 'up') {
+						activeRect.y = (activeRect.y + this._o.rect.height) - activeRect.height;
+					}
+				}
+				this._o.valueRule = this._o.valueRule || 'fill';
+				this._bodyActive.setAttribute('fill', this._o.valueRule === 'fill' ? dt.color : (this._o.isFillBkg ? this._o.varFillColor : 'none'));
+				this._bodyActive.setAttribute('stroke', this._o.valueRule === 'stroke' ? dt.color : (this._o.isFillStroke ? this._o.varStrokeColor : 'none'));
+
+				if (this._o.valueRule === 'both') {
+					this._bodyActive.setAttribute('fill', dt.color);
+					this._bodyActive.setAttribute('stroke', dt.color);
+				}
+
+				if (this._o.colorRule == 'stroke' || this._o.colorRule == 'both') {
+					this._body.setAttribute('stroke', dt.color);
+				}
+				if (this._o.colorRule == 'fill' || this._o.colorRule == 'both') {
+					this._body.setAttribute('fill', dt.color);
+				}
+
+			}
+		}
+		// build the clip rectangle here...
+		SmartWidgets.addElement('rect', {
+			x: activeRect.x,
+			y: activeRect.y,
+			width: activeRect.width,
+			height: activeRect.height,
+		}, this._active, this._svgdoc);
+
+		this._bodyActive.setAttribute('clip-path', 'url(#activeRect)');
+	}
+    _build() {
+		if (!this._inited) {
+			console.log('_build() -> Nothing todo, not yet initialized!');
+			return;
+		}
         if (this._body) {
+			this._body.removeEventListener("click", this._onClick);
+			this._body.removeEventListener("mouseover", this._onShowTooltip);
+			// this._body.removeEventListener("mousemove", this._onMoveTooltip);
+            this._body.removeEventListener("mouseout", this._onHideTooltip);
+
+			this._svgroot.removeChild(this._boundary);
+			this._svgroot.removeChild(this._bodyActive);
             this._svgroot.removeChild(this._body);
         }
         const centerPt = {
             x: this._o.rect.x + this._o.radius,
             y: this._o.rect.y + this._o.radius,
         }
+		this._boundary = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
+		if (this._boundary) {
+			SmartWidgets.addElement('rect', {
+				x: this._o.rect.x,
+				y: this._o.rect.y,
+				width: this._o.rect.width,
+				height: this._o.rect.height,
+				stroke: 'gray',
+				fill: 'none'
+			}, this._boundary, this._svgdoc);
+			SmartWidgets.addElement('line', {
+				x1: this._o.rect.x,
+				y1: this._o.rect.y,
+				x2: this._o.rect.x + this._o.rect.width,
+				y2: this._o.rect.y + this._o.rect.height,
+				stroke: 'gray',
+			}, this._boundary, this._svgdoc);
+			SmartWidgets.addElement('line', {
+				x1: this._o.rect.x + this._o.rect.width,
+				y1: this._o.rect.y,
+				x2: this._o.rect.x,
+				y2: this._o.rect.y + this._o.rect.height,
+				stroke: 'gray',
+			}, this._boundary, this._svgdoc);
+		}
 
         // add base element to svg
         this._body = SmartPolygons.addElement('polygon', {
             id: 'body',
             class: 'body',
-            stroke: `${this._o.varStrokeColor}`,
-            fill: `${this._o.varFillColor}`,
-            'stroke-width': `${this._o.varStrokeWidth}`,
-            'stroke-opacity': `${this._o.varOpacity}`,
-            'fill-opacity':  `${this._o.varOpacity}`,
+            stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
+            fill: `${this._o.isFillBkg ? this._o.varFillColor : 'none'}`,
+            'stroke-width': this._o.varStrokeWidth,
+            'stroke-opacity': this._o.varOpacity,
+            'fill-opacity':  this._o.varOpacity,
             points: this._buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
-        }, this._svgroot, this._svgdoc);
-    }
+		}, this._svgroot, this._svgdoc);
+		this._bodyActive = SmartPolygons.addElement('polygon', {
+            id: 'bodyAdcive',
+            class: 'body',
+            stroke: this._o.varStrokeColor,
+            fill: this._o.varFillColor,
+            'stroke-width': this._o.varStrokeWidth,
+			'fill-opacity':  this._o.varOpacity,
+			'stroke-linejoin':'miter',
+			'stroke-miterlimit': '50',
+            points: this._buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
+		}, this._svgroot, this._svgdoc);
+		if (this._o.colorRule != 'none') {
+			this._svgroot.insertBefore(this._bodyActive, this._body);
+		}
+
+		this._body.addEventListener('click', this._onClick);
+		this._body.addEventListener("mouseover", this._onShowTooltip);
+		// this._body.addEventListener("mousemove", this._onMoveTooltip);
+		this._body.addEventListener("mouseout", this._onHideTooltip);
+		this._buildActive(this._data);
+
+
+
+}
 
 
     /**
@@ -381,18 +508,18 @@ class SmartPolygon {
 				width:  this._o.isLegend ? this._o.radius *2 + 220 : this._o.radius * 2,
 				height: this._o.isLegend ? this._o.radius * 2 + 50 : this._o.radius * 2
 			};
+		}
+		this._inited = true;
 
-        }
 		// calculate normalized radius
         this._recalculateNormRadius();
-        this._buildBody();
+        this._build();
 
         this._data = new Set();
 		if (this._o.ttipTemplate) {
 			// call static function (it will instantinate SmartTooltip and load template)
 			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
 		}
-		this._body.addEventListener('click', this._onClick);
     }
     isRun() {
 		return this._o.isRun;
@@ -470,6 +597,7 @@ class SmartPolygon {
 			if (typeof data.opt === 'object') {
 				options = data.opt;
 			}
+			// don't rebuld on set params!
 			let needRebuild = this.setParams(options, false);
 			if (typeof data.targets === 'object' && typeof data.targets.length === 'number' && data.targets.length) {
 				// if (this._o.isAnimate) {
@@ -483,11 +611,14 @@ class SmartPolygon {
 				needRebuild++
 			}
 			if (needRebuild) {
-				this._buildActive(this._data);
+				this._build();
 			}
 		}
 	}
 	generateExData() {
+		const max = 100;
+		const value = Math.abs(Math.floor(Math.random() * (100 + 1)) + 0);
+		const color = value < 30 ? 'blue' : (value < 50 ? 'green' : (value < 70 ? 'yellow' : 'red'));
 		var dataEx = {
 			"opt": {
 				"lcolor": "red",
@@ -497,9 +628,10 @@ class SmartPolygon {
 				{
 					"uuid": "uuid_ex_Target1",
 					"tooltip":  "Missing at work",
-					"value": "42",
-					"color": "green",
+					"value": `${value}`,
+					"color": `${color}`,
 					"link": "http://www.google.com/?target1",
+					"max": `${max}` 
                 }
 			],
 			"error": {
@@ -515,7 +647,7 @@ class SmartPolygon {
 	setParam(name, value) {
 		const opt = {};
 		opt[name] = value;
-		// convert to numbers known properties
+		// convert to numbers specified by name property
 		SmartPolygon.convertNumericProps(opt, name);
 
 		if (this._body) {
@@ -524,94 +656,31 @@ class SmartPolygon {
 	}
 	setParams(options={}, rebuild=true) {
 		let val, needRebuild = false;
+		// convert all known properties to numbers
+		SmartPolygon.convertNumericProps(options);
+		this._o = Object.assign({}, this._o, options);
+
+		// some properties changing requires rebuilding, lets find its!
 		for (let key in options) {
 			switch (key) {
-				case 'inner-radius':
-					this._o.innerRadius = option[key];
-					needRebuild++;
-					break;
-				case 'rotation':
-					this._o.rotation = options[key];
-					needRebuild++;
-					break;
-				case 'startAngle':
-					this._o.startAngle = options[key];
-					needRebuild++;
-					break;
+				case 'position':
+				case 'ttipTemplate':
+				case 'isLink':
+				case 'isTooltip':
 				case 'isEmulate':
-					this._o.isEmulate = options[key];
-					break;
-				case 'varFillColor':
-					val = options[key];
-					this._o.varFillColor = val;
-					this._body.setAttribute('fill', val);
-					break;
-				case 'varStrokeColor':
-					val = options[key];
-					this._o.varStrokeColor = val;
-					this._body.setAttribute('stroke', val);
-					break;
-				case 'radius':
-					val = Number(options[key]);
-					this._recalculteNormRadius();
-					needRebuild++;
-					break;
-				case 'varStrokeWidth':
-					val = Number(options[key]);
-					this._o.varStrokeWidth = val;
-					this._recalculteNormRadius();
-					needRebuild++;
-					break;
-				case 'varOpacity':
-					val = Number(options[key]);
-					this._body.setAttribute('stroke-opacity', val);
-					this._body.setAttribute('fill-opacity', val);
-					this._o.varOpacity = val;
-					break;
-				case 'interval':
-					val = Number(options[key]);
-					let minInterval = 500;
-					let animAddText = 'This';
-					if (this._o.isAnimate) {
-						minInterval = 3000
-						animAddText = 'In case of animation this';
-					}
-					if (val < minInterval) {
-						val = minInterval;
-						console.log(`It is not recommended to set the data update interval too short.
-						${animAddText} value was forcibly limited to ${minInterval} ms!!`);
-					}
-					this._o.interval = val;
-					break;
-				case 'isAnimate':
-					val = Number(options[key]);
-					if (val) {	// in case of animation enabled, duration of interval must be greater than 3 sec!
-						this._o.interval = (this._o.interval < 3000 ? 3000 : this._o.interval);
-						this._recalculteNormRadius();
-					}
-					this._o.isAnimate = val;
-					this._o.isAnimate ? this._body.classList.add('animated') : this._body.classList.remove('animated');
-					break;
 				case 'isRun':
-					this.run(Number(options[key]));
-					break;
-				case 'stop':
-					this.run(0);
-					break;
+				case 'interval':
 				case 'server':
-					this._o.server = options[key];
-					break;
 				case 'targets':
-					this._o.targets = options[key];
-					break;
 				case 'user':
-					this._o.user = options[key];
+					break;
+				default:
+					needRebuild++;						
 					break;
 			}
 		}
 		if (rebuild && needRebuild) {
-            this._buildBody();
-			this._buildActive(this._data);
+            this._build();
 		}
 		return needRebuild;
 	}

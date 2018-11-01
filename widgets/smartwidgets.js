@@ -119,7 +119,7 @@ class SmartWidgets {
 		});
     }
     /**
-	 * Converts known numeric property (ies) to numbers
+	 * Converts known numeric property to numbers
 	 * @param {object} optObj reference to an options object
      * @param {object} knownParams an array of properties names to be converted
 	 * @param {string} prop the property name which value needs (in case of specified) to be validated. If null, all properties will be validated.

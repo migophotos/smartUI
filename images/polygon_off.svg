@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="61px" height="58px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="popygonOff">
+        <path d="M30.434,0L37.618,22.111L60.868,22.111L42.058,35.777L49.243,57.889L30.434,44.223L11.625,57.889L18.809,35.777L0,22.111L23.249,22.111L30.434,0Z" style="fill:none;"/>
+        <clipPath id="_clip1">
+            <path d="M30.434,0L37.618,22.111L60.868,22.111L42.058,35.777L49.243,57.889L30.434,44.223L11.625,57.889L18.809,35.777L0,22.111L23.249,22.111L30.434,0Z"/>
+        </clipPath>
+        <g clip-path="url(#_clip1)">
+            <rect x="0.434" y="28.944" width="59" height="29.056" style="fill:#fff;fill-opacity:0.419686;"/>
+        </g>
+        <path d="M37.618,22.111L60.868,22.111L42.058,35.777L49.243,57.889L30.434,44.223L11.625,57.889L18.809,35.777L0,22.111L23.249,22.111L30.434,0L37.618,22.111ZM24.702,24.111L6.155,24.111L21.16,35.013L15.429,52.652L30.434,41.751L45.439,52.652L39.707,35.013L54.712,24.111L36.165,24.111L30.434,6.472L24.702,24.111Z" style="fill:#fff;"/>
+    </g>
+</svg>

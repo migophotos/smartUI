@@ -182,6 +182,7 @@
                     <smart-ui-button class="about-btn" id="thelogo" state="on" image-width="64" image-height="64" image="favicon.png"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smarttoolip_btn" targets="smarttooltip_cat,smarttooltip_opt,smarttooltip_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/tooltip_on.svg" imageOff="images/tooltip_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartTooltip"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartpie_btn" targets="smartpie_cat,smartpie_opt,smarttpie_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/pie_on.svg" imageOff="images/pie_off.svg"  data-sttip-tooltip="Настроить параметры виджета SmartPie"></smart-ui-button>
+                    <smart-ui-button class="widgets-btn" id="smartpgn_btn" targets="smartpgn_cat,smartpgn_opt,smartpgn_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/polygon_on.svg" imageOff="images/polygon_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartPolygon"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartgauge_btn" targets="smartgauge_cat,smartgauge_opt,smartgauge_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartGauge"></smart-ui-button>
             </div>
             <div class="bottom-panel">
@@ -250,6 +251,8 @@
                             <p><label id="image-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="image" data-sttip-name="Title String of text" data-sttip-descr="Description String of text" data-sttip-link="images/colorwill.png">image</label></p>
                             <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-name="Title String of text" data-sttip-descr="Description String of text" data-sttip-link="index.html">iframe</label>
                         </div>
+                        <div class="widget-example" id="smartpgn_examp" style="display: none;">
+                        </div>
                         <div class="widget-example" id="smartgauge_examp" style="display: none;">
                         </div>
                         <div class="widget-example" id="smarttpie_page" style="display: none; position: relative;">
@@ -261,14 +264,18 @@
                                     --bg--purple: #8E44AD;
                                     --bg--lightgray: lightgray;
                                 }
+
                                 .ml {
-                                    column-count: 3;
-                                    -webkit-column-count: 3;
                                     column-gap: 10px;
                                     -webkit-column-gap: 10px;
                                     position: relative;
                                     margin-top: 10px;
                                 }
+                                .pie-ml {
+                                    -webkit-column-count: 3;
+                                    column-count: 3;
+                                }
+
                                 .ml * {
                                     box-sizing: border-box;
                                 }
@@ -337,7 +344,7 @@
                                     --smartpie-is-emulate: 1;
                                     --smartpie-legend: 0;
                                 }
-                                .stpie-example-grid {
+                                .example-grid {
                                     /* display: grid; */
                                     height: 100%;
                                     grid-template-columns: 0.4fr 2.2fr 0.4fr;
@@ -345,10 +352,10 @@
                                     grid-gap: 1px 1px;
                                     grid-template-areas: ". stpie-example-descr ." ". stpie-example-cont ." ". . .";
                                     }
-                                .stpie-example-grid--shown {
+                                .example-grid--shown {
                                     display: grid;
                                 }
-                                .stpie-example-grid--hidden {
+                                .example-grid--hidden {
                                     display: none;
                                 }
                                 .stpie-example-descr { grid-area: stpie-example-descr; }
@@ -378,7 +385,7 @@
                                 }
 
                             </style>
-                            <div class="ml">
+                            <div class="ml pie-ml">
                                 <div class="ml-p">
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
@@ -441,7 +448,7 @@
                                     <div class="ml-p_content">
                                         <div class="ml-p_content-ctrl">
                                             <p>"zWatch"</p>
-                                            <smart-polygon class="pie-item" id="sample-08" start-angle="0" angles-number="23" is-star="1" inner-radius="10" is-run="1" is-emulate="1" is-tooltip="0" is-link="0"></smart-polygon>
+                                            <smart-pie class="pie-item" id="sample-09" type="zwatch" is-run="1" is-emulate="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -456,7 +463,7 @@
 
                             </div>
                             <div id="over-panel" class="over-hidden">
-                                <div id="stpie-example-grid" class="stpie-example-grid stpie-example-grid--hidden">
+                                <div id="stpie-example-grid" class="example-grid example-grid--hidden">
                                     <div class="stpie-example-descr">
                                         <p id="stpie-example-descr"></p>
                                     </div>
@@ -466,6 +473,140 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="widget-example" id="smartpgn_page" style="display: none; position: relative;">
+                            <style>
+                                .pgn-ml {
+                                    -webkit-column-count: 4;
+                                    column-count: 5;
+                                }
+
+                                .example-grid {
+                                    /* display: grid; */
+                                    height: 100%;
+                                    grid-template-columns: 0.4fr 2.2fr 0.4fr;
+                                    grid-template-rows: 0.7fr 1.6fr 0.7fr;
+                                    grid-gap: 1px 1px;
+                                    grid-template-areas: ". stpgn-example-descr ." ". stpgn-example-cont ." ". . .";
+                                    }
+                                .example-grid--shown {
+                                    display: grid;
+                                }
+                                .example-grid--hidden {
+                                    display: none;
+                                }
+                                .stpgn-example-descr { grid-area: stpgn-example-descr; }
+                                .stpgn-example-cont { grid-area: stpgn-example-cont; }
+                                .stpgn-example-descr p {
+                                    font-size: 2em;
+                                    color: rgba(0, 171, 6, 0.8);
+                                    transition: bcolor 0.6s;
+                                    margin-top: 10px;
+                                    text-align: center;
+                                }
+                                .stpgn-example-cont smart-pie {
+                                    display: inherit;
+                                    border: 2px gray solid;
+                                    cursor: default;
+
+                                }
+                            </style>
+                            <div class="ml pgn-ml">
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Polygon, 4 "</p>
+                                            <smart-polygon class="pgn-item" id="pgn-01" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" angles-number="4" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Start, 4"</p>
+                                            <smart-polygon class="pgn-item" id="pgn-02" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" var-fill-color="red" rotation="22.5" start-angle="45" angles-number="4" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Polygon, 5"</p>
+                                            <smart-polygon class="pgn-item" id="pgn-03" aligning="left" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="27" angles-number="5" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Star, 5"</p>
+                                            <smart-polygon class="pgn-item" id="pgn-04" orient="ver" aligning="up" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" var-fill-color="red" rotation="85" angles-number="5" is-star="1" inner-radius="19" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Poligon, 6"</p>
+                                            <smart-polygon class="pgn-item" id="pgn-05" orient="ver" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="75" angles-number="6" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Star, 6"</p>
+                                            <smart-polygon class="pgn-item" id="pgn-06" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="6" rotation="68" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Polygon, 8"</p>
+                                            <smart-polygon class="pgn-item" id="pgn-07" orient="ver" aligning="up" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="90" angles-number="8" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Star, 8"</p>
+                                            <smart-polygon class="pgn-item" id="pgn-08" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="8" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Polygon, 3"</p>
+                                            <smart-polygon class="pgn-item" id="pgn-09" orient="ver" aligning="up" value-rule="fill" color-rule="none" is-fill-bkg="0" is-fill-stroke="1" var-stroke-width="3" var-stroke-color="white" start-angle="0" rotation="90" angles-number="3" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="ml-p_content-ctrl">
+                                            <p>"Start, Any"</p>
+                                            <smart-polygon class="pgn-item" id="pgn-10" interval="200" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="35" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-polygon>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                            </div>
+                            <div id="over-panel" class="over-hidden">
+                                <div id="stpgn-example-grid" class="example-grid example-grid--hidden">
+                                    <div class="stpgn-example-descr">
+                                        <p id="stpgn-example-descr"></p>
+                                    </div>
+                                    <div class="stpgn-example-cont">
+                                        <smart-polygon class="stpgn-example" id="stpgn-example" radius="120" is-tooltip="0" is-link="0"></smart-polygon>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            
                     </div>
                 </div>
                 <div class="side-panel">
@@ -487,6 +628,15 @@
                         <smart-ui-button class="categories-btn" id="pie_ui_params_btn" targets="pie-ui-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как фонт, цвет, размер и т.д."></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                     </div>
+
+                    <div id="smartpgn_cat" style="display: none;">
+                        <smart-ui-button class="categories-btn" id="pgn_params_btn" targets="pgn-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры полигона, такие как количество вершин, отображение звезды, направление индикатора и др."></smart-ui-button>
+                        <smart-ui-spacer class="ver-small"></smart-ui-spacer>
+                        <smart-ui-button class="categories-btn" id="pgn_ui-params_btn" targets="pgn-ui-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как цвет, размеры и др."></smart-ui-button>
+                        <smart-ui-spacer class="ver-small"></smart-ui-spacer>
+                    </div>
+    
+
                     <div id="smartgauge_cat" style="display: none;">
                         <smart-ui-button class="categories-btn" id="gauge_params_btn" targets="gauge-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры индикатора, такие как тип, вид стрелок, количество шкал и др."></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
@@ -584,6 +734,32 @@
                                 </div>
                             </div>
                         </div>
+
+
+                        <div id="smartpgn_opt" style="display: none;">
+                            <div id="pgn-params_pan" class="overlay" style="max-height: 766px; display: none;">
+                                <h2>Основные параметры индикатора</h2>
+                                <div style="display: block;">
+                                    <smart-ui-editslider name="stpgn-param" param="delay-in" title="Delay In (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-editslider name="stpgn-param" param="delay-out" title="Delay Out (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                                </div>
+                            </div>
+                            <div id="pgn-ui-params_pan" class="overlay" style="max-height: 766px; display: none;">
+                                <h2>Параметры интерфейса индикатора</h2>
+                                <div style="display: block;">
+                                    <smart-ui-editslider name="stpgn-param" param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-editslider name="stpgn-param" param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-colorbox name="stpgn-param" param="var-frame-fill" title="Background color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
+                                    <smart-ui-colorbox name="stpgn-param" param="var-border-color" title="Border color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
+                                    <smart-ui-editslider name="stpgn-param" param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="images/gauge_off.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-editslider name="stpgn-param" param="var-border-radius" title="Border radius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-checkbox name="stpgn-param" param="is-shadow" title="Enable shadows" value="on" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                </div>
+                            </div>
+                        </div>
+    
+
+
                         <div id="smartgauge_opt" style="display: none;">
                             <div id="gauge-params_pan" class="overlay" style="max-height: 766px; display: none;">
                                 <h2>Основные параметры индикатора</h2>
@@ -729,8 +905,8 @@
 
                         over_panel.classList.remove('over-shown');
                         tmp = document.getElementById('stpie-example-grid');
-                        tmp.classList.add('stpie-example-grid--hidden');
-                        tmp.classList.remove('stpie-example-grid--shown');
+                        tmp.classList.add('example-grid--hidden');
+                        tmp.classList.remove('example-grid--shown');
                     });
 
                     // click on one pie example
@@ -748,8 +924,8 @@
                                 tmp.textContent = `Pie Type: "${selType}"`;
 
                                 tmp = document.getElementById('stpie-example-grid');
-                                tmp.classList.remove('stpie-example-grid--hidden');
-                                tmp.classList.add('stpie-example-grid--shown');
+                                tmp.classList.remove('example-grid--hidden');
+                                tmp.classList.add('example-grid--shown');
                             }
                             over_panel.classList.add('over-shown');
                         });
@@ -903,6 +1079,11 @@
                         subtree: true
                     });
                     observer.observe(document.getElementById('smartpie_opt'), {
+                        attributeFilter: [ "state", "value" ],
+                        attributeOldValue: false,
+                        subtree: true
+                    });
+                    observer.observe(document.getElementById('smartpgn_opt'), {
                         attributeFilter: [ "state", "value" ],
                         attributeOldValue: false,
                         subtree: true
