@@ -1,9 +1,17 @@
 /* eslint-disable */
 
 /**
+ * @copyright Copyright © 2018 ... All rights reserved.
+ * @author Michael Goyberg
+ * @license
+ * @version   2.0
+ 
+ * 
  * http://qaru.site/questions/45461/how-to-calculate-the-svg-path-for-an-arc-of-a-circle
  * https://codepen.io/dudleystorey/pen/LNdaZX
  * https://webformyself.com/krugovye-elementy-interfejsa-pri-pomoshhi-html5-css-js-i-svg-chast-1/
+ * 
+ * 
  *
  */
 class SmartPies {
@@ -377,13 +385,14 @@ class SmartPie {
 			varStrokeColor: 'red',
 			varStrokeWidth: 2,
 			varFillColor: 	'rgb(255, 205, 136)',
-			varOpacity: 	1
+			varOpacity: 	1,
+			varIsShadow:	1,
 		}
 	}
 	/**
 	 * Converts known numeric property (ies) to numbers
 	 * @param {object} optObj reference to an options object
-	 * @param {string} prop the property name which value needs (in case of it known) to be validated. If null, all properties will be validated.
+	 * @param {string} prop the property name which value needs (in case of specified) to be validated. If null, all properties will be validated.
 	 */
 	static convertNumericProps(optObj = {}, prop = null) {
 		if (typeof optObj !== 'object') {
@@ -406,6 +415,7 @@ class SmartPie {
 			'isRun',
 			'isTooltip',
 			'interval',
+			'varIsShadow',
 			'varStrokeWidth',
 			'varOpacity'
 		];
@@ -1689,13 +1699,6 @@ class SmartPieElement extends HTMLElement {
 		// create SmartPies collection only once!
 		SmartPies.initSmartPies();
 
-        // overwrite by external styles!
-        // this._o.isLegend = Number(getComputedStyle(this).getPropertyValue('--smartpie-is-legend').trimLeft());
-
-		// for (let attr of this.attributes) {
-		// 	this._o[attr.name] = attr.value;
-        // }
-		// this._o.mode = options.mode;
 		const txtStyle = `
 			:host {
 				all: initial;	/* 1st rule so subsequent properties are reset. */
@@ -1805,39 +1808,3 @@ class SmartPieElement extends HTMLElement {
 
 }
 window.customElements.define('smart-pie', SmartPieElement);
-
-class Poligons {
-	/**
-	 * Draw poligon
-	 */
-	poligon(c, n, x, y, r, angel, counterclockwise) {
-		angle = ange || 0;
-		counterclockwise = counterclockwise || 0;
-		c.moveTo(x + r * Math.sin(angle), y - r * Math.cos(angle));
-		let delta = 2 * Math.PI / n;
-		for (let i = 1; i < n; i++) {
-			angle += counterclockwise ? -delta : delta; // correct an angle
-			c.lineTo(x + r * Math.sin(angel), y - Math.cos(angel));
-		}
-		c.closePath();
-	}
-	draw(id) {
-		const canvas = document.getElementById(id);
-		const c = canvas.msGetInputContext('2d');
-		// create new contur
-		c.beginPath();
-		poligon(c, 3, 50, 70, 50);
-		poligon(c, 4, 150, 60, Math.PI / 4);
-		poligon(c, 5, 255, 55, 50);
-		poligon(c, 6, 365, 53, 50, Math.PI / 6);
-		poligon(c, 4, 365, 53, 20, Math.PI / 4, true);
-
-		c.fillStyle = '#ccc';
-		c.strokeStyle = '#008';
-		c.lineWidth = 5;
-
-		c.fill();
-		c.stroke();
-		'https://online.flippingbook.com/view/302153/676/'
-	}
-}
