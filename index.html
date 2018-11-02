@@ -271,7 +271,7 @@
                                     position: relative;
                                     margin-top: 10px;
                                 }
-                                .pie-ml {
+                                .stpie-ml {
                                     -webkit-column-count: 3;
                                     column-count: 3;
                                 }
@@ -327,7 +327,7 @@
                                 }
 
 
-                                .ml-p_content-ctrl {
+                                .stpie-ml-p_content-ctrl {
                                     cursor: pointer;
                                 }
 
@@ -344,14 +344,14 @@
                                     --smartpie-is-emulate: 1;
                                     --smartpie-legend: 0;
                                 }
-                                .example-grid {
+                                .stpie-example-grid {
                                     /* display: grid; */
                                     height: 100%;
                                     grid-template-columns: 0.4fr 2.2fr 0.4fr;
                                     grid-template-rows: 0.7fr 1.6fr 0.7fr;
                                     grid-gap: 1px 1px;
                                     grid-template-areas: ". stpie-example-descr ." ". stpie-example-cont ." ". . .";
-                                    }
+                                }
                                 .example-grid--shown {
                                     display: grid;
                                 }
@@ -385,10 +385,10 @@
                                 }
 
                             </style>
-                            <div class="ml pie-ml">
+                            <div class="ml stpie-ml">
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpie-ml-p_content-ctrl">
                                             <p>"Relative"</p>
                                             <smart-pie class="pie-item" id="sample-01" type="rel" rotation="180" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
@@ -396,7 +396,7 @@
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpie-ml-p_content-ctrl">
                                             <p>"Flat"</p>
                                             <smart-pie class="pie-item" id="sample-02" type="1.0" is-emulate="0" rotation="180" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
@@ -404,7 +404,7 @@
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpie-ml-p_content-ctrl">
                                             <p>"Auto, One child"</p>
                                             <smart-pie class="pie-item" id="sample-03" type="1.1" is-emulate="1" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
@@ -413,7 +413,7 @@
 
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpie-ml-p_content-ctrl">
                                             <p>"Auto, Two children"</p>
                                             <smart-pie class="pie-item" id="sample-04" type="1.2" is-emulate="1" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
@@ -421,7 +421,7 @@
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpie-ml-p_content-ctrl">
                                             <p>"Auto, Three children"</p>
                                             <smart-pie class="pie-item" id="sample-05" type="1.3" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
@@ -429,7 +429,7 @@
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpie-ml-p_content-ctrl">
                                             <p>"Auto, Four Children"</p>
                                             <smart-pie class="pie-item" id="sample-06" type="1.4" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
@@ -438,7 +438,7 @@
 
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpie-ml-p_content-ctrl">
                                             <p>"Flat Segment"</p>
                                             <smart-pie class="pie-item" id="sample-07" type="1.0" is-run="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
@@ -446,7 +446,7 @@
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpie-ml-p_content-ctrl">
                                             <p>"zWatch"</p>
                                             <smart-pie class="pie-item" id="sample-09" type="zwatch" is-run="1" is-emulate="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
@@ -454,7 +454,7 @@
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpie-ml-p_content-ctrl">
                                             <p>"Donut"</p>
                                             <smart-pie class="pie-item" id="sample-09" type="donut" is-run="1" is-emulate="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
@@ -462,8 +462,8 @@
                                 </div>
 
                             </div>
-                            <div id="over-panel" class="over-hidden">
-                                <div id="stpie-example-grid" class="example-grid example-grid--hidden">
+                            <div id="stpie-over-panel" class="over-hidden">
+                                <div id="stpie-example-grid" class="stpie-example-grid example-grid--hidden">
                                     <div class="stpie-example-descr">
                                         <p id="stpie-example-descr"></p>
                                     </div>
@@ -479,8 +479,10 @@
                                     -webkit-column-count: 4;
                                     column-count: 5;
                                 }
-
-                                .example-grid {
+                                .stpgn-ml-p_content-ctrl {
+                                    cursor: pointer;
+                                }
+                                .stpgn-example-grid {
                                     /* display: grid; */
                                     height: 100%;
                                     grid-template-columns: 0.4fr 2.2fr 0.4fr;
@@ -513,7 +515,7 @@
                             <div class="ml pgn-ml">
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Polygon, 4 "</p>
                                             <smart-polygon class="pgn-item" id="pgn-01" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" angles-number="4" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
@@ -521,15 +523,15 @@
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Start, 4"</p>
-                                            <smart-polygon class="pgn-item" id="pgn-02" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" var-fill-color="red" rotation="22.5" start-angle="45" angles-number="4" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-polygon>
+                                            <smart-polygon class="pgn-item" id="pgn-02" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" var-fill-color="red" rotation="22.5" start-angle="45" angles-number="4" is-star="1" inner-radius="30" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Polygon, 5"</p>
                                             <smart-polygon class="pgn-item" id="pgn-03" aligning="left" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="27" angles-number="5" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
@@ -538,15 +540,15 @@
 
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Star, 5"</p>
-                                            <smart-polygon class="pgn-item" id="pgn-04" orient="ver" aligning="up" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" var-fill-color="red" rotation="85" angles-number="5" is-star="1" inner-radius="19" is-tooltip="0" is-link="0"></smart-polygon>
+                                            <smart-polygon class="pgn-item" id="pgn-04" orient="ver" aligning="up" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" var-fill-color="red" rotation="85" angles-number="5" is-star="1" inner-radius="50" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Poligon, 6"</p>
                                             <smart-polygon class="pgn-item" id="pgn-05" orient="ver" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="75" angles-number="6" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
@@ -554,16 +556,16 @@
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Star, 6"</p>
-                                            <smart-polygon class="pgn-item" id="pgn-06" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="6" rotation="68" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-polygon>
+                                            <smart-polygon class="pgn-item" id="pgn-06" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="6" rotation="68" is-star="1" inner-radius="70" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Polygon, 8"</p>
                                             <smart-polygon class="pgn-item" id="pgn-07" orient="ver" aligning="up" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="90" angles-number="8" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
@@ -571,23 +573,23 @@
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Star, 8"</p>
-                                            <smart-polygon class="pgn-item" id="pgn-08" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="8" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-polygon>
+                                            <smart-polygon class="pgn-item" id="pgn-08" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="8" is-star="1" inner-radius="50" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Polygon, 3"</p>
-                                            <smart-polygon class="pgn-item" id="pgn-09" orient="ver" aligning="up" value-rule="fill" color-rule="none" is-fill-bkg="0" is-fill-stroke="1" var-stroke-width="3" var-stroke-color="white" start-angle="0" rotation="90" angles-number="3" is-tooltip="0" is-link="0"></smart-polygon>
+                                            <smart-polygon class="pgn-item" id="pgn-09" orient="ver" aligning="up" value-rule="fill" color-rule="fill" is-fill-bkg="0" is-fill-stroke="1" var-stroke-width="5" var-stroke-color="black" var-opacity="0.3" start-angle="0" rotation="0" angles-number="3" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="ml-p">
                                     <div class="ml-p_content">
-                                        <div class="ml-p_content-ctrl">
+                                        <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Start, Any"</p>
                                             <smart-polygon class="pgn-item" id="pgn-10" interval="200" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="35" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
@@ -595,12 +597,12 @@
                                 </div>
     
                             </div>
-                            <div id="over-panel" class="over-hidden">
-                                <div id="stpgn-example-grid" class="example-grid example-grid--hidden">
+                            <div id="stpgn-over-panel" class="over-hidden">
+                                <div id="stpgn-example-grid" class="stpgn-example-grid example-grid--hidden">
                                     <div class="stpgn-example-descr">
                                         <p id="stpgn-example-descr"></p>
                                     </div>
-                                    <div class="stpgn-example-cont">
+                                    <div class="stpgn-example-cont no-legend">
                                         <smart-polygon class="stpgn-example" id="stpgn-example" radius="120" is-tooltip="0" is-link="0"></smart-polygon>
                                     </div>
                                 </div>
@@ -895,22 +897,21 @@
                     for (let el of els) {
                         el.textContent = _(el.textContent);
                     }
-
-                    const over_panel = document.getElementById('over-panel');
-                    over_panel.addEventListener('click', (evt) => {
+                    // stpie example panel processing
+                    const stpie_over_panel = document.getElementById('stpie-over-panel');
+                    stpie_over_panel.addEventListener('click', (evt) => {
                         evt.preventDefault();
                         if (evt.target.id == 'stpie-example') {
                             return;
                         }
 
-                        over_panel.classList.remove('over-shown');
+                        stpie_over_panel.classList.remove('over-shown');
                         tmp = document.getElementById('stpie-example-grid');
                         tmp.classList.add('example-grid--hidden');
                         tmp.classList.remove('example-grid--shown');
                     });
-
                     // click on one pie example
-                    els = document.getElementsByClassName('ml-p_content-ctrl');
+                    els = document.getElementsByClassName('stpie-ml-p_content-ctrl');
                     for (let el of els) {
                         el.addEventListener('click', (evt) => {
                             evt.preventDefault();
@@ -927,10 +928,55 @@
                                 tmp.classList.remove('example-grid--hidden');
                                 tmp.classList.add('example-grid--shown');
                             }
-                            over_panel.classList.add('over-shown');
+                            stpie_over_panel.classList.add('over-shown');
                         });
                     }
 
+                    // stpgn example panel processing
+                    const stpgn_over_panel = document.getElementById('stpgn-over-panel');
+                    stpgn_over_panel.addEventListener('click', (evt) => {
+                        evt.preventDefault();
+                        if (evt.target.id == 'stpie-example') {
+                            return;
+                        }
+
+                        stpgn_over_panel.classList.remove('over-shown');
+                        tmp = document.getElementById('stpgn-example-grid');
+                        tmp.classList.add('example-grid--hidden');
+                        tmp.classList.remove('example-grid--shown');
+                    });
+
+                    // click on one polygon example
+                    els = document.getElementsByClassName('stpgn-ml-p_content-ctrl');
+                    for (let el of els) {
+                        el.addEventListener('click', (evt) => {
+                            evt.preventDefault();
+                            sel = evt.currentTarget.querySelector('smart-polygon');
+                            if (sel) {
+                                
+                                const dirtyParams = sel.getCtrl().getParams('dirty');
+                                let   allParams = SmartPolygon.defOptions();
+                                allParams = Object.assign({}, allParams, dirtyParams); 
+                                // remove radius and interval, is-tooltip
+                                delete allParams.radius;
+                                delete allParams.interval;
+                                allParams.isTooltip = '1';
+
+                                tmp = document.getElementById('stpgn-example');
+                                tmp.getCtrl().setParams(allParams, true);
+
+                                tmp = document.getElementById('stpgn-example-descr');
+                                tmp.textContent = `${allParams.isStar ? 'Star' : 'Polygon'}`;
+
+                                tmp = document.getElementById('stpgn-example-grid');
+                                tmp.classList.remove('example-grid--hidden');
+                                tmp.classList.add('example-grid--shown');
+                            }
+                            stpgn_over_panel.classList.add('over-shown');
+                        });
+                    }
+                    
+                    
                     // translate title attributes in-place
                     // file vocabulary.js has function _(str) and returns translated text or original if translation is not found
                     // set value from options into apropriated elements on UI panels

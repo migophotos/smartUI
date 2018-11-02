@@ -51,7 +51,7 @@ class SmartPolygon {
 			'radius',			// This parameter sets the radius of inscribed circle. It should not be more than half the
 								// height or width of the widget. During initialization or installation of parameters,
                                 // all disputed parameters are checked and corrected automatically. Default is 50
-            'inner-radius',     // radius for stars
+            'inner-radius',     // radius for stars in percents from radius
 			'width',			// The width of the widget. The value of the “radius” parameter will be corrected if it
 								// exceeds half the value of this parameter, or the parameter “height” if its value is less than this parameter.
 			'height',			// The height of the widget. The value of the “radius” parameter will be corrected if it exceeds half the value
@@ -101,7 +101,7 @@ class SmartPolygon {
 			radius: 50,			// This parameter sets the radius of inscribed circle. It should not be more than half the
 								// height or width of the widget. During initialization or installation of parameters,
                                 // all disputed parameters are checked and corrected automatically. Default is 50
-            innerRadius: 0,     // inner radius for starts
+            innerRadius: 0,     // inner radius for starts in percents
 			width: 0,			// The width of the widget. The value of the “radius” parameter will be corrected if it
 								// exceeds half the value of this parameter, or the parameter “height” if its value is less than this parameter.
 			height: 0,			// The height of the widget. The value of the “radius” parameter will be corrected if it exceeds half the value
@@ -167,8 +167,9 @@ class SmartPolygon {
 	 * params = {
 	 * 	firstSecondThird: options.firstSecondThird
 	 * } will be returned
+	 * in case filter equals 'dirty' returns only changed (dirty) parameters
 	 */
-	static getCustomParams(options = null) {
+	static getCustomParams(options = null, filter = 'all') {
 		const props = SmartPolygon.getCustomProperties();		// get an array of custom properties
 		const paramsArray = [];
 		for (let prop of props) {
@@ -178,9 +179,13 @@ class SmartPolygon {
 			return paramsArray;
 		}
 		const params = {};
+		const original = SmartPolygon.defOptions();
 		for (let prop of paramsArray) {
 			if (typeof options[prop] !== 'undefined') {
-				params[prop] = options[prop];
+				if (filter === 'all' || 
+					(filter === 'dirty' && options[prop] !== original[prop])) {
+					params[prop] = options[prop]; 
+				}
 			}
 		}
 		return params;
@@ -350,6 +355,13 @@ class SmartPolygon {
 				stroke: 'gray',
 				fill: 'none'
 			}, this._boundary, this._svgdoc);
+			SmartWidgets.addElement('circle', {
+				cx: centerPt.x,
+				cy: centerPt.y,
+				r: this._normRadius,
+				stroke: 'gray',
+				fill: 'none'
+			}, this._boundary, this._svgdoc);
 			SmartWidgets.addElement('line', {
 				x1: this._o.rect.x,
 				y1: this._o.rect.y,
@@ -412,21 +424,23 @@ class SmartPolygon {
      * @param {number} angle Starting Angle in degrees
      * @param {number} rotate rotate start angle
      * @param {number} counterclockwise 
-     * @param {number} star Inner radius for star 
+     * @param {number} star Inner radius for star in percents to r
      */
 	_buildPolygon(n, x, y, r, angle, rotate, counterclockwise, star) {
         counterclockwise = counterclockwise || 0;
-        star = star || 0;
+		star = star || 0;
+		
         angle = angle || 0;
         if (star) {
             angle /= 2;
             n *= 2;
         }
-        angle = (angle + rotate) * Math.PI / 180;  // convert degrees to radians
+		angle = (angle + rotate) * Math.PI / 180;  // convert degrees to radians
+		const innerRadius = r / 100 * star;
         let i = 0;
         let points;
         if (star) {
-            points = `${x + star * Math.sin(angle)},${y - star * Math.cos(angle)}`;
+            points = `${x + innerRadius * Math.sin(angle)},${y - innerRadius * Math.cos(angle)}`;
         } else {
             points = `${x + r * Math.sin(angle)},${y - r * Math.cos(angle)}`;
         }
@@ -438,7 +452,7 @@ class SmartPolygon {
                 if (i % 2) {
                     points += ` ${x + r * Math.sin(angle)},${y - r * Math.cos(angle)}`;
                 } else {
-                    points += ` ${x + star * Math.sin(angle)},${y - star * Math.cos(angle)}`;
+                    points += ` ${x + innerRadius * Math.sin(angle)},${y - innerRadius * Math.cos(angle)}`;
                 }
             } else {
                 points += ` ${x + r * Math.sin(angle)},${y - r * Math.cos(angle)}`;
@@ -505,8 +519,8 @@ class SmartPolygon {
 			this._o.rect = {
 				x: 0,
 				y: 0,
-				width:  this._o.isLegend ? this._o.radius *2 + 220 : this._o.radius * 2,
-				height: this._o.isLegend ? this._o.radius * 2 + 50 : this._o.radius * 2
+				width:  this._o.radius * 2,
+				height: this._o.radius * 2
 			};
 		}
 		this._inited = true;
@@ -620,10 +634,6 @@ class SmartPolygon {
 		const value = Math.abs(Math.floor(Math.random() * (100 + 1)) + 0);
 		const color = value < 30 ? 'blue' : (value < 50 ? 'green' : (value < 70 ? 'yellow' : 'red'));
 		var dataEx = {
-			"opt": {
-				"lcolor": "red",
-				"width": "3"
-			},
 			"targets": [
 				{
 					"uuid": "uuid_ex_Target1",
@@ -641,8 +651,8 @@ class SmartPolygon {
 		}
 		return dataEx;
 	}
-	getParams() {
-		return SmartPolygon.getCustomParams(this._o);
+	getParams(filter = 'all') {
+		return SmartPolygon.getCustomParams(this._o, filter);	// 'dirty' means: get only changed parameters
 	}
 	setParam(name, value) {
 		const opt = {};
@@ -656,6 +666,9 @@ class SmartPolygon {
 	}
 	setParams(options={}, rebuild=true) {
 		let val, needRebuild = false;
+		if(!options) {
+			return false;
+		}
 		// convert all known properties to numbers
 		SmartPolygon.convertNumericProps(options);
 		this._o = Object.assign({}, this._o, options);
