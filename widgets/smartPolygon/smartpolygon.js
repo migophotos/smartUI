@@ -65,7 +65,7 @@ class SmartPolygon {
 			'is-animate',		// Allows to animate the moment of receiving the data array.
 			'is-link',			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			'is-tooltip',		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
-			'is-emulate',		// Allows automatic emulation of the process of receiving an array of data.
+			'is-emulate',		// Allows automatic emulation of the process of data receiving.
 			'is-run',			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “provider”, “user”
 			'interval',			// Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)
@@ -87,7 +87,7 @@ class SmartPolygon {
 			'is-fill-stroke',   // Enables draw colored stroke around of polygon. Default is 0
 			'var-stroke-color',
 			'var-fill-color',
-			'var-is-shadow',	// Allows shadow for widget, legend and tooltip
+			'var-is-shadow',	// Allows shadow for widget and tooltip
             'var-stroke-width',	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			'var-opacity'		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
         ];
@@ -96,12 +96,12 @@ class SmartPolygon {
         return {
             orient: 'hor',      // Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',  // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
-            rotation: 0,      // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
-            startAngle: 45,     // Degrees. Default is 45
+            rotation: 0,        // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
+            startAngle: 0 ,     // Degrees. Default is 45
 			radius: 50,			// This parameter sets the radius of inscribed circle. It should not be more than half the
 								// height or width of the widget. During initialization or installation of parameters,
                                 // all disputed parameters are checked and corrected automatically. Default is 50
-            innerRadius: 0,     // inner radius for starts in percents
+            innerRadius: 50,    // inner radius for starts in percents
 			width: 0,			// The width of the widget. The value of the “radius” parameter will be corrected if it
 								// exceeds half the value of this parameter, or the parameter “height” if its value is less than this parameter.
 			height: 0,			// The height of the widget. The value of the “radius” parameter will be corrected if it exceeds half the value
@@ -115,7 +115,7 @@ class SmartPolygon {
 			isAnimate: 0,		// Allows to animate the moment of receiving the data array.
 			isLink: 1,			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			isTooltip: 1,		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
-			isEmulate: 1,		// Allows automatic emulation of the process of data receiving.
+			isEmulate: 0,		// Allows automatic emulation of the process of data receiving.
 			isRun: 1,			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “provider”, “user”
 			interval: 2000,     // Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)

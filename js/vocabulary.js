@@ -13,6 +13,8 @@ const vocEn = [
     ["Задержка показа на выходе", "Delay Out"],
     ["Время показа", "Delay On"],
     ["Непрозрачность", "Opacity"],
+    ["Цвет фона", "Background Color"],
+    ["Цвет обводки", "Stroke Color"],
     ["Цвет фона окна подсказки", "Tooltip Window Background Color"],
     ["Цвет обводки окна подсказки", "Tooltip Window Border Color"],
     ["Толщина обводки", "Border Width"],

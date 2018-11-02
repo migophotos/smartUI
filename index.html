@@ -448,7 +448,7 @@
                                     <div class="ml-p_content">
                                         <div class="stpie-ml-p_content-ctrl">
                                             <p>"zWatch"</p>
-                                            <smart-pie class="pie-item" id="sample-09" type="zwatch" is-run="1" is-emulate="1" is-tooltip="0" is-link="0"></smart-pie>
+                                            <smart-pie class="pie-item" id="sample-08" type="zwatch" is-run="1" is-emulate="1" is-tooltip="0" is-link="0"></smart-pie>
                                         </div>
                                     </div>
                                 </div>
@@ -525,7 +525,7 @@
                                     <div class="ml-p_content">
                                         <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Start, 4"</p>
-                                            <smart-polygon class="pgn-item" id="pgn-02" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" var-fill-color="red" rotation="22.5" start-angle="45" angles-number="4" is-star="1" inner-radius="30" is-tooltip="0" is-link="0"></smart-polygon>
+                                            <smart-polygon class="pgn-item" id="pgn-02" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" angles-number="4" is-star="1" inner-radius="30" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
                                     </div>
                                 </div>
@@ -542,7 +542,7 @@
                                     <div class="ml-p_content">
                                         <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Star, 5"</p>
-                                            <smart-polygon class="pgn-item" id="pgn-04" orient="ver" aligning="up" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" var-fill-color="red" rotation="85" angles-number="5" is-star="1" inner-radius="50" is-tooltip="0" is-link="0"></smart-polygon>
+                                            <smart-polygon class="pgn-item" id="pgn-04" orient="ver" aligning="up" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" rotation="85" angles-number="5" is-star="1" inner-radius="50" is-tooltip="0" is-link="0"></smart-polygon>
                                         </div>
                                     </div>
                                 </div>
@@ -740,22 +740,34 @@
 
                         <div id="smartpgn_opt" style="display: none;">
                             <div id="pgn-params_pan" class="overlay" style="max-height: 766px; display: none;">
-                                <h2>Основные параметры индикатора</h2>
+                                <h2>Основные параметры</h2>
                                 <div style="display: block;">
-                                    <smart-ui-editslider name="stpgn-param" param="delay-in" title="Delay In (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                                    <smart-ui-editslider name="stpgn-param" param="delay-out" title="Delay Out (250 - 1000 ms)" value="250" units="ms" min="250" max="1000" step="50" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-selector name="stpgn-param" param="orient" title="Ориентация оси значение" value="" valueList="hor,ver" labelList="Горизонтально,Вертикально" image="images/align_text_off.svg"></smart-ui-selector>
+                                    <smart-ui-selector name="stpgn-param" param="aligning" title="Направление максимума" value="" valueList="left,up,right,down" labelList="Влево,Вверх,Вправо,Вниз" image="images/align_text_off.svg"></smart-ui-selector>
+                                    <smart-ui-editslider name="stpgn-param" param="rotation" title="Угол поворота полигона" value="1" units="" min="0" max="359" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-editslider name="stpgn-param" param="angles-number" title="Количество вершин полигона" value="1" units="" min="3" max="128" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-selector name="stpgn-param" param="is-star" title="Вид полигона" value="" valueList="1,0" labelList="Звезда,Полигон" image="images/align_text_off.svg"></smart-ui-selector>
+                                    <smart-ui-editslider name="stpgn-param" param="inner-radius" title="Внутренний размер звезды" value="1" units="%" min="1" max="99" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-checkbox name="stpgn-param" param="is-run" title="Разрешить самостоятельный опрос" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-editslider name="stpgn-param" param="interval" title="Интервал опроса" value="1" units="ms" min="1000" max="60000" step="500" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-checkbox name="stpgn-param" param="is-tooltip" title="Разрешить отображение подсказки" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-selector name="stpgn-param" param="position" title="Расположение окна подсказки" value=""
+                                    valuelist="none,ru,rt,rd,lu,lt,ld,cu,cd"
+                                    labellist="Рядом с курсором,Справа Выше,Справа По верху,Справа Ниже,Слева Выше,Слева По верху,Слева Ниже,По центру Выше,По центру Ниже" image="images/position_off.svg"></smart-ui-selector>
                                 </div>
                             </div>
                             <div id="pgn-ui-params_pan" class="overlay" style="max-height: 766px; display: none;">
-                                <h2>Параметры интерфейса индикатора</h2>
+                                <h2>Параметры интерфейса</h2>
                                 <div style="display: block;">
-                                    <smart-ui-editslider name="stpgn-param" param="frame-scale-factor" title="Frame Scale Factor (0.5 - 1)" value="0.8" units="" min="0.5" max="1" step="0.1" image="images/scale-factor.svg">edit control with slider</smart-ui-editslider>
-                                    <smart-ui-editslider name="stpgn-param" param="var-frame-opacity" title="Opacity (0 - 1)" value="0.9" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
-                                    <smart-ui-colorbox name="stpgn-param" param="var-frame-fill" title="Background color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                                    <smart-ui-colorbox name="stpgn-param" param="var-border-color" title="Border color" value="#000000" image="images/color_wheel.png">color selector</smart-ui-colorbox>
-                                    <smart-ui-editslider name="stpgn-param" param="var-border-width" title="Border wide (0 - 10)" value="2" units="" min="0" max="10" step="0.5" image="images/gauge_off.svg">edit control with slider</smart-ui-editslider>
-                                    <smart-ui-editslider name="stpgn-param" param="var-border-radius" title="Border radius (0 - 20 px)" value="10" units="px" min="0" max="20" step="1" image="images/image_width.svg">edit control with slider</smart-ui-editslider>
-                                    <smart-ui-checkbox name="stpgn-param" param="is-shadow" title="Enable shadows" value="on" image="images/gauge_on.svg" iw="52" ih="18" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-selector name="stpgn-param" param="value-rule" title="Где отображать значение сигнала" value="" valueList="fill,stroke,both,none" labelList="На фоне,На обводке,На фоне и на обводке,Нигде" image="images/align_text_off.svg"></smart-ui-selector>
+                                    <smart-ui-selector name="stpgn-param" param="color-rule" title="Где отображать цвет сигнала" value="" valueList="fill,stroke,none" labelList="На фоне,На обводке,Нигде" image="images/align_text_off.svg"></smart-ui-selector>
+                                    <smart-ui-checkbox name="stpgn-param" param="is-fill-bkg" title="Закрашивать фон" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-colorbox name="stpgn-param" param="var-fill-color" title="Цвет фона" value="white" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
+                                    <smart-ui-checkbox name="stpgn-param" param="is-fill-stroke" title="Закрашивать обводку" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-colorbox name="stpgn-param" param="var-stroke-color" title="Цвет обводки" value="black" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
+                                    <smart-ui-editslider name="stpgn-param" param="var-opacity" title="Непрозрачность" value="1" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-editslider name="stpgn-param" param="var-stroke-width" title="Толщина обводки" value="1" units="" min="0" max="10" step="0.5" image="images/border_width_off.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-checkbox name="stpgn-param" param="var-is-shadow" title="Отбрасывать тень" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                 </div>
                             </div>
                         </div>
@@ -787,6 +799,7 @@
                 </div>
             </div>
         </div>
+        <script src="js/w3color.js"></script>
         <script src="widgets/smartwidgets.js"></script>
         <script src="js/smartUI.js"></script>
         <script src="widgets/smartTooltip/smarttooltip.js"></script>
@@ -883,6 +896,22 @@
                     //     });
                     // }
 
+                    // update UI panels parameters
+                    // set values from options into apropriated elements of UI panels
+                    // for example famName='stpgn-param' is a name attribute of all elements on 'smartpgn_opt' panels
+                    // sourceId='stpgn-example'
+                    function updateUIPanels(famName, sourceId) {
+                        const srcElem = document.getElementById(sourceId);
+                        const allParams = srcElem.getCtrl().getParams('all');                        
+                        els = document.getElementsByName(famName);
+                        for (let el of els) {
+                            const optionNameAttr = el.attributes['param'].value;
+                            let optionName = SmartWidgets.customProp2Param(optionNameAttr);
+                            let optionValue = allParams[optionName]
+                            el.setAttribute('value', `${optionValue}`);
+                        }
+                    }
+
                     let el, els, allBtns, tmp, sel;
                     els = document.getElementsByClassName("widgets-btn");
                     for (let el of els) {
@@ -961,9 +990,11 @@
                                 delete allParams.radius;
                                 delete allParams.interval;
                                 allParams.isTooltip = '1';
+                                allParams.isEmulate = '1';
 
                                 tmp = document.getElementById('stpgn-example');
                                 tmp.getCtrl().setParams(allParams, true);
+                                updateUIPanels('stpgn-param', 'stpgn-example');
 
                                 tmp = document.getElementById('stpgn-example-descr');
                                 tmp.textContent = `${allParams.isStar ? 'Star' : 'Polygon'}`;
@@ -993,6 +1024,12 @@
                             optionValue = demoTooltipEl._o[optionName];
                         }
                         el.setAttribute('value', `${optionValue}`);
+                    }
+                    // translate title attributes in-place
+                    // 'stpgn-param' is a name attribute of all elements on 'smartpgn_opt' panels
+                    els = document.getElementsByName('stpgn-param');
+                    for (let el of els) {
+                        el.attributes.title.textContent = _(el.attributes.title.value);
                     }
 
                     // switch targets after clicks on selector buttons

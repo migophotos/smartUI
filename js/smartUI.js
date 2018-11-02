@@ -39,8 +39,7 @@ class utils {
 			}
         }
         return (count > 0);
-	}
-
+    }
 }
 
 /**
@@ -1185,7 +1184,8 @@ class SmartUiColorBox extends HTMLElement {
 
         switch (name) {
             case 'value': {
-                this._o.value = newValue;
+                const c = w3color(newValue);
+                this._o.value = c.valid ? c.toHexString() : '#000000';
                 this._input.value = `${this._o.value} `;
                 this._colorBox.value = this._o.value;
                 break;
