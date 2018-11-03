@@ -1095,7 +1095,7 @@ class CustomProperties {
      * }
 	 * varsOnly = false;
      * output: {
-     * 		sttip-var-param-key: value,		// custom property is param-key
+     * 		sttip-param-key: value,		// custom property is param-key
      * 		sttip-var-param-key: value,		// custom property is var-param-key
      * }
      *

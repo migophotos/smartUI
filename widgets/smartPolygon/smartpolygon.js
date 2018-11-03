@@ -37,6 +37,158 @@ class SmartPolygons extends SmartWidgets {
 
 class SmartPolygon {
 	/**
+	 * converts JSON representation of options into the options parameters object siutable for show() call
+	 */
+	static JsonToOptions(jsonOpt) {
+		const options = {
+		};
+		if (typeof jsonOpt === 'string' && jsonOpt.length) {
+			const tmpOpt = JSON.parse(jsonOpt);
+			for (let key in tmpOpt) {
+				const paramName = key.replace('--stpgn-', '');
+				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
+			}
+			this.convertNumericProps(options);
+			return options;
+		}
+		return null;
+	}
+
+    /**
+     * build and returns an options object siutable for 'show()' function
+	 *
+	 * input: {
+	 * 	paramKey: value,	// custom prop is param-key
+	 *  paramKey: value		// custorm property is var-param-key
+	 * }
+	 * what = 'options';
+     * output: {
+     *  paramKey: value,	// custom prop is param-key
+     *  varParamKey: value,	// custom property is var-param-key
+     * }
+	 * what = 'any';
+     * output: {
+     *   stpgn-param-key: value,		// custom property is param-key
+     *   stpgn-var-param-key: value,	// custom property is var-param-key
+     * }
+     *
+     * @param {object} opt options object to be converted
+	 * @param {boolean} what the flag that enables (if it has any string exclude 'options' to convert all properties to css vars (used in web-components)
+     * @returns {object} options in form siutable for using
+     *
+     */
+    static buidOptionsAndCssVars(opt, what = 'options') {
+		const options = {
+		};
+
+		// convert properties started with 'var-' to css values
+		const customProp = SmartPolygon.getCustomProperties();
+		for (let n = 0; n < customProp.length; n++) {
+			if (what != 'options') {
+				let cssKey = `--stpgn-${customProp[n]}`;
+				let oKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
+				let cssVal = opt[oKey];
+				if (typeof cssVal !== 'undefined') {
+					cssVal = cssVal.toString();
+					options[`${cssKey}`] = cssVal;
+				}
+			} else {
+				const propKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
+				let propVal = opt[propKey];
+				if (typeof propVal !== 'undefined') {
+					options[propKey] = propVal;
+				}
+			}
+		}
+		return options;
+	}
+
+	/**
+	 * Build text representation of changed options for specific templates
+	 * @param {object} opt Options
+	 * @param {string} templateId Specific template name.
+	 * The one from next: 'def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'
+	 */
+    static serializeOptions(opt, templateId) {
+		let template = '', className;
+		let dtO = null;
+		//disable emulation (this.option only for builder!)
+		if (typeof opt.isEmulate !== 'undefined') {
+			delete opt.isEmulate;
+		}
+		// enable link
+		if (typeof opt.isLink !== 'undefined') {
+			delete opt.isLink;
+		}
+		
+		className = `${opt.isStar ? 'star' : 'polygon'}-${opt.anglesNumber}`;
+		switch (templateId) {
+			case 'def-custom-elem_btn':
+				// convert all options into css vars
+				dtO = this.buidOptionsAndCssVars(opt, 'css');
+
+                template = '&lt;style>\n';
+                template += `  .${className} {\n`;
+                // template += `    `
+                for (let key in dtO) {
+                    template += `    ${key}:${dtO[key]};\n`;
+                }
+                template += '  }\n';
+                template += '&lt;/style>\n';
+				template += `'&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">Yout browser does not support custom elements.&lt/smart-ui-polygon>\n'`;
+                break;
+			case 'def-json_btn': {
+				dtO = this.buidOptionsAndCssVars(opt);
+				const jstr = `'${JSON.stringify(dtO)}'`;
+				template = `${jstr}`;
+				template += '\n\n';
+				template +=
+				`// later, use static function SmartPolygon.JsonToOptions(options); to convert JSON string
+// into 'options' object, sutable for SmartPolygon creation. For example:
+
+const el = document.getElementById("jsn");
+if (el) {
+  const opt = ${jstr};
+  const options = SmartPolygon.JsonToOptions(opt);
+  // change the radius of polygon as you want, for ex:
+  options.radius = 50;
+  // create an instanse
+  const pgn = new SmartPolygon(jsn, options);
+}
+`
+                break;
+            }
+            case 'def-object-params_btn':
+				dtO = this.buidOptionsAndCssVars(opt);
+				let optStr = '';
+				for (let key in dtO) {
+					if (typeof dtO[key] === 'string') {
+						optStr += `  ${key}: '${dtO[key]}',\n`;
+					} else {
+						optStr += `  ${key}: ${dtO[key]},\n`;
+					}
+				}
+				template +=
+				`
+const el = document.getElementById("jsn");
+if (el) {
+  const options = {
+${optStr}  };
+  // change the radius of polygon as you want, for ex:
+  options.radius = 50;
+  // create an instanse
+  const pgn = new SmartPolygon(jsn, options);
+}
+`
+				break;
+            case 'def-svg_widget_btn':
+                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+                break;
+        }
+        return template;
+	}
+
+	/**
 	 * Returns an array of custom properties. Each of the custom property has corresponding declarative attribute in form first-second == prefix-first-second
 	 * and option parameter with name "firstSecond".
 	 * for example: '--sttip-title-format' property equals to attribute 'title-format' and options.titleFormat parameter, but
@@ -106,7 +258,7 @@ class SmartPolygon {
 								// exceeds half the value of this parameter, or the parameter “height” if its value is less than this parameter.
 			height: 0,			// The height of the widget. The value of the “radius” parameter will be corrected if it exceeds half the value
                                 // of this parameter, or the parameter “width” if its value is less than this parameter.
-            anglesNumber: 4,    // The number of corners of a regular polygon. Default is 4
+            anglesNumber: 0,    // The number of corners of a regular polygon. Default is 0 and must be specified!
 			position: 'rt',     // The value describes location of tooltip window Default value is 'rt' which means right-top conner of element.
 			ttipTemplate: 'simple',// Default value for this property is 'simple, wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
@@ -123,14 +275,14 @@ class SmartPolygon {
             targets: ['answer.json'],
             user: '',
                     
-			colorRule: 'none',
+			colorRule: 'stroke',
 			valueRule: 'fill',
-			isFillBkg: 1,       // Enables fill and color the background of polygon. Default is 1
-            isFillStroke: 1,    // Enables draw stroke around of polygon. Default is 1
-            varStrokeColor: 'black',
-            varFillColor: 'rgb(255, 205, 136)',
-			varIsShadow: 1,     // Allows shadow for widget, legend and tooltip
-            varStrokeWidth: 1,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
+			isFillBkg: 0,       // Enables fill and color the background of polygon. Default is 1
+            isFillStroke: 0,    // Enables draw stroke around of polygon. Default is 1
+            varStrokeColor: '#000000',
+            varFillColor: 	'#ffcd88',
+			varIsShadow: 0,     // Allows shadow for widget, legend and tooltip
+            varStrokeWidth: 3,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			varOpacity: 1		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
         }
     }
@@ -353,6 +505,7 @@ class SmartPolygon {
 				width: this._o.rect.width,
 				height: this._o.rect.height,
 				stroke: 'gray',
+				'stroke-dasharray': '4 2',
 				fill: 'none'
 			}, this._boundary, this._svgdoc);
 			SmartWidgets.addElement('circle', {
@@ -360,6 +513,7 @@ class SmartPolygon {
 				cy: centerPt.y,
 				r: this._normRadius,
 				stroke: 'gray',
+				'stroke-dasharray': '4 2',
 				fill: 'none'
 			}, this._boundary, this._svgdoc);
 			SmartWidgets.addElement('line', {
@@ -368,6 +522,7 @@ class SmartPolygon {
 				x2: this._o.rect.x + this._o.rect.width,
 				y2: this._o.rect.y + this._o.rect.height,
 				stroke: 'gray',
+				'stroke-dasharray': '4 2'
 			}, this._boundary, this._svgdoc);
 			SmartWidgets.addElement('line', {
 				x1: this._o.rect.x + this._o.rect.width,
@@ -375,6 +530,23 @@ class SmartPolygon {
 				x2: this._o.rect.x,
 				y2: this._o.rect.y + this._o.rect.height,
 				stroke: 'gray',
+				'stroke-dasharray': '4 2'
+			}, this._boundary, this._svgdoc);
+			SmartWidgets.addElement('line', {
+				x1: this._o.rect.x + this._o.rect.width / 2,
+				y1: this._o.rect.y,
+				x2: this._o.rect.x + this._o.rect.width / 2,
+				y2: this._o.rect.y + this._o.rect.height,
+				stroke: 'gray',
+				'stroke-dasharray': '4 2'
+			}, this._boundary, this._svgdoc);
+			SmartWidgets.addElement('line', {
+				x1: this._o.rect.x,
+				y1: this._o.rect.y + this._o.rect.height / 2,
+				x2: this._o.rect.x + this._o.rect.width,
+				y2: this._o.rect.y + this._o.rect.height / 2,
+				stroke: 'gray',
+				'stroke-dasharray': '4 2'
 			}, this._boundary, this._svgdoc);
 		}
 
@@ -799,6 +971,6 @@ class SmartPolygonElement extends HTMLElement {
     }
 
 }
-window.customElements.define('smart-polygon', SmartPolygonElement);
+window.customElements.define('smart-ui-polygon', SmartPolygonElement);
 // thanks 'https://online.flippingbook.com/view/302153/676/'
 
