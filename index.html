@@ -603,7 +603,7 @@
                                         <p id="stpgn-example-descr"></p>
                                     </div>
                                     <div class="stpgn-example-cont no-legend">
-                                        <smart-ui-polygon class="stpgn-example" id="stpgn-example" radius="120" is-tooltip="0" is-link="0"></smart-ui-polygon>
+                                        <smart-ui-polygon class="stpgn-example" id="stpgn-example" radius="120" role="demoMode" is-tooltip="0" is-link="0"></smart-ui-polygon>
                                     </div>
                                 </div>
                             </div>
@@ -1000,6 +1000,7 @@
                                 delete allParams.interval;
                                 allParams.isTooltip = '1';
                                 allParams.isEmulate = '1';
+                                allParams.role = 'demoMode';
 
                                 tmp = document.getElementById('stpgn-example');
                                 tmp.getCtrl().setParams(allParams, true);

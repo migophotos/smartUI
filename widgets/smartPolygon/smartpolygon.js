@@ -196,6 +196,7 @@ ${optStr}  };
 	 */
 	static getCustomProperties() {
 		return [
+			'role',			    // in demo mode this parameter has value 'demoMode' 
             'orient',           // Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             'aligning',         // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
             'rotation',         // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
@@ -212,11 +213,13 @@ ${optStr}  };
 			'position',			// The value describes location of tooltip or legend window Default value is 'rt' which means right-top conner of element.
 			'ttip-template',	// Default value for this property is 'pie', wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
+			'ttip-type',		// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings. 
+								// Possible values are: 'own' and 'global'. Default is 'own'. 					
             'max-value',        // the maximum value. If 0 then 100% is a maximum.
             'is-star',          // Enables drawing start instead of regular polygon
 			'is-animate',		// Allows to animate the moment of receiving the data array.
 			'is-link',			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
-			'is-tooltip',		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
+			'is-tooltip',		// Allows internal dispetching of smarttooltip next to the mouse pointer.
 			'is-emulate',		// Allows automatic emulation of the process of data receiving.
 			'is-run',			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “target”, “user”
 			'interval',			// Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
@@ -246,6 +249,7 @@ ${optStr}  };
     }
     static defOptions() {
         return {
+			role: '',			// in demo mode this parameter has value 'demoMode' 
             orient: 'hor',      // Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',  // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
             rotation: 0,        // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
@@ -262,6 +266,9 @@ ${optStr}  };
 			position: 'rt',     // The value describes location of tooltip window Default value is 'rt' which means right-top conner of element.
 			ttipTemplate: 'simple',// Default value for this property is 'simple, wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
+			ttipType: 'own',	// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings. 
+								// Possible values are: 'own' and 'global'. Default is 'own'. 					
+
             maxValue: 0,        // the maximum value. If 0 then 100% is a maximum.
             isStar: 0,          // Enables drawing start instead of regular polygon
 			isAnimate: 0,		// Allows to animate the moment of receiving the data array.
@@ -472,15 +479,19 @@ ${optStr}  };
 
 			}
 		}
-		// build the clip rectangle here...
-		SmartWidgets.addElement('rect', {
-			x: activeRect.x,
-			y: activeRect.y,
-			width: activeRect.width,
-			height: activeRect.height,
-		}, this._active, this._svgdoc);
+		if (this._o.valueRule !== 'none' || this._o.colorRule !== 'none') {
+			// build the clip rectangle here...
+			SmartWidgets.addElement('rect', {
+				x: activeRect.x,
+				y: activeRect.y,
+				width: activeRect.width,
+				height: activeRect.height,
+			}, this._active, this._svgdoc);
 
-		this._bodyActive.setAttribute('clip-path', 'url(#activeRect)');
+			this._bodyActive.setAttribute('clip-path', 'url(#activeRect)');
+		} else {
+			this._bodyActive.removeAttribute('clip-path');
+		}
 	}
     _build() {
 		if (!this._inited) {
@@ -490,70 +501,78 @@ ${optStr}  };
         if (this._body) {
 			this._body.removeEventListener("click", this._onClick);
 			this._body.removeEventListener("mouseover", this._onShowTooltip);
-			// this._body.removeEventListener("mousemove", this._onMoveTooltip);
+			this._body.removeEventListener("mousemove", this._onMoveTooltip);
             this._body.removeEventListener("mouseout", this._onHideTooltip);
+			this._bodyActive.removeEventListener("click", this._onClick);
+			this._bodyActive.removeEventListener("mouseover", this._onShowTooltip);
+			this._bodyActive.removeEventListener("mousemove", this._onMoveTooltip);
+            this._bodyActive.removeEventListener("mouseout", this._onHideTooltip);
 
-			this._svgroot.removeChild(this._boundary);
+			if (this._boundary) {
+				this._svgroot.removeChild(this._boundary);
+				this._boundary = null;
+			}
 			this._svgroot.removeChild(this._bodyActive);
             this._svgroot.removeChild(this._body);
         }
         const centerPt = {
             x: this._o.rect.x + this._o.radius,
             y: this._o.rect.y + this._o.radius,
-        }
-		this._boundary = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
-		if (this._boundary) {
-			SmartWidgets.addElement('rect', {
-				x: this._o.rect.x,
-				y: this._o.rect.y,
-				width: this._o.rect.width,
-				height: this._o.rect.height,
-				stroke: 'gray',
-				'stroke-dasharray': '4 2',
-				fill: 'none'
-			}, this._boundary, this._svgdoc);
-			SmartWidgets.addElement('circle', {
-				cx: centerPt.x,
-				cy: centerPt.y,
-				r: this._normRadius,
-				stroke: 'gray',
-				'stroke-dasharray': '4 2',
-				fill: 'none'
-			}, this._boundary, this._svgdoc);
-			SmartWidgets.addElement('line', {
-				x1: this._o.rect.x,
-				y1: this._o.rect.y,
-				x2: this._o.rect.x + this._o.rect.width,
-				y2: this._o.rect.y + this._o.rect.height,
-				stroke: 'gray',
-				'stroke-dasharray': '4 2'
-			}, this._boundary, this._svgdoc);
-			SmartWidgets.addElement('line', {
-				x1: this._o.rect.x + this._o.rect.width,
-				y1: this._o.rect.y,
-				x2: this._o.rect.x,
-				y2: this._o.rect.y + this._o.rect.height,
-				stroke: 'gray',
-				'stroke-dasharray': '4 2'
-			}, this._boundary, this._svgdoc);
-			SmartWidgets.addElement('line', {
-				x1: this._o.rect.x + this._o.rect.width / 2,
-				y1: this._o.rect.y,
-				x2: this._o.rect.x + this._o.rect.width / 2,
-				y2: this._o.rect.y + this._o.rect.height,
-				stroke: 'gray',
-				'stroke-dasharray': '4 2'
-			}, this._boundary, this._svgdoc);
-			SmartWidgets.addElement('line', {
-				x1: this._o.rect.x,
-				y1: this._o.rect.y + this._o.rect.height / 2,
-				x2: this._o.rect.x + this._o.rect.width,
-				y2: this._o.rect.y + this._o.rect.height / 2,
-				stroke: 'gray',
-				'stroke-dasharray': '4 2'
-			}, this._boundary, this._svgdoc);
 		}
-
+		if (this._o.role === 'demoMode') {
+			this._boundary = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
+			if (this._boundary) {
+				SmartWidgets.addElement('rect', {
+					x: this._o.rect.x,
+					y: this._o.rect.y,
+					width: this._o.rect.width,
+					height: this._o.rect.height,
+					stroke: 'gray',
+					'stroke-dasharray': '4 2',
+					fill: 'none'
+				}, this._boundary, this._svgdoc);
+				SmartWidgets.addElement('circle', {
+					cx: centerPt.x,
+					cy: centerPt.y,
+					r: this._normRadius,
+					stroke: 'gray',
+					'stroke-dasharray': '4 2',
+					fill: 'none'
+				}, this._boundary, this._svgdoc);
+				SmartWidgets.addElement('line', {
+					x1: this._o.rect.x,
+					y1: this._o.rect.y,
+					x2: this._o.rect.x + this._o.rect.width,
+					y2: this._o.rect.y + this._o.rect.height,
+					stroke: 'gray',
+					'stroke-dasharray': '4 2'
+				}, this._boundary, this._svgdoc);
+				SmartWidgets.addElement('line', {
+					x1: this._o.rect.x + this._o.rect.width,
+					y1: this._o.rect.y,
+					x2: this._o.rect.x,
+					y2: this._o.rect.y + this._o.rect.height,
+					stroke: 'gray',
+					'stroke-dasharray': '4 2'
+				}, this._boundary, this._svgdoc);
+				SmartWidgets.addElement('line', {
+					x1: this._o.rect.x + this._o.rect.width / 2,
+					y1: this._o.rect.y,
+					x2: this._o.rect.x + this._o.rect.width / 2,
+					y2: this._o.rect.y + this._o.rect.height,
+					stroke: 'gray',
+					'stroke-dasharray': '4 2'
+				}, this._boundary, this._svgdoc);
+				SmartWidgets.addElement('line', {
+					x1: this._o.rect.x,
+					y1: this._o.rect.y + this._o.rect.height / 2,
+					x2: this._o.rect.x + this._o.rect.width,
+					y2: this._o.rect.y + this._o.rect.height / 2,
+					stroke: 'gray',
+					'stroke-dasharray': '4 2'
+				}, this._boundary, this._svgdoc);
+			}
+		}
         // add base element to svg
         this._body = SmartPolygons.addElement('polygon', {
             id: 'body',
@@ -579,12 +598,16 @@ ${optStr}  };
 		if (this._o.colorRule != 'none') {
 			this._svgroot.insertBefore(this._bodyActive, this._body);
 		}
+		this._buildActive(this._data);
 
 		this._body.addEventListener('click', this._onClick);
 		this._body.addEventListener("mouseover", this._onShowTooltip);
-		// this._body.addEventListener("mousemove", this._onMoveTooltip);
+		this._body.addEventListener("mousemove", this._onMoveTooltip);
 		this._body.addEventListener("mouseout", this._onHideTooltip);
-		this._buildActive(this._data);
+		this._bodyActive.addEventListener('click', this._onClick);
+		this._bodyActive.addEventListener("mouseover", this._onShowTooltip);
+		this._bodyActive.addEventListener("mousemove", this._onMoveTooltip);
+		this._bodyActive.addEventListener("mouseout", this._onHideTooltip);
 
 
 
@@ -641,15 +664,16 @@ ${optStr}  };
 	_onShowTooltip(evt) {
 		if (!this._o.isTooltip) {
 			return;
-        }
+		}
+		let tta = Array.from(this._data)
         const data = {
             id: this._o.id,
             x: evt.clientX,
             y: evt.clientY,
-            title: this._data,
+            title: tta[0],
             options: {
                 isRun:  this._o.isRun,
-                location: this._body.getBoundingRect(),
+                location: this._body.getBoundingClientRect(),
                 delayOut: 1000,
                 showMode: 'pinned',
                 position: this._o.position
@@ -658,7 +682,7 @@ ${optStr}  };
         SmartTooltip.showTooltip(data, evt);
     }
 	_onMoveTooltip(evt) {
-		SmartTooltip.moveTooltip(evt);
+		// not work properly. why? SmartTooltip.moveTooltip(evt);
 	}
 	_onHideTooltip(evt) {
 		SmartTooltip.hideTooltip(evt);
@@ -706,7 +730,7 @@ ${optStr}  };
         this._build();
 
         this._data = new Set();
-		if (this._o.ttipTemplate) {
+		if (this._o.ttipType == 'own' && this._o.ttipTemplate) {
 			// call static function (it will instantinate SmartTooltip and load template)
 			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
 		}
@@ -815,10 +839,12 @@ ${optStr}  };
 				// 	this._body.setAttribute('stroke-opacity', 0);
 				// }
 				this._data = new Set([data.target]);
-				needRebuild++
+				// needRebuild++
 			}
 			if (needRebuild) {
 				this._build();
+			} else {
+				this._buildActive(this._data);
 			}
 		}
 	}
@@ -893,7 +919,7 @@ ${optStr}  };
 }
 
 class SmartPolygonElement extends HTMLElement {
-	constructor(id, options= { mode:'html' }) {
+	constructor(id) {
 		super();
 
 		// create SmartPolygons collection only once!
