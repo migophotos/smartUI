@@ -180,7 +180,7 @@
         <div class="grid-container">
             <div class="widgets-sel">
                     <smart-ui-button class="about-btn" id="thelogo" state="on" image-width="64" image-height="64" image="favicon.png"></smart-ui-button>
-                    <smart-ui-button class="widgets-btn" id="smarttoolip_btn" targets="smarttooltip_cat,smarttooltip_opt,smarttooltip_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/tooltip_on.svg" imageOff="images/tooltip_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartTooltip"></smart-ui-button>
+                    <smart-ui-button class="widgets-btn" id="smarttooltip_btn" targets="smarttooltip_cat,smarttooltip_opt,smarttooltip_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/tooltip_on.svg" imageOff="images/tooltip_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartTooltip"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartpie_btn" targets="smartpie_cat,smartpie_opt,smarttpie_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/pie_on.svg" imageOff="images/pie_off.svg"  data-sttip-tooltip="Настроить параметры виджета SmartPie"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartpgn_btn" targets="smartpgn_cat,smartpgn_opt,smartpgn_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/polygon_on.svg" imageOff="images/polygon_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartPolygon"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartgauge_btn" targets="smartgauge_cat,smartgauge_opt,smartgauge_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartGauge"></smart-ui-button>
@@ -861,9 +861,6 @@
                                 }
                                 // update demo tooltip
                                 demoTooltipEl.showDemoTooltip(data);
-                                // get changed options only and update source panels
-                                changedOptions = CustomProperties.diffProperties(demoTooltipEl._o);
-                                updateSourcePanels(changedOptions, true);
                             }
                         }
                     }
@@ -900,12 +897,12 @@
                         }
                     }
                     // update source panels
-                    function updateSourcePanels(dirtyOptions, isTooltip) {
+                    function updateSourcePanels(selWidget, dirtyOptions) {
                         ['def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'].forEach((id) => {
                             let srcTypeSelectorBtn = document.getElementById(id);
                             let scrTargetContainer = document.getElementById(srcTypeSelectorBtn.attributes.targets.value);
                             let options = '';
-                            if (isTooltip) {
+                            if (selWidget === 'smarttooltip') {
                                 if (id == 'def-svg_widget_btn') {
                                     options = demoTooltipEl._demoTooltip._svg ? demoTooltipEl._demoTooltip._svg.outerHTML : '';
                                     scrTargetContainer.textContent = `${options}`;
@@ -1085,8 +1082,25 @@
                                     document.getElementById(wdgs[n]).style.setProperty('display', (state === 'on' ? 'block' : 'none'));
                                 }
                             }
-                            if (evt.target.id === 'smarttoolip_btn') {
+                            if (evt.target.id === 'smarttooltip_btn') {
                                 showDemoTooltip();
+                            }
+                            // update sourse panels
+                            const selWidget = evt.target.id.split('_')[0];
+                            let dirtyOpt, elem;
+                            switch (selWidget) {
+                                case 'smarttooltip':
+                                    dirtyOpt = CustomProperties.diffProperties(demoTooltipEl._o);
+                                    updateSourcePanels(selWidget, dirtyOpt);
+                                    break;
+                                case 'smartpgn': {
+                                    elem = document.getElementById('stpgn-example');
+                                    dirtyOpt = elem.getCtrl().getParams('dirty');
+                                    updateSourcePanels(selWidget, dirtyOpt);
+                                    break;
+                                }
+                                default:
+                                    break;
                             }
                         });
                     }
@@ -1147,14 +1161,16 @@
                                 }
                                 const optionName = mutation.target._o['param'];
                                 const panel = mutation.target.parentNode.parentElement.parentElement;
-                                if (panel.id === 'smartpgn_opt') {
-                                    const elem = document.getElementById('stpgn-example');
+                                let dirtyOpt, elem;
+                                const selWidget = panel.id.split('_')[0];
+                                if (selWidget === 'smartpgn') {
+                                    elem = document.getElementById('stpgn-example');
                                     elem.getCtrl().setParam(SmartWidgets.customProp2Param(optionName), optionValue);
-                                    const dirtyOpt = elem.getCtrl().getParams('dirty');
-                                    updateSourcePanels(dirtyOpt);
+                                    dirtyOpt = elem.getCtrl().getParams('dirty');
+                                    updateSourcePanels(selWidget, dirtyOpt);
 
                                 }
-                                if (panel.id === 'smarttooltip_opt') {
+                                if (selWidget === 'smarttooltip') {
                                     if (typeof demoTooltipEl.showDemoTooltip !== 'undefined') {
                                         // special for font sizes (add 'px')
                                         switch (optionName) {
@@ -1167,6 +1183,9 @@
                                         }
                                         demoTooltipEl._o[CustomProperties.customProp2Param(optionName)] = optionValue;
                                         showDemoTooltip();
+                                        dirtyOpt = CustomProperties.diffProperties(demoTooltipEl._o);
+                                        updateSourcePanels(selWidget, dirtyOpt);
+
                                     }
                                 }
                                 // console.log(`${optionName} = ${optionValue}`);

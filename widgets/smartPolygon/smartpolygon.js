@@ -218,11 +218,11 @@ ${optStr}  };
 			'is-link',			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			'is-tooltip',		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			'is-emulate',		// Allows automatic emulation of the process of data receiving.
-			'is-run',			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “provider”, “user”
+			'is-run',			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “target”, “user”
 			'interval',			// Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)
             'server',
-            'provider',
+            'target',
             'user',				// These parameters determine the URL of the request to the server
 
 			'color-rule',		// Same as 'value-rule', but set color only, do not use value at all.
@@ -268,11 +268,11 @@ ${optStr}  };
 			isLink: 1,			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			isTooltip: 1,		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			isEmulate: 0,		// Allows automatic emulation of the process of data receiving.
-			isRun: 1,			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “provider”, “user”
+			isRun: 1,			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “target”, “user”
 			interval: 2000,     // Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)
-            server: './widgets/smartPie/',
-            targets: ['answer.json'],
+            server: '',
+            target: '',
             user: '',
                     
 			colorRule: 'stroke',
@@ -383,7 +383,7 @@ ${optStr}  };
         this._svgroot   = this._root.getElementById(this._o.id);    // reference on insertion node
         this._svgdoc    = this._svgroot.ownerDocument;
 
-        this._data      = null; // last received from data provider
+        this._data      = null; // last received from data provider (server + target)
         this._body      = null; // the polygons body
         this._active    = null; // the active element (circle in clip)
 		this._intervalCounter = 0;
@@ -464,6 +464,10 @@ ${optStr}  };
 				}
 				if (this._o.colorRule == 'fill' || this._o.colorRule == 'both') {
 					this._body.setAttribute('fill', dt.color);
+				}
+				// and last coorection here
+				if (this._o.valueRule === 'stroke' || this._o.valueRule === 'none') {
+					this._bodyActive.setAttribute('fill', 'none');
 				}
 
 			}
@@ -752,29 +756,46 @@ ${optStr}  };
 							// opt or cfg objects may contain any known optional attributes,
 							// such as: opacity, lcolor (legend color), interval (ms), run/stop, server, targets, user, ...
 		if (!data) { // do realtime updates here!
-			SmartWidgets._httpGet(this._o.server + this._o.targets[0])
-			.then(response => {
-				// if (this._o.isAnimate) {
-				// 	this._body.setAttribute('style', `/* r:${this._normRadius}; */`);
+			if (this._o.server != '' && this._o.target != '') {
+				SmartWidgets._httpGet(this._o.server + this._o.target)
+				.then(response => {
+					// if (this._o.isAnimate) {
+					// 	this._body.setAttribute('style', `/* r:${this._normRadius}; */`);
 
-				// 	this._body.setAttribute("r", this._normRadius + this._normRadius/5);
-				// 	this._body.setAttribute('fill-opacity', 0);
-				// 	this._body.setAttribute('stroke-opacity', 0);
-				// }
-				var data = JSON.parse(response);
-				this._data.clear();
-				this._data = new Set(data.targets);
-				for(let value of this._data) {
-					if (value.type === 'description') {
-						this._data.delete(value);
-						break;
+					// 	this._body.setAttribute("r", this._normRadius + this._normRadius/5);
+					// 	this._body.setAttribute('fill-opacity', 0);
+					// 	this._body.setAttribute('stroke-opacity', 0);
+					// }
+					var data = JSON.parse(response);
+					this._data.clear();
+					this._data = new Set(data.target);
+					for(let value of this._data) {
+						if (value.type === 'description') {
+							this._data.delete(value);
+							break;
+						}
+					}
+					this._buildActive(this._data);
+				})
+				.catch(error => {
+					console.error(error); // Error: Not Found
+				});
+			} else { // generate fake data
+				var fakeData = {
+					"target": { 
+						"uuid": "uuid_T4",
+						"name": "T4",
+						"value": "15",
+						"color": "gray",
+						"link": "http://www.google.com/?t4",
+						"parent": "",
+						"childs": ["uuid_T5", "uuid_T6"]
 					}
 				}
+				this._data.clear();
+				this._data = new Set([fakeData.target]);
 				this._buildActive(this._data);
-			})
-			.catch(error => {
-				console.error(error); // Error: Not Found
-			});
+			}
 		} else { // show external or emulated data
 			let options = null;
 			if (typeof data.cfg === 'object') {
@@ -785,7 +806,7 @@ ${optStr}  };
 			}
 			// don't rebuld on set params!
 			let needRebuild = this.setParams(options, false);
-			if (typeof data.targets === 'object' && typeof data.targets.length === 'number' && data.targets.length) {
+			if (typeof data.target === 'object') {
 				// if (this._o.isAnimate) {
 				// 	this._body.setAttribute('style', `/* r:${this._normRadius}; */`);
 
@@ -793,7 +814,7 @@ ${optStr}  };
 				// 	this._body.setAttribute('fill-opacity', 0);
 				// 	this._body.setAttribute('stroke-opacity', 0);
 				// }
-				this._data = new Set(data.targets);
+				this._data = new Set([data.target]);
 				needRebuild++
 			}
 			if (needRebuild) {
@@ -806,7 +827,7 @@ ${optStr}  };
 		const value = Math.abs(Math.floor(Math.random() * (100 + 1)) + 0);
 		const color = value < 30 ? 'blue' : (value < 50 ? 'green' : (value < 70 ? 'yellow' : 'red'));
 		var dataEx = {
-			"targets": [
+			"target": 
 				{
 					"uuid": "uuid_ex_Target1",
 					"tooltip":  "Missing at work",
@@ -815,7 +836,7 @@ ${optStr}  };
 					"link": "http://www.google.com/?target1",
 					"max": `${max}` 
                 }
-			],
+			,
 			"error": {
 				"message": "null",
 				"code": "0"
@@ -856,7 +877,7 @@ ${optStr}  };
 				case 'isRun':
 				case 'interval':
 				case 'server':
-				case 'targets':
+				case 'target':
 				case 'user':
 					break;
 				default:
