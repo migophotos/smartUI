@@ -1606,6 +1606,9 @@ class SmartTooltip {
 
 	static formatString(str, data) {
 		let frmStr = '';
+		if (typeof str !== 'string' || typeof str.length !== 'number' || str.length == 0) {
+			return frmStr;
+		}
 		const tokens = str.split('$');
 		for (let i = 0; i < tokens.length; i++) {
 			switch (tokens[i]) {

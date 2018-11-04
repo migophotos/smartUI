@@ -214,7 +214,10 @@ ${optStr}  };
 			'ttip-template',	// Default value for this property is 'pie', wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
 			'ttip-type',		// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings. 
-								// Possible values are: 'own' and 'global'. Default is 'own'. 					
+								// Possible values are: 'own' and 'global'. Default is 'own'.
+			'title-format',
+			'descr-format',
+			
             'max-value',        // the maximum value. If 0 then 100% is a maximum.
             'is-star',          // Enables drawing start instead of regular polygon
 			'is-animate',		// Allows to animate the moment of receiving the data array.
@@ -267,7 +270,9 @@ ${optStr}  };
 			ttipTemplate: 'simple',// Default value for this property is 'simple, wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
 			ttipType: 'own',	// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings. 
-								// Possible values are: 'own' and 'global'. Default is 'own'. 					
+								// Possible values are: 'own' and 'global'. Default is 'own'.
+			titleFormat: '$TITLE$, value = $VALUE$',
+			descrFormat: '$DESCR$, color = $COLOR$',
 
             maxValue: 0,        // the maximum value. If 0 then 100% is a maximum.
             isStar: 0,          // Enables drawing start instead of regular polygon
@@ -276,7 +281,7 @@ ${optStr}  };
 			isTooltip: 1,		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			isEmulate: 0,		// Allows automatic emulation of the process of data receiving.
 			isRun: 1,			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “target”, “user”
-			interval: 2000,     // Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
+			interval: 3000,     // Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)
             server: '',
             target: '',
@@ -351,6 +356,7 @@ ${optStr}  };
     }
     
     constructor(id, options = null) {
+		this.dontRespond 	= false; // An external application may set this flag for disabling responding on setting changing. It must to clear this flag after that.
 		this._onShowTooltip = this._onShowTooltip.bind(this);
 		this._onMoveTooltip = this._onMoveTooltip.bind(this);
 		this._onHideTooltip = this._onHideTooltip.bind(this);
@@ -443,6 +449,14 @@ ${optStr}  };
 			let dta = Array.from(data);
 			if (dta.length) {
 				const dt = dta[0];
+				
+				if (this._o.ttipType == 'global') {
+					// store data in data-set attributes (for global SmartTooltip)
+					for(let key in dt) {
+						this._svgroot.setAttribute(`data-sttip-${key}`, dt[key]);	
+					}
+				}
+
 				const maxValue = parseInt(dt.max, 10) || this._o.maxValue;
 				const max100 = this._o.orient === 'hor' ? activeRect.width : activeRect.height;
 				let onePCT = maxValue ? max100 / maxValue : max100 / 100;
@@ -662,7 +676,7 @@ ${optStr}  };
 
 	// event listeners
 	_onShowTooltip(evt) {
-		if (!this._o.isTooltip) {
+		if (!this._o.isTooltip || this._o.ttipType !== 'own') {
 			return;
 		}
 		let tta = Array.from(this._data)
@@ -672,19 +686,28 @@ ${optStr}  };
             y: evt.clientY,
             title: tta[0],
             options: {
-                isRun:  this._o.isRun,
+                // isRun:  this._o.isRun,
                 location: this._body.getBoundingClientRect(),
-                delayOut: 1000,
+				delayOut: 1000,
                 showMode: 'pinned',
+				template: this._o.ttipTemplate,
+				titleFormat: this._o.titleFormat,
+				descrFormat: this._o.descrFormat,
                 position: this._o.position
             }
         };
         SmartTooltip.showTooltip(data, evt);
     }
 	_onMoveTooltip(evt) {
+		if (!this._o.isTooltip || this._o.ttipType !== 'own') {
+			return;
+		}		
 		// not work properly. why? SmartTooltip.moveTooltip(evt);
 	}
 	_onHideTooltip(evt) {
+		if (!this._o.isTooltip || this._o.ttipType !== 'own') {
+			return;
+		}		
 		SmartTooltip.hideTooltip(evt);
 	}
 	_onClick(event) {
@@ -807,13 +830,13 @@ ${optStr}  };
 			} else { // generate fake data
 				var fakeData = {
 					"target": { 
-						"uuid": "uuid_T4",
-						"name": "T4",
+						"uuid": "uuid",
+						"name": "Name",
+						"descr": "Description",
 						"value": "15",
+						"max": "100",
 						"color": "gray",
-						"link": "http://www.google.com/?t4",
-						"parent": "",
-						"childs": ["uuid_T5", "uuid_T6"]
+						"link": "http://www.google.com/"
 					}
 				}
 				this._data.clear();
@@ -856,10 +879,12 @@ ${optStr}  };
 			"target": 
 				{
 					"uuid": "uuid_ex_Target1",
-					"tooltip":  "Missing at work",
+					// "tooltip":  "Missing at work",
+					"descr": "Значение параметра 'descr' в объекте 'data'",
+					"name": "Значение параметра 'name' в объекте 'data'",
 					"value": `${value}`,
 					"color": `${color}`,
-					"link": "http://www.google.com/?target1",
+					"link": "http://www.google.com/index.html",
 					"max": `${max}` 
                 }
 			,
@@ -874,6 +899,8 @@ ${optStr}  };
 		return SmartPolygon.getCustomParams(this._o, filter);	// 'dirty' means: get only changed parameters
 	}
 	setParam(name, value) {
+		if (this.dontRespond)	// don't respond on changing parameters when updating user panels in UI Builder (for example)
+			return;
 		const opt = {};
 		opt[name] = value;
 		// convert to numbers specified by name property

@@ -636,6 +636,9 @@
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                         <smart-ui-button class="categories-btn" id="pgn_ui-params_btn" targets="pgn-ui-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как цвет, размеры и др."></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
+                        <smart-ui-button class="categories-btn" id="pgn_ttip-params_btn" targets="pgn-ttip-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры отображения подсказок"></smart-ui-button>
+                        <smart-ui-spacer class="ver-small"></smart-ui-spacer>
+                        
                     </div>
     
 
@@ -748,12 +751,8 @@
                                     <smart-ui-editslider name="stpgn-param" param="angles-number" title="Количество вершин полигона" value="1" units="" min="3" max="128" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
                                     <smart-ui-selector name="stpgn-param" param="is-star" title="Вид полигона" value="" valueList="1,0" labelList="Звезда,Полигон" image="images/align_text_off.svg"></smart-ui-selector>
                                     <smart-ui-editslider name="stpgn-param" param="inner-radius" title="Внутренний размер звезды" value="1" units="%" min="1" max="99" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
-                                    <smart-ui-checkbox name="stpgn-param" param="is-run" title="Разрешить самостоятельный опрос" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
-                                    <smart-ui-editslider name="stpgn-param" param="interval" title="Интервал опроса" value="1" units="ms" min="1000" max="60000" step="500" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
-                                    <smart-ui-checkbox name="stpgn-param" param="is-tooltip" title="Разрешить отображение подсказки" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
-                                    <smart-ui-selector name="stpgn-param" param="position" title="Расположение окна подсказки" value=""
-                                    valuelist="none,ru,rt,rd,lu,lt,ld,cu,cd"
-                                    labellist="Рядом с курсором,Справа Выше,Справа По верху,Справа Ниже,Слева Выше,Слева По верху,Слева Ниже,По центру Выше,По центру Ниже" image="images/position_off.svg"></smart-ui-selector>
+                                    <smart-ui-editslider name="stpgn-param" param="var-opacity" title="Непрозрачность" value="1" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-checkbox name="stpgn-param" param="var-is-shadow" title="Отбрасывать тень" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                 </div>
                             </div>
                             <div id="pgn-ui-params_pan" class="overlay" style="max-height: 766px; display: none;">
@@ -765,9 +764,22 @@
                                     <smart-ui-colorbox name="stpgn-param" param="var-fill-color" title="Цвет фона" value="#ffcd88" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
                                     <smart-ui-checkbox name="stpgn-param" param="is-fill-stroke" title="Закрашивать обводку" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                     <smart-ui-colorbox name="stpgn-param" param="var-stroke-color" title="Цвет обводки" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
-                                    <smart-ui-editslider name="stpgn-param" param="var-opacity" title="Непрозрачность" value="1" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
                                     <smart-ui-editslider name="stpgn-param" param="var-stroke-width" title="Толщина обводки" value="1" units="" min="0.5" max="20" step="0.5" image="images/border_width_off.svg">edit control with slider</smart-ui-editslider>
-                                    <smart-ui-checkbox name="stpgn-param" param="var-is-shadow" title="Отбрасывать тень" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-checkbox name="stpgn-param" param="is-run" title="Разрешить самостоятельный опрос" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-editslider name="stpgn-param" param="interval" title="Интервал опроса" value="1" units="ms" min="1000" max="60000" step="500" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                </div>
+                            </div>
+                            <div id="pgn-ttip-params_pan" class="overlay" style="max-height: 766px; display: none;">
+                                <h2>Параметры отображения подсказки</h2>
+                                <div style="display: block;">
+                                    <smart-ui-checkbox name="stpgn-param" param="is-tooltip" title="Разрешить отображение подсказки" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-selector name="stpgn-param" param="ttip-type" title="Механизм включения подсказок" value="" valueList="own,global" labelList="Встроенный,Глобальный" image="images/align_text_off.svg"></smart-ui-selector>
+                                    <smart-ui-selector name="stpgn-param" param="position" title="Расположение окна подсказки" value=""
+                                    valuelist="none,ru,rt,rd,lu,lt,ld,cu,cd"
+                                    labellist="Рядом с курсором,Справа Выше,Справа По верху,Справа Ниже,Слева Выше,Слева По верху,Слева Ниже,По центру Выше,По центру Ниже" image="images/position_off.svg"></smart-ui-selector>
+                                    <smart-ui-selector name="stpgn-param" param="ttipTemplate" title="Шаблон Подсказки" value="" valueList="simple,pie,image,iframe" labellist="Простой,Диаграмма,Картинка,IFrame" image="images/template_off.svg"></smart-ui-selector>
+                                    <smart-ui-edittext   name="stpgn-param" param="title-format" title="Форматирование заголовка" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
+                                    <smart-ui-edittext   name="stpgn-param" param="descr-format" title="Форматирование описания" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
                                 </div>
                             </div>
                         </div>
@@ -1004,7 +1016,12 @@
 
                                 tmp = document.getElementById('stpgn-example');
                                 tmp.getCtrl().setParams(allParams, true);
+                                // now disable responding on future settings changing
+                                //tmp.getCtrl().dontRespond = true;
                                 updateUIPanels('stpgn-param', 'stpgn-example');
+                                // enable responding ->  try to find how todo this
+                                //tmp.getCtrl().dontRespond = false;
+
 
                                 tmp = document.getElementById('stpgn-example-descr');
                                 tmp.textContent = `${allParams.isStar ? 'Star' : 'Polygon'}`;
