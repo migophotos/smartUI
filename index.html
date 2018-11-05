@@ -488,7 +488,7 @@
                                     grid-template-columns: 0.4fr 2.2fr 0.4fr;
                                     grid-template-rows: 0.7fr 1.6fr 0.7fr;
                                     grid-gap: 1px 1px;
-                                    grid-template-areas: ". stpgn-example-descr ." ". stpgn-example-cont ." ". . .";
+                                    grid-template-areas: ". stpgn-example-descr ." ". stpgn-example-cont ." ". stpgn-try-it .";
                                     }
                                 .example-grid--shown {
                                     display: grid;
@@ -498,6 +498,8 @@
                                 }
                                 .stpgn-example-descr { grid-area: stpgn-example-descr; }
                                 .stpgn-example-cont { grid-area: stpgn-example-cont; }
+                                .stpgn-try-it { grid-area: stpgn-try-it; }
+
                                 .stpgn-example-descr p {
                                     font-size: 2em;
                                     color: rgba(0, 171, 6, 0.8);
@@ -509,7 +511,12 @@
                                     display: inherit;
                                     border: 2px gray solid;
                                     cursor: default;
+                                }
 
+                                .stpgn-try-it {
+                                    display: inherit;
+                                    border: 2px gray solid;
+                                    cursor: default;
                                 }
                             </style>
                             <div class="ml pgn-ml">
@@ -604,6 +611,13 @@
                                     </div>
                                     <div class="stpgn-example-cont no-legend">
                                         <smart-ui-polygon class="stpgn-example" id="stpgn-example" radius="120" role="demoMode" is-tooltip="0" is-link="0"></smart-ui-polygon>
+                                    </div>
+                                    <div class="stpgn-try-it">
+                                        <svg id="try-it" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <g id="pgn-wdg">
+                                                <rect id="r1" x="10" y="10" width="50" height="50" fill="#eee" stroke="black" stroke-dasharray="4 4";  />
+                                            </g>
+                                        </svg>
                                     </div>
                                 </div>
                             </div>
@@ -908,6 +922,29 @@
                             el.setAttribute('value', `${optionValue}`);
                         }
                     }
+                    function updateTryItElement(selWidget, id, options) {
+                        let el;
+                        polygonOpt = Object.assign({}, options);
+
+                        switch (selWidget) {
+                            case 'smartpgn': {
+                                polygonOpt.role = ''; // delete 'demoRole';
+                                polygonOpt.context = document.getElementById('try-it');
+                                polygonOpt.radius = 25; // todo: temporary set radius. I need to fix the bug with getting right size!!!
+                                polygonOpt.isEmulate = 1;
+                                el = window.SmartPolygons.get('pgn-wdg');
+                                if (!el) {
+                                    el = new SmartPolygon(id, polygonOpt);
+                                }
+                                if (el && el.isInited()) {
+                                    // set new options and rebuild!
+                                    el.resetParams(polygonOpt);
+                                }
+                                break;
+                            }
+                        }
+                    }
+
                     // update source panels
                     function updateSourcePanels(selWidget, dirtyOptions) {
                         ['def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'].forEach((id) => {
@@ -1029,6 +1066,18 @@
                                 tmp = document.getElementById('stpgn-example-grid');
                                 tmp.classList.remove('example-grid--hidden');
                                 tmp.classList.add('example-grid--shown');
+
+                                const tryItElement = document.getElementById('try-it');
+                                if (tryItElement) {
+                                    // create polygon here!
+                                    const polygonOpt = Object.assign({}, dirtyParams);
+                                    polygonOpt.radius = 25;
+                                    polygonOpt.isEmulate = 1;
+                                    polygonOpt.isTooltip = 1;
+
+                                    polygonOpt.context = tryItElement;
+                                    updateTryItElement('smartpgn', 'pgn-wdg', polygonOpt);
+                                }
                             }
                             stpgn_over_panel.classList.add('over-shown');
                         });
@@ -1114,6 +1163,7 @@
                                 case 'smartpgn': {
                                     elem = document.getElementById('stpgn-example');
                                     dirtyOpt = elem.getCtrl().getParams('dirty');
+                                    updateTryItElement(selWidget, 'pgn-wdg', dirtyOpt);
                                     updateSourcePanels(selWidget, dirtyOpt);
                                     break;
                                 }
@@ -1185,6 +1235,7 @@
                                     elem = document.getElementById('stpgn-example');
                                     elem.getCtrl().setParam(SmartWidgets.customProp2Param(optionName), optionValue);
                                     dirtyOpt = elem.getCtrl().getParams('dirty');
+                                    updateTryItElement(selWidget, 'pgn-wdg', dirtyOpt);
                                     updateSourcePanels(selWidget, dirtyOpt);
 
                                 }

@@ -391,9 +391,9 @@ ${optStr}  };
         SmartPolygon.convertNumericProps(this._o);
 
         this._mode      = options.mode || null; // in case of 'custom elements' initialization the 'mode' equals 'html'
-        this._o.id      = id;   // <g id> inside of <svg>
+        this.id         = id;   // <g id> inside of <svg>
         this._root      = options.context || null;  // svg root element
-        this._svgroot   = this._root.getElementById(this._o.id);    // reference on insertion node
+        this._svgroot   = this._root.getElementById(this.id);    // reference on insertion node
         this._svgdoc    = this._svgroot.ownerDocument;
 
         this._data      = null; // last received from data provider (server + target)
@@ -412,7 +412,7 @@ ${optStr}  };
 		// in case of creating SmartPolygon object from Javascript, lets do all needed work in one place...
 		if (!this._mode) {
 			// store containerId: ref on SmartPolygon element inside SmartPolygons collection for JS access
-			window.SmartPolygons.set(this._o.id, this);
+			window.SmartPolygons.set(this.id, this);
 			this.init();
 		}
     }
@@ -439,10 +439,10 @@ ${optStr}  };
 			}
 		}
 		const activeRect = {
-			x: this._o.rect.x,
-			y: this._o.rect.y,
-			width: this._o.rect.width,
-			height: this._o.rect.height,
+			x: this._rect.x,
+			y: this._rect.y,
+			width: this._rect.width,
+			height: this._rect.height,
 		};
 		// calculte the value
 		if (data) {
@@ -463,12 +463,12 @@ ${optStr}  };
 				if (this._o.orient === 'hor') {
 					activeRect.width = parseFloat(dt.value) * onePCT;
 					if (this._o.aligning === 'left') {
-						activeRect.x = (activeRect.x + this._o.rect.width) - activeRect.width;
+						activeRect.x = (activeRect.x + this._rect.width) - activeRect.width;
 					}
 				} else {
 					activeRect.height = parseFloat(dt.value) * onePCT;
 					if (this._o.aligning == 'up') {
-						activeRect.y = (activeRect.y + this._o.rect.height) - activeRect.height;
+						activeRect.y = (activeRect.y + this._rect.height) - activeRect.height;
 					}
 				}
 				this._o.valueRule = this._o.valueRule || 'fill';
@@ -530,17 +530,17 @@ ${optStr}  };
             this._svgroot.removeChild(this._body);
         }
         const centerPt = {
-            x: this._o.rect.x + this._o.radius,
-            y: this._o.rect.y + this._o.radius,
+            x: this._rect.x + this._o.radius,
+            y: this._rect.y + this._o.radius,
 		}
 		if (this._o.role === 'demoMode') {
 			this._boundary = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
 			if (this._boundary) {
 				SmartWidgets.addElement('rect', {
-					x: this._o.rect.x,
-					y: this._o.rect.y,
-					width: this._o.rect.width,
-					height: this._o.rect.height,
+					x: this._rect.x,
+					y: this._rect.y,
+					width: this._rect.width,
+					height: this._rect.height,
 					stroke: 'gray',
 					'stroke-dasharray': '4 2',
 					fill: 'none'
@@ -554,34 +554,34 @@ ${optStr}  };
 					fill: 'none'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
-					x1: this._o.rect.x,
-					y1: this._o.rect.y,
-					x2: this._o.rect.x + this._o.rect.width,
-					y2: this._o.rect.y + this._o.rect.height,
+					x1: this._rect.x,
+					y1: this._rect.y,
+					x2: this._rect.x + this._rect.width,
+					y2: this._rect.y + this._rect.height,
 					stroke: 'gray',
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
-					x1: this._o.rect.x + this._o.rect.width,
-					y1: this._o.rect.y,
-					x2: this._o.rect.x,
-					y2: this._o.rect.y + this._o.rect.height,
+					x1: this._rect.x + this._rect.width,
+					y1: this._rect.y,
+					x2: this._rect.x,
+					y2: this._rect.y + this._rect.height,
 					stroke: 'gray',
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
-					x1: this._o.rect.x + this._o.rect.width / 2,
-					y1: this._o.rect.y,
-					x2: this._o.rect.x + this._o.rect.width / 2,
-					y2: this._o.rect.y + this._o.rect.height,
+					x1: this._rect.x + this._rect.width / 2,
+					y1: this._rect.y,
+					x2: this._rect.x + this._rect.width / 2,
+					y2: this._rect.y + this._rect.height,
 					stroke: 'gray',
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
-					x1: this._o.rect.x,
-					y1: this._o.rect.y + this._o.rect.height / 2,
-					x2: this._o.rect.x + this._o.rect.width,
-					y2: this._o.rect.y + this._o.rect.height / 2,
+					x1: this._rect.x,
+					y1: this._rect.y + this._rect.height / 2,
+					x2: this._rect.x + this._rect.width,
+					y2: this._rect.y + this._rect.height / 2,
 					stroke: 'gray',
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
@@ -681,7 +681,7 @@ ${optStr}  };
 		}
 		let tta = Array.from(this._data)
         const data = {
-            id: this._o.id,
+            id: this.id,
             x: evt.clientX,
             y: evt.clientY,
             title: tta[0],
@@ -724,7 +724,10 @@ ${optStr}  };
     /// API
     getCtrl() {
         return this;
-    }
+	}
+	isInited() {
+		return this._inited;
+	}
     init(options = null) {
         if (options) {
             // validate and merge with own _o
@@ -732,14 +735,21 @@ ${optStr}  };
             this._o = Object.assign({}, this._o, options);
         }
         const rc = this._svgroot.firstElementChild;
-        this._o.rect = rc.getBBox();
+        this._rect = rc.getBBox();
         rc.setAttribute('display', 'none');
         if (!this._mode) {
-			this._o.radius  = Math.min(this._o.rect.width, this._o.rect.height) / 2;
+			if (this._rect.width == 0 || this._rect.height == 0) {
+				// get size from attributes!
+				this._rect.width = Number(rc.getAttribute('width'));
+				this._rect.height = Number(rc.getAttribute('height'));
+				this._rect.x = Number(rc.getAttribute('x'));
+				this._rect.y = Number(rc.getAttribute('y'));
+			}
+			this._o.radius  = Math.min(this._rect.width, this._rect.height) / 2;
         } else {
 			// calculate svg rectangle and coordinates
 			// todo: check radius and correct it with width and height parameters if they exists!
-			this._o.rect = {
+			this._rect = {
 				x: 0,
 				y: 0,
 				width:  this._o.radius * 2,
@@ -755,7 +765,7 @@ ${optStr}  };
         this._data = new Set();
 		if (this._o.ttipType == 'own' && this._o.ttipTemplate) {
 			// call static function (it will instantinate SmartTooltip and load template)
-			SmartTooltip.initTooltip(this._o.id, this._o.ttipTemplate);
+			SmartTooltip.initTooltip(this.id, this._o.ttipTemplate);
 		}
     }
     isRun() {
@@ -910,6 +920,17 @@ ${optStr}  };
 			this.setParams(opt);
 		}
 	}
+	/**
+	 * Instead of uppending new options, to own, 
+	 * this functions sets new and alwase rebuild the polygon.
+	 * @param {object} options 
+	 */
+	resetParams(options = null) {
+		if (options) {
+			this._o = Object.assign({}, SmartPolygon.defOptions(), options);
+			this._build();
+		}
+	}
 	setParams(options={}, rebuild=true) {
 		let val, needRebuild = false;
 		if(!options) {
@@ -1025,9 +1046,9 @@ class SmartPolygonElement extends HTMLElement {
 		// all specific work will be done inside
 		this._stpgn.init(this._o);
 		// resize own svg
-		this._svgroot.setAttribute('height', this._stpgn._o.rect.height);
-		this._svgroot.setAttribute('width', this._stpgn._o.rect.width);
-		this._svgroot.setAttribute('viewBox', `0 0 ${this._stpgn._o.rect.width} ${this._stpgn._o.rect.height}`);
+		this._svgroot.setAttribute('height', this._stpgn._rect.height);
+		this._svgroot.setAttribute('width', this._stpgn._rect.width);
+		this._svgroot.setAttribute('viewBox', `0 0 ${this._stpgn._rect.width} ${this._stpgn._rect.height}`);
 
     }
     disconnectedCallback() {
