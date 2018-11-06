@@ -1068,7 +1068,7 @@ class SmartPolygonElement extends HTMLElement {
 
     }
     disconnectedCallback() {
-		// remove element from smartpies.heap!!
+		// remove element from smartpol.heap!!
 		// ....todo
 
 		// this._data.clear();

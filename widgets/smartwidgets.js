@@ -1,12 +1,17 @@
+/* eslint-disable indent */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-multi-spaces) */
+/* eslint-disable no-underscore-dangle */
+
 /**
  * @copyright Copyright © 2018 ... All rights reserved.
  * @author Michael Goyberg
  * @license
  * @version   1.0
- * 
+ *
  * @overview  SmartWidgets the base class for family of smart controls
- * 
- * 
+ *
+ *
  */
 class SmartWidgets {
     constructor() {
@@ -54,8 +59,8 @@ class SmartWidgets {
 			color: '$ALERT_COLOR',
 			value: '$PCT',
 			link: '$LINK',
-			tooltip: '$TARGET_NAME',
-		}
+			tooltip: '$TARGET_NAME'
+		};
 		return df;
     }
     // creates svg element, sets attributes and append it to parent, if it not null
@@ -63,7 +68,7 @@ class SmartWidgets {
 	// usage example: createElement('circle',{cx:50,cy:50,r:10})
 	// special case for 'text' element creation: uppend pair text:'any text...' into params object
 	// and this text will be automathically appended to 'text' element
-	static addElement(type, params, parent=null, doc=null) {
+	static addElement(type, params, parent = null, doc = null) {
 		if (!doc) { // try to main document in case of doc not specified
 			if (parent) {
 				doc = parent.ownerDocument;
@@ -95,25 +100,25 @@ class SmartWidgets {
 			elem.appendChild(doc.createTextNode(textData));
 		}
 		return elem;
-    };
+    }
 	// http get returns promis
 	static 	_httpGet(url) {
-		return new Promise(function(resolve, reject) {
-			var xhr = new XMLHttpRequest();
+		return new Promise(function (resolve, reject) {
+			const xhr = new XMLHttpRequest();
 			xhr.open('GET', url, true);
 
-			xhr.onload = function() {
+			xhr.onload = function () {
 				if (this.status == 200) {
 					resolve(this.response);
 				} else {
-					var error = new Error(this.statusText);
+					const error = new Error(this.statusText);
 					error.code = this.status;
 					reject(error);
 				}
 			};
 
-			xhr.onerror = function() {
-				reject(new Error("Network Error"));
+			xhr.onerror = function () {
+				reject(new Error('Network Error'));
 			};
 			xhr.send();
 		});
@@ -127,10 +132,10 @@ class SmartWidgets {
 	 */
     static convertToNumbers(options = {}, knownParams = [], propName) {
 		if (typeof options !== 'object') {
-			throw new ReferenceError("options object cannot be undefined!");
+			throw new ReferenceError('options object cannot be undefined!');
 		}
 		if (typeof knownParams !== 'object') {
-			throw new ReferenceError("knownParams array cannot be undefined!");
+			throw new ReferenceError('knownParams array cannot be undefined!');
 		}
 		let count = 0;
 		for (let np of knownParams) {
@@ -160,7 +165,7 @@ class SmartWidgets {
 		return prop.replace(CAMELIZE, capitalize);
 	}
 
-    
+
     // private - please don't call this function from outside!
 	_intervalTimer() {
 		this._interval = setInterval(() => {
@@ -168,7 +173,7 @@ class SmartWidgets {
 				let obj = entry[1].getCtrl();
 				if (obj && obj._o.isRun) { // realtime updates are enabled
 					let ic = obj.intervalCounter;
-					ic = ic - this._timeout;
+					ic -= this._timeout;
 					obj.intervalCounter = ic;	// it will restored automatically to _o.interval, if <= 0
 					if (ic <= 0) {
 						let data = null, updMode = obj.isEmulate();	// 1 - enabled, 0 - disabled, -1 - nulled
@@ -184,11 +189,11 @@ class SmartWidgets {
 			}
 		}, 100);
     }
-    
-    /// public API
+
+    // public API
 	init(dashboardContext = {}) {
 		if (dashboardContext) {
-			this.lang = dashboardContext.lang || "ru";
+			this.lang = dashboardContext.lang || 'ru';
 			this.document = dashboardContext.document || document;
 			this.editorAPI = dashboardContext.editorAPI || null;
 			this.runtimeAPI = dashboardContext.runtimeAPI || null;
@@ -199,7 +204,7 @@ class SmartWidgets {
 			this._initialized = true;
 		}
 	}
-	get (id) {
+	get(id) {
 		const ref = this._heap.get(id);
 		if (ref) {
 			return ref.getCtrl();
@@ -251,10 +256,10 @@ class SmartWidgets {
             ctrl.run(0);
         }
 	}
-	update(id, data={}) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
+	update(id, data = {}) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
 							// this section will be processed before progress=[]
-							 // opt or cfg objects may contain any known optional attributes,
-							 // such as: lang, type, sortBy, varOpacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
+							// opt or cfg objects may contain any known optional attributes,
+							// such as: lang, type, sortBy, varOpacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
 		const ctrl = this.get(id);
 		if (ctrl) {
             ctrl.update(data);
