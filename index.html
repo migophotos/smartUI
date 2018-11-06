@@ -515,7 +515,8 @@
 
                                 .stpgn-try-it {
                                     display: inherit;
-                                    border: 2px gray solid;
+                                    text-align: center;
+                                    /* border: 2px gray solid; */
                                     cursor: default;
                                 }
                             </style>
@@ -613,11 +614,17 @@
                                         <smart-ui-polygon class="stpgn-example" id="stpgn-example" radius="120" role="demoMode" is-tooltip="0" is-link="0"></smart-ui-polygon>
                                     </div>
                                     <div class="stpgn-try-it">
-                                        <svg id="try-it" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                        <table><tr>
+                                            <td>Полигон внутри SVG, диаметром 25 пикс:</td></tr>
+                                        <tr><td>
+                                        <svg id="try-it" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                            width="50" heigh="50" viewBox="0 0 50 50">
                                             <g id="pgn-wdg">
-                                                <rect id="r1" x="10" y="10" width="50" height="50" fill="#eee" stroke="black" stroke-dasharray="4 4";  />
+                                                <rect id="r1" x="0" y="0" width="50" height="50" fill="#eee" stroke="black" stroke-dasharray="4 4";  />
                                             </g>
                                         </svg>
+                                        </td>
+                                        </tr></table>
                                     </div>
                                 </div>
                             </div>
@@ -930,7 +937,7 @@
                             case 'smartpgn': {
                                 polygonOpt.role = ''; // delete 'demoRole';
                                 polygonOpt.context = document.getElementById('try-it');
-                                polygonOpt.radius = 25; // todo: temporary set radius. I need to fix the bug with getting right size!!!
+                                // polygonOpt.radius = 25; // todo: temporary set radius. I need to fix the bug with getting right size!!!
                                 polygonOpt.isEmulate = 1;
                                 el = window.SmartPolygons.get('pgn-wdg');
                                 if (!el) {

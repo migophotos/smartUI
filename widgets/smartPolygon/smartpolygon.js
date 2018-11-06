@@ -530,8 +530,8 @@ ${optStr}  };
             this._svgroot.removeChild(this._body);
         }
         const centerPt = {
-            x: this._rect.x + this._o.radius,
-            y: this._rect.y + this._o.radius,
+            x: this._rect.x + this._normRadius,
+            y: this._rect.y + this._normRadius,
 		}
 		if (this._o.role === 'demoMode') {
 			this._boundary = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
