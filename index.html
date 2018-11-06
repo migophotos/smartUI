@@ -519,6 +519,7 @@
                                     /* border: 2px gray solid; */
                                     cursor: default;
                                 }
+
                             </style>
                             <div class="ml pgn-ml">
                                 <div class="ml-p">
@@ -603,7 +604,7 @@
                                         </div>
                                     </div>
                                 </div>
-    
+
                             </div>
                             <div id="stpgn-over-panel" class="over-hidden">
                                 <div id="stpgn-example-grid" class="stpgn-example-grid example-grid--hidden">
@@ -629,7 +630,7 @@
                                 </div>
                             </div>
                         </div>
-                            
+
                     </div>
                 </div>
                 <div class="side-panel">
@@ -659,9 +660,9 @@
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                         <smart-ui-button class="categories-btn" id="pgn_ttip-params_btn" targets="pgn-ttip-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры отображения подсказок"></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
-                        
+
                     </div>
-    
+
 
                     <div id="smartgauge_cat" style="display: none;">
                         <smart-ui-button class="categories-btn" id="gauge_params_btn" targets="gauge-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры индикатора, такие как тип, вид стрелок, количество шкал и др."></smart-ui-button>
@@ -805,7 +806,7 @@
                                 </div>
                             </div>
                         </div>
-    
+
 
 
                         <div id="smartgauge_opt" style="display: none;">
@@ -921,7 +922,7 @@
                     // sourceId='stpgn-example'
                     function updateUIPanels(famName, sourceId) {
                         const srcElem = document.getElementById(sourceId);
-                        const allParams = srcElem.getCtrl().getParams('all');                        
+                        const allParams = srcElem.getCtrl().getParams('all');
                         els = document.getElementsByName(famName);
                         for (let el of els) {
                             const optionNameAttr = el.attributes['param'].value;
@@ -1053,7 +1054,7 @@
                             if (sel) {
                                 const dirtyParams = sel.getCtrl().getParams('dirty');
                                 let   allParams = SmartPolygon.defOptions();
-                                allParams = Object.assign({}, allParams, dirtyParams); 
+                                allParams = Object.assign({}, allParams, dirtyParams);
                                 // remove radius, interval, set is-tooltip and is-emulate
                                 delete allParams.radius;
                                 delete allParams.interval;
@@ -1092,8 +1093,8 @@
                             stpgn_over_panel.classList.add('over-shown');
                         });
                     }
-                    
-                    
+
+
                     // translate title attributes in-place
                     // file vocabulary.js has function _(str) and returns translated text or original if translation is not found
                     // set value from options into apropriated elements on UI panels

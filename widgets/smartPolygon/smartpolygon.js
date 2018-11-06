@@ -1046,8 +1046,21 @@ class SmartPolygonElement extends HTMLElement {
 
 	// connect and disconnect from html
     connectedCallback() {
+		// getting properties in form 'stpgn-XXX' and 'sttip-var-XXX' from styles
+		const compStyle = getComputedStyle(this);
+		const customProp = SmartPolygon.getCustomProperties();
+		for (let n = 0; n < customProp.length; n++) {
+			const prop = `--stpgn-${customProp[n]}`;
+			const propKey = SmartPolygons.customProp2Param(`${customProp[n]}`);
+			let propVal = compStyle.getPropertyValue(prop);
+			if (propVal) {
+				propVal = propVal.trimLeft();
+				this._o[propKey] = propVal;
+			}
+		}
 		// all specific work will be done inside
 		this._stpgn.init(this._o);
+
 		// resize own svg
 		this._svgroot.setAttribute('height', this._stpgn._rect.height);
 		this._svgroot.setAttribute('width', this._stpgn._rect.width);
