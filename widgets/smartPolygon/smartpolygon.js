@@ -1,9 +1,15 @@
+/* eslint-disable indent */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-multi-spaces) */
+/* eslint-disable no-underscore-dangle */
+
+
 /**
  * @copyright Copyright © 2018 ... All rights reserved.
  * @author Michael Goyberg
  * @license
  * @version   1.0
- 
+
  */
 
 class SmartPolygons extends SmartWidgets {
@@ -13,14 +19,15 @@ class SmartPolygons extends SmartWidgets {
         }
         window.SmartPolygons.init(context);
     }
-    static addElement(type, params, parent=null, doc=null) {
+    static addElement(type, params, parent = null, doc = null) {
         return super.addElement(type, params, parent, doc);
     }
 
     constructor() {
         super();
 
-    }
+	}
+
 	initCtrl(id, options) {
 		let ctrl = this.get(id);
 		if (!ctrl) {
@@ -31,7 +38,7 @@ class SmartPolygons extends SmartWidgets {
 		}
 	}
 	unInitCtrl(id) {
-        /// todo....
+        // todo....
 	}
 }
 
@@ -112,15 +119,11 @@ class SmartPolygon {
     static serializeOptions(opt, templateId) {
 		let template = '', className;
 		let dtO = null;
-		//disable emulation (this.option only for builder!)
+		// disable emulation (this.option only for builder!)
 		if (typeof opt.isEmulate !== 'undefined') {
 			delete opt.isEmulate;
 		}
-		// // enable link
-		// if (typeof opt.isLink !== 'undefined') {
-		// 	delete opt.isLink;
-		// }
-		
+
 		className = `${opt.isStar ? 'star' : 'polygon'}-${opt.anglesNumber}`;
 		switch (templateId) {
 			case 'def-custom-elem_btn':
@@ -155,10 +158,10 @@ if (el) {
   // create an instanse
   const pgn = new SmartPolygon(jsn, options);
 }
-`
+`;
                 break;
             }
-            case 'def-object-params_btn':
+            case 'def-object-params_btn': {
 				dtO = this.buidOptionsAndCssVars(opt);
 				let optStr = '';
 				for (let key in dtO) {
@@ -179,8 +182,9 @@ ${optStr}  };
   // create an instanse
   const pgn = new SmartPolygon(jsn, options);
 }
-`
+`;
 				break;
+			}
             case 'def-svg_widget_btn':
                 template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
                 break;
@@ -196,7 +200,7 @@ ${optStr}  };
 	 */
 	static getCustomProperties() {
 		return [
-			'role',			    // in demo mode this parameter has value 'demoMode' 
+			'role',			    // in demo mode this parameter has value 'demoMode'
             'orient',           // Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             'aligning',         // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
             'rotation',         // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
@@ -213,11 +217,11 @@ ${optStr}  };
 			'position',			// The value describes location of tooltip or legend window Default value is 'rt' which means right-top conner of element.
 			'ttip-template',	// Default value for this property is 'pie', wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
-			'ttip-type',		// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings. 
+			'ttip-type',		// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings.
 								// Possible values are: 'own' and 'global'. Default is 'own'.
 			'title-format',
 			'descr-format',
-			
+
             'max-value',        // the maximum value. If 0 then 100% is a maximum.
             'is-star',          // Enables drawing start instead of regular polygon
 			'is-animate',		// Allows to animate the moment of receiving the data array.
@@ -234,11 +238,11 @@ ${optStr}  };
 			'color-rule',		// Same as 'value-rule', but set color only, do not use value at all.
 			'value-rule',		// Specifies what will be painted when the value is drawn: line or background
 								// Possible values are: 'stroke', 'fill', 'both'. Default is 'fill'.
-								// The following four parameters also affect rendering. 
-								// The following addition rule is used: the missing parameter is drawn. 
-								// That is, if it is indicated that the value affects the background ('rule'='fill'), 
-								// then for the lines, the color of the line and the corresponding flag are used. 
-								// Conversely, if the value affects the line ('rule'='stroke'), 
+								// The following four parameters also affect rendering.
+								// The following addition rule is used: the missing parameter is drawn.
+								// That is, if it is indicated that the value affects the background ('rule'='fill'),
+								// then for the lines, the color of the line and the corresponding flag are used.
+								// Conversely, if the value affects the line ('rule'='stroke'),
 								// then the corresponding color and flag are used to fill the background.
 								// In the case of 'rule'='both', additional parameters are not used.
 			'is-fill-bkg',      // Enables fill and color the background of polygon. Default is 1
@@ -252,7 +256,7 @@ ${optStr}  };
     }
     static defOptions() {
         return {
-			role: '',			// in demo mode this parameter has value 'demoMode' 
+			role: '',			// in demo mode this parameter has value 'demoMode'
             orient: 'hor',      // Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',  // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
             rotation: 0,        // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
@@ -267,9 +271,9 @@ ${optStr}  };
                                 // of this parameter, or the parameter “width” if its value is less than this parameter.
             anglesNumber: 0,    // The number of corners of a regular polygon. Default is 0 and must be specified!
 			position: 'rt',     // The value describes location of tooltip window Default value is 'rt' which means right-top conner of element.
-			ttipTemplate: 'simple',// Default value for this property is 'simple, wich means the using of internal SmartTooltip pie template definition.
+			ttipTemplate: 'simple', // Default value for this property is 'simple, wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
-			ttipType: 'own',	// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings. 
+			ttipType: 'own',	// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings.
 								// Possible values are: 'own' and 'global'. Default is 'own'.
 			titleFormat: '$TITLE$, value = $VALUE$',
 			descrFormat: '$DESCR$, color = $COLOR$',
@@ -286,7 +290,7 @@ ${optStr}  };
             server: '',
             target: '',
             user: '',
-                    
+
 			colorRule: 'stroke',
 			valueRule: 'fill',
 			isFillBkg: 0,       // Enables fill and color the background of polygon. Default is 1
@@ -296,7 +300,7 @@ ${optStr}  };
 			varIsShadow: 0,     // Allows shadow for widget, legend and tooltip
             varStrokeWidth: 3,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			varOpacity: 1		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
-        }
+        };
     }
     static convertNumericProps(options = {}, propName) {
         const numericProps = [
@@ -346,15 +350,15 @@ ${optStr}  };
 		const original = SmartPolygon.defOptions();
 		for (let prop of paramsArray) {
 			if (typeof options[prop] !== 'undefined') {
-				if (filter === 'all' || 
+				if (filter === 'all' ||
 					(filter === 'dirty' && options[prop] !== original[prop])) {
-					params[prop] = options[prop]; 
+					params[prop] = options[prop];
 				}
 			}
 		}
 		return params;
     }
-    
+
     constructor(id, options = null) {
 		this.dontRespond 	= false; // An external application may set this flag for disabling responding on setting changing. It must to clear this flag after that.
 		this._onShowTooltip = this._onShowTooltip.bind(this);
@@ -416,10 +420,10 @@ ${optStr}  };
 			this.init();
 		}
     }
-	/// Internal functions. Please don't use from outside!
+	// Internal functions. Please don't use from outside!
 	// The normalized radius of regular polygon must be recalculated after changing some optional parameters, such as: radius and stroke-width
 	_recalculateNormRadius() {
-		this._normRadius = this._o.radius - this._o.varStrokeWidth/2;
+		this._normRadius = this._o.radius - (this._o.varStrokeWidth / 2);
 		this._normRadius = this._normRadius < 0 ? 0 : this._normRadius;
 		if (this._o.isAnimate) {
 			this._normRadius -= this._normRadius / 5;
@@ -442,18 +446,18 @@ ${optStr}  };
 			x: this._rect.x,
 			y: this._rect.y,
 			width: this._rect.width,
-			height: this._rect.height,
+			height: this._rect.height
 		};
 		// calculte the value
 		if (data) {
 			let dta = Array.from(data);
 			if (dta.length) {
 				const dt = dta[0];
-				
+
 				if (this._o.ttipType == 'global') {
 					// store data in data-set attributes (for global SmartTooltip)
-					for(let key in dt) {
-						this._svgroot.setAttribute(`data-sttip-${key}`, dt[key]);	
+					for (let key in dt) {
+						this._svgroot.setAttribute(`data-sttip-${key}`, dt[key]);
 					}
 				}
 
@@ -499,7 +503,7 @@ ${optStr}  };
 				x: activeRect.x,
 				y: activeRect.y,
 				width: activeRect.width,
-				height: activeRect.height,
+				height: activeRect.height
 			}, this._active, this._svgdoc);
 
 			this._bodyActive.setAttribute('clip-path', 'url(#activeRect)');
@@ -513,14 +517,14 @@ ${optStr}  };
 			return;
 		}
         if (this._body) {
-			this._body.removeEventListener("click", this._onClick);
-			this._body.removeEventListener("mouseover", this._onShowTooltip);
-			this._body.removeEventListener("mousemove", this._onMoveTooltip);
-            this._body.removeEventListener("mouseout", this._onHideTooltip);
-			this._bodyActive.removeEventListener("click", this._onClick);
-			this._bodyActive.removeEventListener("mouseover", this._onShowTooltip);
-			this._bodyActive.removeEventListener("mousemove", this._onMoveTooltip);
-            this._bodyActive.removeEventListener("mouseout", this._onHideTooltip);
+			this._body.removeEventListener('click', this._onClick);
+			this._body.removeEventListener('mouseover', this._onShowTooltip);
+			this._body.removeEventListener('mousemove', this._onMoveTooltip);
+            this._body.removeEventListener('mouseout', this._onHideTooltip);
+			this._bodyActive.removeEventListener('click', this._onClick);
+			this._bodyActive.removeEventListener('mouseover', this._onShowTooltip);
+			this._bodyActive.removeEventListener('mousemove', this._onMoveTooltip);
+            this._bodyActive.removeEventListener('mouseout', this._onHideTooltip);
 
 			if (this._boundary) {
 				this._svgroot.removeChild(this._boundary);
@@ -531,8 +535,8 @@ ${optStr}  };
         }
         const centerPt = {
             x: this._rect.x + this._normRadius,
-            y: this._rect.y + this._normRadius,
-		}
+            y: this._rect.y + this._normRadius
+		};
 		if (this._o.role === 'demoMode') {
 			this._boundary = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
 			if (this._boundary) {
@@ -596,7 +600,9 @@ ${optStr}  };
             'stroke-width': this._o.varStrokeWidth,
             'stroke-opacity': this._o.varOpacity,
             'fill-opacity':  this._o.varOpacity,
-            points: this._buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
+			points: this._buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y,
+				this._normRadius, this._o.startAngle,
+				this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
 		}, this._svgroot, this._svgdoc);
 		this._bodyActive = SmartPolygons.addElement('polygon', {
             id: 'bodyAdcive',
@@ -605,9 +611,11 @@ ${optStr}  };
             fill: this._o.varFillColor,
             'stroke-width': this._o.varStrokeWidth,
 			'fill-opacity':  this._o.varOpacity,
-			'stroke-linejoin':'miter',
+			'stroke-linejoin': 'miter',
 			'stroke-miterlimit': '50',
-            points: this._buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y, this._normRadius, this._o.startAngle, this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
+			points: this._buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y,
+				this._normRadius, this._o.startAngle,
+				this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
 		}, this._svgroot, this._svgdoc);
 		if (this._o.colorRule != 'none') {
 			this._svgroot.insertBefore(this._bodyActive, this._body);
@@ -615,34 +623,31 @@ ${optStr}  };
 		this._buildActive(this._data);
 
 		this._body.addEventListener('click', this._onClick);
-		this._body.addEventListener("mouseover", this._onShowTooltip);
-		this._body.addEventListener("mousemove", this._onMoveTooltip);
-		this._body.addEventListener("mouseout", this._onHideTooltip);
+		this._body.addEventListener('mouseover', this._onShowTooltip);
+		this._body.addEventListener('mousemove', this._onMoveTooltip);
+		this._body.addEventListener('mouseout', this._onHideTooltip);
 		this._bodyActive.addEventListener('click', this._onClick);
-		this._bodyActive.addEventListener("mouseover", this._onShowTooltip);
-		this._bodyActive.addEventListener("mousemove", this._onMoveTooltip);
-		this._bodyActive.addEventListener("mouseout", this._onHideTooltip);
-
-
-
+		this._bodyActive.addEventListener('mouseover', this._onShowTooltip);
+		this._bodyActive.addEventListener('mousemove', this._onMoveTooltip);
+		this._bodyActive.addEventListener('mouseout', this._onHideTooltip);
 }
 
 
     /**
      * Builds and return the path for regular polygon and stars
-     * @param {number} n The number of corners of a regular polygon. Default is 4 
+     * @param {number} n The number of corners of a regular polygon. Default is 4
      * @param {number} x X position of center point
      * @param {number} y Y position of center point
      * @param {number} r Radius of inscribed circle
      * @param {number} angle Starting Angle in degrees
      * @param {number} rotate rotate start angle
-     * @param {number} counterclockwise 
+     * @param {number} counterclockwise
      * @param {number} star Inner radius for star in percents to r
      */
 	_buildPolygon(n, x, y, r, angle, rotate, counterclockwise, star) {
         counterclockwise = counterclockwise || 0;
 		star = star || 0;
-		
+
         angle = angle || 0;
         if (star) {
             angle /= 2;
@@ -650,7 +655,6 @@ ${optStr}  };
         }
 		angle = (angle + rotate) * Math.PI / 180;  // convert degrees to radians
 		const innerRadius = r / 100 * star;
-        let i = 0;
         let points;
         if (star) {
             points = `${x + innerRadius * Math.sin(angle)},${y - innerRadius * Math.cos(angle)}`;
@@ -658,7 +662,7 @@ ${optStr}  };
             points = `${x + r * Math.sin(angle)},${y - r * Math.cos(angle)}`;
         }
         let delta = 2 * Math.PI / n;
-        
+
 		for (let i = 1; i < n; i++) {
             angle += counterclockwise ? -delta : delta; // correct an angle
             if (star) {
@@ -701,13 +705,13 @@ ${optStr}  };
 	_onMoveTooltip(evt) {
 		if (!this._o.isTooltip || this._o.ttipType !== 'own') {
 			return;
-		}		
+		}
 		// not work properly. why? SmartTooltip.moveTooltip(evt);
 	}
 	_onHideTooltip(evt) {
 		if (!this._o.isTooltip || this._o.ttipType !== 'own') {
 			return;
-		}		
+		}
 		SmartTooltip.hideTooltip(evt);
 	}
 	_onClick(event) {
@@ -721,7 +725,7 @@ ${optStr}  };
         }
     }
 
-    /// API
+    // API
     getCtrl() {
         return this;
 	}
@@ -745,7 +749,7 @@ ${optStr}  };
 				this._rect.x = Number(rc.getAttribute('x'));
 				this._rect.y = Number(rc.getAttribute('y'));
 			}
-			this._o.radius  = Math.min(this._rect.width, this._rect.height) / 2;
+			this._o.radius = Math.min(this._rect.width, this._rect.height) / 2;
         } else {
 			// calculate svg rectangle and coordinates
 			// todo: check radius and correct it with width and height parameters if they exists!
@@ -815,7 +819,7 @@ ${optStr}  };
 		if (!data) { // do realtime updates here!
 			if (this._o.server != '' && this._o.target != '') {
 				SmartWidgets._httpGet(this._o.server + this._o.target)
-				.then(response => {
+				.then((response) => {
 					// if (this._o.isAnimate) {
 					// 	this._body.setAttribute('style', `/* r:${this._normRadius}; */`);
 
@@ -823,10 +827,10 @@ ${optStr}  };
 					// 	this._body.setAttribute('fill-opacity', 0);
 					// 	this._body.setAttribute('stroke-opacity', 0);
 					// }
-					var data = JSON.parse(response);
+					data = JSON.parse(response);
 					this._data.clear();
 					this._data = new Set(data.target);
-					for(let value of this._data) {
+					for (let value of this._data) {
 						if (value.type === 'description') {
 							this._data.delete(value);
 							break;
@@ -834,12 +838,12 @@ ${optStr}  };
 					}
 					this._buildActive(this._data);
 				})
-				.catch(error => {
+				.catch((error) => {
 					console.error(error); // Error: Not Found
 				});
 			} else { // generate fake data
-				var fakeData = {
-					"target": { 
+				const fakeData = {
+					"target": {
 						"uuid": "uuid",
 						"name": "Name",
 						"descr": "Description",
@@ -848,7 +852,7 @@ ${optStr}  };
 						"color": "gray",
 						"link": "http://www.google.com/"
 					}
-				}
+				};
 				this._data.clear();
 				this._data = new Set([fakeData.target]);
 				this._buildActive(this._data);
@@ -885,9 +889,8 @@ ${optStr}  };
 		const max = 100;
 		const value = Math.abs(Math.floor(Math.random() * (100 + 1)) + 0);
 		const color = value < 30 ? 'blue' : (value < 50 ? 'green' : (value < 70 ? 'yellow' : 'red'));
-		var dataEx = {
-			"target": 
-				{
+		const dataEx = {
+			"target": {
 					"uuid": "uuid_ex_Target1",
 					// "tooltip":  "Missing at work",
 					"descr": "Значение параметра 'descr' в объекте 'data'",
@@ -895,9 +898,8 @@ ${optStr}  };
 					"value": `${value}`,
 					"color": `${color}`,
 					"link": "http://www.google.com/index.html",
-					"max": `${max}` 
-                }
-			,
+					"max": `${max}`
+                },
 			"error": {
 				"message": "null",
 				"code": "0"
@@ -909,8 +911,9 @@ ${optStr}  };
 		return SmartPolygon.getCustomParams(this._o, filter);	// 'dirty' means: get only changed parameters
 	}
 	setParam(name, value) {
-		if (this.dontRespond)	// don't respond on changing parameters when updating user panels in UI Builder (for example)
+		if (this.dontRespond) {	// don't respond on changing parameters when updating user panels in UI Builder (for example)
 			return;
+		}
 		const opt = {};
 		opt[name] = value;
 		// convert to numbers specified by name property
@@ -921,9 +924,9 @@ ${optStr}  };
 		}
 	}
 	/**
-	 * Instead of uppending new options, to own, 
+	 * Instead of uppending new options, to own,
 	 * this functions sets new and alwase rebuild the polygon.
-	 * @param {object} options 
+	 * @param {object} options
 	 */
 	resetParams(options = null) {
 		if (options) {
@@ -931,9 +934,9 @@ ${optStr}  };
 			this._build();
 		}
 	}
-	setParams(options={}, rebuild=true) {
-		let val, needRebuild = false;
-		if(!options) {
+	setParams(options = {}, rebuild = true) {
+		let needRebuild = false;
+		if (!options) {
 			return false;
 		}
 		// convert all known properties to numbers
@@ -955,7 +958,7 @@ ${optStr}  };
 				case 'user':
 					break;
 				default:
-					needRebuild++;						
+					needRebuild++;
 					break;
 			}
 		}
@@ -1022,7 +1025,7 @@ class SmartPolygonElement extends HTMLElement {
 		`;
 		this._svgroot = this._root.querySelector('svg');
 		// now create the smart polygon!
-		this._stpgn = new SmartPolygon(`mainG`, {context: this._svgroot, mode: 'html'});
+		this._stpgn = new SmartPolygon('mainG', {context: this._svgroot, mode: 'html'});
 		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
 		window.SmartPolygons.set(this._id, this);
 	}
@@ -1053,7 +1056,7 @@ class SmartPolygonElement extends HTMLElement {
     }
     disconnectedCallback() {
 		// remove element from smartpies.heap!!
-		//....todo
+		// ....todo
 
 		// this._data.clear();
 		// this._legend.length = 0;
