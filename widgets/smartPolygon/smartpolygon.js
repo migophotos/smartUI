@@ -801,6 +801,9 @@ ${optStr}  };
 						}
 					}
 					this._buildActive(this._data);
+					if (this._o.role === 'demoMode') {
+						window.SmartPolygons.update('pgn-wdg', data);
+					}
 				})
 				.catch((error) => {
 					console.error(error); // Error: Not Found
@@ -820,6 +823,9 @@ ${optStr}  };
 				this._data.clear();
 				this._data = new Set([fakeData.target]);
 				this._buildActive(this._data);
+				if (this._o.role === 'demoMode') {
+					window.SmartPolygons.update('pgn-wdg', data);
+				}
 			}
 		} else { // show external or emulated data
 			let options = null;
@@ -846,6 +852,9 @@ ${optStr}  };
 				this._build();
 			} else {
 				this._buildActive(this._data);
+				if (this._o.role === 'demoMode') {
+					window.SmartPolygons.update('pgn-wdg', data);
+				}
 			}
 		}
 	}

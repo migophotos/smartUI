@@ -600,7 +600,7 @@
                                     <div class="ml-p_content">
                                         <div class="stpgn-ml-p_content-ctrl">
                                             <p>"Start, Any"</p>
-                                            <smart-ui-polygon class="pgn-item" id="pgn-10" interval="200" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="35" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-ui-polygon>
+                                            <smart-ui-polygon class="pgn-item" id="pgn-10" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="35" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-ui-polygon>
                                         </div>
                                     </div>
                                 </div>
@@ -940,7 +940,8 @@
                                 polygonOpt.role = ''; // delete 'demoRole';
                                 polygonOpt.context = document.getElementById('try-it');
                                 // polygonOpt.radius = 25; // todo: temporary set radius. I need to fix the bug with getting right size!!!
-                                polygonOpt.isEmulate = 1;
+                                polygonOpt.isRun = 0;
+                                polygonOpt.isEmulate = 0;
                                 el = window.SmartPolygons.get('pgn-wdg');
                                 if (!el) {
                                     el = new SmartPolygon(id, polygonOpt);
@@ -1083,7 +1084,8 @@
                                     // create polygon here!
                                     const polygonOpt = Object.assign({}, dirtyParams);
                                     polygonOpt.radius = 25;
-                                    polygonOpt.isEmulate = 1;
+                                    polygonOpt.isRun = 0;
+                                    polygonOpt.isEmulate = 0;
                                     polygonOpt.isTooltip = 1;
 
                                     polygonOpt.context = tryItElement;
