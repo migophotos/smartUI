@@ -786,6 +786,7 @@
                                     <smart-ui-checkbox name="stpgn-param" param="is-fill-stroke" title="Закрашивать обводку" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                     <smart-ui-colorbox name="stpgn-param" param="var-stroke-color" title="Цвет обводки" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
                                     <smart-ui-editslider name="stpgn-param" param="var-stroke-width" title="Толщина обводки" value="1" units="" min="0.5" max="20" step="0.5" image="images/border_width_off.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-checkbox name="stpgn-param" param="is-link" title="Разрешить переход по линкам" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                     <smart-ui-checkbox name="stpgn-param" param="is-run" title="Разрешить самостоятельный опрос" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                     <smart-ui-editslider name="stpgn-param" param="interval" title="Интервал опроса" value="1" units="ms" min="1000" max="60000" step="500" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
                                 </div>
@@ -957,21 +958,23 @@
                         ['def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'].forEach((id) => {
                             let srcTypeSelectorBtn = document.getElementById(id);
                             let scrTargetContainer = document.getElementById(srcTypeSelectorBtn.attributes.targets.value);
-                            let options = '';
+                            let srcText = '';
                             if (selWidget === 'smarttooltip') {
                                 if (id == 'def-svg_widget_btn') {
-                                    options = demoTooltipEl._demoTooltip._svg ? demoTooltipEl._demoTooltip._svg.outerHTML : '';
-                                    scrTargetContainer.textContent = `${options}`;
+                                    srcText = demoTooltipEl._demoTooltip._svg ? demoTooltipEl._demoTooltip._svg.outerHTML : '';
+                                    scrTargetContainer.textContent = `${srcText}`;
                                 } else {
-                                    options = CustomProperties.serializeOptions(dirtyOptions, id);
-                                    scrTargetContainer.innerHTML = `<code>${options}</code>`;
+                                    srcText = CustomProperties.serializeOptions(dirtyOptions, id);
+                                    scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
                                 }
                             } else {
-                                options = SmartPolygon.serializeOptions(dirtyOptions, id);
+                                delete dirtyOptions.radius;
+                                delete dirtyOptions.role;
+                                srcText = SmartPolygon.serializeOptions(dirtyOptions, id);
                                 if (id == 'def-svg_widget_btn') {
-                                    scrTargetContainer.innerHTML = `<code>${options}</code>`;
+                                    scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
                                 } else {
-                                    scrTargetContainer.innerHTML = `<code>${options}</code>`;
+                                    scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
                                 }
                             }
                         });

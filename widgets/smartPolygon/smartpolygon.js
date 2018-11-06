@@ -116,10 +116,10 @@ class SmartPolygon {
 		if (typeof opt.isEmulate !== 'undefined') {
 			delete opt.isEmulate;
 		}
-		// enable link
-		if (typeof opt.isLink !== 'undefined') {
-			delete opt.isLink;
-		}
+		// // enable link
+		// if (typeof opt.isLink !== 'undefined') {
+		// 	delete opt.isLink;
+		// }
 		
 		className = `${opt.isStar ? 'star' : 'polygon'}-${opt.anglesNumber}`;
 		switch (templateId) {
@@ -135,7 +135,7 @@ class SmartPolygon {
                 }
                 template += '  }\n';
                 template += '&lt;/style>\n';
-				template += `'&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">Yout browser does not support custom elements.&lt/smart-ui-polygon>\n'`;
+				template += `&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">Yout browser does not support custom elements.&lt/smart-ui-polygon>\n`;
                 break;
 			case 'def-json_btn': {
 				dtO = this.buidOptionsAndCssVars(opt);
