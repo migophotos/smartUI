@@ -200,20 +200,20 @@ ${optStr}  };
 	 */
 	static getCustomProperties() {
 		return [
-			'role',			    // in demo mode this parameter has value 'demoMode'
-            'orient',           // Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
-            'aligning',         // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
-            'rotation',         // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
-            'start-angle',      // Degrees. Default is 45
+			'role',				// in demo mode this parameter has value 'demoMode'
+            'orient',			// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
+            'aligning',			// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
+            'rotation',			// Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
+            'start-angle',		// Degrees. Default is 45
 			'radius',			// This parameter sets the radius of inscribed circle. It should not be more than half the
 								// height or width of the widget. During initialization or installation of parameters,
                                 // all disputed parameters are checked and corrected automatically. Default is 50
-            'inner-radius',     // radius for stars in percents from radius
+            'inner-radius',		// radius for stars in percents from radius
 			'width',			// The width of the widget. The value of the “radius” parameter will be corrected if it
 								// exceeds half the value of this parameter, or the parameter “height” if its value is less than this parameter.
 			'height',			// The height of the widget. The value of the “radius” parameter will be corrected if it exceeds half the value
                                 // of this parameter, or the parameter “width” if its value is less than this parameter.
-            'angles-number',    // The number of corners of a regular polygon. Default is 4
+            'angles-number',	// The number of corners of a regular polygon. Default is 4
 			'position',			// The value describes location of tooltip or legend window Default value is 'rt' which means right-top conner of element.
 			'ttip-template',	// Default value for this property is 'pie', wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
@@ -222,8 +222,8 @@ ${optStr}  };
 			'title-format',
 			'descr-format',
 
-            'max-value',        // the maximum value. If 0 then 100% is a maximum.
-            'is-star',          // Enables drawing start instead of regular polygon
+            'max-value',		// the maximum value. If 0 then 100% is a maximum.
+            'is-star',			// Enables drawing start instead of regular polygon
 			'is-animate',		// Allows to animate the moment of receiving the data array.
 			'is-link',			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			'is-tooltip',		// Allows internal dispetching of smarttooltip next to the mouse pointer.
@@ -245,8 +245,8 @@ ${optStr}  };
 								// Conversely, if the value affects the line ('rule'='stroke'),
 								// then the corresponding color and flag are used to fill the background.
 								// In the case of 'rule'='both', additional parameters are not used.
-			'is-fill-bkg',      // Enables fill and color the background of polygon. Default is 1
-			'is-fill-stroke',   // Enables draw colored stroke around of polygon. Default is 0
+			'is-fill-bkg',		// Enables fill and color the background of polygon. Default is 1
+			'is-fill-stroke',	// Enables draw colored stroke around of polygon. Default is 0
 			'var-stroke-color',
 			'var-fill-color',
 			'var-is-shadow',	// Allows shadow for widget and tooltip
@@ -257,20 +257,20 @@ ${optStr}  };
     static defOptions() {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
-            orient: 'hor',      // Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
-            aligning: 'right',  // Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
-            rotation: 0,        // Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
-            startAngle: 0 ,     // Degrees. Default is 45
+            orient: 'hor',		// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
+            aligning: 'right',	// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
+            rotation: 0,		// Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
+            startAngle: 0,		// Degrees. Default is 45
 			radius: 50,			// This parameter sets the radius of inscribed circle. It should not be more than half the
 								// height or width of the widget. During initialization or installation of parameters,
                                 // all disputed parameters are checked and corrected automatically. Default is 50
-            innerRadius: 50,    // inner radius for starts in percents
+            innerRadius: 50,	// inner radius for starts in percents
 			width: 0,			// The width of the widget. The value of the “radius” parameter will be corrected if it
 								// exceeds half the value of this parameter, or the parameter “height” if its value is less than this parameter.
 			height: 0,			// The height of the widget. The value of the “radius” parameter will be corrected if it exceeds half the value
                                 // of this parameter, or the parameter “width” if its value is less than this parameter.
-            anglesNumber: 0,    // The number of corners of a regular polygon. Default is 0 and must be specified!
-			position: 'rt',     // The value describes location of tooltip window Default value is 'rt' which means right-top conner of element.
+            anglesNumber: 0,	// The number of corners of a regular polygon. Default is 0 and must be specified!
+			position: 'rt',		// The value describes location of tooltip window Default value is 'rt' which means right-top conner of element.
 			ttipTemplate: 'simple', // Default value for this property is 'simple, wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
 			ttipType: 'own',	// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings.
@@ -278,14 +278,14 @@ ${optStr}  };
 			titleFormat: '$TITLE$, value = $VALUE$',
 			descrFormat: '$DESCR$, color = $COLOR$',
 
-            maxValue: 0,        // the maximum value. If 0 then 100% is a maximum.
-            isStar: 0,          // Enables drawing start instead of regular polygon
+            maxValue: 0,		// the maximum value. If 0 then 100% is a maximum.
+            isStar: 0,			// Enables drawing start instead of regular polygon
 			isAnimate: 0,		// Allows to animate the moment of receiving the data array.
 			isLink: 1,			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			isTooltip: 1,		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			isEmulate: 0,		// Allows automatic emulation of the process of data receiving.
 			isRun: 1,			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “target”, “user”
-			interval: 3000,     // Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
+			interval: 3000,		// Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)
             server: '',
             target: '',
@@ -293,11 +293,11 @@ ${optStr}  };
 
 			colorRule: 'stroke',
 			valueRule: 'fill',
-			isFillBkg: 0,       // Enables fill and color the background of polygon. Default is 1
-            isFillStroke: 0,    // Enables draw stroke around of polygon. Default is 1
+			isFillBkg: 0,		// Enables fill and color the background of polygon. Default is 1
+            isFillStroke: 0,	// Enables draw stroke around of polygon. Default is 1
             varStrokeColor: '#000000',
             varFillColor: 	'#ffcd88',
-			varIsShadow: 0,     // Allows shadow for widget, legend and tooltip
+			varIsShadow: 1,		// Allows shadow for widget, legend and tooltip
             varStrokeWidth: 3,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			varOpacity: 1		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
         };
@@ -320,9 +320,10 @@ ${optStr}  };
             'interval',
             'isFillBkg',
             'isFillStroke',
-            'maxValue',
+			'maxValue',
+			'varIsShadow',
             'varStrokeWidth',
-            'varOpacity',
+            'varOpacity'
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
     }
@@ -621,6 +622,7 @@ ${optStr}  };
 			this._svgroot.insertBefore(this._bodyActive, this._body);
 		}
 		this._buildActive(this._data);
+		this._body.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
 
 		this._body.addEventListener('click', this._onClick);
 		this._body.addEventListener('mouseover', this._onShowTooltip);
@@ -1002,7 +1004,6 @@ class SmartPolygonElement extends HTMLElement {
 			:host(.pink) > #tabs {
 				color: pink; /* color internal #tabs node when host has class="pink". */
 			}
-
 		`;
 
 		const supportsShadowDOMV1 = !!HTMLElement.prototype.attachShadow;
@@ -1068,17 +1069,10 @@ class SmartPolygonElement extends HTMLElement {
 
     }
     disconnectedCallback() {
-		// remove element from smartpol.heap!!
-		// ....todo
-
-		// this._data.clear();
-		// this._legend.length = 0;
-		// this._body.removeEventListener('click', this._onClick);
-		// this._body.removeEventListener('transitionend');
-
-		// this._activeG  	= null;
-		// this._passiveG 	= null;
-		// this._body 		= null;
+		window.SmartPolygons.unset(this._id);
+		this._stpgn = null;
+		this._root = null;
+		this._o = null;
     }
 
 }

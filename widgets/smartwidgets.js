@@ -78,7 +78,7 @@ class SmartWidgets {
 		}
 			// Fix for error: <circle> attribute r: A negative value is not valid!
 		if (type == 'circle' && params.r < 0) {
-			params.r = 0;
+			params.r = 1;
 		}
 		const svgNS = 'http://www.w3.org/2000/svg';
 		let textData = '';
@@ -140,12 +140,12 @@ class SmartWidgets {
 		let count = 0;
 		for (let np of knownParams) {
 			if (propName) {
-				if (np === propName && options.hasOwnProperty(propName)) {
+				if (np === propName && typeof options[propName] !== 'undefined') {
 					options[propName] = Number(options[propName]);
 					count++;
 					break;
 				}
-			} else if (options.hasOwnProperty(np)) {
+			} else if (typeof options[np] !== 'undefined') {
 					options[np] = Number(options[np]);
 					count++;
 			}
@@ -215,6 +215,9 @@ class SmartWidgets {
 		this._heap.set(id, obj);
 		return this;
 	}
+	unset(id) {
+		return this._heap.delete(id);
+	}
     initCtrl(id, options) {
         throw new Error('You must overwrite this function in derived class!');
     }
@@ -227,7 +230,7 @@ class SmartWidgets {
 	getParams(id) {
 		const ctrl = this.get(id);
 		if (ctrl) {
-			return ctrl.getParams()
+			return ctrl.getParams();
 		}
 		return null;
     }
@@ -256,10 +259,7 @@ class SmartWidgets {
             ctrl.run(0);
         }
 	}
-	update(id, data = {}) {	// JSON object with defined progress:[]. In case of cfg={}, or opt:{} defined
-							// this section will be processed before progress=[]
-							// opt or cfg objects may contain any known optional attributes,
-							// such as: lang, type, sortBy, varOpacity, lcolor (legend color), legend, interval (ms), run/stop, server, targets, user, ...
+	update(id, data = {}) {
 		const ctrl = this.get(id);
 		if (ctrl) {
             ctrl.update(data);
