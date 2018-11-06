@@ -85,30 +85,24 @@ class SmartPolygon {
      *
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
-		const options = {
-		};
-
-		// convert properties started with 'var-' to css values
 		const customProp = SmartPolygon.getCustomProperties();
-		for (let n = 0; n < customProp.length; n++) {
-			if (what != 'options') {
-				let cssKey = `--stpgn-${customProp[n]}`;
-				let oKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
-				let cssVal = opt[oKey];
-				if (typeof cssVal !== 'undefined') {
-					cssVal = cssVal.toString();
-					options[`${cssKey}`] = cssVal;
-				}
-			} else {
-				const propKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
-				let propVal = opt[propKey];
-				if (typeof propVal !== 'undefined') {
-					options[propKey] = propVal;
-				}
-			}
-		}
-		return options;
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, 'stpgn');
 	}
+	/**
+	 * Returns an array of custom properties in form of parameter names in case of options equals null.
+	 * If 'options' is specified, then this functions returns the filled object.
+	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
+	 * and in case of specified options:
+	 * params = {
+	 * 	firstSecondThird: options.firstSecondThird
+	 * } will be returned
+	 * in case filter equals 'dirty' returns only changed (dirty) parameters
+	 */
+	static getCustomParams(options = null, filter = 'all') {
+		const custProp = SmartPolygon.getCustomProperties();		// get an array of custom properties
+		const origOpt = SmartPolygon.defOptions();
+		return SmartWidgets.getCustomParams(custProp, origOpt, options, filter);
+    }
 
 	/**
 	 * Build text representation of changed options for specific templates
@@ -138,7 +132,7 @@ class SmartPolygon {
                 }
                 template += '  }\n';
                 template += '&lt;/style>\n';
-				template += `&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">Yout browser does not support custom elements.&lt/smart-ui-polygon>\n`;
+				template += `&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-polygon>\n`;
                 break;
 			case 'def-json_btn': {
 				dtO = this.buidOptionsAndCssVars(opt);
@@ -326,38 +320,6 @@ ${optStr}  };
             'varOpacity'
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
-    }
-
-	/**
-	 * Returns an array of custom properties in form of parameter names in case of options equals null.
-	 * If 'options' is specified, then this functions returns the filled object.
-	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
-	 * and in case of specified options:
-	 * params = {
-	 * 	firstSecondThird: options.firstSecondThird
-	 * } will be returned
-	 * in case filter equals 'dirty' returns only changed (dirty) parameters
-	 */
-	static getCustomParams(options = null, filter = 'all') {
-		const props = SmartPolygon.getCustomProperties();		// get an array of custom properties
-		const paramsArray = [];
-		for (let prop of props) {
-			paramsArray.push(SmartPolygons.customProp2Param(prop));
-		}
-		if (!options) {
-			return paramsArray;
-		}
-		const params = {};
-		const original = SmartPolygon.defOptions();
-		for (let prop of paramsArray) {
-			if (typeof options[prop] !== 'undefined') {
-				if (filter === 'all' ||
-					(filter === 'dirty' && options[prop] !== original[prop])) {
-					params[prop] = options[prop];
-				}
-			}
-		}
-		return params;
     }
 
     constructor(id, options = null) {
@@ -1008,7 +970,7 @@ class SmartPolygonElement extends HTMLElement {
 
 		const supportsShadowDOMV1 = !!HTMLElement.prototype.attachShadow;
 		if (!supportsShadowDOMV1) {
-			throw new Error('Unfortunately, your browser does not support shadow DOM v1. Think about switching to a Chrome browser that supports all new technologies!');
+			throw new Error('This browser does not support shadow DOM v1. Think about switching to a Chrome browser that supports all new technologies!');
 		}
 		this._id = this.getAttribute('id') || id;
 		this._o = {};

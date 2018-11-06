@@ -165,6 +165,85 @@ class SmartWidgets {
 		return prop.replace(CAMELIZE, capitalize);
 	}
 
+    /**
+     * build and returns an options object or css vars
+	 *
+	 * input: {
+	 * 	paramKey: value,	// custom prop is param-key
+	 *  paramKey: value		// custorm property is var-param-key
+	 * }
+	 * preffix = '';
+     * output: {
+     *  paramKey: value,	// custom prop is param-key
+     *  varParamKey: value,	// custom property is var-param-key
+     * }
+	 * preffix = 'any';
+     * output: {
+     *   --any-param-key: value,		// custom property is param-key
+     *   --any-var-param-key: value,	// custom property is var-param-key
+     * }
+	 *
+	 * @param {object} opt current options object from widget
+	 * @param {object} prop custom properties array from widget
+	 * @param {string} preffix flag '' or 'preffix' means the type of returned data.
+	 * the preffix flag is just a name, that will be extended by '--' at the start and '-' at the end
+	 * for example: stpgn will be extended to '--stpgn-'
+	 */
+	static buidOptionsAndCssVars(opt, prop, preffix = '') {
+		const options = {
+		};
+
+		// convert all properties to css vars
+		const customProp = SmartPolygon.getCustomProperties();
+		for (let n = 0; n < customProp.length; n++) {
+			if (preffix != '') {
+				let cssKey = `--${preffix}-${customProp[n]}`;
+				let oKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
+				let cssVal = opt[oKey];
+				if (typeof cssVal !== 'undefined') {
+					cssVal = cssVal.toString();
+					options[`${cssKey}`] = cssVal;
+				}
+			} else {
+				const propKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
+				let propVal = opt[propKey];
+				if (typeof propVal !== 'undefined') {
+					options[propKey] = propVal;
+				}
+			}
+		}
+		return options;
+	}
+
+	/**
+	 * Returns an array of custom properties in form of parameter names in case of options equals null.
+	 * If 'options' is specified, then this functions returns the filled object.
+	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
+	 * and in case of specified options:
+	 * params = {
+	 * 	firstSecondThird: options.firstSecondThird
+	 * } will be returned
+	 * in case filter equals 'dirty' returns only changed (dirty) parameters
+	 */
+	static getCustomParams(custProp, defOpt, options = null, filter = 'all') {
+		const paramsArray = [];
+		for (let prop of custProp) {
+			paramsArray.push(SmartPolygons.customProp2Param(prop));
+		}
+		if (!options) {
+			return paramsArray;
+		}
+		const params = {};
+		for (let prop of paramsArray) {
+			if (typeof options[prop] !== 'undefined') {
+				if (filter === 'all' ||
+					(filter === 'dirty' && options[prop] !== defOpt[prop])) {
+					params[prop] = options[prop];
+				}
+			}
+		}
+		return params;
+    }
 
     // private - please don't call this function from outside!
 	_intervalTimer() {
