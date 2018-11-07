@@ -183,7 +183,7 @@
                     <smart-ui-button class="widgets-btn" id="smarttooltip_btn" targets="smarttooltip_cat,smarttooltip_opt,smarttooltip_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/tooltip_on.svg" imageOff="images/tooltip_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartTooltip"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartpie_btn" targets="smartpie_cat,smartpie_opt,smarttpie_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/pie_on.svg" imageOff="images/pie_off.svg"  data-sttip-tooltip="Настроить параметры виджета SmartPie"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartpgn_btn" targets="smartpgn_cat,smartpgn_opt,smartpgn_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/polygon_on.svg" imageOff="images/polygon_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartPolygon"></smart-ui-button>
-                    <smart-ui-button class="widgets-btn" id="smartbar_btn" targets="smartbar_cat,smartbar_opt,smartbar_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/polygon_on.svg" imageOff="images/polygon_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartBar"></smart-ui-button>
+                    <smart-ui-button class="widgets-btn" id="smartbar_btn" targets="smartbar_cat,smartbar_opt,smartbar_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/bar_on.svg" imageOff="images/bar_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartBar"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartgauge_btn" targets="smartgauge_cat,smartgauge_opt,smartgauge_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartGauge"></smart-ui-button>
             </div>
             <div class="bottom-panel">
@@ -655,7 +655,7 @@
                                     .stbar-example-descr { grid-area: stbar-example-descr; }
                                     .stbar-example-cont { grid-area: stbar-example-cont; }
                                     .stbar-try-it { grid-area: stbar-try-it; }
-    
+
                                     .stbar-example-descr p {
                                         font-size: 2em;
                                         color: rgba(0, 171, 6, 0.8);
@@ -668,21 +668,25 @@
                                         border: 2px gray solid;
                                         cursor: default;
                                     }
-    
+
                                     .stbar-try-it {
                                         display: inherit;
                                         text-align: center;
                                         /* border: 2px gray solid; */
                                         cursor: default;
                                     }
-    
+                                    .bar-item {
+                                        --stbar-width: 100;
+                                        --stbar-thickness: 20;
+                                    }
+
                                 </style>
                                 <div class="ml bar-ml">
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar "</p>
-                                                <smart-ui-bar class="bar-item" id="bar-01" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" angles-number="4" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-01" type="discrete" is-scale="0" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -690,7 +694,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item" id="bar-02" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" rotation="45" angles-number="4" is-star="1" inner-radius="30" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-02" type="discrete" is-scale="0" orient="ver" aligning="up" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -698,16 +702,16 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="bar-item" id="bar-03" aligning="left" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" angles-number="5" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-03" type="discrete" scale-position="top" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
-    
+
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item" id="bar-04" orient="ver" aligning="up" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" rotation="36.5" angles-number="5" is-star="1" inner-radius="50" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-04" type="discrete" orient="ver" scale-position="left" aligning="up" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -715,7 +719,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="bar-item" id="bar-05" orient="hor" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="-1" angles-number="6" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-05" scale-position="top" value-rule="none" color-rule="none" is-fill-bkg="0" is-fill-stroke="0" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -723,16 +727,16 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item" id="bar-06" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="6" rotation="30.5" is-star="1" inner-radius="70" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-06" orient="ver" scale-position="left" value-rule="none" color-rule="none" is-fill-bkg="0" is-fill-stroke="0" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
-    
+
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="bar-item" id="bar-07" orient="ver" aligning="up" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="0.5" angles-number="8" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-07" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -740,7 +744,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item" id="bar-08" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" rotation="22.5" angles-number="8" is-star="1" inner-radius="50" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-08" orient="ver" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -748,7 +752,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="bar-item" id="bar-09" orient="ver" aligning="up" value-rule="fill" color-rule="fill" is-fill-bkg="0" is-fill-stroke="1" var-stroke-width="5" var-stroke-color="black" var-opacity="0.3" start-angle="0" angles-number="3" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-09" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" var-opacity="0.3" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -756,11 +760,11 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item" id="bar-10" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="35" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="bar-item demoMode" id="bar-10" orient="ver" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
-    
+
                                 </div>
                                 <div id="stbar-over-panel" class="over-hidden">
                                     <div id="stbar-example-grid" class="stbar-example-grid example-grid--hidden">
@@ -768,16 +772,18 @@
                                             <p id="stbar-example-descr"></p>
                                         </div>
                                         <div class="stbar-example-cont no-legend">
-                                            <smart-ui-bar class="stbar-example" id="stbar-example" radius="120" role="demoMode" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            <smart-ui-bar class="stbar-example" id="stbar-example" width="100" height="24" role="demoMode" is-tooltip="0" is-link="0"></smart-ui-bar>
                                         </div>
                                         <div class="stbar-try-it">
                                             <table><tr>
                                                 <td>SmartBar внутри SVG:</td></tr>
                                             <tr><td>
                                             <svg id="bar-try-it" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                width="100" heigh="100" viewBox="0 0 100 100">
+                                                width="200" heigh="200" viewBox="0 0 200 200">
+                                                <rect x="0" y="0" width="200" height="200" fill="none" stroke="gray" stroke-dasharray="4 2"/>
+                                                <circle cy="30" cx="30" r="25" fill="lightgray" stroke-dasharray="4 2"/>
                                                 <g id="bar-wdg">
-                                                    <rect id="r1" x="0" y="50" width="100" height="20" fill="#eee" stroke="black" stroke-dasharray="4 4";  />
+                                                    <rect id="r1" x="50" y="30" width="100" height="24"/>
                                                 </g>
                                             </svg>
                                             </td>
@@ -786,7 +792,7 @@
                                     </div>
                                 </div>
                             </div>
-    
+
                     </div>
                 </div>
                 <div class="side-panel">
@@ -826,7 +832,7 @@
                         <smart-ui-button class="categories-btn" id="bar_ttip-params_btn" targets="bar-ttip-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры отображения подсказок"></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                     </div>
-    
+
 
                     <div id="smartgauge_cat" style="display: none;">
                         <smart-ui-button class="categories-btn" id="gauge_params_btn" targets="gauge-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры индикатора, такие как тип, вид стрелок, количество шкал и др."></smart-ui-button>
@@ -1014,7 +1020,7 @@
                                     </div>
                                 </div>
                         </div>
-    
+
 
                         <div id="smartgauge_opt" style="display: none;">
                             <div id="gauge-params_pan" class="overlay" style="max-height: 766px; display: none;">
@@ -1369,7 +1375,7 @@
 
 
                                 tmp = document.getElementById('stbar-example-descr');
-                                tmp.textContent = `${allParams.orient ? 'Vertical Bar' : 'Horizontal Bar'}`;
+                                tmp.textContent = `${allParams.orient == 'ver' ? 'Vertical Bar' : 'Horizontal Bar'}`;
 
                                 tmp = document.getElementById('stbar-example-grid');
                                 tmp.classList.remove('example-grid--hidden');

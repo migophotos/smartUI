@@ -195,6 +195,7 @@ ${optStr}  };
             'orient',			// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
 			'aligning',			// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
 			'thickness',		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
+			'width', 'height',	// the size of bar may be specified by this parameters
 			'is-scale',			// Enables scale drawing, default is 1.
 			'scale-position',	// Depends from 'orient', 'alighing'. May contain one from next values: 'top','right','bottom', or 'left'
 			'scale-offset',		// An offset of scale base line from center axe of SmartBar. Depends from 'orient'
@@ -252,9 +253,12 @@ ${optStr}  };
             orient: 'hor',		// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',	// Direction of axis "value". Depends on the parameter "orient". May have values: "up", "down", "right", "left". Default is 'right'
 			thickness: 10,		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
+			width: 50,
+			height: 12,			// the size of bar may be specified by this parameters
+
 			isScale: 1,			// Enables scale drawing, default is 1.
 			scalePosition: 'bottom',	// Depends from 'orient', 'alighing'. May contain one from next values: 'top','right','bottom', or 'left'
-			scaleOffset:15,		// An offset of scale base line from center axe of SmartBar. Depends from 'orient and thickness'
+			scaleOffset: 15,		// An offset of scale base line from center axe of SmartBar. Depends from 'orient and thickness'
 			majorMLength: 3, 	// The length of main marks on the scale in percentage of 'thickness'. Default is 3
 			minorMLength: 1.5, 	// The length of additional marks on the scale in percentage of 'thickness'. Default is 1.5
 
@@ -278,21 +282,20 @@ ${optStr}  };
             target: '',
             user: '',
 
-			colorRule: 'stroke',
-			valueRule: 'fill',
-			isFillBkg: 0,		// Enables fill and color the background of polygon. Default is 1
-            isFillStroke: 0,	// Enables draw stroke around of polygon. Default is 1
+			colorRule: 'none',
+			valueRule: 'none',
+			isFillBkg: 1,		// Enables fill and color the background of polygon. Default is 1
+            isFillStroke: 1,	// Enables draw stroke around of polygon. Default is 1
             varStrokeColor: '#000000',
             varFillColor: 	'#ffcd88',
 			varIsShadow: 1,		// Allows shadow for widget, legend and tooltip
-            varStrokeWidth: 3,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
+            varStrokeWidth: 1,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			varOpacity: 1,		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
 
 			varFontFamily:	'Arial, DIN Condensed, Noteworthy, sans-serif',
-			varFontSize:	'12px',
+			varFontSize:	'5px',
 			varFontStretch:	'condensed',
-			varFontColor:	'#666666',
-			varStrokeColor: 'red', // The default is stroke color!
+			varFontColor:	'#666666'
         };
     }
     static convertNumericProps(options = {}, propName) {
@@ -306,13 +309,16 @@ ${optStr}  };
             'isFillBkg',
             'isFillStroke',
 			'maxValue',
+			'width',
+			'thickness',
 			'isScale',
 			'scaleOffset',
 			'majorMLength',
 			'minorMLength',
 			'varIsShadow',
             'varStrokeWidth',
-            'varOpacity'
+			'varOpacity',
+			'varFontSize'
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
     }
@@ -366,6 +372,7 @@ ${optStr}  };
         style.textContent = txtStyle;
         this._defs = SmartBars.addElement('defs', {}, this._root, this._svgdoc);
 		this._defs.innerHTML = window.SmartPolygons.defs;
+		this._active = SmartPolygons.addElement('clipPath', {id: 'activeRect'}, this._root, this._svgdoc);
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
 		// in case of creating SmartPolygon object from Javascript, lets do all needed work in one place...
@@ -391,15 +398,118 @@ ${optStr}  };
 			this._body.removeEventListener('click', this._onClick);
 			this._body.removeEventListener('mouseover', this._onShowTooltip);
 			this._body.removeEventListener('mousemove', this._onMoveTooltip);
-            this._body.removeEventListener('mouseout', this._onHideTooltip);
-			this._bodyActive.removeEventListener('click', this._onClick);
-			this._bodyActive.removeEventListener('mouseover', this._onShowTooltip);
-			this._bodyActive.removeEventListener('mousemove', this._onMoveTooltip);
-			this._bodyActive.removeEventListener('mouseout', this._onHideTooltip);
-
-			this._svgroot.removeChild(this._bodyActive);
-            this._svgroot.removeChild(this._body);
+			this._body.removeEventListener('mouseout', this._onHideTooltip);
+			if (this._bodyActive) {
+				this._bodyActive.removeEventListener('click', this._onClick);
+				this._bodyActive.removeEventListener('mouseover', this._onShowTooltip);
+				this._bodyActive.removeEventListener('mousemove', this._onMoveTooltip);
+				this._bodyActive.removeEventListener('mouseout', this._onHideTooltip);
+				this._svgroot.removeChild(this._bodyActive);
+			}
+			this._svgroot.removeChild(this._body);
 		}
+		// calculate body size
+		this._barBody = {
+			x: this._rect.x,
+			y: this._rect.y,
+			width: this._rect.width,
+			height: (this._rect.width / 100) * this._o.thickness,
+			active: {x: 0, y: 0, width: 0, height: 0}
+		};
+		// calc and move active part
+		this._barBody.active.x = this._barBody.x + this._o.scaleOffset;
+		this._barBody.active.y = this._barBody.y + this._o.scaleOffset;
+		this._barBody.active.width = this._barBody.width;
+		this._barBody.active.height = this._barBody.height;
+
+		// append gaps
+		if (this._o.isFillStroke || this._o.isFillStroke) {
+			// expand body
+			this._barBody.width += this._o.scaleOffset * 2;
+			this._barBody.height += this._o.scaleOffset * 2;
+		}
+
+		if (this._o.isScale) {
+			this._barBody.height += this._o.scaleOffset + this._o.majorMLength + this._o.varFontSize + (this._o.scaleOffset / 2);
+			if (this._o.orient === 'hor' && this._o.scalePosition === 'top') {
+				// move active down
+				this._barBody.active.y = (this._barBody.y + this._barBody.height) - this._o.scaleOffset - this._barBody.active.height;
+			}
+		}
+		if (this._o.orient == 'ver') {
+			let tv;
+			tv = this._barBody.width;
+			this._barBody.width = this._barBody.height;
+			this._barBody.height = tv;
+
+			tv = this._barBody.active.width;
+			this._barBody.active.width = this._barBody.active.height;
+			this._barBody.active.height = tv;
+
+			if (this._o.scalePosition === 'left') {
+				// move active right
+				this._barBody.active.x = (this._barBody.x + this._barBody.width) - this._o.scaleOffset - this._barBody.active.width;
+			}
+		}
+
+		this._body = SmartBars.addElement('rect', {
+			id: 'body',
+			class: 'body',
+			stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
+			fill: `${this._o.isFillBkg ? this._o.varFillColor : 'none'}`,
+			'stroke-width': this._o.varStrokeWidth,
+			'stroke-opacity': this._o.varOpacity,
+			'fill-opacity': this._o.varOpacity,
+			x: this._rect.x,
+			y: this._rect.y,
+			width: this._barBody.width,
+			height: this._barBody.height
+		}, this._svgroot, this._svgdoc);
+		// build active path
+		let path = '';
+		if (this._o.type == 'solid') {
+			const ra = this._barBody.active;
+			path = `M${ra.x},${ra.y} h${ra.width} v${ra.height} h-${ra.width} z`;
+		} else {
+			let startX = this._barBody.active.x;
+			let startY = this._barBody.active.y;
+			let partW, partH;
+			if (this._o.orient == 'ver') {
+				partH = (this._barBody.active.height / 10) - 3;
+				partW = this._barBody.active.width;
+			} else {
+				partW = (this._barBody.active.width / 10) - 3;
+				partH = this._barBody.active.height;
+			}
+			for (let n = 0; n < 10; n++) {
+				path += `M${startX},${startY} h${partW} v${partH} h-${partW} v-${partH} `;
+				if (this._o.orient == 'ver') {
+					startY += partH + 3;
+				} else {
+					startX += partW + 3;
+				}
+			}
+		}
+		this._bodyActive = SmartBars.addElement('path', {
+            id: 'bodyActive',
+            class: 'bodyActive',
+            stroke: this._o.varStrokeColor,
+            fill: '#ffffff',
+            'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
+			'fill-opacity':  this._o.varOpacity,
+			'stroke-linejoin': 'miter',
+			d: path
+		}, this._svgroot, this._svgdoc);
+
+		this._buildActive(this._data);
+		this._body.addEventListener('click', this._onClick);
+		this._body.addEventListener('mouseover', this._onShowTooltip);
+		this._body.addEventListener('mousemove', this._onMoveTooltip);
+		this._body.addEventListener('mouseout', this._onHideTooltip);
+		this._bodyActive.addEventListener('click', this._onClick);
+		this._bodyActive.addEventListener('mouseover', this._onShowTooltip);
+		this._bodyActive.addEventListener('mousemove', this._onMoveTooltip);
+		this._bodyActive.addEventListener('mouseout', this._onHideTooltip);
 	}
 	// event listeners
 	_onShowTooltip(evt) {
@@ -474,12 +584,11 @@ ${optStr}  };
 			}
         } else {
 			// calculate svg rectangle and coordinates
-			// todo: check radius and correct it with width and height parameters if they exists!
 			this._rect = {
 				x: 0,
 				y: 0,
-				width:  this._o.radius * 2,
-				height: this._o.radius * 2
+				width:  options.width,
+				height: options.height
 			};
 		}
 		this._inited = true;
@@ -789,9 +898,13 @@ class SmartBarElement extends HTMLElement {
 		this._stbar.init(this._o);
 
 		// resize own svg
-		this._svgroot.setAttribute('height', this._stbar._rect.height);
-		this._svgroot.setAttribute('width', this._stbar._rect.width);
-		this._svgroot.setAttribute('viewBox', `0 0 ${this._stbar._rect.width} ${this._stbar._rect.height}`);
+		let size = Math.max(this._stbar._barBody.height, this._stbar._barBody.width);
+		if (this.classList.contains('demoMode')) {
+			size = 130;
+		}
+		this._svgroot.setAttribute('height', size);
+		this._svgroot.setAttribute('width', size);
+		this._svgroot.setAttribute('viewBox', `0 0 ${size} ${size}`);
 
     }
     disconnectedCallback() {
@@ -804,6 +917,3 @@ class SmartBarElement extends HTMLElement {
 }
 window.customElements.define('smart-ui-bar', SmartBarElement);
 // thanks 'https://online.flippingbook.com/view/302153/676/'
-
-
-

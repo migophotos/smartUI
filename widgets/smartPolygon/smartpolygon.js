@@ -365,7 +365,7 @@ ${optStr}  };
 
         this._data      = null; // last received from data provider (server + target)
         this._body      = null; // the polygons body
-        this._active    = null; // the active element (circle in clip)
+        this._active    = null; // the active element (rect in clip)
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
@@ -568,8 +568,8 @@ ${optStr}  };
 				this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
 		}, this._svgroot, this._svgdoc);
 		this._bodyActive = SmartPolygons.addElement('polygon', {
-            id: 'bodyAdcive',
-            class: 'body',
+            id: 'bodyActive',
+            class: 'bodyActive',
             stroke: this._o.varStrokeColor,
             fill: this._o.varFillColor,
             'stroke-width': this._o.varStrokeWidth,

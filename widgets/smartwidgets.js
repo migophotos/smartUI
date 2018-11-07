@@ -137,17 +137,25 @@ class SmartWidgets {
 		if (typeof knownParams !== 'object') {
 			throw new ReferenceError('knownParams array cannot be undefined!');
 		}
-		let count = 0;
+		let val, count = 0;
 		for (let np of knownParams) {
 			if (propName) {
 				if (np === propName && typeof options[propName] !== 'undefined') {
-					options[propName] = Number(options[propName]);
+					val = options[propName];
+					if (typeof val === 'string') {
+						val = val.split('px')[0];
+					}
+					options[propName] = Number(val);
 					count++;
 					break;
 				}
 			} else if (typeof options[np] !== 'undefined') {
-					options[np] = Number(options[np]);
-					count++;
+				val = options[np];
+				if (typeof val === 'string') {
+					val = val.split('px')[0];
+				}
+				options[np] = Number(val);
+				count++;
 			}
 		}
 		return (count > 0);
