@@ -183,6 +183,7 @@
                     <smart-ui-button class="widgets-btn" id="smarttooltip_btn" targets="smarttooltip_cat,smarttooltip_opt,smarttooltip_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/tooltip_on.svg" imageOff="images/tooltip_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartTooltip"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartpie_btn" targets="smartpie_cat,smartpie_opt,smarttpie_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/pie_on.svg" imageOff="images/pie_off.svg"  data-sttip-tooltip="Настроить параметры виджета SmartPie"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartpgn_btn" targets="smartpgn_cat,smartpgn_opt,smartpgn_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/polygon_on.svg" imageOff="images/polygon_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartPolygon"></smart-ui-button>
+                    <smart-ui-button class="widgets-btn" id="smartbar_btn" targets="smartbar_cat,smartbar_opt,smartbar_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/polygon_on.svg" imageOff="images/polygon_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartBar"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartgauge_btn" targets="smartgauge_cat,smartgauge_opt,smartgauge_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartGauge"></smart-ui-button>
             </div>
             <div class="bottom-panel">
@@ -250,8 +251,6 @@
                                 >pie</label></p>
                             <p><label id="image-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="image" data-sttip-name="Title String of text" data-sttip-descr="Description String of text" data-sttip-link="images/colorwill.png">image</label></p>
                             <p><label id="iframe-01" class="ttip-target" data-sttip-show-mode="pinned" data-sttip-template="iframe" data-sttip-name="Title String of text" data-sttip-descr="Description String of text" data-sttip-link="index.html">iframe</label>
-                        </div>
-                        <div class="widget-example" id="smartpgn_examp" style="display: none;">
                         </div>
                         <div class="widget-example" id="smartgauge_examp" style="display: none;">
                         </div>
@@ -630,7 +629,164 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="widget-example" id="smartbar_page" style="display: none; position: relative;">
+                                <style>
+                                    .bar-ml {
+                                        -webkit-column-count: 4;
+                                        column-count: 5;
+                                    }
+                                    .stbar-ml-p_content-ctrl {
+                                        cursor: pointer;
+                                    }
+                                    .stbar-example-grid {
+                                        /* display: grid; */
+                                        height: 100%;
+                                        grid-template-columns: 0.4fr 2.2fr 0.4fr;
+                                        grid-template-rows: 0.7fr 1.6fr 0.7fr;
+                                        grid-gap: 1px 1px;
+                                        grid-template-areas: ". stbar-example-descr ." ". stbar-example-cont ." ". stbar-try-it .";
+                                        }
+                                    .example-grid--shown {
+                                        display: grid;
+                                    }
+                                    .example-grid--hidden {
+                                        display: none;
+                                    }
+                                    .stbar-example-descr { grid-area: stbar-example-descr; }
+                                    .stbar-example-cont { grid-area: stbar-example-cont; }
+                                    .stbar-try-it { grid-area: stbar-try-it; }
+    
+                                    .stbar-example-descr p {
+                                        font-size: 2em;
+                                        color: rgba(0, 171, 6, 0.8);
+                                        transition: bcolor 0.6s;
+                                        margin-top: 10px;
+                                        text-align: center;
+                                    }
+                                    .stbar-example-cont smart-pie {
+                                        display: inherit;
+                                        border: 2px gray solid;
+                                        cursor: default;
+                                    }
+    
+                                    .stbar-try-it {
+                                        display: inherit;
+                                        text-align: center;
+                                        /* border: 2px gray solid; */
+                                        cursor: default;
+                                    }
+    
+                                </style>
+                                <div class="ml bar-ml">
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Horizontal Bar "</p>
+                                                <smart-ui-bar class="bar-item" id="bar-01" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" angles-number="4" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Vertical Bar"</p>
+                                                <smart-ui-bar class="bar-item" id="bar-02" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" rotation="45" angles-number="4" is-star="1" inner-radius="30" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Horizontal Bar"</p>
+                                                <smart-ui-bar class="bar-item" id="bar-03" aligning="left" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" angles-number="5" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+    
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Vertical Bar"</p>
+                                                <smart-ui-bar class="bar-item" id="bar-04" orient="ver" aligning="up" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="2" rotation="36.5" angles-number="5" is-star="1" inner-radius="50" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Horizontal Bar"</p>
+                                                <smart-ui-bar class="bar-item" id="bar-05" orient="hor" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="-1" angles-number="6" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Vertical Bar"</p>
+                                                <smart-ui-bar class="bar-item" id="bar-06" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="6" rotation="30.5" is-star="1" inner-radius="70" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+    
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Horizontal Bar"</p>
+                                                <smart-ui-bar class="bar-item" id="bar-07" orient="ver" aligning="up" value-rule="fill" color-rule="stroke" is-fill-bkg="0" is-fill-stroke="0" var-stroke-width="3" rotation="0.5" angles-number="8" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Vertical Bar"</p>
+                                                <smart-ui-bar class="bar-item" id="bar-08" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" rotation="22.5" angles-number="8" is-star="1" inner-radius="50" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Horizontal Bar"</p>
+                                                <smart-ui-bar class="bar-item" id="bar-09" orient="ver" aligning="up" value-rule="fill" color-rule="fill" is-fill-bkg="0" is-fill-stroke="1" var-stroke-width="5" var-stroke-color="black" var-opacity="0.3" start-angle="0" angles-number="3" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-p">
+                                        <div class="ml-p_content">
+                                            <div class="stbar-ml-p_content-ctrl">
+                                                <p>"Vertical Bar"</p>
+                                                <smart-ui-bar class="bar-item" id="bar-10" value-rule="none" color-rule="fill" is-fill-bkg="0" is-fill-stroke="0" angles-number="35" is-star="1" inner-radius="10" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            </div>
+                                        </div>
+                                    </div>
+    
+                                </div>
+                                <div id="stbar-over-panel" class="over-hidden">
+                                    <div id="stbar-example-grid" class="stbar-example-grid example-grid--hidden">
+                                        <div class="stbar-example-descr">
+                                            <p id="stbar-example-descr"></p>
+                                        </div>
+                                        <div class="stbar-example-cont no-legend">
+                                            <smart-ui-bar class="stbar-example" id="stbar-example" radius="120" role="demoMode" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                        </div>
+                                        <div class="stbar-try-it">
+                                            <table><tr>
+                                                <td>SmartBar внутри SVG:</td></tr>
+                                            <tr><td>
+                                            <svg id="bar-try-it" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                width="100" heigh="100" viewBox="0 0 100 100">
+                                                <g id="bar-wdg">
+                                                    <rect id="r1" x="0" y="50" width="100" height="20" fill="#eee" stroke="black" stroke-dasharray="4 4";  />
+                                                </g>
+                                            </svg>
+                                            </td>
+                                            </tr></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+    
                     </div>
                 </div>
                 <div class="side-panel">
@@ -660,9 +816,17 @@
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                         <smart-ui-button class="categories-btn" id="pgn_ttip-params_btn" targets="pgn-ttip-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры отображения подсказок"></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
-
                     </div>
 
+                    <div id="smartbar_cat" style="display: none;">
+                        <smart-ui-button class="categories-btn" id="bar_params_btn" targets="bar-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры полигона, такие как количество вершин, отображение звезды, направление индикатора и др."></smart-ui-button>
+                        <smart-ui-spacer class="ver-small"></smart-ui-spacer>
+                        <smart-ui-button class="categories-btn" id="bar_ui-params_btn" targets="bar-ui-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как цвет, размеры и др."></smart-ui-button>
+                        <smart-ui-spacer class="ver-small"></smart-ui-spacer>
+                        <smart-ui-button class="categories-btn" id="bar_ttip-params_btn" targets="bar-ttip-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры отображения подсказок"></smart-ui-button>
+                        <smart-ui-spacer class="ver-small"></smart-ui-spacer>
+                    </div>
+    
 
                     <div id="smartgauge_cat" style="display: none;">
                         <smart-ui-button class="categories-btn" id="gauge_params_btn" targets="gauge-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры индикатора, такие как тип, вид стрелок, количество шкал и др."></smart-ui-button>
@@ -807,7 +971,50 @@
                             </div>
                         </div>
 
-
+                        <div id="smartbar_opt" style="display: none;">
+                                <div id="bar-params_pan" class="overlay" style="max-height: 766px; display: none;">
+                                    <h2>Основные параметры</h2>
+                                    <div style="display: block;">
+                                        <smart-ui-selector name="stbar-param" param="orient" title="Ориентация оси значение" value="" valueList="hor,ver" labelList="Горизонтально,Вертикально" image="images/align_text_off.svg"></smart-ui-selector>
+                                        <smart-ui-selector name="stbar-param" param="aligning" title="Направление максимума" value="" valueList="left,up,right,down" labelList="Влево,Вверх,Вправо,Вниз" image="images/align_text_off.svg"></smart-ui-selector>
+                                        <smart-ui-editslider name="stbar-param" param="rotation" title="Угол поворота полигона" value="1" units="" min="-180" max="180" step="0.5" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                        <smart-ui-editslider name="stbar-param" param="angles-number" title="Количество вершин полигона" value="1" units="" min="3" max="128" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                        <smart-ui-selector name="stbar-param" param="is-star" title="Вид полигона" value="" valueList="1,0" labelList="Звезда,Полигон" image="images/align_text_off.svg"></smart-ui-selector>
+                                        <smart-ui-editslider name="stbar-param" param="inner-radius" title="Внутренний размер звезды" value="1" units="%" min="1" max="99" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                        <smart-ui-editslider name="stbar-param" param="var-opacity" title="Непрозрачность" value="1" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                        <smart-ui-checkbox name="stbar-param" param="var-is-shadow" title="Отбрасывать тень" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    </div>
+                                </div>
+                                <div id="bar-ui-params_pan" class="overlay" style="max-height: 766px; display: none;">
+                                    <h2>Параметры интерфейса</h2>
+                                    <div style="display: block;">
+                                        <smart-ui-selector name="stbar-param" param="value-rule" title="Где отображать значение сигнала" value="" valueList="fill,stroke,both,none" labelList="На фоне,На обводке,На фоне и на обводке,Нигде" image="images/align_text_off.svg"></smart-ui-selector>
+                                        <smart-ui-selector name="stbar-param" param="color-rule" title="Где отображать цвет сигнала" value="" valueList="fill,stroke,none" labelList="На фоне,На обводке,Нигде" image="images/align_text_off.svg"></smart-ui-selector>
+                                        <smart-ui-checkbox name="stbar-param" param="is-fill-bkg" title="Закрашивать фон" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                        <smart-ui-colorbox name="stbar-param" param="var-fill-color" title="Цвет фона" value="#ffcd88" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
+                                        <smart-ui-checkbox name="stbar-param" param="is-fill-stroke" title="Закрашивать обводку" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                        <smart-ui-colorbox name="stbar-param" param="var-stroke-color" title="Цвет обводки" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
+                                        <smart-ui-editslider name="stbar-param" param="var-stroke-width" title="Толщина обводки" value="1" units="" min="0.5" max="20" step="0.5" image="images/border_width_off.svg">edit control with slider</smart-ui-editslider>
+                                        <smart-ui-checkbox name="stbar-param" param="is-link" title="Разрешить переход по линкам" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                        <smart-ui-checkbox name="stbar-param" param="is-run" title="Разрешить самостоятельный опрос" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                        <smart-ui-editslider name="stbar-param" param="interval" title="Интервал опроса" value="1" units="ms" min="1000" max="60000" step="500" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                    </div>
+                                </div>
+                                <div id="bar-ttip-params_pan" class="overlay" style="max-height: 766px; display: none;">
+                                    <h2>Параметры отображения подсказки</h2>
+                                    <div style="display: block;">
+                                        <smart-ui-checkbox name="stbar-param" param="is-tooltip" title="Разрешить отображение подсказки" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                        <smart-ui-selector name="stbar-param" param="ttip-type" title="Механизм включения подсказок" value="" valueList="own,global" labelList="Встроенный,Глобальный" image="images/align_text_off.svg"></smart-ui-selector>
+                                        <smart-ui-selector name="stbar-param" param="position" title="Расположение окна подсказки" value=""
+                                        valuelist="none,ru,rt,rd,lu,lt,ld,cu,cd"
+                                        labellist="Рядом с курсором,Справа Выше,Справа По верху,Справа Ниже,Слева Выше,Слева По верху,Слева Ниже,По центру Выше,По центру Ниже" image="images/position_off.svg"></smart-ui-selector>
+                                        <smart-ui-selector name="stbar-param" param="ttipTemplate" title="Шаблон Подсказки" value="" valueList="simple,pie,image,iframe" labellist="Простой,Диаграмма,Картинка,IFrame" image="images/template_off.svg"></smart-ui-selector>
+                                        <smart-ui-edittext   name="stbar-param" param="title-format" title="Форматирование заголовка" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
+                                        <smart-ui-edittext   name="stbar-param" param="descr-format" title="Форматирование описания" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
+                                    </div>
+                                </div>
+                        </div>
+    
 
                         <div id="smartgauge_opt" style="display: none;">
                             <div id="gauge-params_pan" class="overlay" style="max-height: 766px; display: none;">
@@ -934,22 +1141,38 @@
                     }
                     function updateTryItElement(selWidget, id, options) {
                         let el;
-                        polygonOpt = Object.assign({}, options);
+                        wdgOpt = Object.assign({}, options);
 
                         switch (selWidget) {
                             case 'smartpgn': {
-                                polygonOpt.role = ''; // delete 'demoRole';
-                                polygonOpt.context = document.getElementById('try-it');
+                                wdgOpt.role = ''; // delete 'demoRole';
+                                wdgOpt.context = document.getElementById('try-it');
                                 // polygonOpt.radius = 25; // todo: temporary set radius. I need to fix the bug with getting right size!!!
-                                polygonOpt.isRun = 0;
-                                polygonOpt.isEmulate = 0;
+                                wdgOpt.isRun = 0;
+                                wdgOpt.isEmulate = 0;
                                 el = window.SmartPolygons.get('pgn-wdg');
                                 if (!el) {
-                                    el = new SmartPolygon(id, polygonOpt);
+                                    el = new SmartPolygon(id, wdgOpt);
                                 }
                                 if (el && el.isInited()) {
                                     // set new options and rebuild!
-                                    el.resetParams(polygonOpt);
+                                    el.resetParams(wdgOpt);
+                                }
+                                break;
+                            }
+                            case 'smartbar': {
+                                wdgOpt.role = ''; // delete 'demoRole';
+                                wdgOpt.context = document.getElementById('bar-try-it');
+                                // polygonOpt.radius = 25; // todo: temporary set radius. I need to fix the bug with getting right size!!!
+                                wdgOpt.isRun = 0;
+                                wdgOpt.isEmulate = 0;
+                                el = window.SmartBars.get('bar-wdg');
+                                if (!el) {
+                                    el = new SmartBar(id, wdgOpt);
+                                }
+                                if (el && el.isInited()) {
+                                    // set new options and rebuild!
+                                    el.resetParams(wdgOpt);
                                 }
                                 break;
                             }
@@ -970,10 +1193,19 @@
                                     srcText = CustomProperties.serializeOptions(dirtyOptions, id);
                                     scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
                                 }
-                            } else {
+                            } else if (selWidget === 'smartpgn') {
                                 delete dirtyOptions.radius;
                                 delete dirtyOptions.role;
                                 srcText = SmartPolygon.serializeOptions(dirtyOptions, id);
+                                if (id == 'def-svg_widget_btn') {
+                                    scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
+                                } else {
+                                    scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
+                                }
+                            } else if (selWidget === 'smartbar') {
+                                delete dirtyOptions.radius;
+                                delete dirtyOptions.role;
+                                srcText = SmartBar.serializeOptions(dirtyOptions, id);
                                 if (id == 'def-svg_widget_btn') {
                                     scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
                                 } else {
@@ -1098,6 +1330,69 @@
                     }
 
 
+                    // stbar example panel processing
+                    const stbar_over_panel = document.getElementById('stbar-over-panel');
+                    stbar_over_panel.addEventListener('click', (evt) => {
+                        evt.preventDefault();
+                        if (evt.target.id == 'stpie-example') {
+                            return;
+                        }
+                        stbar_over_panel.classList.remove('over-shown');
+                        tmp = document.getElementById('stbar-example-grid');
+                        tmp.classList.add('example-grid--hidden');
+                        tmp.classList.remove('example-grid--shown');
+                    });
+                    // click on one bar example
+                    els = document.getElementsByClassName('stbar-ml-p_content-ctrl');
+                    for (let el of els) {
+                        el.addEventListener('click', (evt) => {
+                            evt.preventDefault();
+                            sel = evt.currentTarget.querySelector('smart-ui-bar');
+                            if (sel) {
+                                const dirtyParams = sel.getCtrl().getParams('dirty');
+                                let   allParams = SmartBar.defOptions();
+                                allParams = Object.assign({}, allParams, dirtyParams);
+                                // remove radius, interval, set is-tooltip and is-emulate
+                                delete allParams.radius;
+                                delete allParams.interval;
+                                allParams.isTooltip = '1';
+                                allParams.isEmulate = '1';
+                                allParams.role = 'demoMode';
+
+                                tmp = document.getElementById('stbar-example');
+                                tmp.getCtrl().setParams(allParams, true);
+                                // now disable responding on future settings changing
+                                //tmp.getCtrl().dontRespond = true;
+                                updateUIPanels('stbar-param', 'stbar-example');
+                                // enable responding ->  try to find how todo this
+                                //tmp.getCtrl().dontRespond = false;
+
+
+                                tmp = document.getElementById('stbar-example-descr');
+                                tmp.textContent = `${allParams.orient ? 'Vertical Bar' : 'Horizontal Bar'}`;
+
+                                tmp = document.getElementById('stbar-example-grid');
+                                tmp.classList.remove('example-grid--hidden');
+                                tmp.classList.add('example-grid--shown');
+
+                                const tryItElement = document.getElementById('bar-try-it');
+                                if (tryItElement) {
+                                    // create polygon here!
+                                    const wdgOpt = Object.assign({}, dirtyParams);
+                                    wdgOpt.radius = 25;
+                                    wdgOpt.isRun = 0;
+                                    wdgOpt.isEmulate = 0;
+                                    wdgOpt.isTooltip = 1;
+
+                                    wdgOpt.context = tryItElement;
+                                    updateTryItElement('smartbar', 'bar-wdg', wdgOpt);
+                                }
+                            }
+                            stbar_over_panel.classList.add('over-shown');
+                        });
+                    }
+
+
                     // translate title attributes in-place
                     // file vocabulary.js has function _(str) and returns translated text or original if translation is not found
                     // set value from options into apropriated elements on UI panels
@@ -1118,6 +1413,12 @@
                     // translate title attributes in-place
                     // 'stpgn-param' is a name attribute of all elements on 'smartpgn_opt' panels
                     els = document.getElementsByName('stpgn-param');
+                    for (let el of els) {
+                        el.attributes.title.textContent = _(el.attributes.title.value);
+                    }
+                    // translate title attributes in-place
+                    // 'stbar-param' is a name attribute of all elements on 'smartbar_opt' panels
+                    els = document.getElementsByName('stbar-param');
                     for (let el of els) {
                         el.attributes.title.textContent = _(el.attributes.title.value);
                     }
@@ -1178,6 +1479,13 @@
                                     elem = document.getElementById('stpgn-example');
                                     dirtyOpt = elem.getCtrl().getParams('dirty');
                                     updateTryItElement(selWidget, 'pgn-wdg', dirtyOpt);
+                                    updateSourcePanels(selWidget, dirtyOpt);
+                                    break;
+                                }
+                                case 'smartbar': {
+                                    elem = document.getElementById('stbar-example');
+                                    dirtyOpt = elem.getCtrl().getParams('dirty');
+                                    updateTryItElement(selWidget, 'bar-wdg', dirtyOpt);
                                     updateSourcePanels(selWidget, dirtyOpt);
                                     break;
                                 }
@@ -1253,6 +1561,14 @@
                                     updateSourcePanels(selWidget, dirtyOpt);
 
                                 }
+                                if (selWidget === 'smartbar') {
+                                    elem = document.getElementById('stbar-example');
+                                    elem.getCtrl().setParam(SmartWidgets.customProp2Param(optionName), optionValue);
+                                    dirtyOpt = elem.getCtrl().getParams('dirty');
+                                    updateTryItElement(selWidget, 'bar-wdg', dirtyOpt);
+                                    updateSourcePanels(selWidget, dirtyOpt);
+
+                                }
                                 if (selWidget === 'smarttooltip') {
                                     if (typeof demoTooltipEl.showDemoTooltip !== 'undefined') {
                                         // special for font sizes (add 'px')
@@ -1288,6 +1604,11 @@
                         subtree: true
                     });
                     observer.observe(document.getElementById('smartpgn_opt'), {
+                        attributeFilter: [ "state", "value" ],
+                        attributeOldValue: false,
+                        subtree: true
+                    });
+                    observer.observe(document.getElementById('smartbar_opt'), {
                         attributeFilter: [ "state", "value" ],
                         attributeOldValue: false,
                         subtree: true

@@ -73,8 +73,8 @@ class SmartBar {
      * }
 	 * what = 'any';
      * output: {
-     *   stpgn-param-key: value,		// custom property is param-key
-     *   stpgn-var-param-key: value,	// custom property is var-param-key
+     *   stbar-param-key: value,		// custom property is param-key
+     *   stbar-var-param-key: value,	// custom property is var-param-key
      * }
      *
      * @param {object} opt options object to be converted
@@ -147,7 +147,7 @@ if (el) {
   // change the radius of polygon as you want, for ex:
   options.radius = 50;
   // create an instanse
-  const pgn = new SmartBar(jsn, options);
+  const bar = new SmartBar(jsn, options);
 }
 `;
                 break;
@@ -171,7 +171,7 @@ ${optStr}  };
   // change the radius of polygon as you want, for ex:
   options.radius = 50;
   // create an instanse
-  const pgn = new SmartBar(jsn, options);
+  const bar = new SmartBar(jsn, options);
 }
 `;
 				break;
@@ -702,7 +702,7 @@ class SmartBarElement extends HTMLElement {
 		super();
 
 		// create SmartBars collection only once!
-		SmartBars.initSmartPolygons();
+		SmartBars.initSmartBars();
 
 		const txtStyle = `
 			:host {
@@ -773,11 +773,11 @@ class SmartBarElement extends HTMLElement {
 
 	// connect and disconnect from html
     connectedCallback() {
-		// getting properties in form 'stpgn-XXX' and 'sttip-var-XXX' from styles
+		// getting properties in form 'stbar-XXX' and 'stbar-var-XXX' from styles
 		const compStyle = getComputedStyle(this);
 		const customProp = SmartBar.getCustomProperties();
 		for (let n = 0; n < customProp.length; n++) {
-			const prop = `--stpgn-${customProp[n]}`;
+			const prop = `--stbar-${customProp[n]}`;
 			const propKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
 			let propVal = compStyle.getPropertyValue(prop);
 			if (propVal) {
