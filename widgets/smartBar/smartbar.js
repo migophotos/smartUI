@@ -87,30 +87,6 @@ class SmartBar {
 		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, 'stbar');
 	}
 
-	/**
-	 * Hyphenates a property name, for example:
-	 *
-	 *   > hyphenateProp('backgroundColor')
-	 *   < "background-color"
-	 *   > hyphenateStyleName('varFormFactor')
-	 *   < "--stbar-form-factor"
-	 *
-	 *
-	 * @param {string} string
-	 * @param {string} smartPrefix  '--stbar-', for example
-	 * @return {string}
-	 */
-	static hyphenate(string) {
-		const _uppercasePattern = /([A-Z])/g;
-		return string.replace(_uppercasePattern, '-$1').toLowerCase();
-	}
-	static hyphenateProp(string, smartPrefix = null) {
-		const stVar = /^var-/;
-		if (smartPrefix) {
-			return hyphenate(string).replace(stVar, smartPrefix);
-		}
-		return hyphenate(string);
-	}
 		/**
 	 * Returns an array of custom properties in form of parameter names in case of options equals null.
 	 * If 'options' is specified, then this functions returns the filled object.

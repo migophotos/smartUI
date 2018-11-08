@@ -173,6 +173,32 @@ class SmartWidgets {
 		return prop.replace(CAMELIZE, capitalize);
 	}
 
+	/**
+	 * Hyphenates a property name, for example:
+	 *
+	 *   > hyphenateProp('backgroundColor')
+	 *   < "background-color"
+	 *   > hyphenateStyleName('varFormFactor')
+	 *   < "--stbar-form-factor"
+	 *
+	 *
+	 * @param {string} string
+	 * @param {string} smartPrefix  '--stbar-', for example
+	 * @return {string}
+	 */
+	static hyphenate(string) {
+		const _uppercasePattern = /([A-Z])/g;
+		return string.replace(_uppercasePattern, '-$1').toLowerCase();
+	}
+	static hyphenateProp(string, smartPrefix = null) {
+		const stVar = /^var-/;
+		if (smartPrefix) {
+			return hyphenate(string).replace(stVar, smartPrefix);
+		}
+		return hyphenate(string);
+	}
+
+
     /**
      * build and returns an options object or css vars
 	 *
