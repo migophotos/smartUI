@@ -690,7 +690,8 @@
                                         --stbar-color-rule:none;
                                         --stbar-var-stroke-color:#008000;
                                         --stbar-var-fill-color:#80ff80;
-                                        --stbar-var-font-size:5;
+                                        --stbar-var-font-size:8;
+                                        --stbar-gap:9;
                                     }
                                     .black-line-bar {
                                         --stbar-position:cd;
@@ -887,7 +888,7 @@
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                         <smart-ui-button class="categories-btn" id="bar_ttip-params_btn" targets="bar-ttip-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры отображения подсказок"></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
-                        <smart-ui-button class="categories-btn" id="font_params_btn" targets="bar-font-params_pan" type="radio" state="off" imageOn="images/font_family_on.svg" imageOff="images/font_family_off.svg" data-sttip-tooltip="Настроить параметры шрифтов"></smart-ui-button>
+                        <smart-ui-button class="categories-btn" id="bar_font_params_btn" targets="bar-font-params_pan" type="radio" state="off" imageOn="images/font_family_on.svg" imageOff="images/font_family_off.svg" data-sttip-tooltip="Настроить параметры шрифтов"></smart-ui-button>
                     </div>
 
 
@@ -1027,7 +1028,7 @@
                                     <smart-ui-selector name="stpgn-param" param="position" title="Расположение окна подсказки" value=""
                                     valuelist="none,ru,rt,rd,lu,lt,ld,cu,cd"
                                     labellist="Рядом с курсором,Справа Выше,Справа По верху,Справа Ниже,Слева Выше,Слева По верху,Слева Ниже,По центру Выше,По центру Ниже" image="images/position_off.svg"></smart-ui-selector>
-                                    <smart-ui-selector name="stpgn-param" param="ttipTemplate" title="Шаблон Подсказки" value="" valueList="simple,pie,image,iframe" labellist="Простой,Диаграмма,Картинка,IFrame" image="images/template_off.svg"></smart-ui-selector>
+                                    <smart-ui-selector name="stpgn-param" param="ttip-template" title="Шаблон Подсказки" value="" valueList="simple,pie,image,iframe" labellist="Простой,Диаграмма,Картинка,IFrame" image="images/template_off.svg"></smart-ui-selector>
                                     <smart-ui-edittext   name="stpgn-param" param="title-format" title="Форматирование заголовка" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
                                     <smart-ui-edittext   name="stpgn-param" param="descr-format" title="Форматирование описания" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
                                 </div>
@@ -1041,7 +1042,7 @@
                                     <smart-ui-selector name="stbar-param" param="orient" title="Ориентация индикатора" value="" valueList="hor,ver" labelList="Горизонтально,Вертикально" image="images/align_text_off.svg"></smart-ui-selector>
                                     <smart-ui-selector name="stbar-param" param="aligning" title="Направление максимума" value="" valueList="left,up,right,down" labelList="Влево,Вверх,Вправо,Вниз" image="images/align_text_off.svg"></smart-ui-selector>
                                     <smart-ui-selector name="stbar-param" param="type" title="Тип индикатора" value="" valueList="solid,discrete" labelList="Сплошной,Дискретный" image="images/align_text_off.svg"></smart-ui-selector>
-                                    <smart-ui-editslider name="stbar-param" param="thickness" title="Толщина индикатора" value="1" units="%" min="1" max="100" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-editslider name="stbar-param" param="thickness" title="Толщина индикатора" value="1" units="" min="1" max="100" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
                                     <smart-ui-selector name="stbar-param" param="scale-position" title="Положение шкалы" value="" valueList="none,left,top,right,bottom" labelList="Не показывать,Слева,Сверху,Справа,Снизу" image="images/align_text_off.svg"></smart-ui-selector>
                                     <smart-ui-editslider name="stbar-param" param="scale-offset" title="Смещение шкалы" value="15" units="" min="2" max="30" step="1" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
                                     <smart-ui-editslider name="stbar-param" param="var-opacity" title="Непрозрачность" value="1" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
@@ -1071,7 +1072,7 @@
                                     <smart-ui-selector name="stbar-param" param="position" title="Расположение окна подсказки" value=""
                                     valuelist="none,ru,rt,rd,lu,lt,ld,cu,cd"
                                     labellist="Рядом с курсором,Справа Выше,Справа По верху,Справа Ниже,Слева Выше,Слева По верху,Слева Ниже,По центру Выше,По центру Ниже" image="images/position_off.svg"></smart-ui-selector>
-                                    <smart-ui-selector name="stbar-param" param="ttipTemplate" title="Шаблон Подсказки" value="" valueList="simple,pie,image,iframe" labellist="Простой,Диаграмма,Картинка,IFrame" image="images/template_off.svg"></smart-ui-selector>
+                                    <smart-ui-selector name="stbar-param" param="ttip-template" title="Шаблон Подсказки" value="" valueList="simple,pie,image,iframe" labellist="Простой,Диаграмма,Картинка,IFrame" image="images/template_off.svg"></smart-ui-selector>
                                     <smart-ui-edittext   name="stbar-param" param="title-format" title="Форматирование заголовка" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
                                     <smart-ui-edittext   name="stbar-param" param="descr-format" title="Форматирование описания" value="" image="images/format_text_off.svg">edit control with vocabulary</smart-ui-edittext>
                                 </div>
@@ -1081,7 +1082,8 @@
                                     <div style="display: block;">
                                         <smart-ui-edittext name="stbar-param" param="var-font-family" title="Семейство шрифтов" value="" image="images/font_family_off.svg"></smart-ui-edittext>
                                         <smart-ui-selector name="stbar-param" param="var-font-stretch" title="Ширина начертания шрифта" value="" valueList="extra-condensed,ultra-condensed,condensed,normal,expanded,extra-expanded,ultra-expanded" image="images/font_stretch_off.svg"></smart-ui-selector>
-                                        <smart-ui-editslider name="stbar-param" param="var-font-size" title="Размер шрифта" value="" units="px" min="5" max="72" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
+                                        <smart-ui-editslider name="stbar-param" param="var-font-size" title="Размер подписей шкалы" value="" units="px" min="5" max="16" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
+                                        <smart-ui-editslider name="stbar-param" param="gap" title="Отступ" value="5" units="" min="0.5" max="20" step="0.5" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
                                         <!-- <smart-ui-colorbox name="stbar-param" param="var-font-color" title="Цвет шрифта" value="#000000" image="images/select_color3_off.svg"></smart-ui-colorbox> -->
                                     </div>
                             </div>

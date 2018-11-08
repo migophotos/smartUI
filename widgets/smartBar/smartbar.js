@@ -196,6 +196,7 @@ ${optStr}  };
 			'aligning',			// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
 			'thickness',		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
 			'width', 'height',	// the size of bar may be specified by this parameters
+			'gap',
 			'scale-position',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
 			'scale-offset',		// An offset of scale base line from center axe of SmartBar. Depends from 'orient'
 			'major-m-length', 	// The length of marks on the scale in percentage of 'thickness'
@@ -253,9 +254,9 @@ ${optStr}  };
 			thickness: 10,		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
 			width: 50,
 			height: 12,			// the size of bar may be specified by this parameters
-
+			gap: 5,
 			scalePosition: 'bottom',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
-			scaleOffset: 5,		// An offset of scale base line from center axe of SmartBar. Depends from 'orient and thickness'
+			scaleOffset: 7,		// An offset of scale base line from center axe of SmartBar. Depends from 'orient and thickness'
 			majorMLength: 3, 	// The length of main marks on the scale in percentage of 'thickness'. Default is 3
 			minorMLength: 1.5, 	// The length of additional marks on the scale in percentage of 'thickness'. Default is 1.5
 
@@ -290,7 +291,7 @@ ${optStr}  };
 			varOpacity: 1,		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
 
 			varFontFamily:	'Arial, DIN Condensed, Noteworthy, sans-serif',
-			varFontSize:	'5px',
+			varFontSize:	'10px',
 			varFontStretch:	'condensed',
 			varFontColor:	'#666666'
         };
@@ -307,6 +308,7 @@ ${optStr}  };
             'isFillStroke',
 			'maxValue',
 			'width',
+			'gap',
 			'thickness',
 			'scaleOffset',
 			'majorMLength',
@@ -498,8 +500,7 @@ ${optStr}  };
 			scale: {x1:0, y1: 0, x2: 0, y2: 0}
 		};
 		// calc and move active part
-		let gap = this._o.scaleOffset / 2;
-		gap = gap < 5 ? 5 : gap;	// cannot be lower then 5;
+		let gap = this._o.gap;
 
 		this._barBody.active.x = this._barBody.x + gap;
 		this._barBody.active.y = this._barBody.y + gap;
@@ -507,7 +508,7 @@ ${optStr}  };
 		this._barBody.active.h = this._barBody.height;
 
 		// append gaps
-		if (this._o.isFillStroke || this._o.isFillStroke) {
+		if (this._o.isFillBkg || this._o.isFillStroke) {
 			// expand body
 			this._barBody.width += gap * 2;
 			this._barBody.height += gap * 2;
@@ -529,8 +530,8 @@ ${optStr}  };
 				this._barBody.scale.y2 = this._barBody.scale.y1;
 				}
 		}
+		let tv;
 		if (this._o.orient == 'ver') {
-			let tv;
 			tv = this._barBody.width;
 			this._barBody.width = this._barBody.height;
 			this._barBody.height = tv;
@@ -621,6 +622,49 @@ ${optStr}  };
 				'stroke-width': 1,
 				stroke: this._o.varStrokeColor
 			}, this._bodyScale, this._svgdoc);
+
+			let xPosA, yPosA, anchorsA, cxA, cyA, baselineA;
+			if (this._o.orient == 'hor') {
+				xPosA = [this._barBody.scale.x1, this._barBody.scale.x1 + (this._barBody.active.w / 2), this._barBody.scale.x2];
+				tv = this._o.scalePosition == 'top' ? this._barBody.scale.y1 - 2 : this._barBody.scale.y1 + this._o.varFontSize + 2;
+				yPosA = [tv, tv, tv];
+				anchorsA = ['left', 'middle', 'end'];
+				cxA = xPosA;
+				tv = this._barBody.scale.y1;
+				cyA = [tv, tv, tv];
+				baselineA = this._o.scalePosition == 'top' ? ['after', 'after', 'after'] : ['after', 'after', 'after'];
+			} else {
+				tv = this._o.scalePosition == 'left' ? this._barBody.scale.x1 - 2 : this._barBody.scale.x1 + 2;
+				xPosA = [tv, tv, tv];
+				tv = this._o.varFontSize / 2;
+				yPosA = [this._barBody.scale.y1 + this._o.varFontSize, this._barBody.scale.y1 + (this._barBody.active.h / 2), this._barBody.scale.y2];
+				anchorsA = this._o.scalePosition == 'left' ? ['end', 'end', 'end'] : ['left', 'left', 'left'];
+				cxA = [this._barBody.scale.x1, this._barBody.scale.x1, this._barBody.scale.x1];
+				cyA = [this._barBody.scale.y1, this._barBody.scale.y1 + (this._barBody.active.h / 2), this._barBody.scale.y2]; // [this._barBody.scale.y1 + this._o.varFontSize, this._barBody.scale.y1 + (this._barBody.active.h / 2) + tv, this._barBody.scale.y2 - this._o.varFontSize]
+				baselineA = ['after', 'middle', 'before'];
+			}
+
+			for (let i = 0; i < 3; i++) {
+				let numb = 50;
+				SmartBars.addElement('circle', {
+					'stroke-width': 1,
+					stroke: this._o.varStrokeColor,
+					cx: cxA[i],
+					cy: cyA[i],
+					r: 1
+				}, this._bodyScale, this._svgdoc);
+				SmartBars.addElement('text', {
+					'text-anchor': anchorsA[i],
+					'pointer-events': 'none',
+					'font-family': this._o.varFontFamily,
+					'font-size': this._o.varFontSize,
+					'dominant-baseline': baselineA[i],
+					fill: this._o.varStrokeColor,
+					text: `${numb * i}`,
+					x: xPosA[i],
+					y: yPosA[i]
+				}, this._bodyScale, this._svgdoc);
+			}
 		}
 		// build active clip rect
 		this._buildActive(this._data);
