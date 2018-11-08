@@ -202,18 +202,17 @@ class SmartWidgets {
 		};
 
 		// convert all properties to css vars
-		const customProp = SmartPolygon.getCustomProperties();
-		for (let n = 0; n < customProp.length; n++) {
+		for (let n = 0; n < prop.length; n++) {
 			if (preffix != '') {
-				let cssKey = `--${preffix}-${customProp[n]}`;
-				let oKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
+				let cssKey = `--${preffix}-${prop[n]}`;
+				let oKey = SmartWidgets.customProp2Param(`${prop[n]}`);
 				let cssVal = opt[oKey];
 				if (typeof cssVal !== 'undefined') {
 					cssVal = cssVal.toString();
 					options[`${cssKey}`] = cssVal;
 				}
 			} else {
-				const propKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
+				const propKey = SmartWidgets.customProp2Param(`${prop[n]}`);
 				let propVal = opt[propKey];
 				if (typeof propVal !== 'undefined') {
 					options[propKey] = propVal;

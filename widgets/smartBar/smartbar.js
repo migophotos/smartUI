@@ -196,8 +196,7 @@ ${optStr}  };
 			'aligning',			// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
 			'thickness',		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
 			'width', 'height',	// the size of bar may be specified by this parameters
-			'is-scale',			// Enables scale drawing, default is 1.
-			'scale-position',	// Depends from 'orient', 'alighing'. May contain one from next values: 'top','right','bottom', or 'left'
+			'scale-position',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
 			'scale-offset',		// An offset of scale base line from center axe of SmartBar. Depends from 'orient'
 			'major-m-length', 	// The length of marks on the scale in percentage of 'thickness'
 			'minor-m-length',
@@ -256,9 +255,8 @@ ${optStr}  };
 			width: 50,
 			height: 12,			// the size of bar may be specified by this parameters
 
-			isScale: 1,			// Enables scale drawing, default is 1.
-			scalePosition: 'bottom',	// Depends from 'orient', 'alighing'. May contain one from next values: 'top','right','bottom', or 'left'
-			scaleOffset: 15,		// An offset of scale base line from center axe of SmartBar. Depends from 'orient and thickness'
+			scalePosition: 'bottom',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
+			scaleOffset: 5,		// An offset of scale base line from center axe of SmartBar. Depends from 'orient and thickness'
 			majorMLength: 3, 	// The length of main marks on the scale in percentage of 'thickness'. Default is 3
 			minorMLength: 1.5, 	// The length of additional marks on the scale in percentage of 'thickness'. Default is 1.5
 
@@ -282,8 +280,8 @@ ${optStr}  };
             target: '',
             user: '',
 
-			colorRule: 'none',
-			valueRule: 'none',
+			colorRule: 'stroke',
+			valueRule: 'fill',
 			isFillBkg: 1,		// Enables fill and color the background of polygon. Default is 1
             isFillStroke: 1,	// Enables draw stroke around of polygon. Default is 1
             varStrokeColor: '#000000',
@@ -311,7 +309,6 @@ ${optStr}  };
 			'maxValue',
 			'width',
 			'thickness',
-			'isScale',
 			'scaleOffset',
 			'majorMLength',
 			'minorMLength',
@@ -363,8 +360,10 @@ ${optStr}  };
         this._svgdoc    = this._svgroot.ownerDocument;
 
         this._data      = null; // last received from data provider (server + target)
-        this._body      = null; // the SmartBar body
-        this._active    = null; // the active element
+		this._body      = null; // the SmartBar body
+		this._bodyActive= null;	// active element path
+		this._bodyScale = null; // body scale element (group) includes line, and texts
+        this._active    = null; // the active clip element
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
@@ -388,6 +387,82 @@ ${optStr}  };
 			console.log('_build() -> Nothing todo, not yet initialized!');
 			return;
 		}
+        if (this._active) {
+			// remove old clip rectangle
+			const elem = this._active.firstElementChild;
+			if (elem) {
+				this._active.removeChild(this._active.firstElementChild);
+			}
+		}
+		const activeRect = {
+			x: this._barBody.active.x,
+			y: this._barBody.active.y,
+			width: this._barBody.active.w,
+			height: this._barBody.active.h
+		};
+		// calculte the value
+		if (data) {
+			let dta = Array.from(data);
+			if (dta.length) {
+				const dt = dta[0];
+
+				if (this._o.ttipType == 'global') {
+					// store data in data-set attributes (for global SmartTooltip)
+					for (let key in dt) {
+						this._svgroot.setAttribute(`data-sttip-${key}`, dt[key]);
+					}
+				}
+
+				const maxValue = parseInt(dt.max, 10) || this._o.maxValue;
+				const max100 = this._o.orient === 'hor' ? activeRect.width : activeRect.height;
+				let onePCT = maxValue ? max100 / maxValue : max100 / 100;
+				if (this._o.orient === 'hor') {
+					activeRect.width = parseFloat(dt.value) * onePCT;
+					if (this._o.aligning === 'left') {
+						activeRect.x = (activeRect.x + this._rect.width) - activeRect.width;
+					}
+				} else {
+					activeRect.height = parseFloat(dt.value) * onePCT;
+					if (this._o.aligning == 'up') {
+						activeRect.y = (activeRect.y + this._rect.height) - activeRect.height;
+					}
+				}
+				this._o.valueRule = this._o.valueRule || 'fill';
+				this._bodyActive.setAttribute('fill', this._o.valueRule === 'fill' ? dt.color : (this._o.isFillBkg ? this._o.varFillColor : 'none'));
+				this._bodyActive.setAttribute('stroke', this._o.valueRule === 'stroke' ? dt.color : (this._o.isFillStroke ? this._o.varStrokeColor : 'none'));
+
+				if (this._o.valueRule === 'both') {
+					this._bodyActive.setAttribute('fill', dt.color);
+					this._bodyActive.setAttribute('stroke', dt.color);
+				}
+
+				if (this._o.colorRule == 'stroke' || this._o.colorRule == 'both') {
+					this._body.setAttribute('stroke', dt.color);
+				}
+				if (this._o.colorRule == 'fill' || this._o.colorRule == 'both') {
+					this._body.setAttribute('fill', dt.color);
+				}
+				// and last corection here
+				if (this._o.valueRule === 'stroke' || this._o.valueRule === 'none') {
+					this._bodyActive.setAttribute('fill', 'none');
+				}
+
+			}
+		}
+		if (this._o.valueRule !== 'none' || this._o.colorRule !== 'none') {
+			// build the clip rectangle here...
+			SmartWidgets.addElement('rect', {
+				x: activeRect.x,
+				y: activeRect.y,
+				width: activeRect.width,
+				height: activeRect.height,
+				
+			}, this._active, this._svgdoc);
+
+			this._bodyActive.setAttribute('clip-path', 'url(#activeRect)');
+		} else {
+			this._bodyActive.removeAttribute('clip-path');
+		}
 	}
     _build() {
 		if (!this._inited) {
@@ -405,6 +480,12 @@ ${optStr}  };
 				this._bodyActive.removeEventListener('mousemove', this._onMoveTooltip);
 				this._bodyActive.removeEventListener('mouseout', this._onHideTooltip);
 				this._svgroot.removeChild(this._bodyActive);
+				this._svgroot.removeChild(this._bodyActiveBasis);
+				this._bodyActive = null;
+				if (this._bodyScale) {
+					this._svgroot.removeChild(this._bodyScale);
+					this._bodyScale = null;	// may be I don't need it
+				}
 			}
 			this._svgroot.removeChild(this._body);
 		}
@@ -413,28 +494,41 @@ ${optStr}  };
 			x: this._rect.x,
 			y: this._rect.y,
 			width: this._rect.width,
-			height: (this._rect.width / 100) * this._o.thickness,
-			active: {x: 0, y: 0, width: 0, height: 0}
+			height: this._o.thickness, // in percents: (this._rect.width / 100) * this._o.thickness,
+			active: {x: 0, y: 0, w: 0, h: 0},
+			scale: {x1:0, y1: 0, x2: 0, y2: 0}
 		};
 		// calc and move active part
-		this._barBody.active.x = this._barBody.x + this._o.scaleOffset;
-		this._barBody.active.y = this._barBody.y + this._o.scaleOffset;
-		this._barBody.active.width = this._barBody.width;
-		this._barBody.active.height = this._barBody.height;
+		let gap = this._o.scaleOffset / 2;
+		gap = gap < 5 ? 5 : gap;	// cannot be lower then 5;
+
+		this._barBody.active.x = this._barBody.x + gap;
+		this._barBody.active.y = this._barBody.y + gap;
+		this._barBody.active.w = this._barBody.width;
+		this._barBody.active.h = this._barBody.height;
 
 		// append gaps
 		if (this._o.isFillStroke || this._o.isFillStroke) {
 			// expand body
-			this._barBody.width += this._o.scaleOffset * 2;
-			this._barBody.height += this._o.scaleOffset * 2;
+			this._barBody.width += gap * 2;
+			this._barBody.height += gap * 2;
 		}
 
-		if (this._o.isScale) {
-			this._barBody.height += this._o.scaleOffset + this._o.majorMLength + this._o.varFontSize + (this._o.scaleOffset / 2);
+		if (this._o.scalePosition !== 'none') {
+			this._barBody.height += this._o.scaleOffset + this._o.varFontSize + 2;
+
+			this._barBody.scale.x1 = this._barBody.active.x;
+			this._barBody.scale.x2 = this._barBody.active.x + this._barBody.active.w;
+			this._barBody.scale.y1 = this._barBody.active.y + this._barBody.active.h + this._o.scaleOffset;
+			this._barBody.scale.y2 = this._barBody.scale.y1;
+
+
 			if (this._o.orient === 'hor' && this._o.scalePosition === 'top') {
 				// move active down
-				this._barBody.active.y = (this._barBody.y + this._barBody.height) - this._o.scaleOffset - this._barBody.active.height;
-			}
+				this._barBody.active.y = (this._barBody.y + this._barBody.height) - gap - this._barBody.active.h;
+				this._barBody.scale.y1 = this._barBody.active.y - this._o.scaleOffset;
+				this._barBody.scale.y2 = this._barBody.scale.y1;
+				}
 		}
 		if (this._o.orient == 'ver') {
 			let tv;
@@ -442,13 +536,20 @@ ${optStr}  };
 			this._barBody.width = this._barBody.height;
 			this._barBody.height = tv;
 
-			tv = this._barBody.active.width;
-			this._barBody.active.width = this._barBody.active.height;
-			this._barBody.active.height = tv;
+			tv = this._barBody.active.w;
+			this._barBody.active.w = this._barBody.active.h;
+			this._barBody.active.h = tv;
+
+			this._barBody.scale.x1 = this._barBody.active.x + this._barBody.active.w + this._o.scaleOffset;
+			this._barBody.scale.x2 = this._barBody.scale.x1;
+			this._barBody.scale.y1 = this._barBody.active.y;
+			this._barBody.scale.y2 = this._barBody.active.y + this._barBody.active.h;
 
 			if (this._o.scalePosition === 'left') {
 				// move active right
-				this._barBody.active.x = (this._barBody.x + this._barBody.width) - this._o.scaleOffset - this._barBody.active.width;
+				this._barBody.active.x = (this._barBody.x + this._barBody.width) - gap - this._barBody.active.w;
+				this._barBody.scale.x1 = this._barBody.active.x - this._o.scaleOffset;
+				this._barBody.scale.x2 = this._barBody.scale.x1;
 			}
 		}
 
@@ -469,17 +570,17 @@ ${optStr}  };
 		let path = '';
 		if (this._o.type == 'solid') {
 			const ra = this._barBody.active;
-			path = `M${ra.x},${ra.y} h${ra.width} v${ra.height} h-${ra.width} z`;
+			path = `M${ra.x},${ra.y} h${ra.w} v${ra.h} h-${ra.w} z`;
 		} else {
 			let startX = this._barBody.active.x;
 			let startY = this._barBody.active.y;
 			let partW, partH;
 			if (this._o.orient == 'ver') {
-				partH = (this._barBody.active.height / 10) - 3;
-				partW = this._barBody.active.width;
+				partH = (this._barBody.active.h / 10) - 3;
+				partW = this._barBody.active.w;
 			} else {
-				partW = (this._barBody.active.width / 10) - 3;
-				partH = this._barBody.active.height;
+				partW = (this._barBody.active.w / 10) - 3;
+				partH = this._barBody.active.h;
 			}
 			for (let n = 0; n < 10; n++) {
 				path += `M${startX},${startY} h${partW} v${partH} h-${partW} v-${partH} `;
@@ -490,6 +591,16 @@ ${optStr}  };
 				}
 			}
 		}
+		this._bodyActiveBasis = SmartBars.addElement('path', {
+            id: 'bodyActiveBasis',
+            class: 'bodyActiveBasis',
+            stroke: this._o.varStrokeColor,
+            fill: 'none',
+            'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
+			'fill-opacity':  this._o.varOpacity,
+			'stroke-linejoin': 'miter',
+			d: path
+		}, this._svgroot, this._svgdoc);
 		this._bodyActive = SmartBars.addElement('path', {
             id: 'bodyActive',
             class: 'bodyActive',
@@ -500,8 +611,24 @@ ${optStr}  };
 			'stroke-linejoin': 'miter',
 			d: path
 		}, this._svgroot, this._svgdoc);
-
+		// draw scale if enabled
+		if (this._o.scalePosition !== 'none') {
+			this._bodyScale = SmartBars.addElement('g', {}, this._svgroot, this._svgdoc);
+			SmartBars.addElement('line', {
+				x1: this._barBody.scale.x1,
+				y1: this._barBody.scale.y1,
+				x2: this._barBody.scale.x2,
+				y2: this._barBody.scale.y2,
+				'stroke-width': 1,
+				stroke: this._o.varStrokeColor
+			}, this._bodyScale, this._svgdoc);
+		}
+		// build active clip rect
 		this._buildActive(this._data);
+		// add shadow if enabled
+		this._body.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
+		this._bodyActive.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
+		// uppend events
 		this._body.addEventListener('click', this._onClick);
 		this._body.addEventListener('mouseover', this._onShowTooltip);
 		this._body.addEventListener('mousemove', this._onMoveTooltip);
@@ -678,9 +805,9 @@ ${optStr}  };
 						"uuid": "uuid",
 						"name": "Name",
 						"descr": "Description",
-						"value": "15",
+						"value": "85",
 						"max": "100",
-						"color": "gray",
+						"color": "lightgray",
 						"link": "http://www.google.com/"
 					}
 				};
