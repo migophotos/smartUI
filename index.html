@@ -675,18 +675,75 @@
                                         /* border: 2px gray solid; */
                                         cursor: default;
                                     }
+                                    .demoMode {
+                                        --stbar-is-run:1;
+                                    }
                                     .bar-item {
                                         --stbar-width: 100;
                                         --stbar-thickness: 20;
                                     }
-
+                                    .green-bar {
+                                        --stbar-position:cd;
+                                        --stbar-thickness:24;
+                                        --stbar-width:100;
+                                        --stbar-scale-position:right;
+                                        --stbar-scale-offset:4;
+                                        --stbar-color-rule:none;
+                                        --stbar-var-stroke-color:#008000;
+                                        --stbar-var-fill-color:#80ff80;
+                                        --stbar-var-font-size:5;
+                                    }
+                                    .black-line-bar {
+                                        --stbar-position:cd;
+                                        --stbar-type:solid;
+                                        --stbar-scale-position:none;
+                                        --stbar-color-rule:none;
+                                        --stbar-var-stroke-color:#ffffff;
+                                        --stbar-var-fill-color:#3e3e3e;
+                                        --stbar-var-is-shadow:0;
+                                        --stbar-var-stroke-width:2.5;
+                                    }
+                                    .transp-vert-line {
+                                        --stbar-position:cd;
+                                        --stbar-type:discrete;
+                                        --stbar-scale-position:none;
+                                        --stbar-position:cd;
+                                        --stbar-is-fill-bkg:0;
+                                        --stbar-var-stroke-color:#ffffff;
+                                        --stbar-var-is-shadow:0;
+                                        --stbar-var-stroke-width:2.5;
+                                    }
+                                    .just-line {
+                                        --stbar-position:cd;
+                                        --stbar-scale-position:none;
+                                        --stbar-color-rule:none;
+                                        --stbar-value-rule:both;
+                                        --stbar-is-fill-bkg:0;
+                                        --stbar-is-fill-stroke:0;
+                                        --stbar-var-stroke-color:#408080;
+                                        --stbar-var-is-shadow:0;
+                                    }
+                                    .fat-bar {
+                                        --stbar-position:cd;
+                                        --stbar-aligning:up;
+                                        --stbar-thickness:78;
+                                        --stbar-width:100;
+                                        --stbar-scale-offset:7;
+                                        --stbar-is-link:0;
+                                        --stbar-is-run:1;
+                                        --stbar-color-rule:none;
+                                        --stbar-is-fill-bkg:0;
+                                        --stbar-is-fill-stroke:0;
+                                        --stbar-var-stroke-color:#408080;
+                                        --stbar-var-stroke-width:2;
+                                    }
                                 </style>
                                 <div class="ml bar-ml">
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar "</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-01" type="discrete" is-scale="0" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="green-bar demoMode" id="bar-01" thickness="24" width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -694,7 +751,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-02" type="discrete" is-scale="0" orient="ver" aligning="up" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="green-bar demoMode" id="bar-02" type="discrete" orient="ver" aligning="up" thickness="20"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -702,7 +759,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-03" type="discrete" scale-position="top" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="black-line-bar demoMode" id="bar-03" thickness="20"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -711,7 +768,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-04" type="discrete" orient="ver" scale-position="left" aligning="up" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="transp-vert-line demoMode" id="bar-04" orient="ver" thickness="20"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -719,7 +776,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-05" scale-position="top" value-rule="none" color-rule="none" is-fill-bkg="0" is-fill-stroke="0" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="just-line demoMode" id="bar-05" type="solid" thickness="16"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -727,7 +784,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-06" orient="ver" scale-position="left" value-rule="none" color-rule="none" is-fill-bkg="0" is-fill-stroke="0" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="just-line demoMode" id="bar-06" type="discrete" orient="ver" aligning="up" thickness="8"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -736,7 +793,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-07" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="fat-bar demoMode" id="bar-07" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -744,7 +801,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-08" orient="ver" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="fat-bar demoMode" id="bar-08" type="discrete" orient="ver" scale-position="left" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -752,7 +809,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-09" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" var-opacity="0.3" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="fat-bar demoMode" id="bar-09" scale-position="top" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -760,7 +817,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="bar-item demoMode" id="bar-10" orient="ver" value-rule="none" color-rule="none" is-fill-bkg="1" is-fill-stroke="1" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="fat-bar demoMode" id="bar-10" type="discrete" orient="ver" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>

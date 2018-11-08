@@ -115,7 +115,7 @@ class SmartBar {
 			delete opt.isEmulate;
 		}
 
-		className = `${opt.isStar ? 'star' : 'polygon'}-${opt.anglesNumber}`;
+		className = `${opt.orient == 'ver' ? 'vert' : 'hor'}-${opt.type == 'discrete' ? 'dots' : 'line'}`;
 		switch (templateId) {
 			case 'def-custom-elem_btn':
 				// convert all options into css vars
@@ -242,7 +242,6 @@ ${optStr}  };
 			'var-font-size',
 			'var-font-stretch',
 			'var-font-color'
-
         ];
     }
     static defOptions() {
@@ -273,7 +272,7 @@ ${optStr}  };
 			isLink: 1,			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			isTooltip: 1,		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			isEmulate: 0,		// Allows automatic emulation of the process of data receiving.
-			isRun: 1,			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “target”, “user”
+			isRun: 0,			// Starts the internal mechanism of sending requests to the server, if there are parameters: “server”, “target”, “user”
 			interval: 3000,		// Determines the interval of sending requests to the server in seconds (if the value is less than 2000)
 								// or in milliseconds (if the value is greater than 1999)
             server: '',
@@ -419,12 +418,12 @@ ${optStr}  };
 				if (this._o.orient === 'hor') {
 					activeRect.width = parseFloat(dt.value) * onePCT;
 					if (this._o.aligning === 'left') {
-						activeRect.x = (activeRect.x + this._rect.width) - activeRect.width;
+						activeRect.x = (this._barBody.active.x + this._barBody.active.w) - activeRect.width;
 					}
 				} else {
 					activeRect.height = parseFloat(dt.value) * onePCT;
 					if (this._o.aligning == 'up') {
-						activeRect.y = (activeRect.y + this._rect.height) - activeRect.height;
+						activeRect.y = (this._barBody.active.y + this._barBody.active.h) - activeRect.height;
 					}
 				}
 				this._o.valueRule = this._o.valueRule || 'fill';
@@ -456,7 +455,7 @@ ${optStr}  };
 				y: activeRect.y,
 				width: activeRect.width,
 				height: activeRect.height,
-				
+
 			}, this._active, this._svgdoc);
 
 			this._bodyActive.setAttribute('clip-path', 'url(#activeRect)');
@@ -715,7 +714,7 @@ ${optStr}  };
 				x: 0,
 				y: 0,
 				width:  options.width,
-				height: options.height
+				height: options.height || options.thickness
 			};
 		}
 		this._inited = true;
@@ -804,10 +803,10 @@ ${optStr}  };
 					"target": {
 						"uuid": "uuid",
 						"name": "Name",
-						"descr": "Description",
-						"value": "85",
-						"max": "100",
-						"color": "lightgray",
+						"descr":"Description",
+						"value":"85",
+						"max":	"100",
+						"color":"crimson",
 						"link": "http://www.google.com/"
 					}
 				};
