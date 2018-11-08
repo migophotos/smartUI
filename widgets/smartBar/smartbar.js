@@ -365,7 +365,8 @@ ${optStr}  };
 		this._body      = null; // the SmartBar body
 		this._bodyActive= null;	// active element path
 		this._bodyScale = null; // body scale element (group) includes line, and texts
-        this._active    = null; // the active clip element
+		this._active    = null; // the active clip element
+		this._scaleTextA= [];	// the references on scale texts (0, 50, max)
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
@@ -373,7 +374,7 @@ ${optStr}  };
         style.textContent = txtStyle;
         this._defs = SmartBars.addElement('defs', {}, this._root, this._svgdoc);
 		this._defs.innerHTML = window.SmartPolygons.defs;
-		this._active = SmartPolygons.addElement('clipPath', {id: 'activeRect'}, this._root, this._svgdoc);
+		this._active = SmartPolygons.addElement('clipPath', {id: `${this.id}-activeRect`}, this._root, this._svgdoc);
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
 		// in case of creating SmartPolygon object from Javascript, lets do all needed work in one place...
@@ -448,6 +449,21 @@ ${optStr}  };
 				if (this._o.valueRule === 'stroke' || this._o.valueRule === 'none') {
 					this._bodyActive.setAttribute('fill', 'none');
 				}
+				let valsA,
+					maxV = maxValue ? maxValue : 100;
+				if (this._o.aligning === 'left' || this._o.aligning === 'up') {
+					valsA = [maxV, maxV / 2, 0];
+				} else {
+					valsA = [0, maxV / 2, maxV];
+				}
+				if (this._o.scalePosition !== 'none') {
+					for (let i = 0; i < 3; i++) {
+						let el = this._scaleTextA[i];
+						if (el) {
+							el.textContent = valsA[i];
+						}
+					}
+				}
 
 			}
 		}
@@ -461,7 +477,7 @@ ${optStr}  };
 
 			}, this._active, this._svgdoc);
 
-			this._bodyActive.setAttribute('clip-path', 'url(#activeRect)');
+			this._bodyActive.setAttribute('clip-path', `url(#${this.id}-activeRect)`);
 		} else {
 			this._bodyActive.removeAttribute('clip-path');
 		}
@@ -491,6 +507,18 @@ ${optStr}  };
 			}
 			this._svgroot.removeChild(this._body);
 		}
+		// very important: check and set the right maxValue aligning!
+		if (this._o.orient == 'hor') {
+			if (this._o.aligning != 'left' && this._o.aligning != 'right') {
+				this._o.aligning = 'right';
+			}
+		}
+		if (this._o.orient == 'ver') {
+			if (this._o.aligning != 'down' && this._o.aligning != 'up') {
+				this._o.aligning = 'down';
+			}
+		}
+
 		// calculate body size
 		this._barBody = {
 			x: this._rect.x,
@@ -522,6 +550,10 @@ ${optStr}  };
 			this._barBody.scale.x2 = this._barBody.active.x + this._barBody.active.w;
 			this._barBody.scale.y1 = this._barBody.active.y + this._barBody.active.h + this._o.scaleOffset;
 			this._barBody.scale.y2 = this._barBody.scale.y1;
+			// very important: correct the scale width for 'discrete' type
+			if (this._o.type == 'discrete') {
+				this._barBody.scale.x2 -= 3;
+			}
 
 
 			if (this._o.orient === 'hor' && this._o.scalePosition === 'top') {
@@ -529,7 +561,7 @@ ${optStr}  };
 				this._barBody.active.y = (this._barBody.y + this._barBody.height) - gap - this._barBody.active.h;
 				this._barBody.scale.y1 = this._barBody.active.y - this._o.scaleOffset;
 				this._barBody.scale.y2 = this._barBody.scale.y1;
-				}
+			}
 		}
 		let tv;
 		if (this._o.orient == 'ver') {
@@ -545,6 +577,10 @@ ${optStr}  };
 			this._barBody.scale.x2 = this._barBody.scale.x1;
 			this._barBody.scale.y1 = this._barBody.active.y;
 			this._barBody.scale.y2 = this._barBody.active.y + this._barBody.active.h;
+			// very important: correct the scale height for 'discrete' type
+			if (this._o.type == 'discrete') {
+				this._barBody.scale.y2 -= 3;
+			}
 
 			if (this._o.scalePosition === 'left') {
 				// move active right
@@ -555,7 +591,7 @@ ${optStr}  };
 		}
 
 		this._body = SmartBars.addElement('rect', {
-			id: 'body',
+			// id: 'body',
 			class: 'body',
 			stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
 			fill: `${this._o.isFillBkg ? this._o.varFillColor : 'none'}`,
@@ -593,7 +629,7 @@ ${optStr}  };
 			}
 		}
 		this._bodyActiveBasis = SmartBars.addElement('path', {
-            id: 'bodyActiveBasis',
+            // id: 'bodyActiveBasis',
             class: 'bodyActiveBasis',
             stroke: this._o.varStrokeColor,
             fill: 'none',
@@ -603,7 +639,7 @@ ${optStr}  };
 			d: path
 		}, this._svgroot, this._svgdoc);
 		this._bodyActive = SmartBars.addElement('path', {
-            id: 'bodyActive',
+            // id: 'bodyActive',
             class: 'bodyActive',
             stroke: this._o.varStrokeColor,
             fill: '#ffffff',
@@ -654,7 +690,8 @@ ${optStr}  };
 					cy: cyA[i],
 					r: 1
 				}, this._bodyScale, this._svgdoc);
-				SmartBars.addElement('text', {
+				this._scaleTextA[i] = SmartBars.addElement('text', {
+					// id: `${this.id}-V${i}`,
 					'text-anchor': anchorsA[i],
 					'pointer-events': 'none',
 					'font-family': this._o.varFontFamily,
@@ -671,7 +708,7 @@ ${optStr}  };
 		this._buildActive(this._data);
 		// add shadow if enabled
 		this._body.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
-		this._bodyActive.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
+		this._bodyActiveBasis.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
 		// uppend events
 		this._body.addEventListener('click', this._onClick);
 		this._body.addEventListener('mouseover', this._onShowTooltip);
@@ -894,9 +931,9 @@ ${optStr}  };
 		}
 	}
 	generateExData() {
-		const max = 100;
-		const value = Math.abs(Math.floor(Math.random() * (100 + 1)) + 0);
-		const color = value < 30 ? 'blue' : (value < 50 ? 'green' : (value < 70 ? 'yellow' : 'red'));
+		const max = 250;
+		const value = Math.abs(Math.floor(Math.random() * (max + 1)) + 0);
+		const color = value < max/4 ? 'blue' : (value < max/2 ? 'green' : (value < (max/4)*3 ? 'yellow' : 'red'));
 		const dataEx = {
 			"target": {
 					"uuid": "uuid_ex_Target1",
