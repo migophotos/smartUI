@@ -615,12 +615,14 @@
                                     </div>
                                     <div class="stpgn-try-it">
                                         <table><tr>
-                                            <td>Полигон внутри SVG, диаметром 25 пикс:</td></tr>
+                                            <td>Полигон, диаметром 25 пикс. внутри SVG:</td></tr>
                                         <tr><td>
                                         <svg id="try-it" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                            width="50" heigh="50" viewBox="0 0 50 50">
+                                            width="200" heigh="100" viewBox="0 0 200 100">
+                                            <rect x="0" y="0" width="200" height="200" fill="none" stroke="gray" stroke-dasharray="4 2"/>
+                                            <circle cy="30" cx="30" r="25" fill="lightgray" stroke-dasharray="4 2"/>
                                             <g id="pgn-wdg">
-                                                <rect id="r1" x="0" y="0" width="50" height="50" fill="#eee" stroke="black" stroke-dasharray="4 4";  />
+                                                <rect id="r1" x="30" y="20" width="50" height="50" fill="#eee" stroke="black" stroke-dasharray="4 4";  />
                                             </g>
                                         </svg>
                                         </td>
@@ -678,10 +680,7 @@
                                     .demoMode {
                                         --stbar-is-run:1;
                                     }
-                                    .bar-item {
-                                        --stbar-width: 100;
-                                        --stbar-thickness: 20;
-                                    }
+
                                     .green-bar {
                                         --stbar-position:cd;
                                         --stbar-thickness:24;
@@ -727,7 +726,7 @@
                                         --stbar-position:cd;
                                         --stbar-aligning:up;
                                         --stbar-thickness:78;
-                                        --stbar-width:100;
+                                        --stbar-width:120;
                                         --stbar-scale-offset:7;
                                         --stbar-is-link:0;
                                         --stbar-is-run:1;
@@ -743,7 +742,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar "</p>
-                                                <smart-ui-bar class="green-bar demoMode" id="bar-01" thickness="24" width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="green-bar demoMode" id="bar-01" thickness="24" width="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -751,7 +750,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="green-bar demoMode" id="bar-02" type="discrete" orient="ver" aligning="up" thickness="20"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="green-bar demoMode" id="bar-02" type="discrete" orient="ver" aligning="up" thickness="20"  width="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -759,7 +758,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="black-line-bar demoMode" id="bar-03" thickness="20"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="black-line-bar demoMode" id="bar-03" thickness="20"  width="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -768,7 +767,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="transp-vert-line demoMode" id="bar-04" orient="ver" thickness="20"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="transp-vert-line demoMode" id="bar-04" orient="ver" thickness="20"  width="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -776,7 +775,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="just-line demoMode" id="bar-05" type="solid" thickness="16"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="just-line demoMode" id="bar-05" type="solid" thickness="16"  width="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -784,7 +783,7 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="just-line demoMode" id="bar-06" type="discrete" orient="ver" aligning="up" thickness="8"  width="100" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="just-line demoMode" id="bar-06" type="discrete" orient="ver" aligning="up" thickness="8"  width="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -829,18 +828,18 @@
                                             <p id="stbar-example-descr"></p>
                                         </div>
                                         <div class="stbar-example-cont no-legend">
-                                            <smart-ui-bar class="stbar-example" id="stbar-example" width="100" height="24" role="demoMode" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                            <smart-ui-bar class="stbar-example" id="stbar-example" width="110" role="demoMode" is-tooltip="0" is-link="0"></smart-ui-bar>
                                         </div>
                                         <div class="stbar-try-it">
                                             <table><tr>
-                                                <td>SmartBar внутри SVG:</td></tr>
+                                                <td>SmartBar, длинной 70 пикс. внутри SVG:</td></tr>
                                             <tr><td>
                                             <svg id="bar-try-it" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                                 width="200" heigh="200" viewBox="0 0 200 200">
                                                 <rect x="0" y="0" width="200" height="200" fill="none" stroke="gray" stroke-dasharray="4 2"/>
                                                 <circle cy="30" cx="30" r="25" fill="lightgray" stroke-dasharray="4 2"/>
                                                 <g id="bar-wdg">
-                                                    <rect id="r1" x="50" y="30" width="100" height="24"/>
+                                                    <rect id="r1" x="50" y="30" width="70" height="12"/>
                                                 </g>
                                             </svg>
                                             </td>
