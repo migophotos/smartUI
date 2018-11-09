@@ -183,6 +183,33 @@ ${optStr}  };
         }
         return template;
 	}
+
+	/**
+	 * Build the compact version of gauge parameters, by contactination similar parameters group into the one string.
+	 * for example the next group:
+			dialType: 1,
+			dialRadius: 99,
+			dialBorderWidth: 0,
+			dialBorderColor: '#000000',
+			dialFillColor: '#ababab',
+			dialFillPatern: '',
+			dialOpacity: 1,
+		will be stored as: d:'1-99-0-#000000-#ababab--1'
+	 *
+	 */
+	static getCompactProperties() {
+		return [
+			'b',	// all body parameters concatenited by '-'
+			'c',	// all center parameters concatenited by '-'
+			'd',	// all dial parameters concatenited by '-'
+			'p',	// all pointer parameters concatenited by '-'
+			's',	// all scale parameters concatenited by '-'
+			'mj',	// all major parameters concatenited by '-'
+			'mn',	// all minor parameters concatenited by '-'
+			'th'	// all thresholds parameters concatenited by '-'
+
+		];
+	}
 	/**
 	 * Returns an array of custom properties. Each of the custom property has corresponding declarative attribute in form first-second == prefix-first-second
 	 * and option parameter with name "firstSecond".
@@ -191,14 +218,16 @@ ${optStr}  };
 	 */
 	static getCustomProperties() {
 		return [
-			'role',				// in demo mode this parameter has value 'demoMode'
-            'body-type',		// The type of gauge body
-            'body-radius',
-            'body-border-width',
+			'role',					// In demo mode this parameter has value 'demoMode'
+
+            'body-type',			// The type of gauge body
+            'body-radius',			// Absolute value, describes the size of gauge widget
+            'body-border-width',	// all othe sizes are in percentage to body radius
             'body-border-color',
             'body-fill-color',
             'body-fill-gradient',
-            'body-opacity',
+			'body-opacity',
+			'body-shadow',
 
             'center-type',
             'center-radius',
@@ -206,29 +235,65 @@ ${optStr}  };
             'center-border-color',
             'center-fill-color',
             'center-fill-gradient',
-            'center-opacity',
+			'center-opacity',
+			'center-shadow',
 
-            'pointer-type',
+			'dial-type',
+			'dial-radius',
+			'dial-border-width',
+			'dial-border-color',
+			'dial-fill-color',
+			'dial-fill-patern',
+			'dial-opacity',
+
+			'pointer-type',			// 'dauphine', 'baton', 'alfa', 'sword', 'brequet', 'simple', 'skeleton', 'circle', 'zwatch'
             'pointer-radius',
             'pointer-border-width',
             'pointer-border-color',
             'pointer-fill-color',
-            'pointer-opacity',
+			'pointer-opacity',
+			'pointer-width',
+			'pointer-shadow',
 
-            'scale-type',
+			'scale-start-angle',
+			'scale-end-angle',			// '0'
+			'scale-rotation',			// angle
+			'scale-direction',			// '+' - clockwise, '-' - counterclockwise
 
+			'major-type',
+			'major-weight',
+			'major-radius',
+			'major-length',
+			'major-border-width',
+			'major-border-color',
+			'major-fill-color',
+			'major-opacity',
+			'major-text-size',
+			'major-text-offset',
+
+			'minor-type',
+			'minor-weight',
+			'minor-radius',
+			'minor-length',
+			'minor-border-width',
+			'minor-border-color',
+			'minor-fill-color',
+			'minor-opacity',
+
+			'threshold-type',
+			'threshold-radius',
+			'threshold-length',
+			'threshold-border-width',
+			'threshold-border-color',
+			'threshold-fill-color',
+			'threshold-opacity',
 
             'width', 'height',	// the size of gauge may be specified by this parameters
-			'gap',
-			'scale-position',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
-			'scale-offset',		// An offset of scale base line from center axe of SmartGauge. Depends from 'orient'
-			'major-m-length', 	// The length of marks on the scale in percentage of 'thickness'
-			'minor-m-length',
 
 			'position',			// The value describes location of tooltip or legend window Default value is 'rt' which means right-top conner of element.
 			'ttip-template',	// Default value for this property is 'pie', wich means the using of internal SmartTooltip pie template definition.
 								// Currently only 4 types of templates are implemented: 'pie', 'simple', 'image' and 'iframe'.
-			'ttip-type',		// Use own (limited) settings for the tooltip or use the SmartToolеip global (full) settings.
+			'ttip-type',		// Use own (limited) settings for the tooltip or use the SmartToolip global (full) settings.
 								// Possible values are: 'own' and 'global'. Default is 'own'.
 			'title-format',
 			'descr-format',
@@ -245,9 +310,11 @@ ${optStr}  };
             'target',
             'user',				// These parameters determine the URL of the request to the server
 
-			'color-rule',		// Same as 'value-rule', but set color only, do not use value at all.
+			'color-rule',		// Same as 'value-rule', but set color only, not use the value at all.
+								// contains an array of parts of gauge: 'bb', 'bf', 'cb', 'cf', 'pb', 'pf', 'db', 'df', where each one value is an abreviature of
+								// part, for example: 'bb' is a 'body-border' and 'pf' - 'pointer-fill'
 			'value-rule',		// Specifies what will be painted when the value is drawn: line or background
-								// Possible values are: 'stroke', 'fill', 'both'. Default is 'fill'.
+								// Possible values are: 'stroke', 'fill', 'both', 'none'. Default is 'fill'.
 								// The following four parameters also affect rendering.
 								// The following addition rule is used: the missing parameter is drawn.
 								// That is, if it is indicated that the value affects the background ('rule'='fill'),
@@ -255,32 +322,85 @@ ${optStr}  };
 								// Conversely, if the value affects the line ('rule'='stroke'),
 								// then the corresponding color and flag are used to fill the background.
 								// In the case of 'rule'='both', additional parameters are not used.
-			'is-fill-bkg',		// Enables fill and color the background of polygon. Default is 1
-			'is-fill-stroke',	// Enables draw colored stroke around of polygon. Default is 0
-			'var-stroke-color',
-			'var-fill-color',
-			'var-is-shadow',	// Allows shadow for widget and tooltip
-            'var-stroke-width',	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
-			'var-opacity',		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
+
 			'var-font-family',	// Scale font definitions
-			'var-font-stretch',
-			'var-scale-size',
+			'var-font-stretch'
+			// ATTENTION: all future additional parameters must to be placed only after this comment!
         ];
     }
     static defOptions() {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
-			type: 'solid',		// The type of gauge bady: 'solid' or 'discrete'
-            orient: 'hor',		// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
-            aligning: 'right',	// Direction of axis "value". Depends on the parameter "orient". May have values: "up", "down", "right", "left". Default is 'right'
-			thickness: 10,		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
-			width: 50,
-			height: 12,			// the size of gauge may be specified by this parameters
-			gap: 5,
-			scalePosition: 'bottom',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
-			scaleOffset: 7,		// An offset of scale base line from center axe of SmartGauge. Depends from 'orient and thickness'
-			majorMLength: 3, 	// The length of main marks on the scale in percentage of 'thickness'. Default is 3
-			minorMLength: 1.5, 	// The length of additional marks on the scale in percentage of 'thickness'. Default is 1.5
+            bodyType: 1,			// The type of gauge body
+            bodyRadius: 70,			// Absolute value, describes the size of gauge widget
+            bodyBorderWidth: 2,	// all othe sizes are in percentage to body radius
+            bodyBorderColor: '#000000',
+            bodyFillColor: '#929292',
+            bodyFillGradient: '',
+			bodyOpacity: 1,
+			bodyShadow: 1,
+
+            centerType: 0,
+            centerRadius: 2,
+            centerBorderWidth: 0,
+            centerBorderColor: 'none',
+            centerFillColor: 'none',
+            centerFillGradient: '',
+			centerOpacity: 1,
+			centerShadow: 1,
+
+            pointerType: 'simple',
+            pointerRadius: 80,
+            pointerBorderWidth: 0.5,
+            pointerBorderColor: '#000000',
+            pointerFillColor: 'fbfbfb',
+			pointerOpacity: 1,
+			pointerWidth: 2,
+			pointerShadow: 1,
+
+			dialType: 1,
+			dialRadius: 99,
+			dialBorderWidth: 0,
+			dialBorderColor: '#000000',
+			dialFillColor: '#ababab',
+			dialFillPatern: '',
+			dialOpacity: 1,
+
+			scaleStartAngle: 225,
+			scaleEndAngle: 135,
+			scaleRotation: 0,
+			scaleDirection: '+',			// '+' - clockwise, '-' - counterclockwise
+
+			majorType: 'digit',				// 'none' - no digits
+			majorWeight: 25,
+			majorRadius: 90,
+			majorLength: 10,
+			majorBorderWidth: 0,
+			majorBorderColor: '#ffffff',
+			majorFillColor: '#000000',
+			majorOpacity: 1,
+			majorTextSize: 10,
+			majorTextOffset: 80,
+
+			minorType: 'lines',
+			minorWeight: 5,
+			minorRadius: 90,
+			minorLength: 5,
+			minorBorderWidth: 0,
+			minorBorderColor: '#ffffff',
+			minorFillColor: '#000000',
+			minorOpacity: 1,
+
+			thresholdType: '1',
+			thresholdRadius: 96,
+			thresholdLength: 6,
+			thresholdBorderWidth: 0,
+			thresholdBorderColor: '#ffffff',
+			thresholdFillColor: 'status',
+			thresholdOpacity: 1,
+
+			width: 100,
+			height: 100,		// the size of gauge may be specified by this parameters
 
 			position: 'rt',		// The value describes location of tooltip window Default value is 'rt' which means right-top conner of element.
 			ttipTemplate: 'simple', // Default value for this property is 'simple, wich means the using of internal SmartTooltip pie template definition.
@@ -304,18 +424,9 @@ ${optStr}  };
 
 			colorRule: 'stroke',
 			valueRule: 'fill',
-			isFillBkg: 1,		// Enables fill and color the background of polygon. Default is 1
-            isFillStroke: 1,	// Enables draw stroke around of polygon. Default is 1
-            varStrokeColor: '#000000',
-            varFillColor: 	'#ffcd88',
-			varIsShadow: 1,		// Allows shadow for widget, legend and tooltip
-            varStrokeWidth: 1,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
-			varOpacity: 1,		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
 
 			varFontFamily:	'Arial, DIN Condensed, Noteworthy, sans-serif',
-			varFontSize:	'10px',
-			varFontStretch:	'condensed',
-			varFontColor:	'#666666'
+			varFontStretch:	'condensed'
         };
     }
     static convertNumericProps(options = {}, propName) {
