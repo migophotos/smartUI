@@ -192,11 +192,33 @@ ${optStr}  };
 	static getCustomProperties() {
 		return [
 			'role',				// in demo mode this parameter has value 'demoMode'
-			'type',				// The type of gauge bady: 'solid' or 'discrete'
-            'orient',			// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
-			'aligning',			// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
-			'thickness',		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
-			'width', 'height',	// the size of gauge may be specified by this parameters
+            'body-type',		// The type of gauge body
+            'body-radius',
+            'body-border-width',
+            'body-border-color',
+            'body-fill-color',
+            'body-fill-gradient',
+            'body-opacity',
+
+            'center-type',
+            'center-radius',
+            'center-border-width',
+            'center-border-color',
+            'center-fill-color',
+            'center-fill-gradient',
+            'center-opacity',
+
+            'pointer-type',
+            'pointer-radius',
+            'pointer-border-width',
+            'pointer-border-color',
+            'pointer-fill-color',
+            'pointer-opacity',
+
+            'scale-type',
+
+
+            'width', 'height',	// the size of gauge may be specified by this parameters
 			'gap',
 			'scale-position',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
 			'scale-offset',		// An offset of scale base line from center axe of SmartGauge. Depends from 'orient'
@@ -241,9 +263,8 @@ ${optStr}  };
             'var-stroke-width',	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			'var-opacity',		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
 			'var-font-family',	// Scale font definitions
-			'var-font-size',
 			'var-font-stretch',
-			'var-font-color'
+			'var-scale-size',
         ];
     }
     static defOptions() {
