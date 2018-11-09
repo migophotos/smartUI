@@ -12,12 +12,12 @@
 
  */
 
-class SmartBars extends SmartWidgets {
-    static initSmartBars(context = {}) {
-        if (!window.SmartBars) {
-            window.SmartBars = new SmartBars();
+class SmartGauges extends SmartWidgets {
+    static initSmartGauges(context = {}) {
+        if (!window.SmartGauges) {
+            window.SmartGauges = new SmartGauges();
         }
-        window.SmartBars.init(context);
+        window.SmartGauges.init(context);
     }
     static addElement(type, params, parent = null, doc = null) {
         return super.addElement(type, params, parent, doc);
@@ -30,7 +30,7 @@ class SmartBars extends SmartWidgets {
 	initCtrl(id, options) {
 		let ctrl = this.get(id);
 		if (!ctrl) {
-			ctrl = new SmartBar(id, options);
+			ctrl = new SmartGauge(id, options);
 			if (ctrl) {
 				ctrl.init(options);
 			}
@@ -41,7 +41,7 @@ class SmartBars extends SmartWidgets {
 	}
 }
 
-class SmartBar {
+class SmartGauge {
 	/**
 	 * converts JSON representation of options into the options parameters object siutable for show() call
 	 */
@@ -51,7 +51,7 @@ class SmartBar {
 		if (typeof jsonOpt === 'string' && jsonOpt.length) {
 			const tmpOpt = JSON.parse(jsonOpt);
 			for (let key in tmpOpt) {
-				const paramName = key.replace('--stbar-', '');
+				const paramName = key.replace('--stgauge-', '');
 				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
 			}
 			this.convertNumericProps(options);
@@ -73,8 +73,8 @@ class SmartBar {
      * }
 	 * what = 'any';
      * output: {
-     *   stbar-param-key: value,		// custom property is param-key
-     *   stbar-var-param-key: value,	// custom property is var-param-key
+     *   stgauge-param-key: value,		// custom property is param-key
+     *   stgauge-var-param-key: value,	// custom property is var-param-key
      * }
      *
      * @param {object} opt options object to be converted
@@ -83,8 +83,8 @@ class SmartBar {
      *
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
-		const customProp = SmartBar.getCustomProperties();
-		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, 'stbar');
+		const customProp = SmartGauge.getCustomProperties();
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, 'stgauge');
 	}
 
 		/**
@@ -98,8 +98,8 @@ class SmartBar {
 	 * in case filter equals 'dirty' returns only changed (dirty) parameters
 	 */
 	static getCustomParams(options = null, filter = 'all') {
-		const custProp = SmartBar.getCustomProperties();		// get an array of custom properties
-		const origOpt = SmartBar.defOptions();
+		const custProp = SmartGauge.getCustomProperties();		// get an array of custom properties
+		const origOpt = SmartGauge.defOptions();
 		return SmartWidgets.getCustomParams(custProp, origOpt, options, filter);
     }
 	/**
@@ -130,7 +130,7 @@ class SmartBar {
                 }
                 template += '  }\n';
                 template += '&lt;/style>\n';
-				template += `&lt;smart-ui-bar class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-bar>\n`;
+				template += `&lt;smart-ui-gauge class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-gauge>\n`;
                 break;
 			case 'def-json_btn': {
 				dtO = this.buidOptionsAndCssVars(opt);
@@ -138,17 +138,17 @@ class SmartBar {
 				template = `${jstr}`;
 				template += '\n\n';
 				template +=
-				`// later, use static function SmartBar.JsonToOptions(options); to convert JSON string
-// into 'options' object, sutable for SmartBar creation. For example:
+				`// later, use static function SmartGauge.JsonToOptions(options); to convert JSON string
+// into 'options' object, sutable for SmartGauge creation. For example:
 
 const el = document.getElementById("jsn");
 if (el) {
   const opt = ${jstr};
-  const options = SmartBar.JsonToOptions(opt);
+  const options = SmartGauge.JsonToOptions(opt);
   // change the radius of polygon as you want, for ex:
   options.radius = 50;
   // create an instanse
-  const bar = new SmartBar(jsn, options);
+  const gauge = new SmartGauge(jsn, options);
 }
 `;
                 break;
@@ -172,7 +172,7 @@ ${optStr}  };
   // change the radius of polygon as you want, for ex:
   options.radius = 50;
   // create an instanse
-  const bar = new SmartBar(jsn, options);
+  const gauge = new SmartGauge(jsn, options);
 }
 `;
 				break;
@@ -192,14 +192,14 @@ ${optStr}  };
 	static getCustomProperties() {
 		return [
 			'role',				// in demo mode this parameter has value 'demoMode'
-			'type',				// The type of bar bady: 'solid' or 'discrete'
+			'type',				// The type of gauge bady: 'solid' or 'discrete'
             'orient',			// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
 			'aligning',			// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
 			'thickness',		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
-			'width', 'height',	// the size of bar may be specified by this parameters
+			'width', 'height',	// the size of gauge may be specified by this parameters
 			'gap',
 			'scale-position',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
-			'scale-offset',		// An offset of scale base line from center axe of SmartBar. Depends from 'orient'
+			'scale-offset',		// An offset of scale base line from center axe of SmartGauge. Depends from 'orient'
 			'major-m-length', 	// The length of marks on the scale in percentage of 'thickness'
 			'minor-m-length',
 
@@ -249,15 +249,15 @@ ${optStr}  };
     static defOptions() {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
-			type: 'solid',		// The type of bar bady: 'solid' or 'discrete'
+			type: 'solid',		// The type of gauge bady: 'solid' or 'discrete'
             orient: 'hor',		// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',	// Direction of axis "value". Depends on the parameter "orient". May have values: "up", "down", "right", "left". Default is 'right'
 			thickness: 10,		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
 			width: 50,
-			height: 12,			// the size of bar may be specified by this parameters
+			height: 12,			// the size of gauge may be specified by this parameters
 			gap: 5,
 			scalePosition: 'bottom',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
-			scaleOffset: 7,		// An offset of scale base line from center axe of SmartBar. Depends from 'orient and thickness'
+			scaleOffset: 7,		// An offset of scale base line from center axe of SmartGauge. Depends from 'orient and thickness'
 			majorMLength: 3, 	// The length of main marks on the scale in percentage of 'thickness'. Default is 3
 			minorMLength: 1.5, 	// The length of additional marks on the scale in percentage of 'thickness'. Default is 1.5
 
@@ -351,9 +351,9 @@ ${optStr}  };
 			}
         `;
         // merge default options with specified
-        this._o = Object.assign({}, SmartBar.defOptions(), options || {});
+        this._o = Object.assign({}, SmartGauge.defOptions(), options || {});
         // validate all properties
-        SmartBar.convertNumericProps(this._o);
+        SmartGauge.convertNumericProps(this._o);
 
         this._mode      = options.mode || null; // in case of 'custom elements' initialization the 'mode' equals 'html'
         this.id         = id;   // <g id> inside of <svg>
@@ -362,7 +362,7 @@ ${optStr}  };
         this._svgdoc    = this._svgroot.ownerDocument;
 
         this._data      = null; // last received from data provider (server + target)
-		this._body      = null; // the SmartBar body
+		this._body      = null; // the SmartGauge body
 		this._bodyActive= null;	// active element path
 		this._bodyScale = null; // body scale element (group) includes line, and texts
 		this._active    = null; // the active clip element
@@ -370,9 +370,9 @@ ${optStr}  };
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
-        const style = SmartBars.addElement('style', {}, this._root, this._svgdoc);
+        const style = SmartGauges.addElement('style', {}, this._root, this._svgdoc);
         style.textContent = txtStyle;
-        this._defs = SmartBars.addElement('defs', {}, this._root, this._svgdoc);
+        this._defs = SmartGauges.addElement('defs', {}, this._root, this._svgdoc);
 		this._defs.innerHTML = window.SmartPolygons.defs;
 		this._active = SmartPolygons.addElement('clipPath', {id: `${this.id}-activeRect`}, this._root, this._svgdoc);
 		// in case of html insertion, the options.mode == 'html' is defined and
@@ -380,7 +380,7 @@ ${optStr}  };
 		// in case of creating SmartPolygon object from Javascript, lets do all needed work in one place...
 		if (!this._mode) {
 			// store containerId: ref on SmartPolygon element inside SmartPolygons collection for JS access
-			window.SmartBars.set(this.id, this);
+			window.SmartGauges.set(this.id, this);
 			this.init();
 		}
     }
@@ -398,10 +398,10 @@ ${optStr}  };
 			}
 		}
 		const activeRect = {
-			x: this._barBody.active.x,
-			y: this._barBody.active.y,
-			width: this._barBody.active.w,
-			height: this._barBody.active.h
+			x: this._gaugeBody.active.x,
+			y: this._gaugeBody.active.y,
+			width: this._gaugeBody.active.w,
+			height: this._gaugeBody.active.h
 		};
 		// calculte the value
 		if (data) {
@@ -422,12 +422,12 @@ ${optStr}  };
 				if (this._o.orient === 'hor') {
 					activeRect.width = parseFloat(dt.value) * onePCT;
 					if (this._o.aligning === 'left') {
-						activeRect.x = (this._barBody.active.x + this._barBody.active.w) - activeRect.width;
+						activeRect.x = (this._gaugeBody.active.x + this._gaugeBody.active.w) - activeRect.width;
 					}
 				} else {
 					activeRect.height = parseFloat(dt.value) * onePCT;
 					if (this._o.aligning == 'up') {
-						activeRect.y = (this._barBody.active.y + this._barBody.active.h) - activeRect.height;
+						activeRect.y = (this._gaugeBody.active.y + this._gaugeBody.active.h) - activeRect.height;
 					}
 				}
 				this._o.valueRule = this._o.valueRule || 'fill';
@@ -520,7 +520,7 @@ ${optStr}  };
 		}
 
 		// calculate body size
-		this._barBody = {
+		this._gaugeBody = {
 			x: this._rect.x,
 			y: this._rect.y,
 			width: this._rect.width,
@@ -531,66 +531,66 @@ ${optStr}  };
 		// calc and move active part
 		let gap = this._o.gap;
 
-		this._barBody.active.x = this._barBody.x + gap;
-		this._barBody.active.y = this._barBody.y + gap;
-		this._barBody.active.w = this._barBody.width;
-		this._barBody.active.h = this._barBody.height;
+		this._gaugeBody.active.x = this._gaugeBody.x + gap;
+		this._gaugeBody.active.y = this._gaugeBody.y + gap;
+		this._gaugeBody.active.w = this._gaugeBody.width;
+		this._gaugeBody.active.h = this._gaugeBody.height;
 
 		// append gaps
 		if (this._o.isFillBkg || this._o.isFillStroke) {
 			// expand body
-			this._barBody.width += gap * 2;
-			this._barBody.height += gap * 2;
+			this._gaugeBody.width += gap * 2;
+			this._gaugeBody.height += gap * 2;
 		}
 
 		if (this._o.scalePosition !== 'none') {
-			this._barBody.height += this._o.scaleOffset + this._o.varFontSize + 2;
+			this._gaugeBody.height += this._o.scaleOffset + this._o.varFontSize + 2;
 
-			this._barBody.scale.x1 = this._barBody.active.x;
-			this._barBody.scale.x2 = this._barBody.active.x + this._barBody.active.w;
-			this._barBody.scale.y1 = this._barBody.active.y + this._barBody.active.h + this._o.scaleOffset;
-			this._barBody.scale.y2 = this._barBody.scale.y1;
+			this._gaugeBody.scale.x1 = this._gaugeBody.active.x;
+			this._gaugeBody.scale.x2 = this._gaugeBody.active.x + this._gaugeBody.active.w;
+			this._gaugeBody.scale.y1 = this._gaugeBody.active.y + this._gaugeBody.active.h + this._o.scaleOffset;
+			this._gaugeBody.scale.y2 = this._gaugeBody.scale.y1;
 			// very important: correct the scale width for 'discrete' type
 			if (this._o.type == 'discrete') {
-				this._barBody.scale.x2 -= 3;
+				this._gaugeBody.scale.x2 -= 3;
 			}
 
 
 			if (this._o.orient === 'hor' && this._o.scalePosition === 'top') {
 				// move active down
-				this._barBody.active.y = (this._barBody.y + this._barBody.height) - gap - this._barBody.active.h;
-				this._barBody.scale.y1 = this._barBody.active.y - this._o.scaleOffset;
-				this._barBody.scale.y2 = this._barBody.scale.y1;
+				this._gaugeBody.active.y = (this._gaugeBody.y + this._gaugeBody.height) - gap - this._gaugeBody.active.h;
+				this._gaugeBody.scale.y1 = this._gaugeBody.active.y - this._o.scaleOffset;
+				this._gaugeBody.scale.y2 = this._gaugeBody.scale.y1;
 			}
 		}
 		let tv;
 		if (this._o.orient == 'ver') {
-			tv = this._barBody.width;
-			this._barBody.width = this._barBody.height;
-			this._barBody.height = tv;
+			tv = this._gaugeBody.width;
+			this._gaugeBody.width = this._gaugeBody.height;
+			this._gaugeBody.height = tv;
 
-			tv = this._barBody.active.w;
-			this._barBody.active.w = this._barBody.active.h;
-			this._barBody.active.h = tv;
+			tv = this._gaugeBody.active.w;
+			this._gaugeBody.active.w = this._gaugeBody.active.h;
+			this._gaugeBody.active.h = tv;
 
-			this._barBody.scale.x1 = this._barBody.active.x + this._barBody.active.w + this._o.scaleOffset;
-			this._barBody.scale.x2 = this._barBody.scale.x1;
-			this._barBody.scale.y1 = this._barBody.active.y;
-			this._barBody.scale.y2 = this._barBody.active.y + this._barBody.active.h;
+			this._gaugeBody.scale.x1 = this._gaugeBody.active.x + this._gaugeBody.active.w + this._o.scaleOffset;
+			this._gaugeBody.scale.x2 = this._gaugeBody.scale.x1;
+			this._gaugeBody.scale.y1 = this._gaugeBody.active.y;
+			this._gaugeBody.scale.y2 = this._gaugeBody.active.y + this._gaugeBody.active.h;
 			// very important: correct the scale height for 'discrete' type
 			if (this._o.type == 'discrete') {
-				this._barBody.scale.y2 -= 3;
+				this._gaugeBody.scale.y2 -= 3;
 			}
 
 			if (this._o.scalePosition === 'left') {
 				// move active right
-				this._barBody.active.x = (this._barBody.x + this._barBody.width) - gap - this._barBody.active.w;
-				this._barBody.scale.x1 = this._barBody.active.x - this._o.scaleOffset;
-				this._barBody.scale.x2 = this._barBody.scale.x1;
+				this._gaugeBody.active.x = (this._gaugeBody.x + this._gaugeBody.width) - gap - this._gaugeBody.active.w;
+				this._gaugeBody.scale.x1 = this._gaugeBody.active.x - this._o.scaleOffset;
+				this._gaugeBody.scale.x2 = this._gaugeBody.scale.x1;
 			}
 		}
 
-		this._body = SmartBars.addElement('rect', {
+		this._body = SmartGauges.addElement('rect', {
 			// id: 'body',
 			class: 'body',
 			stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
@@ -600,24 +600,24 @@ ${optStr}  };
 			'fill-opacity': this._o.varOpacity,
 			x: this._rect.x,
 			y: this._rect.y,
-			width: this._barBody.width,
-			height: this._barBody.height
+			width: this._gaugeBody.width,
+			height: this._gaugeBody.height
 		}, this._svgroot, this._svgdoc);
 		// build active path
 		let path = '';
 		if (this._o.type == 'solid') {
-			const ra = this._barBody.active;
+			const ra = this._gaugeBody.active;
 			path = `M${ra.x},${ra.y} h${ra.w} v${ra.h} h-${ra.w} z`;
 		} else {
-			let startX = this._barBody.active.x;
-			let startY = this._barBody.active.y;
+			let startX = this._gaugeBody.active.x;
+			let startY = this._gaugeBody.active.y;
 			let partW, partH;
 			if (this._o.orient == 'ver') {
-				partH = (this._barBody.active.h / 10) - 3;
-				partW = this._barBody.active.w;
+				partH = (this._gaugeBody.active.h / 10) - 3;
+				partW = this._gaugeBody.active.w;
 			} else {
-				partW = (this._barBody.active.w / 10) - 3;
-				partH = this._barBody.active.h;
+				partW = (this._gaugeBody.active.w / 10) - 3;
+				partH = this._gaugeBody.active.h;
 			}
 			for (let n = 0; n < 10; n++) {
 				path += `M${startX},${startY} h${partW} v${partH} h-${partW} v-${partH} `;
@@ -628,7 +628,7 @@ ${optStr}  };
 				}
 			}
 		}
-		this._bodyActiveBasis = SmartBars.addElement('path', {
+		this._bodyActiveBasis = SmartGauges.addElement('path', {
             // id: 'bodyActiveBasis',
             class: 'bodyActiveBasis',
             stroke: this._o.varStrokeColor,
@@ -638,7 +638,7 @@ ${optStr}  };
 			'stroke-linejoin': 'miter',
 			d: path
 		}, this._svgroot, this._svgdoc);
-		this._bodyActive = SmartBars.addElement('path', {
+		this._bodyActive = SmartGauges.addElement('path', {
             // id: 'bodyActive',
             class: 'bodyActive',
             stroke: this._o.varStrokeColor,
@@ -650,47 +650,47 @@ ${optStr}  };
 		}, this._svgroot, this._svgdoc);
 		// draw scale if enabled
 		if (this._o.scalePosition !== 'none') {
-			this._bodyScale = SmartBars.addElement('g', {}, this._svgroot, this._svgdoc);
-			SmartBars.addElement('line', {
-				x1: this._barBody.scale.x1,
-				y1: this._barBody.scale.y1,
-				x2: this._barBody.scale.x2,
-				y2: this._barBody.scale.y2,
+			this._bodyScale = SmartGauges.addElement('g', {}, this._svgroot, this._svgdoc);
+			SmartGauges.addElement('line', {
+				x1: this._gaugeBody.scale.x1,
+				y1: this._gaugeBody.scale.y1,
+				x2: this._gaugeBody.scale.x2,
+				y2: this._gaugeBody.scale.y2,
 				'stroke-width': 1,
 				stroke: this._o.varStrokeColor
 			}, this._bodyScale, this._svgdoc);
 
 			let xPosA, yPosA, anchorsA, cxA, cyA, baselineA;
 			if (this._o.orient == 'hor') {
-				xPosA = [this._barBody.scale.x1, this._barBody.scale.x1 + (this._barBody.active.w / 2), this._barBody.scale.x2];
-				tv = this._o.scalePosition == 'top' ? this._barBody.scale.y1 - 2 : this._barBody.scale.y1 + this._o.varFontSize + 2;
+				xPosA = [this._gaugeBody.scale.x1, this._gaugeBody.scale.x1 + (this._gaugeBody.active.w / 2), this._gaugeBody.scale.x2];
+				tv = this._o.scalePosition == 'top' ? this._gaugeBody.scale.y1 - 2 : this._gaugeBody.scale.y1 + this._o.varFontSize + 2;
 				yPosA = [tv, tv, tv];
 				anchorsA = ['left', 'middle', 'end'];
 				cxA = xPosA;
-				tv = this._barBody.scale.y1;
+				tv = this._gaugeBody.scale.y1;
 				cyA = [tv, tv, tv];
 				baselineA = this._o.scalePosition == 'top' ? ['after', 'after', 'after'] : ['after', 'after', 'after'];
 			} else {
-				tv = this._o.scalePosition == 'left' ? this._barBody.scale.x1 - 2 : this._barBody.scale.x1 + 2;
+				tv = this._o.scalePosition == 'left' ? this._gaugeBody.scale.x1 - 2 : this._gaugeBody.scale.x1 + 2;
 				xPosA = [tv, tv, tv];
 				tv = this._o.varFontSize / 2;
-				yPosA = [this._barBody.scale.y1 + this._o.varFontSize, this._barBody.scale.y1 + (this._barBody.active.h / 2), this._barBody.scale.y2];
+				yPosA = [this._gaugeBody.scale.y1 + this._o.varFontSize, this._gaugeBody.scale.y1 + (this._gaugeBody.active.h / 2), this._gaugeBody.scale.y2];
 				anchorsA = this._o.scalePosition == 'left' ? ['end', 'end', 'end'] : ['left', 'left', 'left'];
-				cxA = [this._barBody.scale.x1, this._barBody.scale.x1, this._barBody.scale.x1];
-				cyA = [this._barBody.scale.y1, this._barBody.scale.y1 + (this._barBody.active.h / 2), this._barBody.scale.y2]; // [this._barBody.scale.y1 + this._o.varFontSize, this._barBody.scale.y1 + (this._barBody.active.h / 2) + tv, this._barBody.scale.y2 - this._o.varFontSize]
+				cxA = [this._gaugeBody.scale.x1, this._gaugeBody.scale.x1, this._gaugeBody.scale.x1];
+				cyA = [this._gaugeBody.scale.y1, this._gaugeBody.scale.y1 + (this._gaugeBody.active.h / 2), this._gaugeBody.scale.y2]; // [this._gaugeBody.scale.y1 + this._o.varFontSize, this._gaugeBody.scale.y1 + (this._gaugeBody.active.h / 2) + tv, this._gaugeBody.scale.y2 - this._o.varFontSize]
 				baselineA = ['after', 'middle', 'before'];
 			}
 
 			for (let i = 0; i < 3; i++) {
 				let numb = 50;
-				SmartBars.addElement('circle', {
+				SmartGauges.addElement('circle', {
 					'stroke-width': 1,
 					stroke: this._o.varStrokeColor,
 					cx: cxA[i],
 					cy: cyA[i],
 					r: 1
 				}, this._bodyScale, this._svgdoc);
-				this._scaleTextA[i] = SmartBars.addElement('text', {
+				this._scaleTextA[i] = SmartGauges.addElement('text', {
 					// id: `${this.id}-V${i}`,
 					'text-anchor': anchorsA[i],
 					'pointer-events': 'none',
@@ -776,7 +776,7 @@ ${optStr}  };
     init(options = null) {
         if (options) {
             // validate and merge with own _o
-            SmartBar.convertNumericProps(options);
+            SmartGauge.convertNumericProps(options);
             this._o = Object.assign({}, this._o, options);
         }
         const rc = this._svgroot.firstElementChild;
@@ -874,7 +874,7 @@ ${optStr}  };
 					}
 					this._buildActive(this._data);
 					if (this._o.role === 'demoMode') {
-						window.SmartSmartBars.update('bar-wdg', data);
+						window.SmartSmartGauges.update('gauge-wdg', data);
 					}
 				})
 				.catch((error) => {
@@ -896,7 +896,7 @@ ${optStr}  };
 				this._data = new Set([fakeData.target]);
 				this._buildActive(this._data);
 				if (this._o.role === 'demoMode') {
-					window.SmartBars.update('bar-wdg', data);
+					window.SmartGauges.update('gauge-wdg', data);
 				}
 			}
 		} else { // show external or emulated data
@@ -925,7 +925,7 @@ ${optStr}  };
 			} else {
 				this._buildActive(this._data);
 				if (this._o.role === 'demoMode') {
-					window.SmartBars.update('bar-wdg', data);
+					window.SmartGauges.update('gauge-wdg', data);
 				}
 			}
 		}
@@ -953,7 +953,7 @@ ${optStr}  };
 		return dataEx;
 	}
 	getParams(filter = 'all') {
-		return SmartBar.getCustomParams(this._o, filter);	// 'dirty' means: get only changed parameters
+		return SmartGauge.getCustomParams(this._o, filter);	// 'dirty' means: get only changed parameters
 	}
 	setParam(name, value) {
 		if (this.dontRespond) {	// don't respond on changing parameters when updating user panels in UI Builder (for example)
@@ -962,7 +962,7 @@ ${optStr}  };
 		const opt = {};
 		opt[name] = value;
 		// convert to numbers specified by name property
-		SmartBar.convertNumericProps(opt, name);
+		SmartGauge.convertNumericProps(opt, name);
 
 		if (this._body) {
 			this.setParams(opt);
@@ -975,7 +975,7 @@ ${optStr}  };
 	 */
 	resetParams(options = null) {
 		if (options) {
-			this._o = Object.assign({}, SmartBar.defOptions(), options);
+			this._o = Object.assign({}, SmartGauge.defOptions(), options);
 			this._build();
 		}
 	}
@@ -985,7 +985,7 @@ ${optStr}  };
 			return false;
 		}
 		// convert all known properties to numbers
-		SmartBar.convertNumericProps(options);
+		SmartGauge.convertNumericProps(options);
 		this._o = Object.assign({}, this._o, options);
 
 		// some properties changing requires rebuilding, lets find its!
@@ -1014,12 +1014,12 @@ ${optStr}  };
 	}
 }
 
-class SmartBarElement extends HTMLElement {
+class SmartGaugeElement extends HTMLElement {
 	constructor(id) {
 		super();
 
-		// create SmartBars collection only once!
-		SmartBars.initSmartBars();
+		// create SmartGauges collection only once!
+		SmartGauges.initSmartGauges();
 
 		const txtStyle = `
 			:host {
@@ -1058,7 +1058,7 @@ class SmartBarElement extends HTMLElement {
 
 		this._root = this.attachShadow({mode: 'open'});
 
-		const svgId = `${this.id}--stbar`;
+		const svgId = `${this.id}--stgauge`;
 		this._root.innerHTML = `
 			<style>${txtStyle}</style>
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${svgId}">
@@ -1069,32 +1069,32 @@ class SmartBarElement extends HTMLElement {
 		`;
 		this._svgroot = this._root.querySelector('svg');
 		// now create the smart polygon!
-		this._stbar = new SmartBar('mainG', {context: this._svgroot, mode: 'html'});
+		this._stgauge = new SmartGauge('mainG', {context: this._svgroot, mode: 'html'});
 		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
-		window.SmartBars.set(this._id, this);
+		window.SmartGauges.set(this._id, this);
 	}
 	getCtrl() {
-		return this._stbar;
+		return this._stgauge;
 	}
 
 	// attributes changing processing
 	static get observedAttributes() {
-		return SmartBar.getCustomProperties();
+		return SmartGauge.getCustomProperties();
 	}
 	attributeChangedCallback(name, oldValue, newValue) {
 		// update own property
 		const paramName = SmartWidgets.customProp2Param(name);
 		this._o[paramName] = newValue;
-		this._stbar.setParam(paramName, newValue);
+		this._stgauge.setParam(paramName, newValue);
 	}
 
 	// connect and disconnect from html
     connectedCallback() {
-		// getting properties in form 'stbar-XXX' and 'stbar-var-XXX' from styles
+		// getting properties in form 'stgauge-XXX' and 'stgauge-var-XXX' from styles
 		const compStyle = getComputedStyle(this);
-		const customProp = SmartBar.getCustomProperties();
+		const customProp = SmartGauge.getCustomProperties();
 		for (let n = 0; n < customProp.length; n++) {
-			const prop = `--stbar-${customProp[n]}`;
+			const prop = `--stgauge-${customProp[n]}`;
 			const propKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
 			let propVal = compStyle.getPropertyValue(prop);
 			if (propVal) {
@@ -1103,10 +1103,10 @@ class SmartBarElement extends HTMLElement {
 			}
 		}
 		// all specific work will be done inside
-		this._stbar.init(this._o);
+		this._stgauge.init(this._o);
 
 		// resize own svg
-		let size = Math.max(this._stbar._barBody.height, this._stbar._barBody.width);
+		let size = Math.max(this._stgauge._gaugeBody.height, this._stgauge._gaugeBody.width);
 		if (this.classList.contains('demoMode')) {
 			size = 130;
 		}
@@ -1116,12 +1116,12 @@ class SmartBarElement extends HTMLElement {
 
     }
     disconnectedCallback() {
-		window.SmartBars.unset(this._id);
-		this._stbar = null;
+		window.SmartGauges.unset(this._id);
+		this._stgauge = null;
 		this._root = null;
 		this._o = null;
     }
 
 }
-window.customElements.define('smart-ui-bar', SmartBarElement);
+window.customElements.define('smart-ui-gauge', SmartGaugeElement);
 // thanks 'https://online.flippingbook.com/view/302153/676/'
