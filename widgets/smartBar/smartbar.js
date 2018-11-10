@@ -50,6 +50,21 @@ class SmartBar {
 		};
 		if (typeof jsonOpt === 'string' && jsonOpt.length) {
 			const tmpOpt = JSON.parse(jsonOpt);
+			if (typeof tmpOpt['stwidget'] != 'undefined') {
+				// lets decompress options...
+				const optArr = tmpOpt['stwidget'].split('-');
+				const customProp = SmartBar.getCustomProperties();
+				let index = 1;
+				for (let prop of customProp) {
+					if (optArr[index] != '.') {
+						options[SmartWidgets.customProp2Param(prop)] = optArr[index];
+					}
+					index++;
+				}
+				this.convertNumericProps(options);
+				options.alias = optArr[0];
+				return options;
+			}
 			for (let key in tmpOpt) {
 				const paramName = key.replace('--stbar-', '');
 				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
@@ -121,7 +136,6 @@ class SmartBar {
 			case 'def-custom-elem_btn':
 				// convert all options into css vars
 				dtO = this.buidOptionsAndCssVars(opt, 'css');
-
                 template = '&lt;style>\n';
                 template += `  .${className} {\n`;
                 // template += `    `
@@ -133,7 +147,10 @@ class SmartBar {
 				template += `&lt;smart-ui-bar class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-bar>\n`;
                 break;
 			case 'def-json_btn': {
-				dtO = this.buidOptionsAndCssVars(opt);
+				//dtO = this.buidOptionsAndCssVars(opt);
+				const customProp = SmartBar.getCustomProperties();
+				const defOptions = SmartBar.defOptions();
+				dtO = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', 'stbar');
 				const jstr = `'${JSON.stringify(dtO)}'`;
 				template = `${jstr}`;
 				template += '\n\n';
@@ -145,8 +162,8 @@ const el = document.getElementById("jsn");
 if (el) {
   const opt = ${jstr};
   const options = SmartBar.JsonToOptions(opt);
-  // change the radius of polygon as you want, for ex:
-  options.radius = 50;
+  // change the width of bar as you want, for ex:
+  options.width = 120;
   // create an instanse
   const bar = new SmartBar(jsn, options);
 }
@@ -196,7 +213,7 @@ ${optStr}  };
             'orient',			// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
 			'aligning',			// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
 			'thickness',		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
-			'width', 'height',	// the size of bar may be specified by this parameters
+			'length',			// the size of bar may be specified by this parameters
 			'gap',
 			'scale-position',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
 			'scale-offset',		// An offset of scale base line from center axe of SmartBar. Depends from 'orient'
@@ -253,8 +270,7 @@ ${optStr}  };
             orient: 'hor',		// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',	// Direction of axis "value". Depends on the parameter "orient". May have values: "up", "down", "right", "left". Default is 'right'
 			thickness: 10,		// The height or width of the element, depending on its orientation, as a percentage of its length or height, respectively.
-			width: 50,
-			height: 12,			// the size of bar may be specified by this parameters
+			length: 50,
 			gap: 5,
 			scalePosition: 'bottom',	// Depends from 'orient', 'alighing'. May contain one from next values: 'none', 'top','right','bottom', or 'left'
 			scaleOffset: 7,		// An offset of scale base line from center axe of SmartBar. Depends from 'orient and thickness'
@@ -308,7 +324,7 @@ ${optStr}  };
             'isFillBkg',
             'isFillStroke',
 			'maxValue',
-			'width',
+			'length',
 			'gap',
 			'thickness',
 			'scaleOffset',
@@ -784,19 +800,20 @@ ${optStr}  };
         rc.setAttribute('display', 'none');
         if (!this._mode) {
 			if (this._rect.width == 0 || this._rect.height == 0) {
-				// get size from attributes!
-				this._rect.width = Number(rc.getAttribute('width'));
-				this._rect.height = Number(rc.getAttribute('height'));
 				this._rect.x = Number(rc.getAttribute('x'));
 				this._rect.y = Number(rc.getAttribute('y'));
+				// get size from attributes!
+				this._rect.width = Number(rc.getAttribute('width'));
+				// will be ignored. thickness will be used instead of height!		
+				this._rect.height = Number(rc.getAttribute('height'));
 			}
         } else {
 			// calculate svg rectangle and coordinates
 			this._rect = {
 				x: 0,
 				y: 0,
-				width:  options.width,
-				height: options.height || options.thickness
+				width:  options.length,
+				height: options.thickness
 			};
 		}
 		this._inited = true;
@@ -1101,6 +1118,24 @@ class SmartBarElement extends HTMLElement {
 				propVal = propVal.trimLeft();
 				this._o[propKey] = propVal;
 			}
+		}
+		let myLength = this.getAttribute('length');
+		if (!myLength) {
+			myLength = compStyle.getPropertyValue('width');
+			if (!isNaN(parseInt(myLength, 10))) {
+				this._o.length = myLength;
+			}
+		} else {
+			this._o.length = myLength;
+		}
+		let myThickness = this.getAttribute('thickness');
+		if (!myThickness) {
+			myThickness = compStyle.getPropertyValue('height');
+			if (!isNaN(parseInt(myThickness, 10))) {
+				this._o.thickness = myThickness;
+			}
+		} else {
+			this._o.thickness = myThickness;
 		}
 		// all specific work will be done inside
 		this._stbar.init(this._o);

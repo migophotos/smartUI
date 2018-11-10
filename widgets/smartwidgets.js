@@ -257,8 +257,10 @@ class SmartWidgets {
 	 * 	firstSecondThird: options.firstSecondThird
 	 * } will be returned
 	 * in case filter equals 'dirty' returns only changed (dirty) parameters
+	 * in case of alias equals name of widget and not equals 'none' compress properties into one string concatenated by '-'
+	 * and prepend it with 'stwidget:' and alias name, specified in this parameter
 	 */
-	static getCustomParams(custProp, defOpt, options = null, filter = 'all') {
+	static getCustomParams(custProp, defOpt, options = null, filter = 'all', alias = 'none') {
 		const paramsArray = [];
 		for (let prop of custProp) {
 			paramsArray.push(SmartPolygons.customProp2Param(prop));
@@ -268,12 +270,25 @@ class SmartWidgets {
 		}
 		const params = {};
 		for (let prop of paramsArray) {
-			if (typeof options[prop] !== 'undefined') {
-				if (filter === 'all' ||
-					(filter === 'dirty' && options[prop] !== defOpt[prop])) {
+			if (typeof defOpt[prop] !== 'undefined') {
+				if (filter === 'dirty' && typeof options[prop] !== 'undefined' && options[prop] !== defOpt[prop]) {
 					params[prop] = options[prop];
 				}
+				if (filter === 'all') {
+					if (typeof options[prop] === 'undefined') {
+						params[prop] = alias !== 'none' ? '.' : defOpt[prop];
+					} else {
+						params[prop] = options[prop];
+					}
+				}
 			}
+		}
+		if (alias != 'none') {
+			let compressed = alias;
+			for (let i in params || {}) {
+				compressed += `-${params[i]}`;
+			}
+			return {stwidget: compressed}; 
 		}
 		return params;
     }

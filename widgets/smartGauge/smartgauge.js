@@ -49,7 +49,23 @@ class SmartGauge {
 		const options = {
 		};
 		if (typeof jsonOpt === 'string' && jsonOpt.length) {
-			const tmpOpt = JSON.parse(jsonOpt);
+            const tmpOpt = JSON.parse(jsonOpt);
+			if (typeof tmpOpt['stwidget'] != 'undefined') {
+				// lets decompress options...
+				const optArr = tmpOpt['stwidget'].split('-');
+				const customProp = SmartBar.getCustomProperties();
+				let index = 1;
+				for (let prop of customProp) {
+					if (optArr[index] != '.') {
+						options[SmartWidgets.customProp2Param(prop)] = optArr[index];
+					}
+					index++;
+				}
+				this.convertNumericProps(options);
+				options.alias = optArr[0];
+				return options;
+			}
+            
 			for (let key in tmpOpt) {
 				const paramName = key.replace('--stgauge-', '');
 				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
@@ -133,7 +149,10 @@ class SmartGauge {
 				template += `&lt;smart-ui-gauge class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-gauge>\n`;
                 break;
 			case 'def-json_btn': {
-				dtO = this.buidOptionsAndCssVars(opt);
+				// dtO = this.buidOptionsAndCssVars(opt);
+				const customProp = SmartGauge.getCustomProperties();
+				const defOptions = SmartGauge.defOptions();
+				dtO = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', 'stgauge');
 				const jstr = `'${JSON.stringify(dtO)}'`;
 				template = `${jstr}`;
 				template += '\n\n';
