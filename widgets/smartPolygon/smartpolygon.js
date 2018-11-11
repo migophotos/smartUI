@@ -25,7 +25,7 @@ class SmartPolygons extends SmartWidgets {
 
     constructor() {
         super();
-
+		this._alias = 'stpgn';
 	}
 
 	initCtrl(id, options) {
@@ -104,21 +104,6 @@ class SmartPolygon {
 		const customProp = SmartPolygon.getCustomProperties();
 		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, 'stpgn');
 	}
-	/**
-	 * Returns an array of custom properties in form of parameter names in case of options equals null.
-	 * If 'options' is specified, then this functions returns the filled object.
-	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
-	 * and in case of specified options:
-	 * params = {
-	 * 	firstSecondThird: options.firstSecondThird
-	 * } will be returned
-	 * in case filter equals 'dirty' returns only changed (dirty) parameters
-	 */
-	static getCustomParams(options = null, filter = 'all') {
-		const custProp = SmartPolygon.getCustomProperties();		// get an array of custom properties
-		const origOpt = SmartPolygon.defOptions();
-		return SmartWidgets.getCustomParams(custProp, origOpt, options, filter);
-    }
 
 	/**
 	 * Build text representation of changed options for specific templates
@@ -214,6 +199,7 @@ ${optStr}  };
 	static getCustomProperties() {
 		return [
 			'role',				// in demo mode this parameter has value 'demoMode'
+			'alias',			// 'stpgn'
             'orient',			// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             'aligning',			// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
             'rotation',			// Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
@@ -270,6 +256,7 @@ ${optStr}  };
     static defOptions() {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
+			alias: 'stpgn',
             orient: 'hor',		// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',	// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
             rotation: 0,		// Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
@@ -388,11 +375,11 @@ ${optStr}  };
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
-        const style = SmartPolygons.addElement('style', {}, this._root, this._svgdoc);
+        const style = SmartWidgets.addElement('style', {}, this._root, this._svgdoc);
         style.textContent = txtStyle;
-        this._defs = SmartPolygons.addElement('defs', {}, this._root, this._svgdoc);
+        this._defs = SmartWidgets.addElement('defs', {}, this._root, this._svgdoc);
 		this._defs.innerHTML = window.SmartPolygons.defs;
-		this._active = SmartPolygons.addElement('clipPath', {id: 'activeRect'}, this._root, this._svgdoc);
+		this._active = SmartWidgets.addElement('clipPath', {id: 'activeRect'}, this._root, this._svgdoc);
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
 		// in case of creating SmartPolygon object from Javascript, lets do all needed work in one place...
@@ -574,7 +561,7 @@ ${optStr}  };
 			}
 		}
         // add base element to svg
-        this._body = SmartPolygons.addElement('polygon', {
+        this._body = SmartWidgets.addElement('polygon', {
             id: 'body',
             class: 'body',
             stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
@@ -586,7 +573,7 @@ ${optStr}  };
 				this._normRadius, this._o.startAngle,
 				this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
 		}, this._svgroot, this._svgdoc);
-		this._bodyActive = SmartPolygons.addElement('polygon', {
+		this._bodyActive = SmartWidgets.addElement('polygon', {
             id: 'bodyActive',
             class: 'bodyActive',
             stroke: this._o.varStrokeColor,
@@ -708,7 +695,10 @@ ${optStr}  };
         }
     }
 
-    // API
+	// API
+	getAlias() {
+		return this._o.alias;
+	}
     getCtrl() {
         return this;
 	}
@@ -900,7 +890,9 @@ ${optStr}  };
 		return dataEx;
 	}
 	getParams(filter = 'all') {
-		return SmartPolygon.getCustomParams(this._o, filter);	// 'dirty' means: get only changed parameters
+		const customProp = SmartPolygon.getCustomProperties();
+		const defOptions = SmartPolygon.defOptions();
+		return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
 	}
 	setParam(name, value) {
 		if (this.dontRespond) {	// don't respond on changing parameters when updating user panels in UI Builder (for example)

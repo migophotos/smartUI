@@ -24,7 +24,8 @@ class SmartBars extends SmartWidgets {
     }
 
     constructor() {
-        super();
+		super();
+		this._alias = 'stbar';
 	}
 
 	initCtrl(id, options) {
@@ -102,21 +103,6 @@ class SmartBar {
 		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, 'stbar');
 	}
 
-		/**
-	 * Returns an array of custom properties in form of parameter names in case of options equals null.
-	 * If 'options' is specified, then this functions returns the filled object.
-	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
-	 * and in case of specified options:
-	 * params = {
-	 * 	firstSecondThird: options.firstSecondThird
-	 * } will be returned
-	 * in case filter equals 'dirty' returns only changed (dirty) parameters
-	 */
-	static getCustomParams(options = null, filter = 'all') {
-		const custProp = SmartBar.getCustomProperties();		// get an array of custom properties
-		const origOpt = SmartBar.defOptions();
-		return SmartWidgets.getCustomParams(custProp, origOpt, options, filter);
-    }
 	/**
 	 * Build text representation of changed options for specific templates
 	 * @param {object} opt Options
@@ -186,8 +172,6 @@ const el = document.getElementById("jsn");
 if (el) {
   const options = {
 ${optStr}  };
-  // change the radius of polygon as you want, for ex:
-  options.radius = 50;
   // create an instanse
   const bar = new SmartBar(jsn, options);
 }
@@ -209,6 +193,7 @@ ${optStr}  };
 	static getCustomProperties() {
 		return [
 			'role',				// in demo mode this parameter has value 'demoMode'
+			'alias',			// 'stbar'
 			'type',				// The type of bar bady: 'solid' or 'discrete'
             'orient',			// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
 			'aligning',			// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
@@ -250,8 +235,8 @@ ${optStr}  };
 								// Conversely, if the value affects the line ('rule'='stroke'),
 								// then the corresponding color and flag are used to fill the background.
 								// In the case of 'rule'='both', additional parameters are not used.
-			'is-fill-bkg',		// Enables fill and color the background of polygon. Default is 1
-			'is-fill-stroke',	// Enables draw colored stroke around of polygon. Default is 0
+			'is-fill-bkg',		// Enables fill and color the background of bar. Default is 1
+			'is-fill-stroke',	// Enables draw colored stroke around of bar. Default is 0
 			'var-stroke-color',
 			'var-fill-color',
 			'var-is-shadow',	// Allows shadow for widget and tooltip
@@ -266,6 +251,7 @@ ${optStr}  };
     static defOptions() {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
+			alias: 'stbar',
 			type: 'solid',		// The type of bar bady: 'solid' or 'discrete'
             orient: 'hor',		// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',	// Direction of axis "value". Depends on the parameter "orient". May have values: "up", "down", "right", "left". Default is 'right'
@@ -299,8 +285,8 @@ ${optStr}  };
 
 			colorRule: 'stroke',
 			valueRule: 'fill',
-			isFillBkg: 1,		// Enables fill and color the background of polygon. Default is 1
-            isFillStroke: 1,	// Enables draw stroke around of polygon. Default is 1
+			isFillBkg: 1,		// Enables fill and color the background of bar. Default is 1
+            isFillStroke: 1,	// Enables draw stroke around of bar. Default is 1
             varStrokeColor: '#000000',
             varFillColor: 	'#ffcd88',
 			varIsShadow: 1,		// Allows shadow for widget, legend and tooltip
@@ -386,16 +372,16 @@ ${optStr}  };
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
-        const style = SmartBars.addElement('style', {}, this._root, this._svgdoc);
+        const style = SmartWidgets.addElement('style', {}, this._root, this._svgdoc);
         style.textContent = txtStyle;
-        this._defs = SmartBars.addElement('defs', {}, this._root, this._svgdoc);
-		this._defs.innerHTML = window.SmartPolygons.defs;
-		this._active = SmartPolygons.addElement('clipPath', {id: `${this.id}-activeRect`}, this._root, this._svgdoc);
+        this._defs = SmartWidgets.addElement('defs', {}, this._root, this._svgdoc);
+		this._defs.innerHTML = window.SmartBars.defs;
+		this._active = SmartWidgets.addElement('clipPath', {id: `${this.id}-activeRect`}, this._root, this._svgdoc);
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
-		// in case of creating SmartPolygon object from Javascript, lets do all needed work in one place...
+		// in case of creating SmartBar object from Javascript, lets do all needed work in one place...
 		if (!this._mode) {
-			// store containerId: ref on SmartPolygon element inside SmartPolygons collection for JS access
+			// store containerId: ref on SmartBar element inside SmartBars collection for JS access
 			window.SmartBars.set(this.id, this);
 			this.init();
 		}
@@ -606,7 +592,7 @@ ${optStr}  };
 			}
 		}
 
-		this._body = SmartBars.addElement('rect', {
+		this._body = SmartWidgets.addElement('rect', {
 			// id: 'body',
 			class: 'body',
 			stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
@@ -644,7 +630,7 @@ ${optStr}  };
 				}
 			}
 		}
-		this._bodyActiveBasis = SmartBars.addElement('path', {
+		this._bodyActiveBasis = SmartWidgets.addElement('path', {
             // id: 'bodyActiveBasis',
             class: 'bodyActiveBasis',
             stroke: this._o.varStrokeColor,
@@ -654,7 +640,7 @@ ${optStr}  };
 			'stroke-linejoin': 'miter',
 			d: path
 		}, this._svgroot, this._svgdoc);
-		this._bodyActive = SmartBars.addElement('path', {
+		this._bodyActive = SmartWidgets.addElement('path', {
             // id: 'bodyActive',
             class: 'bodyActive',
             stroke: this._o.varStrokeColor,
@@ -666,8 +652,8 @@ ${optStr}  };
 		}, this._svgroot, this._svgdoc);
 		// draw scale if enabled
 		if (this._o.scalePosition !== 'none') {
-			this._bodyScale = SmartBars.addElement('g', {}, this._svgroot, this._svgdoc);
-			SmartBars.addElement('line', {
+			this._bodyScale = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
+			SmartWidgets.addElement('line', {
 				x1: this._barBody.scale.x1,
 				y1: this._barBody.scale.y1,
 				x2: this._barBody.scale.x2,
@@ -699,14 +685,14 @@ ${optStr}  };
 
 			for (let i = 0; i < 3; i++) {
 				let numb = 50;
-				SmartBars.addElement('circle', {
+				SmartWidgets.addElement('circle', {
 					'stroke-width': 1,
 					stroke: this._o.varStrokeColor,
 					cx: cxA[i],
 					cy: cyA[i],
 					r: 1
 				}, this._bodyScale, this._svgdoc);
-				this._scaleTextA[i] = SmartBars.addElement('text', {
+				this._scaleTextA[i] = SmartWidgets.addElement('text', {
 					// id: `${this.id}-V${i}`,
 					'text-anchor': anchorsA[i],
 					'pointer-events': 'none',
@@ -776,13 +762,16 @@ ${optStr}  };
         if (this._o.isLink) {
 			let linkto = this._data.link;
             if (linkto) {
-                linkto = SmartPolygons.getLink(linkto);
+                linkto = SmartBars.getLink(linkto);
                 window.open(linkto, '');
             }
         }
     }
 
-    // API
+	// API
+	getAlias() {
+		return this._o.alias;
+	}
     getCtrl() {
         return this;
 	}
@@ -970,7 +959,9 @@ ${optStr}  };
 		return dataEx;
 	}
 	getParams(filter = 'all') {
-		return SmartBar.getCustomParams(this._o, filter);	// 'dirty' means: get only changed parameters
+		const customProp = SmartBar.getCustomProperties();		// get an array of custom properties
+		const defOptions = SmartBar.defOptions();
+		return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
 	}
 	setParam(name, value) {
 		if (this.dontRespond) {	// don't respond on changing parameters when updating user panels in UI Builder (for example)
@@ -986,8 +977,8 @@ ${optStr}  };
 		}
 	}
 	/**
-	 * Instead of uppending new options, to own,
-	 * this functions sets new and alwase rebuild the polygon.
+	 * Instead of appending new options, to own,
+	 * this functions sets new and alwaise rebuild the control.
 	 * @param {object} options
 	 */
 	resetParams(options = null) {
@@ -1085,7 +1076,7 @@ class SmartBarElement extends HTMLElement {
 			</svg>
 		`;
 		this._svgroot = this._root.querySelector('svg');
-		// now create the smart polygon!
+		// now create the smart bar control!
 		this._stbar = new SmartBar('mainG', {context: this._svgroot, mode: 'html'});
 		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
 		window.SmartBars.set(this._id, this);

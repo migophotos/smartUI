@@ -2,6 +2,9 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-multi-spaces) */
 /* eslint-disable no-underscore-dangle */
+class SmartHeap extends Map {
+
+}
 
 /**
  * @copyright Copyright © 2018 ... All rights reserved.
@@ -16,8 +19,14 @@
 class SmartWidgets {
     constructor() {
         this._version = '1.0';
-        this._heap = new Map();
-        this._initialized = false;
+		this._heap;		// = new Map();
+		if (!window.SmartHeap) {
+			window.SmartHeap = new SmartHeap();
+
+		}
+		this._heap = window.SmartHeap
+		this._alias = null;  // alias name, for example: 'smartbar', or 'smartpolygon',...  Each smart widget has function getAlias() and returns it's alias name
+		this._initialized = false;
         this._timeout = 100;
 		this.defs = `
 			<filter id="drop-shadow">
@@ -298,7 +307,7 @@ class SmartWidgets {
 		this._interval = setInterval(() => {
 			for (let entry of this._heap.entries()) {
 				let obj = entry[1].getCtrl();
-				if (obj && obj._o.isRun) { // realtime updates are enabled
+				if (obj && obj.getAlias() == this._alias && obj._o.isRun) { // realtime updates are enabled
 					let ic = obj.intervalCounter;
 					ic -= this._timeout;
 					obj.intervalCounter = ic;	// it will restored automatically to _o.interval, if <= 0
