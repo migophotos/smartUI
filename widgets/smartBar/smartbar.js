@@ -140,7 +140,6 @@ class SmartBar {
 				template += `&lt;smart-ui-bar class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-bar>\n`;
                 break;
 			case 'def-json_btn': {
-				//dtO = this.buidOptionsAndCssVars(opt);
 				const customProp = SmartBar.getCustomProperties();
 				const defOptions = SmartBar.defOptions();
 				dtO = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartBars.getAlias());
@@ -154,10 +153,14 @@ class SmartBar {
 const el = document.getElementById("jsn");
 if (el) {
   const opt = ${jstr};
+  // create an instanse of SmartBar widget
+  const bar = new SmartBar(jsn, opt);
+
+  // or in case you want to change any parameters, convert JSON string to options
   const options = SmartBar.JsonToOptions(opt);
   // change the width of bar as you want, for ex:
   options.width = 120;
-  // create an instanse
+  // and create an instanse of SmartBar widget
   const bar = new SmartBar(jsn, options);
 }
 `;
@@ -358,7 +361,13 @@ ${optStr}  };
 			.animated:hover {
 				r: 0;
 			}
-        `;
+		`;
+		// check for options in JSON format and convert its to object in this case
+		const smartWidgetAlias = SmartWidgets.getAlias();
+		if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
+			options = SmartBar.JsonToOptions(options);
+		}
+
         // merge default options with specified
         this._o = Object.assign({}, SmartBar.defOptions(), options || {});
         // validate all properties
@@ -787,6 +796,12 @@ ${optStr}  };
 	}
     init(options = null) {
         if (options) {
+			// check for options in JSON format and convert its to object in this case
+			const smartWidgetAlias = SmartWidgets.getAlias();
+			if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
+				options = SmartBar.JsonToOptions(options);
+			}
+
             // validate and merge with own _o
             SmartBar.convertNumericProps(options);
             this._o = Object.assign({}, this._o, options);
@@ -901,7 +916,7 @@ ${optStr}  };
 						"descr":"Description",
 						"value":"85",
 						"max":	"100",
-						"color":"crimson",
+						"color":"gray",
 						"link": "http://www.google.com/"
 					}
 				};

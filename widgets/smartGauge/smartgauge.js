@@ -210,32 +210,6 @@ ${optStr}  };
 	}
 
 	/**
-	 * Build the compact version of gauge parameters, by contactination similar parameters group into the one string.
-	 * for example the next group:
-			dialType: 1,
-			dialRadius: 99,
-			dialBorderWidth: 0,
-			dialBorderColor: '#000000',
-			dialFillColor: '#ababab',
-			dialFillPatern: '',
-			dialOpacity: 1,
-		will be stored as: d:'1-99-0-#000000-#ababab--1'
-	 *
-	 */
-	static getCompactProperties() {
-		return [
-			'b',	// all body parameters concatenited by '-'
-			'c',	// all center parameters concatenited by '-'
-			'd',	// all dial parameters concatenited by '-'
-			'p',	// all pointer parameters concatenited by '-'
-			's',	// all scale parameters concatenited by '-'
-			'mj',	// all major parameters concatenited by '-'
-			'mn',	// all minor parameters concatenited by '-'
-			'th'	// all thresholds parameters concatenited by '-'
-
-		];
-	}
-	/**
 	 * Returns an array of custom properties. Each of the custom property has corresponding declarative attribute in form first-second == prefix-first-second
 	 * and option parameter with name "firstSecond".
 	 * for example: '--sttip-title-format' property equals to attribute 'title-format' and options.titleFormat parameter, but
@@ -507,7 +481,13 @@ ${optStr}  };
 			.animated:hover {
 				r: 0;
 			}
-        `;
+		`;
+		// check for options in JSON format and convert its to object in this case
+		const smartWidgetAlias = SmartWidgets.getAlias();
+		if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
+			options = SmartGauge.JsonToOptions(options);
+		}
+
         // merge default options with specified
         this._o = Object.assign({}, SmartGauge.defOptions(), options || {});
         // validate all properties
@@ -521,10 +501,10 @@ ${optStr}  };
 
         this._data      = null; // last received from data provider (server + target)
 		this._body      = null; // the SmartGauge body
-		this._bodyActive= null;	// active element path
+		this._bodyActive = null;	// active element path
 		this._bodyScale = null; // body scale element (group) includes line, and texts
 		this._active    = null; // the active clip element
-		this._scaleTextA= [];	// the references on scale texts (0, 50, max)
+		this._scaleTextA = [];	// the references on scale texts (0, 50, max)
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
@@ -933,6 +913,12 @@ ${optStr}  };
 	}
     init(options = null) {
         if (options) {
+			// check for options in JSON format and convert its to object in this case
+			const smartWidgetAlias = SmartWidgets.getAlias();
+			if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
+				options = SmartGauge.JsonToOptions(options);
+			}
+
             // validate and merge with own _o
             SmartGauge.convertNumericProps(options);
             this._o = Object.assign({}, this._o, options);

@@ -155,10 +155,13 @@ class SmartPolygon {
 const el = document.getElementById("jsn");
 if (el) {
   const opt = ${jstr};
+  // create an instance of SmartPolygon widget
+  const pgn = new SmartPolygon(jsn, opt);
+  // or in case you want to change any parameters, convert the JSON string into object
   const options = SmartPolygon.JsonToOptions(opt);
   // change the radius of polygon as you want, for ex:
   options.radius = 50;
-  // create an instanse
+  // and create an instanse of SmartPolygon widget
   const pgn = new SmartPolygon(jsn, options);
 }
 `;
@@ -362,7 +365,13 @@ ${optStr}  };
 			.animated:hover {
 				r: 0;
 			}
-        `;
+		`;
+		// check for options in JSON format and convert its to object in this case
+		const smartWidgetAlias = SmartWidgets.getAlias();
+		if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
+			options = SmartPolygon.JsonToOptions(options);
+		}
+
         // merge default options with specified
         this._o = Object.assign({}, SmartPolygon.defOptions(), options || {});
         // validate all properties
@@ -712,6 +721,11 @@ ${optStr}  };
 	}
     init(options = null) {
         if (options) {
+			// check for options in JSON format and convert its to object in this case
+			const smartWidgetAlias = SmartWidgets.getAlias();
+			if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
+				options = SmartPolygon.JsonToOptions(options);
+			}
             // validate and merge with own _o
             SmartPolygon.convertNumericProps(options);
             this._o = Object.assign({}, this._o, options);
