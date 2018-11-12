@@ -2,8 +2,10 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-multi-spaces) */
 /* eslint-disable no-underscore-dangle */
-class SmartHeap extends Map {
+/* eslint-disable no-unused-vars */
+/* eslint-disable guard-for-in */
 
+class SmartHeap extends Map {
 }
 
 /**
@@ -19,13 +21,12 @@ class SmartHeap extends Map {
 class SmartWidgets {
     constructor() {
         this._version = '1.0';
-		this._heap;		// = new Map();
 		if (!window.SmartHeap) {
 			window.SmartHeap = new SmartHeap();
 
 		}
-		this._heap = window.SmartHeap
-		this._alias = null;  // alias name, for example: 'smartbar', or 'smartpolygon',...  Each smart widget has function getAlias() and returns it's alias name
+		this._heap = window.SmartHeap;
+		this._alias = null;	// alias name, for example: 'stbar', or 'stpgn',...  Each smart widget has function getAlias() and returns it's alias name
 		this._initialized = false;
         this._timeout = 100;
 		this.defs = `
@@ -297,7 +298,7 @@ class SmartWidgets {
 			for (let i in params || {}) {
 				compressed += `-${params[i]}`;
 			}
-			return {stwidget: compressed}; 
+			return {stwidget: compressed};
 		}
 		return params;
     }
@@ -326,7 +327,30 @@ class SmartWidgets {
 		}, 100);
     }
 
-    // public API
+	// public API
+	/**
+	 * Function Generator unique IDs
+	 * @param {string} alias
+	 * @param {number} start start sequence from this number
+	 */
+	* _makeId(alias, start) {
+		let iterationCount = 0;
+		for (let i = start; i < Infinity; i += 1) {
+			iterationCount++;
+			yield `${alias}-${iterationCount}`;
+		}
+		return iterationCount;
+	}
+	/**
+	 * Returns unique id in form alias-number
+	 * Example of use:
+	 * Initialization in derived class - this.uniqueId = this._makeId('stbar', 0);
+	 * Getting unique id - window.SmartBars.getId();
+	 */
+	getId() {
+		return this.uniqueId.next().value;
+	}
+
 	init(dashboardContext = {}) {
 		if (dashboardContext) {
 			this.lang = dashboardContext.lang || 'ru';

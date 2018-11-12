@@ -13,6 +13,9 @@
  */
 
 class SmartBars extends SmartWidgets {
+	static getAlias() {
+		return 'stbar';
+	}
     static init(context = {}) {
         if (!window.SmartBars) {
             window.SmartBars = new SmartBars();
@@ -25,8 +28,8 @@ class SmartBars extends SmartWidgets {
 
     constructor() {
 		super();
-		this._alias = 'stbar';
-		this.uniqueId = this.makeId('stbar', 0);
+		this._alias = SmartBars.getAlias();
+		this.uniqueId = this._makeId(this._alias, 0);
 	}
 
 	initCtrl(id, options) {
@@ -39,27 +42,7 @@ class SmartBars extends SmartWidgets {
 		}
 	}
 	unInitCtrl(id) {
-        // todo....
-	}
-	/**
-	 * Function Generator unique IDs
-	 * @param {string} alias
-	 * @param {number} start start sequence from this number
-	 */
-	*makeId(alias, start) {
-		let iterationCount = 0;
-		for (let i = start; i < Infinity; i += 1) {
-			iterationCount++;
-			yield `${alias}-${iterationCount}`;
-		}
-		return iterationCount;
-	}
-	/**
-	 * Returns unique id in form alias-number
-	 * Example of use: window.SmartBars.getId();
-	 */
-	getId() {
-		return this.uniqueId.next().value;
+        // todo....  #E3D44D
 	}
 }
 
@@ -87,8 +70,9 @@ class SmartBar {
 				options.alias = optArr[0];
 				return options;
 			}
+			const aliasKey = `--${SmartBars.getAlias()}-`;
 			for (let key in tmpOpt) {
-				const paramName = key.replace('--stbar-', '');
+				const paramName = key.replace(aliasKey, '');
 				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
 			}
 			this.convertNumericProps(options);
@@ -121,7 +105,7 @@ class SmartBar {
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
 		const customProp = SmartBar.getCustomProperties();
-		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, 'stbar');
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, SmartBars.getAlias());
 	}
 
 	/**
@@ -157,7 +141,7 @@ class SmartBar {
 				//dtO = this.buidOptionsAndCssVars(opt);
 				const customProp = SmartBar.getCustomProperties();
 				const defOptions = SmartBar.defOptions();
-				dtO = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', 'stbar');
+				dtO = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartBars.getAlias());
 				const jstr = `'${JSON.stringify(dtO)}'`;
 				template = `${jstr}`;
 				template += '\n\n';
@@ -272,7 +256,7 @@ ${optStr}  };
     static defOptions() {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
-			alias: 'stbar',
+			alias: SmartBars.getAlias(),
 			type: 'solid',		// The type of bar bady: 'solid' or 'discrete'
             orient: 'hor',		// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',	// Direction of axis "value". Depends on the parameter "orient". May have values: "up", "down", "right", "left". Default is 'right'
@@ -407,7 +391,7 @@ ${optStr}  };
 			this.init();
 		}
 	}
-	
+
 	_buildActive(data = null) {
 		if (!this._inited) {
 			console.log('_build() -> Nothing todo, not yet initialized!');
@@ -814,7 +798,7 @@ ${optStr}  };
 				this._rect.y = Number(rc.getAttribute('y'));
 				// get size from attributes!
 				this._rect.width = Number(rc.getAttribute('width'));
-				// will be ignored. thickness will be used instead of height!		
+				// will be ignored. thickness will be used instead of height!
 				this._rect.height = Number(rc.getAttribute('height'));
 			}
         } else {
@@ -1088,7 +1072,7 @@ class SmartBarElement extends HTMLElement {
 		this._root = this.attachShadow({mode: 'open'});
 		// make unique ids for 'stbar' container g inside svg
 		const elemId = window.SmartBars.getId();
-		const svgId = `${this.id}--stbar`;
+		const svgId = `${this.id}--${SmartBars.getAlias()}`;
 		this._root.innerHTML = `
 			<style>${txtStyle}</style>
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${svgId}">
@@ -1124,7 +1108,7 @@ class SmartBarElement extends HTMLElement {
 		const compStyle = getComputedStyle(this);
 		const customProp = SmartBar.getCustomProperties();
 		for (let n = 0; n < customProp.length; n++) {
-			const prop = `--stbar-${customProp[n]}`;
+			const prop = `--${SmartBars.getAlias()}-${customProp[n]}`;
 			const propKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
 			let propVal = compStyle.getPropertyValue(prop);
 			if (propVal) {

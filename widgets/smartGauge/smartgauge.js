@@ -13,7 +13,11 @@
  */
 
 class SmartGauges extends SmartWidgets {
-    static initSmartGauges(context = {}) {
+	static getAlias() {
+		return 'stgauge';
+	}
+
+    static init(context = {}) {
         if (!window.SmartGauges) {
             window.SmartGauges = new SmartGauges();
         }
@@ -25,6 +29,8 @@ class SmartGauges extends SmartWidgets {
 
     constructor() {
         super();
+		this._alias = SmartGauges.getAlias();
+		this.uniqueId = this._makeId(this._alias, 0);
 	}
 
 	initCtrl(id, options) {
@@ -50,8 +56,10 @@ class SmartGauge {
 		};
 		if (typeof jsonOpt === 'string' && jsonOpt.length) {
 			const tmpOpt = JSON.parse(jsonOpt);
+
+			const aliasKey = `--${SmartGauges.getAlias()}-`;
 			for (let key in tmpOpt) {
-				const paramName = key.replace('--stgauge-', '');
+				const paramName = key.replace(aliasKey, '');
 				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
 			}
 			this.convertNumericProps(options);
@@ -84,7 +92,7 @@ class SmartGauge {
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
 		const customProp = SmartGauge.getCustomProperties();
-		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, 'stgauge');
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, SmartGauges.getAlias());
 	}
 
 		/**
@@ -331,7 +339,7 @@ ${optStr}  };
     static defOptions() {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
-			alias: 'stgauge',
+			alias: SmartGauges.getAlias(),
             bodyType: 1,			// The type of gauge body
             bodyRadius: 70,			// Absolute value, describes the size of gauge widget
             bodyBorderWidth: 2,	// all othe sizes are in percentage to body radius
@@ -1152,7 +1160,7 @@ class SmartGaugeElement extends HTMLElement {
 		super();
 
 		// create SmartGauges collection only once!
-		SmartGauges.initSmartGauges();
+		SmartGauges.init();
 
 		const txtStyle = `
 			:host {
@@ -1190,19 +1198,19 @@ class SmartGaugeElement extends HTMLElement {
 		this._o = {};
 
 		this._root = this.attachShadow({mode: 'open'});
-
-		const svgId = `${this.id}--stgauge`;
+		const elemId = window.SmartPolygons.getId();
+		const svgId = `${this.id}--${SmartGauges.getAlias()}`;
 		this._root.innerHTML = `
 			<style>${txtStyle}</style>
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${svgId}">
-				<g id="mainG">
+				<g id="${elemId}">
 					<rect id="fakeR" x="10" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4"></rect>
 				</g>
 			</svg>
 		`;
 		this._svgroot = this._root.querySelector('svg');
 		// now create the smart polygon!
-		this._stgauge = new SmartGauge('mainG', {context: this._svgroot, mode: 'html'});
+		this._stgauge = new SmartGauge(elemId, {context: this._svgroot, mode: 'html'});
 		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
 		window.SmartGauges.set(this._id, this);
 	}
@@ -1227,7 +1235,7 @@ class SmartGaugeElement extends HTMLElement {
 		const compStyle = getComputedStyle(this);
 		const customProp = SmartGauge.getCustomProperties();
 		for (let n = 0; n < customProp.length; n++) {
-			const prop = `--stgauge-${customProp[n]}`;
+			const prop = `--${SmartGauges.getAlias()}-${customProp[n]}`;
 			const propKey = SmartWidgets.customProp2Param(`${customProp[n]}`);
 			let propVal = compStyle.getPropertyValue(prop);
 			if (propVal) {

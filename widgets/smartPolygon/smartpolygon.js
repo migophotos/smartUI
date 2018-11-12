@@ -13,6 +13,9 @@
  */
 
 class SmartPolygons extends SmartWidgets {
+	static getAlias() {
+		return 'stpgn';
+	}
     static init(context = {}) {
         if (!window.SmartPolygons) {
             window.SmartPolygons = new SmartPolygons();
@@ -25,7 +28,8 @@ class SmartPolygons extends SmartWidgets {
 
     constructor() {
         super();
-		this._alias = 'stpgn';
+		this._alias = SmartPolygons.getAlias();
+		this.uniqueId = this._makeId(SmartPolygons.getAlias(), 0);
 	}
 
 	initCtrl(id, options) {
@@ -54,7 +58,7 @@ class SmartPolygon {
 			if (typeof tmpOpt['stwidget'] != 'undefined') {
 				// lets decompress options...
 				const optArr = tmpOpt['stwidget'].split('-');
-				const customProp = SmartBar.getCustomProperties();
+				const customProp = SmartPolygon.getCustomProperties();
 				let index = 1;
 				for (let prop of customProp) {
 					if (optArr[index] != '.') {
@@ -66,9 +70,9 @@ class SmartPolygon {
 				options.alias = optArr[0];
 				return options;
 			}
-
+			const aliasKey = `--${SmartPolygons.getAlias()}-`;
 			for (let key in tmpOpt) {
-				const paramName = key.replace('--stpgn-', '');
+				const paramName = key.replace(aliasKey, '');
 				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
 			}
 			this.convertNumericProps(options);
@@ -102,7 +106,7 @@ class SmartPolygon {
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
 		const customProp = SmartPolygon.getCustomProperties();
-		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, 'stpgn');
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, SmartPolygons.getAlias());
 	}
 
 	/**
@@ -139,7 +143,7 @@ class SmartPolygon {
 				// dtO = this.buidOptionsAndCssVars(opt);
 				const customProp = SmartPolygon.getCustomProperties();
 				const defOptions = SmartPolygon.defOptions();
-				dtO = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', 'stpgn');
+				dtO = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartPolygons.getAlias());
 				const jstr = `'${JSON.stringify(dtO)}'`;
 				template = `${jstr}`;
 				template += '\n\n';
@@ -256,7 +260,7 @@ ${optStr}  };
     static defOptions() {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
-			alias: 'stpgn',
+			alias: SmartPolygons.getAlias(),
             orient: 'hor',		// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'
             aligning: 'right',	// Direction of axis "value". Depends on the parameter "orientation". May have values: "up", "down", "right", "left". Default is 'right'
             rotation: 0,		// Degrees. Positive values rotate the widget in the direction of the clockwise movement. Default is '-90'
@@ -997,18 +1001,19 @@ class SmartPolygonElement extends HTMLElement {
 
 		this._root = this.attachShadow({mode: 'open'});
 
-		const svgId = `${this.id}--stpolygon`;
+		const elemId = window.SmartPolygons.getId();
+		const svgId = `${this.id}--${SmartPolygons.getAlias()}`;
 		this._root.innerHTML = `
 			<style>${txtStyle}</style>
 			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${svgId}">
-				<g id="mainG">
+				<g id="${elemId}">
 					<rect id="fakeR" x="10" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4"></rect>
 				</g>
 			</svg>
 		`;
 		this._svgroot = this._root.querySelector('svg');
 		// now create the smart polygon!
-		this._stpgn = new SmartPolygon('mainG', {context: this._svgroot, mode: 'html'});
+		this._stpgn = new SmartPolygon(elemId, {context: this._svgroot, mode: 'html'});
 		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
 		window.SmartPolygons.set(this._id, this);
 	}
@@ -1033,7 +1038,7 @@ class SmartPolygonElement extends HTMLElement {
 		const compStyle = getComputedStyle(this);
 		const customProp = SmartPolygon.getCustomProperties();
 		for (let n = 0; n < customProp.length; n++) {
-			const prop = `--stpgn-${customProp[n]}`;
+			const prop = `--${SmartPolygons.getAlias()}-${customProp[n]}`;
 			const propKey = SmartPolygons.customProp2Param(`${customProp[n]}`);
 			let propVal = compStyle.getPropertyValue(prop);
 			if (propVal) {
