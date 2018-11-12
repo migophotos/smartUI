@@ -13,7 +13,7 @@
  */
 
 class SmartGauges extends SmartWidgets {
-    static initSmartGauges(context = {}) {
+    static init(context = {}) {
         if (!window.SmartGauges) {
             window.SmartGauges = new SmartGauges();
         }
@@ -1052,7 +1052,7 @@ class SmartGaugeElement extends HTMLElement {
 		super();
 
 		// create SmartGauges collection only once!
-		SmartGauges.initSmartGauges();
+		SmartGauges.init();
 
 		const txtStyle = `
 			:host {

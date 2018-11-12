@@ -13,7 +13,7 @@
  */
 
 class SmartBars extends SmartWidgets {
-    static initSmartBars(context = {}) {
+    static init(context = {}) {
         if (!window.SmartBars) {
             window.SmartBars = new SmartBars();
         }
@@ -1048,7 +1048,7 @@ class SmartBarElement extends HTMLElement {
 		super();
 
 		// create SmartBars collection only once!
-		SmartBars.initSmartBars();
+		SmartBars.init();
 
 		const txtStyle = `
 			:host {

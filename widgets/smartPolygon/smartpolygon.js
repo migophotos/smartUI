@@ -13,7 +13,7 @@
  */
 
 class SmartPolygons extends SmartWidgets {
-    static initSmartPolygons(context = {}) {
+    static init(context = {}) {
         if (!window.SmartPolygons) {
             window.SmartPolygons = new SmartPolygons();
         }
@@ -958,7 +958,7 @@ class SmartPolygonElement extends HTMLElement {
 		super();
 
 		// create SmartPolygons collection only once!
-		SmartPolygons.initSmartPolygons();
+		SmartPolygons.init();
 
 		const txtStyle = `
 			:host {
