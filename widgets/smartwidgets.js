@@ -2,6 +2,9 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-multi-spaces) */
 /* eslint-disable no-underscore-dangle */
+class SmartHeap extends Map {
+
+}
 
 /**
  * @copyright Copyright © 2018 ... All rights reserved.
@@ -16,8 +19,14 @@
 class SmartWidgets {
     constructor() {
         this._version = '1.0';
-        this._heap = new Map();
-        this._initialized = false;
+		this._heap;		// = new Map();
+		if (!window.SmartHeap) {
+			window.SmartHeap = new SmartHeap();
+
+		}
+		this._heap = window.SmartHeap
+		this._alias = null;  // alias name, for example: 'smartbar', or 'smartpolygon',...  Each smart widget has function getAlias() and returns it's alias name
+		this._initialized = false;
         this._timeout = 100;
 		this.defs = `
 			<filter id="drop-shadow">
@@ -257,8 +266,10 @@ class SmartWidgets {
 	 * 	firstSecondThird: options.firstSecondThird
 	 * } will be returned
 	 * in case filter equals 'dirty' returns only changed (dirty) parameters
+	 * in case of alias equals name of widget and not equals 'none' compress properties into one string concatenated by '-'
+	 * and prepend it with 'stwidget:' and alias name, specified in this parameter
 	 */
-	static getCustomParams(custProp, defOpt, options = null, filter = 'all') {
+	static getCustomParams(custProp, defOpt, options = null, filter = 'all', alias = 'none') {
 		const paramsArray = [];
 		for (let prop of custProp) {
 			paramsArray.push(SmartPolygons.customProp2Param(prop));
@@ -268,12 +279,25 @@ class SmartWidgets {
 		}
 		const params = {};
 		for (let prop of paramsArray) {
-			if (typeof options[prop] !== 'undefined') {
-				if (filter === 'all' ||
-					(filter === 'dirty' && options[prop] !== defOpt[prop])) {
+			if (typeof defOpt[prop] !== 'undefined') {
+				if (filter === 'dirty' && typeof options[prop] !== 'undefined' && options[prop] !== defOpt[prop]) {
 					params[prop] = options[prop];
 				}
+				if (filter === 'all') {
+					if (typeof options[prop] === 'undefined') {
+						params[prop] = alias !== 'none' ? '.' : defOpt[prop];
+					} else {
+						params[prop] = options[prop];
+					}
+				}
 			}
+		}
+		if (alias != 'none') {
+			let compressed = alias;
+			for (let i in params || {}) {
+				compressed += `-${params[i]}`;
+			}
+			return {stwidget: compressed}; 
 		}
 		return params;
     }
@@ -283,7 +307,7 @@ class SmartWidgets {
 		this._interval = setInterval(() => {
 			for (let entry of this._heap.entries()) {
 				let obj = entry[1].getCtrl();
-				if (obj && obj._o.isRun) { // realtime updates are enabled
+				if (obj && obj.getAlias() == this._alias && obj._o.isRun) { // realtime updates are enabled
 					let ic = obj.intervalCounter;
 					ic -= this._timeout;
 					obj.intervalCounter = ic;	// it will restored automatically to _o.interval, if <= 0
