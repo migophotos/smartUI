@@ -332,8 +332,18 @@ ${optStr}  };
 			'varFontSize'
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
-    }
+	}
+	/**
+	 *
+	 * @param {string} id
+	 * @param {object} options contains context, mode and opt
+	 */
     constructor(id, options = null) {
+		if (!options) {
+			console.error('must to be specified!');
+			return;
+		}
+
 		this._onShowTooltip = this._onShowTooltip.bind(this);
 		this._onMoveTooltip = this._onMoveTooltip.bind(this);
 		this._onHideTooltip = this._onHideTooltip.bind(this);
@@ -364,19 +374,19 @@ ${optStr}  };
 		`;
 		// check for options in JSON format and convert its to object in this case
 		const smartWidgetAlias = SmartWidgets.getAlias();
-		if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
-			options = SmartBar.JsonToOptions(options);
+		if (typeof options.opt === 'string' && options.opt.length && options.opt.startsWith(smartWidgetAlias)) {
+			options.opt = SmartBar.JsonToOptions(options.opt);
 		}
 
         // merge default options with specified
-        this._o = Object.assign({}, SmartBar.defOptions(), options || {});
+        this._o = Object.assign({}, SmartBar.defOptions(), options.opt || {});
         // validate all properties
         SmartBar.convertNumericProps(this._o);
 
         this._mode      = options.mode || null; // in case of 'custom elements' initialization the 'mode' equals 'html'
-        this.id         = id;   // <g id> inside of <svg>
-        this._root      = options.context || null;  // svg root element
-        this._svgroot   = this._root.getElementById(this.id);    // reference on insertion node
+        this.id         = id; // <g id> inside of <svg>
+        this._root      = options.context; // svg root element
+        this._svgroot   = this._root.getElementById(this.id); // reference on insertion node
         this._svgdoc    = this._svgroot.ownerDocument;
 
         this._data      = null; // last received from data provider (server + target)
@@ -491,8 +501,7 @@ ${optStr}  };
 				x: activeRect.x,
 				y: activeRect.y,
 				width: activeRect.width,
-				height: activeRect.height,
-
+				height: activeRect.height
 			}, this._active, this._svgdoc);
 
 			this._bodyActive.setAttribute('clip-path', `url(#${this.id}-activeRect)`);
@@ -742,7 +751,7 @@ ${optStr}  };
 		if (!this._o.isTooltip || this._o.ttipType !== 'own') {
 			return;
 		}
-		let tta = Array.from(this._data)
+		let tta = Array.from(this._data);
         const data = {
             id: this.id,
             x: evt.clientX,
@@ -1100,7 +1109,11 @@ class SmartBarElement extends HTMLElement {
 		`;
 		this._svgroot = this._root.querySelector('svg');
 		// now create the smart bar control!
-		this._stbar = new SmartBar(elemId, {context: this._svgroot, mode: 'html'});
+		this._stbar = new SmartBar(elemId, {
+			context: this._svgroot,
+			mode: 'html',
+			opt: null
+		});
 		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
 		window.SmartBars.set(this._id, this);
 	}

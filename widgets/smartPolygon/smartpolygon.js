@@ -335,8 +335,16 @@ ${optStr}  };
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
     }
-
+	/**
+	 *
+	 * @param {string} id
+	 * @param {object} options contains context, mode and opt
+	 */
     constructor(id, options = null) {
+		if (!options) {
+			console.error('must to be specified!');
+			return;
+		}
 		this.dontRespond 	= false; // An external application may set this flag for disabling responding on setting changing. It must to clear this flag after that.
 		this._onShowTooltip = this._onShowTooltip.bind(this);
 		this._onMoveTooltip = this._onMoveTooltip.bind(this);
@@ -368,19 +376,19 @@ ${optStr}  };
 		`;
 		// check for options in JSON format and convert its to object in this case
 		const smartWidgetAlias = SmartWidgets.getAlias();
-		if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
-			options = SmartPolygon.JsonToOptions(options);
+		if (typeof options.opt === 'string' && options.opt.length && options.opt.startsWith(smartWidgetAlias)) {
+			options.opt = SmartPolygon.JsonToOptions(options.opt);
 		}
 
         // merge default options with specified
-        this._o = Object.assign({}, SmartPolygon.defOptions(), options || {});
+        this._o = Object.assign({}, SmartPolygon.defOptions(), options.opt || {});
         // validate all properties
         SmartPolygon.convertNumericProps(this._o);
 
         this._mode      = options.mode || null; // in case of 'custom elements' initialization the 'mode' equals 'html'
-        this.id         = id;   // <g id> inside of <svg>
-        this._root      = options.context || null;  // svg root element
-        this._svgroot   = this._root.getElementById(this.id);    // reference on insertion node
+        this.id         = id; // <g id> inside of <svg>
+        this._root      = options.context; // svg root element
+        this._svgroot   = this._root.getElementById(this.id); // reference on insertion node
         this._svgdoc    = this._svgroot.ownerDocument;
 
         this._data      = null; // last received from data provider (server + target)
@@ -1028,7 +1036,11 @@ class SmartPolygonElement extends HTMLElement {
 		`;
 		this._svgroot = this._root.querySelector('svg');
 		// now create the smart polygon!
-		this._stpgn = new SmartPolygon(elemId, {context: this._svgroot, mode: 'html'});
+		this._stpgn = new SmartPolygon(elemId, {
+			context: this._svgroot,
+			mode: 'html',
+			opt: null
+		});
 		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
 		window.SmartPolygons.set(this._id, this);
 	}

@@ -1214,38 +1214,35 @@
                     }
                     function updateTryItElement(selWidget, id, options) {
                         let el;
-                        wdgOpt = Object.assign({}, options);
+                        wdgOpt = {
+                            role: '',   // delete 'demoRole'
+                            context: null,
+                            opt: Object.assign({}, options)
+                        };
+                        wdgOpt.opt.role = '';
+                        wdgOpt.opt.isRun = 0;
+                        wdgOpt.opt.isEmulate = 0;
 
                         switch (selWidget) {
                             case 'smartpgn': {
-                                wdgOpt.role = ''; // delete 'demoRole';
                                 wdgOpt.context = document.getElementById('try-it');
-                                // polygonOpt.radius = 25; // todo: temporary set radius. I need to fix the bug with getting right size!!!
-                                wdgOpt.isRun = 0;
-                                wdgOpt.isEmulate = 0;
                                 el = window.SmartPolygons.get('pgn-wdg');
                                 if (!el) {
                                     el = new SmartPolygon(id, wdgOpt);
-                                }
-                                if (el && el.isInited()) {
+                                } else if (el && el.isInited()) {
                                     // set new options and rebuild!
-                                    el.resetParams(wdgOpt);
+                                    el.resetParams(wdgOpt.opt);
                                 }
                                 break;
                             }
                             case 'smartbar': {
-                                wdgOpt.role = ''; // delete 'demoRole';
                                 wdgOpt.context = document.getElementById('bar-try-it');
-                                // polygonOpt.radius = 25; // todo: temporary set radius. I need to fix the bug with getting right size!!!
-                                wdgOpt.isRun = 0;
-                                wdgOpt.isEmulate = 0;
                                 el = window.SmartBars.get('bar-wdg');
                                 if (!el) {
                                     el = new SmartBar(id, wdgOpt);
-                                }
-                                if (el && el.isInited()) {
+                                } else if (el && el.isInited()) {
                                     // set new options and rebuild!
-                                    el.resetParams(wdgOpt);
+                                    el.resetParams(wdgOpt.opt);
                                 }
                                 break;
                             }
