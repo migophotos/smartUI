@@ -219,7 +219,7 @@ ${optStr}  };
 	static getCustomProperties() {
 		return [
 			'role',					// In demo mode this parameter has value 'demoMode'
-
+			'alias',
             'body-type',			// The type of gauge body
             'body-radius',			// Absolute value, describes the size of gauge widget
             'body-border-width',	// all othe sizes are in percentage to body radius
@@ -331,6 +331,7 @@ ${optStr}  };
     static defOptions() {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
+			alias: 'stgauge',
             bodyType: 1,			// The type of gauge body
             bodyRadius: 70,			// Absolute value, describes the size of gauge widget
             bodyBorderWidth: 2,	// all othe sizes are in percentage to body radius
