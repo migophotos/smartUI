@@ -55,9 +55,11 @@ class SmartBar {
 		};
 		if (typeof jsonOpt === 'string' && jsonOpt.length) {
 			const tmpOpt = JSON.parse(jsonOpt);
-			if (typeof tmpOpt['stwidget'] != 'undefined') {
+			const smartWidgetAlias = SmartWidgets.getAlias();
+
+			if (typeof tmpOpt[smartWidgetAlias] != 'undefined') {
 				// lets decompress options...
-				const optArr = tmpOpt['stwidget'].split('-');
+				const optArr = tmpOpt[smartWidgetAlias].split('-');
 				const customProp = SmartBar.getCustomProperties();
 				let index = 1;
 				for (let prop of customProp) {

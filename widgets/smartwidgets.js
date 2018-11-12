@@ -19,6 +19,9 @@ class SmartHeap extends Map {
  *
  */
 class SmartWidgets {
+	static getAlias() {
+		return 'stwidget';
+	}
     constructor() {
         this._version = '1.0';
 		if (!window.SmartHeap) {
@@ -298,7 +301,11 @@ class SmartWidgets {
 			for (let i in params || {}) {
 				compressed += `-${params[i]}`;
 			}
-			return {stwidget: compressed};
+			const paramName = SmartWidgets.getAlias();
+			const obj = {
+			};
+			obj[paramName] = compressed;
+			return obj;
 		}
 		return params;
     }

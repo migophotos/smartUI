@@ -56,7 +56,23 @@ class SmartGauge {
 		};
 		if (typeof jsonOpt === 'string' && jsonOpt.length) {
 			const tmpOpt = JSON.parse(jsonOpt);
+			const smartWidgetAlias = SmartWidgets.getAlias();
 
+			if (typeof tmpOpt[smartWidgetAlias] != 'undefined') {
+				// lets decompress options...
+				const optArr = tmpOpt[smartWidgetAlias].split('-');
+				const customProp = SmartGauge.getCustomProperties();
+				let index = 1;
+				for (let prop of customProp) {
+					if (optArr[index] != '.') {
+						options[SmartWidgets.customProp2Param(prop)] = optArr[index];
+					}
+					index++;
+				}
+				this.convertNumericProps(options);
+				options.alias = optArr[0];
+				return options;
+			}
 			const aliasKey = `--${SmartGauges.getAlias()}-`;
 			for (let key in tmpOpt) {
 				const paramName = key.replace(aliasKey, '');
@@ -67,6 +83,7 @@ class SmartGauge {
 		}
 		return null;
 	}
+
     /**
      * build and returns an options object siutable for 'show()' function
 	 *
