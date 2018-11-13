@@ -1215,13 +1215,12 @@
                     function updateTryItElement(selWidget, id, options) {
                         let el;
                         wdgOpt = {
-                            role: '',   // delete 'demoRole'
                             context: null,
                             opt: Object.assign({}, options)
                         };
-                        wdgOpt.opt.role = '';
-                        wdgOpt.opt.isRun = 0;
-                        wdgOpt.opt.isEmulate = 0;
+                        wdgOpt.opt.role = '';       // clear the flag 'demoRole' for this element!
+                        wdgOpt.opt.isRun = 0;       // clear the flag 'isRun' for this element
+                        wdgOpt.opt.isEmulate = 0;   // stop emulation for this element
 
                         switch (selWidget) {
                             case 'smartpgn': {

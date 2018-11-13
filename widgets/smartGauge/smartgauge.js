@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-multi-spaces) */
 /* eslint-disable no-underscore-dangle */
-
+/* eslint-disable no-multi-spaces */
 
 /**
  * @copyright Copyright © 2018 ... All rights reserved.
@@ -109,24 +109,9 @@ class SmartGauge {
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
 		const customProp = SmartGauge.getCustomProperties();
-		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, SmartGauges.getAlias());
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, what == 'options' ? '' : SmartGauges.getAlias());
 	}
 
-		/**
-	 * Returns an array of custom properties in form of parameter names in case of options equals null.
-	 * If 'options' is specified, then this functions returns the filled object.
-	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
-	 * and in case of specified options:
-	 * params = {
-	 * 	firstSecondThird: options.firstSecondThird
-	 * } will be returned
-	 * in case filter equals 'dirty' returns only changed (dirty) parameters
-	 */
-	static getCustomParams(options = null, filter = 'all') {
-		const custProp = SmartGauge.getCustomProperties();		// get an array of custom properties
-		const origOpt = SmartGauge.defOptions();
-		return SmartWidgets.getCustomParams(custProp, origOpt, options, filter);
-    }
 	/**
 	 * Build text representation of changed options for specific templates
 	 * @param {object} opt Options
@@ -165,11 +150,24 @@ class SmartGauge {
 				template +=
 				`// later, use static function SmartGauge.JsonToOptions(options); to convert JSON string
 // into 'options' object, sutable for SmartGauge creation. For example:
-
-const el = document.getElementById("jsn");
+&lt;svg id="dashboard" ....
+  &lt;g id="smart-widget">
+  ....
+&lt;/svg>
+....
+const el = document.getElementById("smart-widget");
 if (el) {
-  const opt = ${jstr};
-  const options = SmartGauge.JsonToOptions(opt);
+  const options = {
+	  context: document.getElementById('dashboard'),
+	  opt: ${jstr};
+  };
+  // create an instance of SmartPolygon widget
+  const pgn = new SmartGauge(jsn, options);
+  // or in case you want to change any parameters, convert the JSON string into object
+  const options = {
+	  opt: SmartGauge.JsonToOptions(opt);
+	  context: document.getElementById('dashboard'),
+  }
   // change the radius of polygon as you want, for ex:
   options.radius = 50;
   // create an instanse
@@ -1106,7 +1104,9 @@ ${optStr}  };
 		return dataEx;
 	}
 	getParams(filter = 'all') {
-		return SmartGauge.getCustomParams(this._o, filter);	// 'dirty' means: get only changed parameters
+		const customProp = SmartGauge.getCustomProperties();
+		const defOptions = SmartGauge.defOptions();
+		return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
 	}
 	setParam(name, value) {
 		if (this.dontRespond) {	// don't respond on changing parameters when updating user panels in UI Builder (for example)

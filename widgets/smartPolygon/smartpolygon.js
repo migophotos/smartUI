@@ -2,7 +2,8 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-multi-spaces) */
 /* eslint-disable no-underscore-dangle */
-
+/* eslint-disable guard-for-in */
+/* eslint-disable no-multi-spaces */
 
 /**
  * @copyright Copyright © 2018 ... All rights reserved.
@@ -107,7 +108,7 @@ class SmartPolygon {
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
 		const customProp = SmartPolygon.getCustomProperties();
-		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, SmartPolygons.getAlias());
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, what == 'options' ? '' : SmartPolygons.getAlias());
 	}
 
 	/**
@@ -138,7 +139,7 @@ class SmartPolygon {
                 }
                 template += '  }\n';
                 template += '&lt;/style>\n';
-				template += `&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-polygon>\n`;
+				template += `&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">browser not support custom elements.&lt/smart-ui-polygon>\n`;
                 break;
 			case 'def-json_btn': {
 				// dtO = this.buidOptionsAndCssVars(opt);
@@ -151,16 +152,27 @@ class SmartPolygon {
 				template +=
 				`// later, use static function SmartPolygon.JsonToOptions(options); to convert JSON string
 // into 'options' object, sutable for SmartPolygon creation. For example:
-
-const el = document.getElementById("jsn");
+&lt;svg id="dashboard" ....
+  &lt;g id="smart-widget">
+  ....
+&lt;/svg>
+....
+const el = document.getElementById("smart-widget");
 if (el) {
-  const opt = ${jstr};
+  const options = {
+	  context: document.getElementById('dashboard'),
+	  opt: ${jstr};
+  };
   // create an instance of SmartPolygon widget
-  const pgn = new SmartPolygon(jsn, opt);
+  const pgn = new SmartPolygon(jsn, options);
   // or in case you want to change any parameters, convert the JSON string into object
-  const options = SmartPolygon.JsonToOptions(opt);
+  const options = {
+	  opt: SmartPolygon.JsonToOptions(opt);
+	  context: document.getElementById('dashboard'),
+  }
   // change the radius of polygon as you want, for ex:
-  options.radius = 50;
+  options.opt.radius = 50;
+
   // and create an instanse of SmartPolygon widget
   const pgn = new SmartPolygon(jsn, options);
 }

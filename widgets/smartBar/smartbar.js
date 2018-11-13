@@ -2,6 +2,8 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-multi-spaces) */
 /* eslint-disable no-underscore-dangle */
+/* eslint-disable guard-for-in */
+/* eslint-disable no-multi-spaces */
 
 
 /**
@@ -107,7 +109,7 @@ class SmartBar {
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
 		const customProp = SmartBar.getCustomProperties();
-		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, SmartBars.getAlias());
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, what == 'options' ? '' : SmartBars.getAlias());
 	}
 
 	/**
@@ -149,15 +151,24 @@ class SmartBar {
 				template +=
 				`// later, use static function SmartBar.JsonToOptions(options); to convert JSON string
 // into 'options' object, sutable for SmartBar creation. For example:
-
-const el = document.getElementById("jsn");
+&lt;svg id="dashboard" ....
+  &lt;g id="smart-widget">
+  ....
+&lt;/svg>
+....
+const el = document.getElementById("smart-widget");
 if (el) {
-  const opt = ${jstr};
-  // create an instanse of SmartBar widget
-  const bar = new SmartBar(jsn, opt);
-
-  // or in case you want to change any parameters, convert JSON string to options
-  const options = SmartBar.JsonToOptions(opt);
+  const options = {
+	  context: document.getElementById('dashboard'),
+	  opt: ${jstr};
+  };
+  // create an instance of SmartPolygon widget
+  const pgn = new SmartBar(jsn, options);
+  // or in case you want to change any parameters, convert the JSON string into object
+  const options = {
+	  opt: SmartBar.JsonToOptions(opt);
+	  context: document.getElementById('dashboard'),
+  }
   // change the width of bar as you want, for ex:
   options.width = 120;
   // and create an instanse of SmartBar widget
@@ -391,10 +402,10 @@ ${optStr}  };
 
         this._data      = null; // last received from data provider (server + target)
 		this._body      = null; // the SmartBar body
-		this._bodyActive= null;	// active element path
+		this._bodyActive = null;	// active element path
 		this._bodyScale = null; // body scale element (group) includes line, and texts
 		this._active    = null; // the active clip element
-		this._scaleTextA= [];	// the references on scale texts (0, 50, max)
+		this._scaleTextA = [];	// the references on scale texts (0, 50, max)
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 

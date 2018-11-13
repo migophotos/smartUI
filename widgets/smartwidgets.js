@@ -262,36 +262,43 @@ class SmartWidgets {
 	}
 
 	/**
-	 * Returns an array of custom properties in form of parameter names in case of options equals null.
-	 * If 'options' is specified, then this functions returns the filled object.
+	 * Returns an array of custom properties in form of parameter names in case of 'opt' equals null.
+	 * If 'opt' is specified, then this functions returns the filled object.
 	 * for example, each property in form 'first-second-third' will be converter to parameter name 'firstSecondThird'
-	 * and in case of specified options:
+	 * and in case of specified 'opt':
 	 * params = {
-	 * 	firstSecondThird: options.firstSecondThird
+	 * 	firstSecondThird: opt.firstSecondThird
 	 * } will be returned
 	 * in case filter equals 'dirty' returns only changed (dirty) parameters
 	 * in case of alias equals name of widget and not equals 'none' compress properties into one string concatenated by '-'
 	 * and prepend it with 'stwidget:' and alias name, specified in this parameter
+	 * @param {object} custProp an array of custom properties
+	 * @param {object} defOpt an array of default options of widget
+	 * @param {object} opt if null, then function returns an array of custom properties only, in another case it returns filled object
+	 * @param {string} filter 'all' means all properties, when 'dirty' - only changed (not default) properties
+	 * @param {string} alias this flag enables creating 'compressed form' of options. Specify here the name of widget, for ex.: 'stbar' and
+	 * this function will return all properties as one string. In case of filter equals 'all' each unchanged property will be replaced by '.'
+	 * @returns {object}
 	 */
-	static getCustomParams(custProp, defOpt, options = null, filter = 'all', alias = 'none') {
+	static getCustomParams(custProp, defOpt, opt = null, filter = 'all', alias = 'none') {
 		const paramsArray = [];
 		for (let prop of custProp) {
 			paramsArray.push(SmartPolygons.customProp2Param(prop));
 		}
-		if (!options) {
+		if (!opt) {
 			return paramsArray;
 		}
 		const params = {};
 		for (let prop of paramsArray) {
 			if (typeof defOpt[prop] !== 'undefined') {
-				if (filter === 'dirty' && typeof options[prop] !== 'undefined' && options[prop] !== defOpt[prop]) {
-					params[prop] = options[prop];
+				if (filter === 'dirty' && typeof opt[prop] !== 'undefined' && opt[prop] !== defOpt[prop]) {
+					params[prop] = opt[prop];
 				}
 				if (filter === 'all') {
-					if (typeof options[prop] === 'undefined') {
+					if (typeof opt[prop] === 'undefined') {
 						params[prop] = alias !== 'none' ? '.' : defOpt[prop];
 					} else {
-						params[prop] = options[prop];
+						params[prop] = opt[prop];
 					}
 				}
 			}
