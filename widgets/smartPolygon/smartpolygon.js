@@ -386,8 +386,24 @@ ${optStr}  };
 				r: 0;
 			}
 		`;
+		let gId = id;
 		// check for options in JSON format and convert its to object in this case
 		const smartWidgetAlias = SmartWidgets.getAlias();
+		// check input parameters
+		const elem = document.getElementById(id);
+		if (elem && elem.tagName === 'DIV') {
+			const elemId = window.SmartPolygons.getId();
+			const svgId = `${id}--${SmartPolygons.getAlias()}`;
+			elem.innerHTML = `${SmartWidgets.getSVGContext(svgId, elemId)}`;
+			options = {
+				mode: 'html',
+				context: document.getElementById(svgId),
+				opt: options
+			};
+			window.SmartBars.set(id, this);
+			gId = elemId;
+		}
+
 		if (typeof options.opt === 'string' && options.opt.length && options.opt.startsWith(smartWidgetAlias)) {
 			options.opt = SmartPolygon.JsonToOptions(options.opt);
 		}
@@ -398,7 +414,7 @@ ${optStr}  };
         SmartPolygon.convertNumericProps(this._o);
 
         this._mode      = options.mode || null; // in case of 'custom elements' initialization the 'mode' equals 'html'
-        this.id         = id; // <g id> inside of <svg>
+        this.id         = gId; // <g id> inside of <svg>
         this._root      = options.context; // svg root element
         this._svgroot   = this._root.getElementById(this.id); // reference on insertion node
         this._svgdoc    = this._svgroot.ownerDocument;
@@ -421,6 +437,9 @@ ${optStr}  };
 			// store containerId: ref on SmartPolygon element inside SmartPolygons collection for JS access
 			window.SmartPolygons.set(this.id, this);
 			this.init();
+		}
+		if (elem && elem.tagName === 'DIV') {
+			this.init(this._o);
 		}
     }
 	// Internal functions. Please don't use from outside!

@@ -646,7 +646,7 @@
                                         grid-template-columns: 0.4fr 2.2fr 0.4fr;
                                         grid-template-rows: 0.7fr 1.6fr 0.7fr;
                                         grid-gap: 1px 1px;
-                                        grid-template-areas: ". stbar-example-descr ." "stbar-try-it stbar-example-cont ." ". . .";
+                                        grid-template-areas: ". stbar-example-descr ." "stbar-try-it stbar-example-cont stbar2-try-it" ". . .";
                                         }
                                     .example-grid--shown {
                                         display: grid;
@@ -657,6 +657,7 @@
                                     .stbar-example-descr { grid-area: stbar-example-descr; }
                                     .stbar-example-cont { grid-area: stbar-example-cont; }
                                     .stbar-try-it { grid-area: stbar-try-it; }
+                                    .stbar2-try-it { grid-area: stbar2-try-it; }
 
                                     .stbar-example-descr p {
                                         font-size: 2em;
@@ -671,7 +672,7 @@
                                         cursor: default;
                                     }
 
-                                    .stbar-try-it {
+                                    .stbar-try-it, .stbar2-try-it {
                                         display: inherit;
                                         text-align: center;
                                         /* border: 2px gray solid; */
@@ -844,6 +845,15 @@
                                             </td>
                                             </tr></table>
                                         </div>
+                                        <div class="stbar-try-it2">
+                                            <table><tr>
+                                                <td>SmartBar, длинной 70 пикс. внутри DIV:</td></tr>
+                                            <tr><td>
+                                                    <div id="bar-try-it2"></div>
+                                            </td>
+                                            </tr></table>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -1243,6 +1253,9 @@
                                     // set new options and rebuild!
                                     el.resetParams(wdgOpt.opt);
                                 }
+                                wdgOpt = '{"stwidget":"stbar-.-.-.-.-.-24-120-9-right-4-.-.-cd-.-.-.-.-.-.-0-.-.-.-.-.-.-.-none-.-.-.-#008000-#80ff80-.-.-.-.-8-.-."}';
+
+                                new SmartBar('bar-try-it2', wdgOpt);
                                 break;
                             }
                         }

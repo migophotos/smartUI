@@ -315,7 +315,16 @@ class SmartWidgets {
 			return obj;
 		}
 		return params;
-    }
+	}
+
+	static getSVGContext(contextId, wdgRootId) {
+		const svgContext = `
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${contextId}">
+<g id="${wdgRootId}">
+<rect id="fakeR" x="10" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4"></rect>
+</g></svg>`;
+		return svgContext;
+	}
 
     // private - please don't call this function from outside!
 	_intervalTimer() {

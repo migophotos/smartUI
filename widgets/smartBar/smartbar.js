@@ -383,9 +383,25 @@ ${optStr}  };
 				r: 0;
 			}
 		`;
+		let gId = id;
 		// check for options in JSON format and convert its to object in this case
 		const smartWidgetAlias = SmartWidgets.getAlias();
-		if (typeof options.opt === 'string' && options.opt.length && options.opt.startsWith(smartWidgetAlias)) {
+		// check input parameters
+		const elem = document.getElementById(id);
+		if (elem && elem.tagName === 'DIV') {
+			const elemId = window.SmartBars.getId();
+			const svgId = `${id}--${SmartBars.getAlias()}`;
+			elem.innerHTML = `${SmartWidgets.getSVGContext(svgId, elemId)}`;
+			options = {
+				mode: 'html',
+				context: document.getElementById(svgId),
+				opt: options
+			};
+			window.SmartBars.set(id, this);
+			gId = elemId;
+		}
+
+		if (typeof options.opt === 'string' && options.opt.length && options.opt.includes(smartWidgetAlias)) {
 			options.opt = SmartBar.JsonToOptions(options.opt);
 		}
 
@@ -395,7 +411,7 @@ ${optStr}  };
         SmartBar.convertNumericProps(this._o);
 
         this._mode      = options.mode || null; // in case of 'custom elements' initialization the 'mode' equals 'html'
-        this.id         = id; // <g id> inside of <svg>
+        this.id         = gId; // <g id> inside of <svg>
         this._root      = options.context; // svg root element
         this._svgroot   = this._root.getElementById(this.id); // reference on insertion node
         this._svgdoc    = this._svgroot.ownerDocument;
@@ -421,6 +437,9 @@ ${optStr}  };
 			// store containerId: ref on SmartBar element inside SmartBars collection for JS access
 			window.SmartBars.set(this.id, this);
 			this.init();
+		}
+		if (elem && elem.tagName === 'DIV') {
+			this.init(this._o);
 		}
 	}
 
@@ -922,7 +941,7 @@ ${optStr}  };
 					}
 					this._buildActive(this._data);
 					if (this._o.role === 'demoMode') {
-						window.SmartSmartBars.update('bar-wdg', data);
+						window.SmartBars.update('bar-wdg', data);
 					}
 				})
 				.catch((error) => {
@@ -974,6 +993,7 @@ ${optStr}  };
 				this._buildActive(this._data);
 				if (this._o.role === 'demoMode') {
 					window.SmartBars.update('bar-wdg', data);
+					window.SmartBars.update('bar-try-it2', data);
 				}
 			}
 		}
@@ -1110,14 +1130,7 @@ class SmartBarElement extends HTMLElement {
 		// make unique ids for 'stbar' container g inside svg
 		const elemId = window.SmartBars.getId();
 		const svgId = `${this.id}--${SmartBars.getAlias()}`;
-		this._root.innerHTML = `
-			<style>${txtStyle}</style>
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="${svgId}">
-				<g id="${elemId}">
-					<rect id="fakeR" x="10" y="10" width="150" height="150" fill="#eee" stroke="black" stroke-dasharray="4 4"></rect>
-				</g>
-			</svg>
-		`;
+		this._root.innerHTML = `<style>${txtStyle}</style>${SmartWidgets.getSVGContext(svgId, elemId)}`;
 		this._svgroot = this._root.querySelector('svg');
 		// now create the smart bar control!
 		this._stbar = new SmartBar(elemId, {
