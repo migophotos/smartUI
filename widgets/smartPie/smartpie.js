@@ -1808,3 +1808,6 @@ class SmartPieElement extends HTMLElement {
 
 }
 window.customElements.define('smart-pie', SmartPieElement);
+// https://css-tricks.com/building-a-donut-chart-with-vue-and-svg/
+// http://svgdiscovery.com/C/svg-donut-arcs.htm
+// https://danielpataki.com/svg-pie-chart-javascript/

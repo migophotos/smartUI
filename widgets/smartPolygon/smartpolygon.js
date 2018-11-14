@@ -624,8 +624,9 @@ ${optStr}  };
             'fill-opacity':  this._o.varOpacity,
 			points: this._buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y,
 				this._normRadius, this._o.startAngle,
-				this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
+				this._o.rotation, 0, this._o.isStar ? this._o.innerRadius : 0)
 		}, this._svgroot, this._svgdoc);
+		
 		this._bodyActive = SmartWidgets.addElement('polygon', {
             id: 'bodyActive',
             class: 'bodyActive',
