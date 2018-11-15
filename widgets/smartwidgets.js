@@ -18,6 +18,37 @@ class SmartHeap extends Map {
  *
  *
  */
+
+/**
+ * State to color interpretator.
+ * stateColors is a comma-separated string, contains the pairs of state and hexa-color in form 'state''hex-color',
+ * for example: 1#00ff00,2#00aabb,3#ff0000,... or old format: 1:#00ff00;2:#00aabb;3:#ff0000,...
+ */
+class StateToColors extends Map {
+	init(stateDef) {
+		super.clear();
+		if (typeof stateDef === 'string' && stateDef.length) {
+			const states = stateDef.split(/[,;]/g);	// split by ',' or ';'
+			for (let st of states) {
+				let s2c;
+				if (st.includes(':')) {
+					s2c = st.split(':');
+					super.set(s2c[0], s2c[1]);
+				} else {
+					s2c = st.split('#');
+					super.set(s2c[0], `#${s2c[1]}`);
+				}
+			}
+		}
+	}
+	get(state) {
+		return super.get(state);
+	}
+	size() {
+		return super.size;
+	}
+}
+
 class SmartWidgets {
 	static getAlias() {
 		return 'stwidget';

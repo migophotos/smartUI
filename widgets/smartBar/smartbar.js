@@ -266,7 +266,9 @@ ${optStr}  };
 			'var-font-family',	// Scale font definitions
 			'var-font-size',
 			'var-font-stretch',
-			'var-font-color'
+			'var-font-color',
+			'state-colors'		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
+								// by default (currently) is empty, what means not in use
         ];
     }
     static defOptions() {
@@ -293,7 +295,7 @@ ${optStr}  };
 			descrFormat: '$DESCR$, color = $COLOR$',
 
             maxValue: 0,		// the maximum value. If 0 then 100% is a maximum.
-			isAnimate: 0,		// Allows to animate the moment of receiving the data array.
+			isAnimate: 1,		// Allows to animate the moment of receiving the data array.
 			isLink: 1,			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			isTooltip: 1,		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			isEmulate: 0,		// Allows automatic emulation of the process of data receiving.
@@ -317,7 +319,10 @@ ${optStr}  };
 			varFontFamily:	'Arial, DIN Condensed, Noteworthy, sans-serif',
 			varFontSize:	'10px',
 			varFontStretch:	'condensed',
-			varFontColor:	'#666666'
+			varFontColor:	'#666666',
+			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
+								// by default (currently) is empty, what means not in use
+
         };
     }
     static convertNumericProps(options = {}, propName) {
@@ -416,7 +421,9 @@ ${optStr}  };
         this._svgroot   = this._root.getElementById(this.id); // reference on insertion node
         this._svgdoc    = this._svgroot.ownerDocument;
 
-        this._data      = null; // last received from data provider (server + target)
+		this._data      = null; // last received from data provider (server + target)
+		this._s2c       = new StateToColors();
+
 		this._body      = null; // the SmartBar body
 		this._bodyActive = null;	// active element path
 		this._bodyScale = null; // body scale element (group) includes line, and texts
@@ -443,12 +450,12 @@ ${optStr}  };
 		}
 	}
 
-	_buildActive(data = null) {
+	_buildActive(data = null, rebuldActive = 'none') {
 		if (!this._inited) {
 			console.log('_build() -> Nothing todo, not yet initialized!');
 			return;
 		}
-        if (this._active) {
+        if (this._active && rebuldActive !== 'none') {
 			// remove old clip rectangle
 			const elem = this._active.firstElementChild;
 			if (elem) {
@@ -473,6 +480,15 @@ ${optStr}  };
 						this._svgroot.setAttribute(`data-sttip-${key}`, dt[key]);
 					}
 				}
+
+				let cr = -1;
+				if (typeof dt.state === 'string') {
+					cr = this._s2c.get(dt.state);
+					if (typeof cr != 'undefined') {
+						dt.color = cr;
+					}
+				}
+
 
 				const maxValue = parseInt(dt.max, 10) || this._o.maxValue;
 				const max100 = this._o.orient === 'hor' ? activeRect.width : activeRect.height;
@@ -526,20 +542,29 @@ ${optStr}  };
 			}
 		}
 		if (this._o.valueRule !== 'none' || this._o.colorRule !== 'none') {
-			// build the clip rectangle here...
-			SmartWidgets.addElement('rect', {
-				x: activeRect.x,
-				y: activeRect.y,
-				width: activeRect.width,
-				height: activeRect.height
-			}, this._active, this._svgdoc);
-
-			this._bodyActive.setAttribute('clip-path', `url(#${this.id}-activeRect)`);
+			// build the clip rectangle here, or change it's attributes...
+			if (rebuldActive !== 'none') {
+				SmartWidgets.addElement('rect', {
+					class: this._o.isAnimate ? 'animated' : ' ',
+					x: activeRect.x,
+					y: activeRect.y,
+					width: activeRect.width,
+					height: activeRect.height
+				}, this._active, this._svgdoc);
+				this._bodyActive.setAttribute('clip-path', `url(#${this.id}-activeRect)`);
+			} else {
+				this._active.firstElementChild.setAttribute('x', activeRect.x);
+				this._active.firstElementChild.setAttribute('y', activeRect.y);
+				this._active.firstElementChild.setAttribute('width', activeRect.width);
+				this._active.firstElementChild.setAttribute('height', activeRect.height);
+			}
 		} else {
 			this._bodyActive.removeAttribute('clip-path');
 		}
 	}
     _build() {
+		this._s2c.init(this._o.stateColors);
+
 		if (!this._inited) {
 			console.log('_build() -> Nothing todo, not yet initialized!');
 			return;
@@ -649,7 +674,7 @@ ${optStr}  };
 
 		this._body = SmartWidgets.addElement('rect', {
 			// id: 'body',
-			class: 'body',
+			class: this._o.isAnimate ? 'animated' : ' ',
 			stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
 			fill: `${this._o.isFillBkg ? this._o.varFillColor : 'none'}`,
 			'stroke-width': this._o.varStrokeWidth,
@@ -697,7 +722,7 @@ ${optStr}  };
 		}, this._svgroot, this._svgdoc);
 		this._bodyActive = SmartWidgets.addElement('path', {
             // id: 'bodyActive',
-            class: 'bodyActive',
+            class: this._o.isAnimate ? 'animated' : ' ',
             stroke: this._o.varStrokeColor,
             fill: '#ffffff',
             'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
@@ -762,16 +787,21 @@ ${optStr}  };
 			}
 		}
 		// build active clip rect
-		this._buildActive(this._data);
+		this._buildActive(this._data, 'rebuild');
 		// add shadow if enabled
 		this._body.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
 		this._bodyActiveBasis.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
 		// uppend events
-		this._body.addEventListener('click', this._onClick);
+		if (this._o.isLink) {
+			this._body.classList.add('linked');
+			this._bodyActive.classList.add('linked');
+			this._body.addEventListener('click', this._onClick);
+			this._bodyActive.addEventListener('click', this._onClick);
+		}
+
 		this._body.addEventListener('mouseover', this._onShowTooltip);
 		this._body.addEventListener('mousemove', this._onMoveTooltip);
 		this._body.addEventListener('mouseout', this._onHideTooltip);
-		this._bodyActive.addEventListener('click', this._onClick);
 		this._bodyActive.addEventListener('mouseover', this._onShowTooltip);
 		this._bodyActive.addEventListener('mousemove', this._onMoveTooltip);
 		this._bodyActive.addEventListener('mouseout', this._onHideTooltip);
@@ -814,9 +844,10 @@ ${optStr}  };
 	}
 	_onClick(event) {
         event.preventDefault();
-        if (this._o.isLink) {
-			let linkto = this._data.link;
-            if (linkto) {
+        if (this._o.isLink && this._o.role !== 'demoMode') {
+			let data = Array.from(this._data);
+			let linkto = data[0].link;
+            if (typeof linkto === 'string') {
                 linkto = SmartBars.getLink(linkto);
                 window.open(linkto, '');
             }
@@ -956,6 +987,7 @@ ${optStr}  };
 						"value":"85",
 						"max":	"100",
 						"color":"gray",
+						"state": "0",
 						"link": "http://www.google.com/"
 					}
 				};
@@ -1002,6 +1034,14 @@ ${optStr}  };
 		const max = 250;
 		const value = Math.abs(Math.floor(Math.random() * (max + 1)) + 0);
 		const color = value < max/4 ? 'blue' : (value < max/2 ? 'green' : (value < (max/4)*3 ? 'yellow' : 'red'));
+		const s2cCount = this._s2c.size();
+		let state = -1;
+
+		if (s2cCount) {
+			// generate s2cCount of states
+			state = Math.abs(Math.floor(Math.random() * s2cCount));
+		}
+
 		const dataEx = {
 			"target": {
 					"uuid": "uuid_ex_Target1",
@@ -1010,6 +1050,7 @@ ${optStr}  };
 					"name": "Значение параметра 'name' в объекте 'data'",
 					"value": `${value}`,
 					"color": `${color}`,
+					"state": `${state}`,
 					"link": "http://www.google.com/index.html",
 					"max": `${max}`
                 },
@@ -1063,7 +1104,6 @@ ${optStr}  };
 			switch (key) {
 				case 'position':
 				case 'ttipTemplate':
-				case 'isLink':
 				case 'isTooltip':
 				case 'isEmulate':
 				case 'isRun':

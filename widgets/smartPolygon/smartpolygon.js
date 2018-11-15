@@ -270,7 +270,9 @@ ${optStr}  };
 			'var-fill-color',
 			'var-is-shadow',	// Allows shadow for widget and tooltip
             'var-stroke-width',	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
-			'var-opacity'		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
+			'var-opacity',		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
+			'state-colors'		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
+								// by default (currently) is empty, what means not in use
         ];
     }
     static defOptions() {
@@ -300,7 +302,7 @@ ${optStr}  };
 
             maxValue: 0,		// the maximum value. If 0 then 100% is a maximum.
             isStar: 0,			// Enables drawing start instead of regular polygon
-			isAnimate: 0,		// Allows to animate the moment of receiving the data array.
+			isAnimate: 1,		// Allows to animate the moment of receiving the data array.
 			isLink: 1,			// Allows to disable going to the link by ckick on the sector. Used in example. The default is 1
 			isTooltip: 1,		// Allows displaying a tooltip next to the mouse pointer. Reproducing legends, hints are not displayed and vice versa.
 			isEmulate: 0,		// Allows automatic emulation of the process of data receiving.
@@ -319,7 +321,9 @@ ${optStr}  };
             varFillColor: 	'#ffcd88',
 			varIsShadow: 1,		// Allows shadow for widget, legend and tooltip
             varStrokeWidth: 3,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
-			varOpacity: 1		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
+			varOpacity: 1,		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
+			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
+								// by default (currently) is empty, what means not in use
         };
     }
     static convertNumericProps(options = {}, propName) {
@@ -421,7 +425,8 @@ ${optStr}  };
 
         this._data      = null; // last received from data provider (server + target)
         this._body      = null; // the polygons body
-        this._active    = null; // the active element (rect in clip)
+		this._active    = null; // the active element (rect in clip)
+		this._s2c		= new StateToColors(); // custom defines state to colors mapping, by default is empty and in not in use (currently)
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
@@ -447,17 +452,15 @@ ${optStr}  };
 	_recalculateNormRadius() {
 		this._normRadius = this._o.radius - (this._o.varStrokeWidth / 2);
 		this._normRadius = this._normRadius < 0 ? 0 : this._normRadius;
-		if (this._o.isAnimate) {
-			this._normRadius -= this._normRadius / 5;
-		}
 	}
-    _buildActive(data = null) {
+
+    _buildActive(data = null, rebuildActive = 'none') {
 		if (!this._inited) {
 			console.log('_build() -> Nothing todo, not yet initialized!');
 			return;
 		}
 
-        if (this._active) {
+        if (this._active && rebuildActive !== 'none') {
 			// remove old clip rectangle
 			const elem = this._active.firstElementChild;
 			if (elem) {
@@ -480,6 +483,14 @@ ${optStr}  };
 					// store data in data-set attributes (for global SmartTooltip)
 					for (let key in dt) {
 						this._svgroot.setAttribute(`data-sttip-${key}`, dt[key]);
+					}
+				}
+
+				let cr = -1;
+				if (typeof dt.state === 'string') {
+					cr = this._s2c.get(dt.state);
+					if (typeof cr != 'undefined') {
+						dt.color = cr;
 					}
 				}
 
@@ -520,20 +531,29 @@ ${optStr}  };
 			}
 		}
 		if (this._o.valueRule !== 'none' || this._o.colorRule !== 'none') {
-			// build the clip rectangle here...
-			SmartWidgets.addElement('rect', {
-				x: activeRect.x,
-				y: activeRect.y,
-				width: activeRect.width,
-				height: activeRect.height
-			}, this._active, this._svgdoc);
-
-			this._bodyActive.setAttribute('clip-path', 'url(#activeRect)');
+			// build the clip rectangle here, or chang it's size
+			if (rebuildActive !== 'none') {
+				SmartWidgets.addElement('rect', {
+					class: this._o.isAnimate ? 'animated' : ' ',
+					x: activeRect.x,
+					y: activeRect.y,
+					width: activeRect.width,
+					height: activeRect.height
+				}, this._active, this._svgdoc);
+				this._bodyActive.setAttribute('clip-path', 'url(#activeRect)');
+			} else {
+				this._active.firstElementChild.setAttribute('x', activeRect.x);
+				this._active.firstElementChild.setAttribute('y', activeRect.y);
+				this._active.firstElementChild.setAttribute('width', activeRect.width);
+				this._active.firstElementChild.setAttribute('height', activeRect.height);
+			}
 		} else {
 			this._bodyActive.removeAttribute('clip-path');
 		}
 	}
     _build() {
+		this._s2c.init(this._o.stateColors);
+
 		if (!this._inited) {
 			console.log('_build() -> Nothing todo, not yet initialized!');
 			return;
@@ -615,8 +635,8 @@ ${optStr}  };
 		}
         // add base element to svg
         this._body = SmartWidgets.addElement('polygon', {
-            id: 'body',
-            class: 'body',
+            // id: 'body',
+            class: this._o.isAnimate ? 'animated' : ' ',
             stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
             fill: `${this._o.isFillBkg ? this._o.varFillColor : 'none'}`,
             'stroke-width': this._o.varStrokeWidth,
@@ -626,10 +646,10 @@ ${optStr}  };
 				this._normRadius, this._o.startAngle,
 				this._o.rotation, 0, this._o.isStar ? this._o.innerRadius : 0)
 		}, this._svgroot, this._svgdoc);
-		
+
 		this._bodyActive = SmartWidgets.addElement('polygon', {
-            id: 'bodyActive',
-            class: 'bodyActive',
+            // id: 'bodyActive',
+            class: this._o.isAnimate ? 'animated' : ' ',
             stroke: this._o.varStrokeColor,
             fill: this._o.varFillColor,
             'stroke-width': this._o.varStrokeWidth,
@@ -643,18 +663,22 @@ ${optStr}  };
 		if (this._o.colorRule != 'none') {
 			this._svgroot.insertBefore(this._bodyActive, this._body);
 		}
-		this._buildActive(this._data);
+		this._buildActive(this._data, 'rebuild');
 		this._body.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
 
-		this._body.addEventListener('click', this._onClick);
+		if (this._o.isLink) {
+			this._body.classList.add('linked');
+			this._bodyActive.classList.add('linked');
+			this._body.addEventListener('click', this._onClick);
+			this._bodyActive.addEventListener('click', this._onClick);
+		}
 		this._body.addEventListener('mouseover', this._onShowTooltip);
 		this._body.addEventListener('mousemove', this._onMoveTooltip);
 		this._body.addEventListener('mouseout', this._onHideTooltip);
-		this._bodyActive.addEventListener('click', this._onClick);
 		this._bodyActive.addEventListener('mouseover', this._onShowTooltip);
 		this._bodyActive.addEventListener('mousemove', this._onMoveTooltip);
 		this._bodyActive.addEventListener('mouseout', this._onHideTooltip);
-}
+	}
 
 
     /**
@@ -740,9 +764,10 @@ ${optStr}  };
 	}
 	_onClick(event) {
         event.preventDefault();
-        if (this._o.isLink) {
-			let linkto = this._data.link;
-            if (linkto) {
+        if (this._o.isLink && this._o.role != 'demoMode') {
+			let data = Array.from(this._data);
+			let linkto = data[0].link;
+            if (typeof linkto === 'string') {
                 linkto = SmartPolygons.getLink(linkto);
                 window.open(linkto, '');
             }
@@ -784,7 +809,7 @@ ${optStr}  };
 			this._o.radius = Math.min(this._rect.width, this._rect.height) / 2;
         } else {
 			// calculate svg rectangle and coordinates
-			// todo: check radius and correct it with width and height parameters if they exists!
+			// to do: check radius and correct it with width and height parameters if they exists!
 			this._rect = {
 				x: 0,
 				y: 0,
@@ -885,6 +910,7 @@ ${optStr}  };
 						"value": "15",
 						"max": "100",
 						"color": "gray",
+						"state": "0",
 						"link": "http://www.google.com/"
 					}
 				};
@@ -930,6 +956,14 @@ ${optStr}  };
 		const max = 100;
 		const value = Math.abs(Math.floor(Math.random() * (100 + 1)) + 0);
 		const color = value < 30 ? 'blue' : (value < 50 ? 'green' : (value < 70 ? 'yellow' : 'red'));
+		const s2cCount = this._s2c.size();
+		let state = -1;
+
+		if (s2cCount) {
+			// generate s2cCount of states
+			state = Math.abs(Math.floor(Math.random() * s2cCount));
+		}
+
 		const dataEx = {
 			"target": {
 					"uuid": "uuid_ex_Target1",
@@ -938,6 +972,7 @@ ${optStr}  };
 					"name": "Значение параметра 'name' в объекте 'data'",
 					"value": `${value}`,
 					"color": `${color}`,
+					"state": `${state}`,
 					"link": "http://www.google.com/index.html",
 					"max": `${max}`
                 },
@@ -991,7 +1026,6 @@ ${optStr}  };
 			switch (key) {
 				case 'position':
 				case 'ttipTemplate':
-				case 'isLink':
 				case 'isTooltip':
 				case 'isEmulate':
 				case 'isRun':
