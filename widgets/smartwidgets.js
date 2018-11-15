@@ -41,8 +41,23 @@ class StateToColors extends Map {
 			}
 		}
 	}
-	get(state) {
-		return super.get(state);
+	get(state = null) {
+		if (state) {
+			return super.get(state);
+		}
+		let str = '';
+		for (let [key, value] of this.entries()) {
+			str += `${key}${value},`;
+		}
+		str = str.slice(0, -1);
+		return str;
+	}
+	set(state, value = null) {
+		if (!value) {
+			this.init(state);
+			return;
+		}
+		super.set(`${state}`, value.startsWith('$') ? value : `#${value}`);
 	}
 	size() {
 		return super.size;
