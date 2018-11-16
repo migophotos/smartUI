@@ -320,8 +320,8 @@ ${optStr}  };
 			varFontSize:	'10px',
 			varFontStretch:	'condensed',
 			varFontColor:	'#666666',
-			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
-								// by default (currently) is empty, what means not in use
+			stateColors: 'global'// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
+								 // by default is 'global' - uses global if exists states color definition. Empty parameter means not in use.
 
         };
     }
@@ -483,7 +483,14 @@ ${optStr}  };
 
 				let cr = -1;
 				if (typeof dt.state === 'string') {
-					cr = this._s2c.get(dt.state);
+					if (this._o.stateColors === 'global' && window.StateToColors) {
+						// try to interpret color of state from global Map
+						cr = window.StateToColors.get(dt.state);
+					} else {
+						// try to get it from local Map
+						cr = this._s2c.get(dt.state);
+					}
+					// if color was found use it, instead of property 'color'
 					if (typeof cr != 'undefined') {
 						dt.color = cr;
 					}
@@ -1034,13 +1041,7 @@ ${optStr}  };
 		const max = 250;
 		const value = Math.abs(Math.floor(Math.random() * (max + 1)) + 0);
 		const color = value < max/4 ? 'blue' : (value < max/2 ? 'green' : (value < (max/4)*3 ? 'yellow' : 'red'));
-		const s2cCount = this._s2c.size();
-		let state = -1;
-
-		if (s2cCount) {
-			// generate s2cCount of states
-			state = Math.abs(Math.floor(Math.random() * s2cCount));
-		}
+		const state = Math.abs(Math.floor(Math.random() * 7));	// from 0 up to 7
 
 		const dataEx = {
 			"target": {

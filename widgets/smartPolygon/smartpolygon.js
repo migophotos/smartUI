@@ -271,6 +271,7 @@ ${optStr}  };
 			'var-is-shadow',	// Allows shadow for widget and tooltip
             'var-stroke-width',	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			'var-opacity',		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
+			'is-global-colors', // use global state to color definition instead of 'state-colors'
 			'state-colors'		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
 								// by default (currently) is empty, what means not in use
         ];
@@ -322,8 +323,9 @@ ${optStr}  };
 			varIsShadow: 1,		// Allows shadow for widget, legend and tooltip
             varStrokeWidth: 3,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			varOpacity: 1,		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
+			isGlobalColors: 1, 
 			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
-								// by default (currently) is empty, what means not in use
+								 // by default is ''Empty parameter means not in use in case of isGlobalColors == 0.
         };
     }
     static convertNumericProps(options = {}, propName) {
@@ -347,7 +349,8 @@ ${optStr}  };
 			'maxValue',
 			'varIsShadow',
             'varStrokeWidth',
-            'varOpacity'
+			'varOpacity',
+			'isGlobalColors'
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
     }
@@ -488,7 +491,14 @@ ${optStr}  };
 
 				let cr = -1;
 				if (typeof dt.state === 'string') {
-					cr = this._s2c.get(dt.state);
+					if (this._o.stateColors === 'global' && window.StateToColors) {
+						// try to interpret color of state from global Map
+						cr = window.StateToColors.get(dt.state);
+					} else {
+						// try to get it from local Map
+						cr = this._s2c.get(dt.state);
+					}
+					// if color was found use it, instead of property 'color'
 					if (typeof cr != 'undefined') {
 						dt.color = cr;
 					}
@@ -956,13 +966,7 @@ ${optStr}  };
 		const max = 100;
 		const value = Math.abs(Math.floor(Math.random() * (100 + 1)) + 0);
 		const color = value < 30 ? 'blue' : (value < 50 ? 'green' : (value < 70 ? 'yellow' : 'red'));
-		const s2cCount = this._s2c.size();
-		let state = -1;
-
-		if (s2cCount) {
-			// generate s2cCount of states
-			state = Math.abs(Math.floor(Math.random() * s2cCount));
-		}
+		const state = Math.abs(Math.floor(Math.random() * 7));	// from 0 up to 7
 
 		const dataEx = {
 			"target": {

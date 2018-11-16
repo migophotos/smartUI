@@ -29,8 +29,12 @@ class StateToColors extends Map {
 		super.clear();
 		if (typeof stateDef === 'string' && stateDef.length) {
 			const states = stateDef.split(/[,;]/g);	// split by ',' or ';'
+			let s2c = states[0].split(/[#:]/g);	// split by ',' or ';'
+			if (s2c.length == 1) {
+				// I don't want to check the content of this string, I just think it is mean 'global' :)
+				return;
+			}
 			for (let st of states) {
-				let s2c;
 				if (st.includes(':')) {
 					s2c = st.split(':');
 					super.set(s2c[0], s2c[1]);
@@ -38,6 +42,13 @@ class StateToColors extends Map {
 					s2c = st.split('#');
 					super.set(s2c[0], `#${s2c[1]}`);
 				}
+			}
+			// set the last colors definition as global
+			if (!window.StateToColors) {
+				window.StateToColors = new StateToColors();
+			} 
+			for (let [key, value] of this.entries()) {
+				window.StateToColors.set(key, value);
 			}
 		}
 	}
@@ -57,7 +68,7 @@ class StateToColors extends Map {
 			this.init(state);
 			return;
 		}
-		super.set(`${state}`, value.startsWith('$') ? value : `#${value}`);
+		super.set(`${state}`, value.startsWith('#') ? value : `#${value}`);
 	}
 	size() {
 		return super.size;
