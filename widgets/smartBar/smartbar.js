@@ -267,6 +267,7 @@ ${optStr}  };
 			'var-font-size',
 			'var-font-stretch',
 			'var-font-color',
+			'is-global-colors', // use global state to color definition instead of 'state-colors'
 			'state-colors'		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
 								// by default (currently) is empty, what means not in use
         ];
@@ -320,8 +321,8 @@ ${optStr}  };
 			varFontSize:	'10px',
 			varFontStretch:	'condensed',
 			varFontColor:	'#666666',
-			stateColors: 'global'// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
-								 // by default is 'global' - uses global if exists states color definition. Empty parameter means not in use.
+			isGlobalColors: 1, 
+			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
 
         };
     }
@@ -345,7 +346,8 @@ ${optStr}  };
 			'varIsShadow',
             'varStrokeWidth',
 			'varOpacity',
-			'varFontSize'
+			'varFontSize',
+			'isGlobalColors'
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
 	}
