@@ -610,7 +610,21 @@ if (!customElements.get('smart-ui-edittext')) {
         this._plus   = this._shadowDOM.getElementById('PB');    // button '+'
         this._slider = this._shadowDOM.getElementById('SL');    // range input
 
-        this._slider.addEventListener('input', (evt) => {
+		this._slider.addEventListener('wheel', (e) => {
+			let K = e.ctrlKey ? 10 : e.shiftKey ? 5 : 1;
+			let delta = e.deltaY || e.detail || e.wheelDelta;
+			if (delta > 0) {
+				this._slider.value = Number(this._slider.value) + (this._o.step * K);
+			} else if (delta < 0) {
+				this._slider.value = Number(this._slider.value) - (this._o.step * K);
+			}
+			this._o.value = Number(this._slider.value);
+			this.setAttribute('value', `${this._o.value}`);
+			this._input.value = `${this._o.value} ${this._o.units}`;
+			e.preventDefault();
+		});
+
+		this._slider.addEventListener('input', (evt) => {
             this._o.value = Number(this._slider.value);
             this.setAttribute('value', `${this._o.value}`);
 
@@ -622,7 +636,29 @@ if (!customElements.get('smart-ui-edittext')) {
         //     this.setAttribute('value', `${this._o.value}`);
 
         //     this._slider.value = this._o.value;
-        // });
+		// });
+		this._input.addEventListener('wheel', (e) => {
+			let K = e.ctrlKey ? 10 : e.shiftKey ? 5 : 1;
+			let delta = e.deltaY || e.detail || e.wheelDelta;
+			let value = this._o.step < 1 ? parseFloat(this._input.value) : parseInt(this._input.value, 10);
+
+			let result;
+
+			if (delta > 0) {
+				result = value + (this._o.step * K);
+			} else if (delta < 0) {
+				result = value - (this._o.step * K);
+			}
+			result = result.toFixed(2);
+			result = result < this._o.min ? this._o.min : result;
+			result = result > this._o.max ? this._o.max : result;
+			this._o.value = result;
+            this.setAttribute('value', `${this._o.value}`);
+			this._input.value = `${result} ${this._o.units}`;
+			this._slider.value = this._o.value;
+			e.preventDefault();
+		});
+
         this._input.addEventListener('change', (evt) => {
             let result = this.convertAndValidate(this._input.value);
             this._o.value = result;

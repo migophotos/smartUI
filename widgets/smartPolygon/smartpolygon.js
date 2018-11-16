@@ -323,7 +323,7 @@ ${optStr}  };
 			varIsShadow: 1,		// Allows shadow for widget, legend and tooltip
             varStrokeWidth: 3,	// Sets the width of the widget's stroke, and tooltip, which also depend on the template. Default is 1
 			varOpacity: 1,		// Sets the transparency of the widget, the legend (and hints, which also depend on the template)
-			isGlobalColors: 1, 
+			isGlobalColors: 1,
 			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
 								 // by default is ''Empty parameter means not in use in case of isGlobalColors == 0.
         };
@@ -491,7 +491,7 @@ ${optStr}  };
 
 				let cr = -1;
 				if (typeof dt.state === 'string') {
-					if (this._o.isGlobalColors && window.StateToColors) {
+					if (this._o.isGlobalColors && window.StateToColors && this._o.role !== 'demoMode') {
 						// try to interpret color of state from global Map
 						cr = window.StateToColors.get(dt.state);
 					} else {

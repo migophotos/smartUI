@@ -321,7 +321,7 @@ ${optStr}  };
 			varFontSize:	'10px',
 			varFontStretch:	'condensed',
 			varFontColor:	'#666666',
-			isGlobalColors: 1, 
+			isGlobalColors: 1,
 			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
 
         };
@@ -485,7 +485,7 @@ ${optStr}  };
 
 				let cr = -1;
 				if (typeof dt.state === 'string') {
-					if (this._o.isGlobalColors && window.StateToColors) {
+					if (this._o.isGlobalColors && window.StateToColors && this._o.role !== 'demoMode') {
 						// try to interpret color of state from global Map
 						cr = window.StateToColors.get(dt.state);
 					} else {

@@ -25,9 +25,6 @@ class SmartHeap extends Map {
  * for example: 1#00ff00,2#00aabb,3#ff0000,... or old format: 1:#00ff00;2:#00aabb;3:#ff0000,...
  */
 class StateToColors extends Map {
-	constructor() {
-		super();
-	}
 	init(stateDef, useAsGlobal = 0) {
 		super.clear();
 		if (typeof stateDef === 'string' && stateDef.length) {
@@ -54,11 +51,11 @@ class StateToColors extends Map {
 			if (useAsGlobal && window.StateToColors != this) {
 				if (!window.StateToColors) {
 					window.StateToColors = new StateToColors();
-				} 
+				}
 				for (let [key, value] of this.entries()) {
 					window.StateToColors.set(key, value);
-					
-					localStorage.setItem('SmartWidgets.stateColors', window.StateToColors.get());
+
+					// localStorage.setItem('SmartWidgets.stateColors', window.StateToColors.get());
 				}
 			}
 		}
@@ -97,11 +94,11 @@ class SmartWidgets {
 		}
 		if (!window.StateToColors) {
 			window.StateToColors = new StateToColors();
-		} 		
-		let def = localStorage.getItem('SmartWidgets.stateColors');
-		if (def) {
-			window.StateToColors.init(def, 1);
 		}
+		// let def = localStorage.getItem('SmartWidgets.stateColors');
+		// if (def) {
+		// 	window.StateToColors.init(def, 1);
+		// }
 
 		this._heap = window.SmartHeap;
 		this._alias = null;	// alias name, for example: 'stbar', or 'stpgn',...  Each smart widget has function getAlias() and returns it's alias name
