@@ -491,7 +491,7 @@ ${optStr}  };
 
 				let cr = -1;
 				if (typeof dt.state === 'string') {
-					if (this._o.stateColors === 'global' && window.StateToColors) {
+					if (this._o.isGlobalColors && window.StateToColors) {
 						// try to interpret color of state from global Map
 						cr = window.StateToColors.get(dt.state);
 					} else {

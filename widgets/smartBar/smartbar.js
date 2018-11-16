@@ -485,7 +485,7 @@ ${optStr}  };
 
 				let cr = -1;
 				if (typeof dt.state === 'string') {
-					if (this._o.stateColors === 'global' && window.StateToColors) {
+					if (this._o.isGlobalColors && window.StateToColors) {
 						// try to interpret color of state from global Map
 						cr = window.StateToColors.get(dt.state);
 					} else {
@@ -572,7 +572,7 @@ ${optStr}  };
 		}
 	}
     _build() {
-		this._s2c.init(this._o.stateColors);
+		this._s2c.init(this._o.stateColors, this._o.isGlobalColors);
 
 		if (!this._inited) {
 			console.log('_build() -> Nothing todo, not yet initialized!');
@@ -1084,7 +1084,7 @@ ${optStr}  };
 	}
 	/**
 	 * Instead of appending new options, to own,
-	 * this functions sets new and alwaise rebuild the control.
+	 * this functions sets new and alwaise rebuilds the control.
 	 * @param {object} options
 	 */
 	resetParams(options = null) {

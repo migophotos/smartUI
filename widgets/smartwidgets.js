@@ -25,7 +25,7 @@ class SmartHeap extends Map {
  * for example: 1#00ff00,2#00aabb,3#ff0000,... or old format: 1:#00ff00;2:#00aabb;3:#ff0000,...
  */
 class StateToColors extends Map {
-	init(stateDef) {
+	init(stateDef, useAsGlobal = 0) {
 		super.clear();
 		if (typeof stateDef === 'string' && stateDef.length) {
 			const states = stateDef.split(/[,;]/g);	// split by ',' or ';'
@@ -37,18 +37,24 @@ class StateToColors extends Map {
 			for (let st of states) {
 				if (st.includes(':')) {
 					s2c = st.split(':');
-					super.set(s2c[0], s2c[1]);
+					if (typeof s2c[0] === 'string' && typeof s2c[1] === 'string') {
+						super.set(s2c[0], s2c[1]);
+					}
 				} else {
 					s2c = st.split('#');
-					super.set(s2c[0], `#${s2c[1]}`);
+					if (typeof s2c[0] === 'string' && typeof s2c[1] === 'string') {
+						super.set(s2c[0], `#${s2c[1]}`);
+					}
 				}
 			}
 			// set the last colors definition as global
-			if (!window.StateToColors) {
-				window.StateToColors = new StateToColors();
-			} 
-			for (let [key, value] of this.entries()) {
-				window.StateToColors.set(key, value);
+			if (useAsGlobal) {
+				if (!window.StateToColors) {
+					window.StateToColors = new StateToColors();
+				} 
+				for (let [key, value] of this.entries()) {
+					window.StateToColors.set(key, value);
+				}
 			}
 		}
 	}
@@ -63,9 +69,9 @@ class StateToColors extends Map {
 		str = str.slice(0, -1);
 		return str;
 	}
-	set(state, value = null) {
+	set(state, value = null, useAsGlobal = 0) {
 		if (!value) {
-			this.init(state);
+			this.init(state, useAsGlobal);
 			return;
 		}
 		super.set(`${state}`, value.startsWith('#') ? value : `#${value}`);
