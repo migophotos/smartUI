@@ -562,7 +562,7 @@ ${optStr}  };
 		}
 	}
     _build() {
-		this._s2c.init(this._o.stateColors);
+		this._s2c.init(this._o.stateColors, this._o.isGlobalColors);
 
 		if (!this._inited) {
 			console.log('_build() -> Nothing todo, not yet initialized!');
