@@ -892,7 +892,7 @@
                     </div>
 
                     <div id="smartbar_cat" style="display: none;">
-                        <smart-ui-button class="categories-btn" id="bar_params_btn" targets="bar-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры полигона, такие как количество вершин, отображение звезды, направление индикатора и др."></smart-ui-button>
+                        <smart-ui-button class="categories-btn" id="bar_params_btn" targets="bar-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить основные параметры, такие как ориентация, тип индикатора, отображение и положение шкалы, направление индикатора, тени, анимация и др."></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                         <smart-ui-button class="categories-btn" id="bar_ui-params_btn" targets="bar-ui-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как цвет, размеры и др."></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
@@ -901,6 +901,9 @@
                         <smart-ui-button class="categories-btn" id="bar_font_params_btn" targets="bar-font-params_pan" type="radio" state="off" imageOn="images/font_family_on.svg" imageOff="images/font_family_off.svg" data-sttip-tooltip="Настроить параметры шрифтов"></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                         <smart-ui-button class="categories-btn" id="bar-state-colors_btn" targets="bar-state-colors_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Задать соответствие между состояниеи сигнала и цветом отображения"></smart-ui-button>
+                        <smart-ui-spacer class="ver-small"></smart-ui-spacer>
+                        <smart-ui-button class="categories-btn" id="bar-rt-params_btn" targets="bar-rt-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметы обновления данных и переходов"></smart-ui-button>
+                        
                     </div>
 
 
@@ -1080,6 +1083,13 @@
                                     <smart-ui-checkbox name="stbar-param" param="is-fill-stroke" title="Закрашивать обводку" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                     <smart-ui-colorbox name="stbar-param" param="var-stroke-color" title="Цвет обводки" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
                                     <smart-ui-editslider name="stbar-param" param="var-stroke-width" title="Толщина обводки" value="1" units="" min="0" max="20" step="0.5" image="images/border_width_off.svg">edit control with slider</smart-ui-editslider>
+                                    <smart-ui-checkbox name="stbar-param" param="is-show-thr" title="Показывать пороговые значения" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-checkbox name="stbar-param" param="is-show-trends" title="Показывать тренды" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                </div>
+                            </div>
+                            <div id="bar-rt-params_pan" class="overlay" style="max-height: 766px; display: none;">
+                                <h2>Параметры Обновления данных</h2>
+                                <div style="display: block;">
                                     <smart-ui-checkbox name="stbar-param" param="is-link" title="Разрешить переход по линкам" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                     <smart-ui-checkbox name="stbar-param" param="is-run" title="Разрешить самостоятельный опрос" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
                                     <smart-ui-editslider name="stbar-param" param="interval" title="Интервал опроса" value="1" units="ms" min="1000" max="60000" step="500" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
@@ -1273,7 +1283,7 @@
                                     // set new options and rebuild!
                                     el.resetParams(wdgOpt.opt);
                                 }
-                                wdgOpt = '{"stwidget":"stbar-.-.-discrete-ver-down-20-120-.-none-.-.-.-cd-.-.-.-.-.-.-0-.-.-1-.-.-.-.-.-.-0-.-#ffffff-.-0-2.5-.-.-10-.-.-0-0#ffaaff,1#ffaaff,2#ffaaff,3#ffaaff,4#aaffaa,5#aaffaa,6#aaffaa,7#aaffaa"}';
+                                wdgOpt = '{"stwidget":"stbar-.-.-discrete-ver-down-20-120-.-none-.-.-.-cd-.-.-.-.-.-.-0-.-.-1-.-.-.-.-.-.-0-.-#ffffff-.-0-2.5-.-.-10-.-.-.-.-0-0#ffaaff,1#ffaaff,2#ffaaff,3#ffaaff,4#aaffaa,5#aaffaa,6#aaffaa,7#aaffaa"}';
 
                                 new SmartBar('bar-try-it2', wdgOpt);
                                 break;

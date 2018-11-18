@@ -267,6 +267,8 @@ ${optStr}  };
 			'var-font-size',
 			'var-font-stretch',
 			'var-font-color',
+			'is-show-thr',
+			'is-show-trends',
 			'is-global-colors', // use global state to color definition instead of 'state-colors'
 			'state-colors'		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
 								// by default (currently) is empty, what means not in use
@@ -321,6 +323,8 @@ ${optStr}  };
 			varFontSize:	'10px',
 			varFontStretch:	'condensed',
 			varFontColor:	'#666666',
+			isShowThr: 0,
+			isShowTrends: 0,
 			isGlobalColors: 1,
 			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
 
@@ -347,6 +351,8 @@ ${optStr}  };
             'varStrokeWidth',
 			'varOpacity',
 			'varFontSize',
+			'isShowThr',
+			'isShowTrends',
 			'isGlobalColors'
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
@@ -799,7 +805,7 @@ ${optStr}  };
 		this._buildActive(this._data, 'rebuild');
 		// add shadow if enabled
 		this._body.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
-		this._bodyActiveBasis.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
+		this._bodyActiveBasis.classList.add(this._o.varIsShadow && this._o.type == 'solid' ? 'shadowed' : 'no-shadows');
 		// uppend events
 		if (this._o.isLink) {
 			this._body.classList.add('linked');
@@ -864,6 +870,14 @@ ${optStr}  };
     }
 
 	// API
+	getDataFormat() {
+		const ddf = super.getDataFormat();
+		ddf.thr = '$THRESHOLDS',// The comma-separated list of threshold values with color encoding delimited by ':'
+								// for example: '30:#00ff00,70:#0000ff,100:#ff0000' or the new simplified form: '30#00ff00,70#0000ff,100#ff0000'
+		ddf.max = '$VALUE_MAX',	// Value shown as maximum on the quantitive scale
+		ddf.trends = '$TRENDS'	// Comma-separated list of trend values, show (optionaly) on the measure bar as lines. These values cannot be greater then max value.
+		// delete ddf.tooltip;
+	}
 	getAlias() {
 		return this._o.alias;
 	}
@@ -1040,10 +1054,12 @@ ${optStr}  };
 		}
 	}
 	generateExData() {
-		const max = 250;
+		const colors = ['#0096ff', '#00f900', '#fffc79', '#ff2600'];	// in order: blue, green, yellow, red
+		const max = Math.abs(Math.floor(Math.random() * 1000));
 		const value = Math.abs(Math.floor(Math.random() * (max + 1)) + 0);
-		const color = value < max/4 ? 'blue' : (value < max/2 ? 'green' : (value < (max/4)*3 ? 'yellow' : 'red'));
+		const color = value < max/4 ? colors[0] : (value < max/2 ? colors[1] : (value < (max/4)*3 ? colors[2] : colors[3]));
 		const state = Math.abs(Math.floor(Math.random() * 7));	// from 0 up to 7
+		const trend = Math.abs(Math.floor(Math.random() * (max + 1)));
 
 		const dataEx = {
 			"target": {
@@ -1055,7 +1071,9 @@ ${optStr}  };
 					"color": `${color}`,
 					"state": `${state}`,
 					"link": "http://www.google.com/index.html",
-					"max": `${max}`
+					"max": `${max}`,
+					"trends": `${trend}`,
+					"thr": `${max/4}${colors[0]},${max/2}${colors[1]},${(max/4)*3}${colors[2]},${max}${colors[3]}`
                 },
 			"error": {
 				"message": "null",
