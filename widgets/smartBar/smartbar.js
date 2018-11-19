@@ -433,7 +433,9 @@ ${optStr}  };
 		this._s2c       = new StateToColors();
 
 		this._body      = null; // the SmartBar body
-		this._bodyActive = null;	// active element path
+		this._activeThrs = null; // the group of thresholds drawn under active path
+		this._bodyActive = null; // active element path
+		this._activeTrends = null; // the group if trends line drawn above active path
 		this._bodyScale = null; // body scale element (group) includes line, and texts
 		this._active    = null; // the active clip element
 		this._scaleTextA = [];	// the references on scale texts (0, 50, max)
@@ -444,7 +446,7 @@ ${optStr}  };
         style.textContent = txtStyle;
         this._defs = SmartWidgets.addElement('defs', {}, this._root, this._svgdoc);
 		this._defs.innerHTML = window.SmartBars.defs;
-		this._active = SmartWidgets.addElement('clipPath', {id: `${this.id}-activeRect`}, this._root, this._svgdoc);
+		this._active = SmartWidgets.addElement('clipPath', {id: `${this.id}-activeRect`}, this._svgroot, this._svgdoc);
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
 		// in case of creating SmartBar object from Javascript, lets do all needed work in one place...
@@ -470,6 +472,18 @@ ${optStr}  };
 				this._active.removeChild(this._active.firstElementChild);
 			}
 		}
+		if (this._activeThrs) {
+			while (this._activeThrs.firstElementChild) {
+				this._activeThrs.removeChild(this._activeThrs.firstElementChild);
+			}
+		}
+
+		if (this._activeTrends) {
+			while (this._activeTrends.firstElementChild) {
+				this._activeTrends.removeChild(this._activeTrends.firstElementChild);
+			}
+		}
+
 		const activeRect = {
 			x: this._barBody.active.x,
 			y: this._barBody.active.y,
@@ -553,6 +567,56 @@ ${optStr}  };
 						}
 					}
 				}
+				// draw trends
+				if (this._o.isShowTrends && this._activeTrends && dt.trends) {
+					const trends = dt.trends.split(/[,;]/g);	// split by ',' or ';'
+					// let t2c = states[0].split(/[#:]/g);			// split by '#' or ':'
+
+					for (let tr of trends) {
+						let t2c = tr.split(/:#|#/g);
+						let val = parseFloat(t2c[0]) * onePCT;
+
+						let x1, x2, y1, y2;
+
+						if (this._o.orient === 'hor') {
+							y1 = this._barBody.active.y;
+							y2 = y1 + this._barBody.active.h;
+							if (this._o.aligning === 'left') {
+								x1 = x2 = (this._barBody.active.x + this._barBody.active.w) - val;
+							} else {
+								x1 = x2 = this._barBody.active.x + val;
+							}
+						} else {
+							x1 = this._barBody.active.x;
+							x2 = x1 + this._barBody.active.w;
+							if (this._o.aligning == 'up') {
+								y1 = y2 = (this._barBody.active.y + this._barBody.active.h) - val;
+							} else {
+								y1 = y2 = this._barBody.active.y + val;
+							}
+						}
+						SmartWidgets.addElement('line', {
+							x1: x1,
+							y1: y1,
+							x2: x2,
+							y2: y2,
+							stroke: `#${t2c[1]}` || this._o.varStrokeColor,
+							'stroke-width': 1
+						}, this._activeTrends, this._svgdoc);
+					}
+					// let onePCT = maxValue ? max100 / maxValue : max100 / 100;
+					if (this._o.orient === 'hor') {
+						activeRect.width = parseFloat(dt.value) * onePCT;
+						if (this._o.aligning === 'left') {
+							activeRect.x = (this._barBody.active.x + this._barBody.active.w) - activeRect.width;
+						}
+					} else {
+						activeRect.height = parseFloat(dt.value) * onePCT;
+						if (this._o.aligning == 'up') {
+							activeRect.y = (this._barBody.active.y + this._barBody.active.h) - activeRect.height;
+						}
+					}
+				}
 
 			}
 		}
@@ -601,6 +665,15 @@ ${optStr}  };
 					this._svgroot.removeChild(this._bodyScale);
 					this._bodyScale = null;	// may be I don't need it
 				}
+				if (this._activeTrends) {
+					this._svgroot.removeChild(this._activeTrends);
+					this._activeTrends = null;	// may be I don't need it
+				}
+				if (this._activeThrs) {
+					this._svgroot.removeChild(this._activeThrs);
+					this._activeThrs = null;	// may be I don't need it
+				}
+
 			}
 			this._svgroot.removeChild(this._body);
 		}
@@ -700,6 +773,9 @@ ${optStr}  };
 			width: this._barBody.width,
 			height: this._barBody.height
 		}, this._svgroot, this._svgdoc);
+		// add group for thresholds
+		this._activeThrs = SmartWidgets.addElement('g', {class: 'thresholds'}, this._svgroot, this._svgdoc);
+
 		// build active path
 		let path = '';
 		if (this._o.type == 'solid') {
@@ -745,9 +821,12 @@ ${optStr}  };
 			'stroke-linejoin': 'miter',
 			d: path
 		}, this._svgroot, this._svgdoc);
+		// add group for thrends
+		this._activeTrends = SmartWidgets.addElement('g', {class: 'trends'}, this._svgroot, this._svgdoc);
+
 		// draw scale if enabled
 		if (this._o.scalePosition !== 'none') {
-			this._bodyScale = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
+			this._bodyScale = SmartWidgets.addElement('g', {class: 'scale'}, this._svgroot, this._svgdoc);
 			SmartWidgets.addElement('line', {
 				x1: this._barBody.scale.x1,
 				y1: this._barBody.scale.y1,
@@ -1059,7 +1138,8 @@ ${optStr}  };
 		const value = Math.abs(Math.floor(Math.random() * (max + 1)) + 0);
 		const color = value < max/4 ? colors[0] : (value < max/2 ? colors[1] : (value < (max/4)*3 ? colors[2] : colors[3]));
 		const state = Math.abs(Math.floor(Math.random() * 7));	// from 0 up to 7
-		const trend = Math.abs(Math.floor(Math.random() * (max + 1)));
+		const trend1 = Math.abs(Math.floor(Math.random() * (max + 1)));
+		const trend2 = Math.abs(Math.floor(Math.random() * (max + 1)));
 
 		const dataEx = {
 			"target": {
@@ -1072,7 +1152,7 @@ ${optStr}  };
 					"state": `${state}`,
 					"link": "http://www.google.com/index.html",
 					"max": `${max}`,
-					"trends": `${trend}`,
+					"trends": `${trend1}#ff0000,${trend2}#ff0000`,
 					"thr": `${max/4}${colors[0]},${max/2}${colors[1]},${(max/4)*3}${colors[2]},${max}${colors[3]}`
                 },
 			"error": {
