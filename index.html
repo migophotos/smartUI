@@ -1283,9 +1283,11 @@
                                     // set new options and rebuild!
                                     el.resetParams(wdgOpt.opt);
                                 }
-                                wdgOpt = '{"stwidget":"stbar-.-.-discrete-ver-down-20-120-.-none-.-.-.-cd-.-.-.-.-.-.-0-.-.-1-.-.-.-.-.-.-0-.-#ffffff-.-0-2.5-.-.-10-.-.-.-.-0-0#ffaaff,1#ffaaff,2#ffaaff,3#ffaaff,4#aaffaa,5#aaffaa,6#aaffaa,7#aaffaa"}';
+                                wdgOpt = '{"stwidget":"stbar-.-.-discrete-ver-down-20-120-.-none-.-.-.-cd-.-.-.-.-.-.-0-.-.-0-.-.-.-.-.-.-0-.-#ffffff-.-0-2.5-.-.-10-.-.-.-.-0-0#ffaaff,1#ffaaff,2#ffaaff,3#ffaaff,4#aaffaa,5#aaffaa,6#aaffaa,7#aaffaa"}';
 
-                                new SmartBar('bar-try-it2', wdgOpt);
+                                if (!window.SmartBars.get('bar-try-it2')) {
+                                    new SmartBar('bar-try-it2', wdgOpt);
+                                }
                                 break;
                             }
                         }

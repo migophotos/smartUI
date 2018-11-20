@@ -467,8 +467,7 @@ ${optStr}  };
 		}
         if (this._active && rebuldActive !== 'none') {
 			// remove old clip rectangle
-			const elem = this._active.firstElementChild;
-			if (elem) {
+			while (this._active.firstElementChild) {
 				this._active.removeChild(this._active.firstElementChild);
 			}
 		}
@@ -567,13 +566,59 @@ ${optStr}  };
 						}
 					}
 				}
+				// draw thresholds
+				let changeRole = false;
+				const tha = [];
+				if (this._o.isShowThr && this._activeThrs && dt.thr) {
+					const thrs = dt.thr.split(/[,;]/g);
+					// build an array of thresholds and sort it after that
+					for (let thr of thrs) {
+						let th2c = thr.split(/:#|#/g);
+						tha.push({
+							value: parseFloat(th2c[0]) * onePCT,
+							color: `#${th2c[1]}`
+						})	
+					}
+					SmartWidgets.sortDataByParam(tha, 'value', 0);
+					for (let thr of tha) {
+						let left, top, width, height;
+
+						if (this._o.orient === 'hor') {
+							top = this._barBody.active.y;
+							height = this._barBody.active.h;
+							width = thr.value; 
+							if (this._o.aligning === 'left') {
+								left = (this._barBody.active.x + this._barBody.active.w) - thr.value;
+							} else {
+								left = this._barBody.active.x;
+							}
+						} else {
+							left = this._barBody.active.x;
+							width = this._barBody.active.w;
+							height = thr.value;
+							if (this._o.aligning == 'up') {
+								top = (this._barBody.active.y + this._barBody.active.h) - thr.value;
+							} else {
+								top = this._barBody.active.y;
+							}
+						}
+
+						SmartWidgets.addElement('rect', {
+							x: left,
+							y: top,
+							width: width,
+							height: height,
+							fill: thr.color
+						}, this._activeThrs, this._svgdoc);
+						changeRole = true;
+					}
+				}
 				// draw trends
 				if (this._o.isShowTrends && this._activeTrends && dt.trends) {
 					const trends = dt.trends.split(/[,;]/g);	// split by ',' or ';'
-					// let t2c = states[0].split(/[#:]/g);			// split by '#' or ':'
 
-					for (let tr of trends) {
-						let t2c = tr.split(/:#|#/g);
+					for (let trend of trends) {
+						let t2c = trend.split(/:#|#/g);
 						let val = parseFloat(t2c[0]) * onePCT;
 
 						let x1, x2, y1, y2;
@@ -617,28 +662,33 @@ ${optStr}  };
 						}
 					}
 				}
-
+				if (this._o.valueRule !== 'none' || this._o.colorRule !== 'none') {
+					// build the clip rectangle here, or change it's attributes...
+					if (rebuldActive === 'rebuild' || this._active.firstElementChild == null) {
+						if (changeRole) {
+							this._bodyActive.removeAttribute('clip-path');
+							this._bodyActive.setAttribute('display', 'none');
+						} else {
+							SmartWidgets.addElement('rect', {
+								class: this._o.isAnimate ? 'animated' : ' ',
+								x: activeRect.x,
+								y: activeRect.y,
+								width: activeRect.width,
+								height: activeRect.height
+							}, this._active, this._svgdoc);
+							this._bodyActive.setAttribute('clip-path', `url(#${this.id}-activeRect)`);
+						}
+					} else if (!changeRole) {
+						this._active.firstElementChild.setAttribute('x', activeRect.x);
+						this._active.firstElementChild.setAttribute('y', activeRect.y);
+						this._active.firstElementChild.setAttribute('width', activeRect.width);
+						this._active.firstElementChild.setAttribute('height', activeRect.height);
+					}
+				} else {
+					this._bodyActive.removeAttribute('clip-path');
+				}
+		
 			}
-		}
-		if (this._o.valueRule !== 'none' || this._o.colorRule !== 'none') {
-			// build the clip rectangle here, or change it's attributes...
-			if (rebuldActive !== 'none') {
-				SmartWidgets.addElement('rect', {
-					class: this._o.isAnimate ? 'animated' : ' ',
-					x: activeRect.x,
-					y: activeRect.y,
-					width: activeRect.width,
-					height: activeRect.height
-				}, this._active, this._svgdoc);
-				this._bodyActive.setAttribute('clip-path', `url(#${this.id}-activeRect)`);
-			} else {
-				this._active.firstElementChild.setAttribute('x', activeRect.x);
-				this._active.firstElementChild.setAttribute('y', activeRect.y);
-				this._active.firstElementChild.setAttribute('width', activeRect.width);
-				this._active.firstElementChild.setAttribute('height', activeRect.height);
-			}
-		} else {
-			this._bodyActive.removeAttribute('clip-path');
 		}
 	}
     _build() {
@@ -813,7 +863,7 @@ ${optStr}  };
 		}, this._svgroot, this._svgdoc);
 		this._bodyActive = SmartWidgets.addElement('path', {
             // id: 'bodyActive',
-            class: this._o.isAnimate ? 'animated' : ' ',
+            class: this._o.isAnimate ? 'bodyActive animated' : 'bodyActive',
             stroke: this._o.varStrokeColor,
             fill: '#ffffff',
             'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
@@ -1052,6 +1102,9 @@ ${optStr}  };
 							// this section will be processed before progress=[]
 							// opt or cfg objects may contain any known optional attributes,
 							// such as: opacity, lcolor (legend color), interval (ms), run/stop, server, targets, user, ...
+		if (this.id == 'stbar-12') {
+			let stop = true; 	// debug only
+		}
 		if (!data) { // do realtime updates here!
 			if (this._o.server != '' && this._o.target != '') {
 				SmartWidgets._httpGet(this._o.server + this._o.target)

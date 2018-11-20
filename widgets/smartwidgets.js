@@ -125,7 +125,6 @@ class SmartWidgets {
 				<rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-stripe)" />
 			</mask>
 		`;
-
     }
     static isNewSite() {
         return (typeof Ext != 'undefined' && typeof Site != 'undefined');
@@ -278,10 +277,99 @@ class SmartWidgets {
 	static hyphenateProp(string, smartPrefix = null) {
 		const stVar = /^var-/;
 		if (smartPrefix) {
-			return hyphenate(string).replace(stVar, smartPrefix);
+			return SmartWidgets.hyphenate(string).replace(stVar, smartPrefix);
 		}
-		return hyphenate(string);
+		return SmartWidgets.hyphenate(string);
 	}
+
+	/**
+	 * Sort data array by specified parameter
+	 *
+	 * @param {array} data An array of data properties
+	 * @property {string} name The name of signal. Existing parameter legend will be used instead of this one
+	 * @property {string} legend the legend for signal.
+	 * @property {number || string} value The value of signal. In case of this parameter's type is 'string' it will be converted to number before compiring
+	 * @property {string} color Represents the color of value
+	 * @property {number} state Represents state of value. In case of this parameter's type is 'string' it will be converted to number before compiring
+	 * @param {string} sortParam Sort data by one of the next parameters:
+	 * 		asis - don't sort,
+	 * 		states/state - sort by state or colors (in case of state is not exists),
+	 * 		values/value - sort by value,
+	 * 		colors/color - sort by color,
+	 * 		names/name - sort by legend or name,
+	 * 		any other word 	- sort by this 'word parameter. For example: link
+	 * @param {number} sortDir Data sorting direction. 1 means from low to hight(down), 0 - from high to low (up)
+	 *
+	 * Be careful: this function changes an array data!
+	 */
+	static sortDataByParam(data = [], sortParam = 'asis', sortDir = 1) {
+		switch (sortParam) {
+			case 'asis':
+				break;
+			// sort by name and ignore lower and upper case
+			case 'name':
+			case 'names': {
+				data.sort((a, b) => {
+					let aName = a.legend || a.name;
+					let bName = b.legend || b.name;
+					const nameA = aName.toUpperCase(); // ignore upper and lowercase
+					const nameB = bName.toUpperCase(); // ignore upper and lowercase
+					if (nameA < nameB) {
+						return sortDir ? -1 : 1;
+					}
+					if (nameA > nameB) {
+						return sortDir ? 1 : -1;
+					}
+					return 0;
+				});
+				break;
+			}
+			case 'value':
+			case 'values': {
+				data.sort((a, b) => {
+					if (Number(a.value) > Number(b.value)) {
+						return sortDir ? 1 : -1;
+					}
+					if (Number(a.value) < Number(b.value)) {
+						return sortDir ? -1 : 1;
+					}
+					return 0;
+				});
+				break;
+			}
+			case 'color':
+			case 'colors': {
+				data.sort((a, b) => {
+					if (a.color > b.color) { return sortDir ? 1 : -1; }
+					if (a.color < b.color) { return sortDir ? -1 : 1; }
+					return 0;
+				});
+				break;
+			}
+			case 'state':
+			case 'states': {
+				data.sort((a, b) => {
+					if (!a.state || !b.state) {
+						if (a.color > b.color) { return sortDir ? 1 : -1; }
+						if (a.color < b.color) { return sortDir ? -1 : 1; }
+					} else {
+						if (Number(a.state) > Number(b.state)) { return sortDir ? 1 : -1; }
+						if (Number(a.state) < Number(b.state)) { return sortDir ? -1 : 1; }
+					}
+					return 0;
+				});
+				break;
+			}
+			default: {
+				data.sort((a, b) => {
+					if (a[sortParam] > b[sortParam]) { return sortDir ? 1 : -1; }
+					if (a[sortParam] < b[sortParam]) { return sortDir ? -1 : 1; }
+					return 0;
+				});
+			}
+		}
+	}
+
 
 
     /**
