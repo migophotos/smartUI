@@ -681,7 +681,6 @@
                                     .demoMode {
                                         --stbar-is-run:1;
                                     }
-
                                     .green-bar {
                                         --stbar-position:cd;
                                         --stbar-thickness:24;
@@ -693,6 +692,42 @@
                                         --stbar-var-font-size:8;
                                         --stbar-gap:9;
                                     }
+
+                                    .yellow-bar {
+                                        --stbar-type:discrete;
+                                        --stbar-orient:ver;
+                                        --stbar-aligning:up;
+                                        --stbar-thickness:20;
+                                        --stbar-length:120;
+                                        --stbar-gap:9;
+                                        --stbar-scale-position:right;
+                                        --stbar-scale-offset:4;
+                                        --stbar-position:cd;
+                                        --stbar-is-link:0;
+                                        --stbar-is-run:1;
+                                        --stbar-color-rule:none;
+                                        --stbar-var-stroke-color:#008000;
+                                        --stbar-var-fill-color:#fffcd4;
+                                        --stbar-var-font-size:8;
+                                        --stbar-state-colors:0;
+                                    }
+
+                                    .black-thr-bar {
+                                        --stbar-thickness:16;
+                                        --stbar-length:120;
+                                        --stbar-position:cd;
+                                        --stbar-is-link:0;
+                                        --stbar-is-run:1;
+                                        --stbar-color-rule:none;
+                                        --stbar-value-rule:both;
+                                        --stbar-is-fill-stroke:0;
+                                        --stbar-var-stroke-color:#fdfffc;
+                                        --stbar-var-fill-color:#000000;
+                                        --stbar-var-font-size:10;
+                                        --stbar-var-font-color:#fefdff;
+                                        --stbar-is-show-thr:1;
+                                        --stbar-state-colors:0;
+                                    }                                    
                                     .black-line-bar {
                                         --stbar-position:cd;
                                         --stbar-type:solid;
@@ -702,6 +737,26 @@
                                         --stbar-var-fill-color:#3e3e3e;
                                         --stbar-var-is-shadow:0;
                                         --stbar-var-stroke-width:2.5;
+                                    }
+                                    .thr-vert-line {
+                                        --stbar-type:discrete;
+                                        --stbar-orient:ver;
+                                        --stbar-aligning:up;
+                                        --stbar-thickness:20;
+                                        --stbar-length:120;
+                                        --stbar-gap:9;
+                                        --stbar-position:cd;
+                                        --stbar-is-link:0;
+                                        --stbar-is-run:1;
+                                        --stbar-color-rule:none;
+                                        --stbar-value-rule:both;
+                                        --stbar-is-fill-stroke:0;
+                                        --stbar-var-fill-color:#ffffff;
+                                        --stbar-var-stroke-width:1.5;
+                                        --stbar-var-font-size:8;
+                                        --stbar-var-font-color:#000000;
+                                        --stbar-is-show-thr:1;
+                                        --stbar-state-colors:0;
                                     }
                                     .transp-vert-line {
                                         --stbar-position:cd;
@@ -750,15 +805,15 @@
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
                                                 <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="green-bar demoMode" id="bar-02" type="discrete" orient="ver" aligning="up" thickness="20"  length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <smart-ui-bar class="yellow-bar demoMode" id="bar-02" type="discrete" orient="ver" aligning="up" thickness="20"  length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
-                                                <p>"Horizontal Bar"</p>
-                                                <smart-ui-bar class="black-line-bar demoMode" id="bar-03" thickness="20"  length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <p>"Thresholds Bar"</p>
+                                                <smart-ui-bar class="black-thr-bar demoMode" id="bar-03" thickness="20"  length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
@@ -766,15 +821,15 @@
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
-                                                <p>"Vertical Bar"</p>
-                                                <smart-ui-bar class="transp-vert-line demoMode" id="bar-04" orient="ver" thickness="20"  length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
+                                                <p>"Thresholds Bar"</p>
+                                                <smart-ui-bar class="thr-vert-line demoMode" id="bar-04" orient="ver" thickness="20"  length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
-                                                <p>"Horizontal Bar"</p>
+                                                <p>"Horizontal Line"</p>
                                                 <smart-ui-bar class="just-line demoMode" id="bar-05" type="solid" thickness="16"  length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
@@ -782,7 +837,7 @@
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
-                                                <p>"Vertical Bar"</p>
+                                                <p>"Vertical Line"</p>
                                                 <smart-ui-bar class="just-line demoMode" id="bar-06" type="discrete" orient="ver" aligning="up" thickness="8"  length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
@@ -791,7 +846,7 @@
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
-                                                <p>"Horizontal Bar"</p>
+                                                <p>"Wide Horizontsl Line"</p>
                                                 <smart-ui-bar class="fat-bar demoMode" id="bar-07" length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
@@ -799,7 +854,7 @@
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
-                                                <p>"Vertical Bar"</p>
+                                                <p>"Wide Vertical Bars"</p>
                                                 <smart-ui-bar class="fat-bar demoMode" id="bar-08" type="discrete" orient="ver" scale-position="left" length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
@@ -807,7 +862,7 @@
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
-                                                <p>"Horizontal Bar"</p>
+                                                <p>"Wide Horizontal Line"</p>
                                                 <smart-ui-bar class="fat-bar demoMode" id="bar-09" scale-position="top" length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
@@ -815,7 +870,7 @@
                                     <div class="ml-p">
                                         <div class="ml-p_content">
                                             <div class="stbar-ml-p_content-ctrl">
-                                                <p>"Vertical Bar"</p>
+                                                <p>"Wide Vertical Bars"</p>
                                                 <smart-ui-bar class="fat-bar demoMode" id="bar-10" type="discrete" orient="ver" length="120" is-tooltip="0" is-link="0"></smart-ui-bar>
                                             </div>
                                         </div>
@@ -1115,7 +1170,7 @@
                                         <smart-ui-selector name="stbar-param" param="var-font-stretch" title="Ширина начертания шрифта" value="" valueList="extra-condensed,ultra-condensed,condensed,normal,expanded,extra-expanded,ultra-expanded" image="images/font_stretch_off.svg"></smart-ui-selector>
                                         <smart-ui-editslider name="stbar-param" param="var-font-size" title="Размер подписей шкалы" value="" units="px" min="5" max="16" step="1" image="images/font_size_off.svg"></smart-ui-editslider>
                                         <smart-ui-editslider name="stbar-param" param="gap" title="Отступ" value="5" units="" min="0.5" max="20" step="0.5" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
-                                        <!-- <smart-ui-colorbox name="stbar-param" param="var-font-color" title="Цвет шрифта" value="#000000" image="images/select_color3_off.svg"></smart-ui-colorbox> -->
+                                        <smart-ui-colorbox name="stbar-param" param="var-font-color" title="Цвет шрифта" value="#000000" image="images/select_color3_off.svg"></smart-ui-colorbox>
                                     </div>
                             </div>
                             <div id="bar-state-colors_pan" class="overlay" style="max-height: 766px; display: none;">

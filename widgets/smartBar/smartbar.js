@@ -18,12 +18,92 @@ class SmartBars extends SmartWidgets {
 	static getAlias() {
 		return 'stbar';
 	}
+    /**
+     * build and returns an options object siutable for 'show()' function
+	 *
+	 * input: {
+	 * 	paramKey: value,	// custom prop is param-key
+	 *  paramKey: value		// custorm property is var-param-key
+	 * }
+	 * what = 'options';
+     * output: {
+     *  paramKey: value,	// custom prop is param-key
+     *  varParamKey: value,	// custom property is var-param-key
+     * }
+	 * what = 'any';
+     * output: {
+     *   stbar-param-key: value,		// custom property is param-key
+     *   stbar-var-param-key: value,	// custom property is var-param-key
+     * }
+     *
+     * @param {object} opt options object to be converted
+	 * @param {boolean} what the flag that enables (if it has any string exclude 'options') to convert all properties to css vars (used in web-components)
+     * @returns {object} options in form siutable for using
+     *
+     */
+    static buidOptionsAndCssVars(opt, what = 'options') {
+		const customProp = SmartBar.getCustomProperties();
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, what == 'options' ? '' : SmartBars.getAlias());
+	}
+
+	static getOptions(opt) {
+		return SmartBars.buidOptionsAndCssVars(opt);
+	}
+	static getCSS(opt) {
+		return SmartBars.buidOptionsAndCssVars(opt, 'css');
+	}
+	static getJSON(opt) {
+		return `'${JSON.stringify(SmartBars.getOptions(opt))}'`;
+	}
+	static getCompressedJSON(opt) {
+		const customProp = SmartBar.getCustomProperties();
+		const defOptions = SmartBar.defOptions();
+		const fullJson = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartBars.getAlias());
+		return `'${JSON.stringify(fullJson)}'`
+	}
+
     static init(context = {}) {
         if (!window.SmartBars) {
             window.SmartBars = new SmartBars();
         }
         window.SmartBars.init(context);
-    }
+	}
+	/**
+	 * converts JSON representation of options into the options parameters object siutable for creating and initializing calls
+	 */
+	static JsonToOptions(jsonOpt) {
+		const options = {
+		};
+		if (typeof jsonOpt === 'string' && jsonOpt.length) {
+			const tmpOpt = JSON.parse(jsonOpt);
+			const smartWidgetAlias = SmartWidgets.getAlias();
+
+			if (typeof tmpOpt[smartWidgetAlias] != 'undefined') {
+				// lets decompress options...
+				const optArr = tmpOpt[smartWidgetAlias].split('-');
+				const customProp = SmartBar.getCustomProperties();
+				let index = 1;
+				for (let prop of customProp) {
+					if (optArr[index] != '.') {
+						options[SmartWidgets.customProp2Param(prop)] = optArr[index];
+					}
+					index++;
+				}
+				SmartBar.convertNumericProps(options);
+				options.alias = optArr[0];
+				return options;
+			}
+			const aliasKey = `--${SmartBars.getAlias()}-`;
+			for (let key in tmpOpt) {
+				const paramName = key.replace(aliasKey, '');
+				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
+			}
+			SmartBar.convertNumericProps(options);
+			return options;
+		}
+		return null;
+	}
+	
     static addElement(type, params, parent = null, doc = null) {
         return super.addElement(type, params, parent, doc);
     }
@@ -49,68 +129,6 @@ class SmartBars extends SmartWidgets {
 }
 
 class SmartBar {
-	/**
-	 * converts JSON representation of options into the options parameters object siutable for show() call
-	 */
-	static JsonToOptions(jsonOpt) {
-		const options = {
-		};
-		if (typeof jsonOpt === 'string' && jsonOpt.length) {
-			const tmpOpt = JSON.parse(jsonOpt);
-			const smartWidgetAlias = SmartWidgets.getAlias();
-
-			if (typeof tmpOpt[smartWidgetAlias] != 'undefined') {
-				// lets decompress options...
-				const optArr = tmpOpt[smartWidgetAlias].split('-');
-				const customProp = SmartBar.getCustomProperties();
-				let index = 1;
-				for (let prop of customProp) {
-					if (optArr[index] != '.') {
-						options[SmartWidgets.customProp2Param(prop)] = optArr[index];
-					}
-					index++;
-				}
-				this.convertNumericProps(options);
-				options.alias = optArr[0];
-				return options;
-			}
-			const aliasKey = `--${SmartBars.getAlias()}-`;
-			for (let key in tmpOpt) {
-				const paramName = key.replace(aliasKey, '');
-				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
-			}
-			this.convertNumericProps(options);
-			return options;
-		}
-		return null;
-	}
-    /**
-     * build and returns an options object siutable for 'show()' function
-	 *
-	 * input: {
-	 * 	paramKey: value,	// custom prop is param-key
-	 *  paramKey: value		// custorm property is var-param-key
-	 * }
-	 * what = 'options';
-     * output: {
-     *  paramKey: value,	// custom prop is param-key
-     *  varParamKey: value,	// custom property is var-param-key
-     * }
-	 * what = 'any';
-     * output: {
-     *   stbar-param-key: value,		// custom property is param-key
-     *   stbar-var-param-key: value,	// custom property is var-param-key
-     * }
-     *
-     * @param {object} opt options object to be converted
-	 * @param {boolean} what the flag that enables (if it has any string exclude 'options' to convert all properties to css vars (used in web-components)
-     * @returns {object} options in form siutable for using
-     *
-     */
-    static buidOptionsAndCssVars(opt, what = 'options') {
-		const customProp = SmartBar.getCustomProperties();
-		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, what == 'options' ? '' : SmartBars.getAlias());
-	}
 
 	/**
 	 * Build text representation of changed options for specific templates
@@ -130,7 +148,7 @@ class SmartBar {
 		switch (templateId) {
 			case 'def-custom-elem_btn':
 				// convert all options into css vars
-				dtO = this.buidOptionsAndCssVars(opt, 'css');
+				dtO = SmartBars.getCSS(opt);
                 template = '&lt;style>\n';
                 template += `  .${className} {\n`;
                 // template += `    `
@@ -142,14 +160,12 @@ class SmartBar {
 				template += `&lt;smart-ui-bar class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-bar>\n`;
                 break;
 			case 'def-json_btn': {
-				const customProp = SmartBar.getCustomProperties();
-				const defOptions = SmartBar.defOptions();
-				dtO = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartBars.getAlias());
-				const jstr = `'${JSON.stringify(dtO)}'`;
+				// const jstr = SmartBar.getJSON(opt);	// get dirty parameters in json format
+				const jstr = SmartBars.getCompressedJSON(opt); // get all parameters in compressed json format
 				template = `${jstr}`;
 				template += '\n\n';
 				template +=
-				`// later, use static function SmartBar.JsonToOptions(options); to convert JSON string
+				`// later, use static function SmartBars.JsonToOptions(options); to convert JSON string
 // into 'options' object, sutable for SmartBar creation. For example:
 &lt;svg id="dashboard" ....
   &lt;g id="smart-widget">
@@ -166,7 +182,7 @@ if (el) {
   const pgn = new SmartBar(jsn, options);
   // or in case you want to change any parameters, convert the JSON string into object
   const options = {
-	  opt: SmartBar.JsonToOptions(opt);
+	  opt: SmartBars.JsonToOptions(opt);
 	  context: document.getElementById('dashboard'),
   }
   // change the width of bar as you want, for ex:
@@ -178,7 +194,7 @@ if (el) {
                 break;
             }
             case 'def-object-params_btn': {
-				dtO = this.buidOptionsAndCssVars(opt);
+				dtO = SmartBars.getOptions(opt);
 				let optStr = '';
 				for (let key in dtO) {
 					if (typeof dtO[key] === 'string') {
@@ -415,7 +431,7 @@ ${optStr}  };
 		}
 
 		if (typeof options.opt === 'string' && options.opt.length && options.opt.includes(smartWidgetAlias)) {
-			options.opt = SmartBar.JsonToOptions(options.opt);
+			options.opt = SmartBars.JsonToOptions(options.opt);
 		}
 
         // merge default options with specified
@@ -501,7 +517,8 @@ ${optStr}  };
 						this._svgroot.setAttribute(`data-sttip-${key}`, dt[key]);
 					}
 				}
-
+				// Calculating color using a status code (using global settings, if any, local settings),
+				// or using color obtained from data
 				let cr = -1;
 				if (typeof dt.state === 'string') {
 					if (this._o.isGlobalColors && window.StateToColors && this._o.role !== 'demoMode') {
@@ -517,7 +534,15 @@ ${optStr}  };
 					}
 				}
 
+				// In the case of allowed display of threshold values, the indicator behavior should be changed. 
+				// To do this, set a special flag, which we will focus on in the future ...
+				let changeRole = false;
+				if (this._o.isShowThr && this._activeThrs && dt.thr) {
+					changeRole = true;
+				}
 
+				// Resizing of the active element, and the colors of the indicator depending on the 
+				// signal value and the selected optional parameters
 				const maxValue = parseInt(dt.max, 10) || this._o.maxValue;
 				const max100 = this._o.orient === 'hor' ? activeRect.width : activeRect.height;
 				let onePCT = maxValue ? max100 / maxValue : max100 / 100;
@@ -526,10 +551,18 @@ ${optStr}  };
 					if (this._o.aligning === 'left') {
 						activeRect.x = (this._barBody.active.x + this._barBody.active.w) - activeRect.width;
 					}
+					if (changeRole) {
+						activeRect.height = activeRect.height / 2;
+						activeRect.y = activeRect.y + activeRect.height / 2;
+					}
 				} else {
 					activeRect.height = parseFloat(dt.value) * onePCT;
 					if (this._o.aligning == 'up') {
 						activeRect.y = (this._barBody.active.y + this._barBody.active.h) - activeRect.height;
+					}
+					if (changeRole) {
+						activeRect.width = activeRect.width / 2;
+						activeRect.x = activeRect.x + activeRect.width / 2;
 					}
 				}
 				this._o.valueRule = this._o.valueRule || 'fill';
@@ -547,29 +580,32 @@ ${optStr}  };
 				if (this._o.colorRule == 'fill' || this._o.colorRule == 'both') {
 					this._body.setAttribute('fill', dt.color);
 				}
-				// and last corection here
 				if (this._o.valueRule === 'stroke' || this._o.valueRule === 'none') {
 					this._bodyActive.setAttribute('fill', 'none');
 				}
-				let valsA,
-					maxV = maxValue ? maxValue : 100;
-				if (this._o.aligning === 'left' || this._o.aligning === 'up') {
-					valsA = [maxV, maxV / 2, 0];
-				} else {
-					valsA = [0, maxV / 2, maxV];
-				}
+
+				// Show correct scale numbers
 				if (this._o.scalePosition !== 'none') {
-					for (let i = 0; i < 3; i++) {
-						let el = this._scaleTextA[i];
-						if (el) {
-							el.textContent = valsA[i];
+					let valsA,
+						maxV = maxValue ? maxValue : 100;
+					if (this._o.aligning === 'left' || this._o.aligning === 'up') {
+						valsA = [maxV, maxV / 2, 0];
+					} else {
+						valsA = [0, maxV / 2, maxV];
+					}
+					if (this._o.scalePosition !== 'none') {
+						for (let i = 0; i < 3; i++) {
+							let el = this._scaleTextA[i];
+							if (el) {
+								el.textContent = valsA[i];
+							}
 						}
 					}
 				}
-				// draw thresholds
-				let changeRole = false;
+
+				// Draw thresholds
 				const tha = [];
-				if (this._o.isShowThr && this._activeThrs && dt.thr) {
+				if (changeRole) {
 					const thrs = dt.thr.split(/[,;]/g);
 					// build an array of thresholds and sort it after that
 					for (let thr of thrs) {
@@ -610,10 +646,10 @@ ${optStr}  };
 							height: height,
 							fill: thr.color
 						}, this._activeThrs, this._svgdoc);
-						changeRole = true;
 					}
 				}
-				// draw trends
+
+				// Draw trends
 				if (this._o.isShowTrends && this._activeTrends && dt.trends) {
 					const trends = dt.trends.split(/[,;]/g);	// split by ',' or ';'
 
@@ -662,12 +698,21 @@ ${optStr}  };
 						}
 					}
 				}
+
+				// Draw value
 				if (this._o.valueRule !== 'none' || this._o.colorRule !== 'none') {
 					// build the clip rectangle here, or change it's attributes...
 					if (rebuldActive === 'rebuild' || this._active.firstElementChild == null) {
 						if (changeRole) {
 							this._bodyActive.removeAttribute('clip-path');
-							this._bodyActive.setAttribute('display', 'none');
+							SmartWidgets.setAttributes([this._bodyActive], {
+								x: activeRect.x,
+								y: activeRect.y,
+								width: activeRect.width,
+								height: activeRect.height,
+								stroke: this._o.varStrokeColor,
+								fill: this._o.varFillColor
+							});
 						} else {
 							SmartWidgets.addElement('rect', {
 								class: this._o.isAnimate ? 'animated' : ' ',
@@ -679,10 +724,12 @@ ${optStr}  };
 							this._bodyActive.setAttribute('clip-path', `url(#${this.id}-activeRect)`);
 						}
 					} else if (!changeRole) {
-						this._active.firstElementChild.setAttribute('x', activeRect.x);
-						this._active.firstElementChild.setAttribute('y', activeRect.y);
-						this._active.firstElementChild.setAttribute('width', activeRect.width);
-						this._active.firstElementChild.setAttribute('height', activeRect.height);
+						SmartWidgets.setAttributes([this._active.firstElementChild], {
+							x: activeRect.x,
+							y: activeRect.y,
+							width: activeRect.width,
+							height: activeRect.height
+						})
 					}
 				} else {
 					this._bodyActive.removeAttribute('clip-path');
@@ -692,12 +739,15 @@ ${optStr}  };
 		}
 	}
     _build() {
+		// Global colors initialization
 		this._s2c.init(this._o.stateColors, this._o.isGlobalColors);
 
 		if (!this._inited) {
 			console.log('_build() -> Nothing todo, not yet initialized!');
 			return;
 		}
+
+		// Delete old elements before creating new ones
         if (this._body) {
 			this._body.removeEventListener('click', this._onClick);
 			this._body.removeEventListener('mouseover', this._onShowTooltip);
@@ -727,7 +777,8 @@ ${optStr}  };
 			}
 			this._svgroot.removeChild(this._body);
 		}
-		// very important: check and set the right maxValue aligning!
+
+		// Very Important: check and set the right maxValue aligning!
 		if (this._o.orient == 'hor') {
 			if (this._o.aligning != 'left' && this._o.aligning != 'right') {
 				this._o.aligning = 'right';
@@ -739,7 +790,7 @@ ${optStr}  };
 			}
 		}
 
-		// calculate body size
+		// Calculate body size
 		this._barBody = {
 			x: this._rect.x,
 			y: this._rect.y,
@@ -748,24 +799,23 @@ ${optStr}  };
 			active: {x: 0, y: 0, w: 0, h: 0},
 			scale: {x1:0, y1: 0, x2: 0, y2: 0}
 		};
-		// calc and move active part
-		let gap = this._o.gap;
 
+		const gap = this._o.gap;
+		// Calculate and move active part
 		this._barBody.active.x = this._barBody.x + gap;
 		this._barBody.active.y = this._barBody.y + gap;
 		this._barBody.active.w = this._barBody.width;
 		this._barBody.active.h = this._barBody.height;
 
-		// append gaps
+		// Append gaps around of indicator
 		if (this._o.isFillBkg || this._o.isFillStroke) {
 			// expand body
 			this._barBody.width += gap * 2;
 			this._barBody.height += gap * 2;
 		}
-
+		// Calculate scale position and correct body size in case of scale enabled
 		if (this._o.scalePosition !== 'none') {
 			this._barBody.height += this._o.scaleOffset + this._o.varFontSize + 2;
-
 			this._barBody.scale.x1 = this._barBody.active.x;
 			this._barBody.scale.x2 = this._barBody.active.x + this._barBody.active.w;
 			this._barBody.scale.y1 = this._barBody.active.y + this._barBody.active.h + this._o.scaleOffset;
@@ -774,8 +824,6 @@ ${optStr}  };
 			if (this._o.type == 'discrete') {
 				this._barBody.scale.x2 -= 3;
 			}
-
-
 			if (this._o.orient === 'hor' && this._o.scalePosition === 'top') {
 				// move active down
 				this._barBody.active.y = (this._barBody.y + this._barBody.height) - gap - this._barBody.active.h;
@@ -784,6 +832,7 @@ ${optStr}  };
 			}
 		}
 		let tv;
+		// Correct all calculated sizes in case of vertical orientation
 		if (this._o.orient == 'ver') {
 			tv = this._barBody.width;
 			this._barBody.width = this._barBody.height;
@@ -810,8 +859,8 @@ ${optStr}  };
 			}
 		}
 
+		// Create body rectangle
 		this._body = SmartWidgets.addElement('rect', {
-			// id: 'body',
 			class: this._o.isAnimate ? 'animated' : ' ',
 			stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
 			fill: `${this._o.isFillBkg ? this._o.varFillColor : 'none'}`,
@@ -823,10 +872,11 @@ ${optStr}  };
 			width: this._barBody.width,
 			height: this._barBody.height
 		}, this._svgroot, this._svgdoc);
-		// add group for thresholds
+
+		// Create group for thresholds
 		this._activeThrs = SmartWidgets.addElement('g', {class: 'thresholds'}, this._svgroot, this._svgdoc);
 
-		// build active path
+		// Build active path
 		let path = '';
 		if (this._o.type == 'solid') {
 			const ra = this._barBody.active;
@@ -851,30 +901,43 @@ ${optStr}  };
 				}
 			}
 		}
+
+		// Create under active (for conturing) element
 		this._bodyActiveBasis = SmartWidgets.addElement('path', {
-            // id: 'bodyActiveBasis',
             class: 'bodyActiveBasis',
-            stroke: this._o.varStrokeColor,
+            stroke: this._o.isShowThr ? this._o.varFontColor : this._o.varStrokeColor,
             fill: 'none',
             'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
 			'fill-opacity':  this._o.varOpacity,
 			'stroke-linejoin': 'miter',
 			d: path
 		}, this._svgroot, this._svgdoc);
-		this._bodyActive = SmartWidgets.addElement('path', {
-            // id: 'bodyActive',
-            class: this._o.isAnimate ? 'bodyActive animated' : 'bodyActive',
-            stroke: this._o.varStrokeColor,
-            fill: '#ffffff',
-            'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
-			'fill-opacity':  this._o.varOpacity,
-			'stroke-linejoin': 'miter',
-			d: path
-		}, this._svgroot, this._svgdoc);
-		// add group for thrends
+
+		// Create active element: rect or path
+		if (this._o.isShowThr) { // In the case of allowed display of threshold values draw rect instead path
+			this._bodyActive = SmartWidgets.addElement('rect', {
+				class: this._o.isAnimate ? 'bodyActive animated' : 'bodyActive',
+				stroke: this._o.varStrokeColor,
+				fill: '#ffffff',
+				'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
+				'fill-opacity':  this._o.varOpacity
+			}, this._svgroot, this._svgdoc);
+		} else { // In the regular case draw path
+			this._bodyActive = SmartWidgets.addElement('path', {
+				class: this._o.isAnimate ? 'bodyActive animated' : 'bodyActive',
+				stroke: this._o.varStrokeColor,
+				fill: '#ffffff',
+				'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
+				'fill-opacity':  this._o.varOpacity,
+				'stroke-linejoin': 'miter',
+				d: path
+			}, this._svgroot, this._svgdoc);
+		}
+
+		// Create group for thrends
 		this._activeTrends = SmartWidgets.addElement('g', {class: 'trends'}, this._svgroot, this._svgdoc);
 
-		// draw scale if enabled
+		// Create scale if enabled
 		if (this._o.scalePosition !== 'none') {
 			this._bodyScale = SmartWidgets.addElement('g', {class: 'scale'}, this._svgroot, this._svgdoc);
 			SmartWidgets.addElement('line', {
@@ -883,7 +946,7 @@ ${optStr}  };
 				x2: this._barBody.scale.x2,
 				y2: this._barBody.scale.y2,
 				'stroke-width': 1,
-				stroke: this._o.varStrokeColor
+				stroke: this._o.isShowThr ? this._o.varFontColor : this._o.varStrokeColor
 			}, this._bodyScale, this._svgdoc);
 
 			let xPosA, yPosA, anchorsA, cxA, cyA, baselineA;
@@ -892,7 +955,7 @@ ${optStr}  };
 				tv = this._o.scalePosition == 'top' ? this._barBody.scale.y1 - 2 : this._barBody.scale.y1 + this._o.varFontSize + 2;
 				yPosA = [tv, tv, tv];
 				anchorsA = ['left', 'middle', 'end'];
-				cxA = xPosA;
+				cxA = [this._barBody.scale.x1 + 1, this._barBody.scale.x1 + (this._barBody.active.w / 2), this._barBody.scale.x2 - 1];
 				tv = this._barBody.scale.y1;
 				cyA = [tv, tv, tv];
 				baselineA = this._o.scalePosition == 'top' ? ['after', 'after', 'after'] : ['after', 'after', 'after'];
@@ -903,15 +966,16 @@ ${optStr}  };
 				yPosA = [this._barBody.scale.y1 + this._o.varFontSize, this._barBody.scale.y1 + (this._barBody.active.h / 2), this._barBody.scale.y2];
 				anchorsA = this._o.scalePosition == 'left' ? ['end', 'end', 'end'] : ['left', 'left', 'left'];
 				cxA = [this._barBody.scale.x1, this._barBody.scale.x1, this._barBody.scale.x1];
-				cyA = [this._barBody.scale.y1, this._barBody.scale.y1 + (this._barBody.active.h / 2), this._barBody.scale.y2]; // [this._barBody.scale.y1 + this._o.varFontSize, this._barBody.scale.y1 + (this._barBody.active.h / 2) + tv, this._barBody.scale.y2 - this._o.varFontSize]
+				cyA = [this._barBody.scale.y1 + 1, this._barBody.scale.y1 + (this._barBody.active.h / 2), this._barBody.scale.y2 - 1]; // [this._barBody.scale.y1 + this._o.varFontSize, this._barBody.scale.y1 + (this._barBody.active.h / 2) + tv, this._barBody.scale.y2 - this._o.varFontSize]
 				baselineA = ['after', 'middle', 'before'];
 			}
 
 			for (let i = 0; i < 3; i++) {
 				let numb = 50;
 				SmartWidgets.addElement('circle', {
+					fill: 'none',
 					'stroke-width': 1,
-					stroke: this._o.varStrokeColor,
+					stroke: this._o.isShowThr ? this._o.varFontColor : this._o.varStrokeColor,
 					cx: cxA[i],
 					cy: cyA[i],
 					r: 1
@@ -923,26 +987,28 @@ ${optStr}  };
 					'font-family': this._o.varFontFamily,
 					'font-size': this._o.varFontSize,
 					'dominant-baseline': baselineA[i],
-					fill: this._o.varStrokeColor,
+					fill: this._o.isShowThr ? this._o.varFontColor : this._o.varStrokeColor,
 					text: `${numb * i}`,
 					x: xPosA[i],
 					y: yPosA[i]
 				}, this._bodyScale, this._svgdoc);
 			}
 		}
-		// build active clip rect
+
+		// Create active clip rect
 		this._buildActive(this._data, 'rebuild');
-		// add shadow if enabled
+
+		// Add shadow if enabled
 		this._body.classList.add(this._o.varIsShadow ? 'shadowed' : 'no-shadows');
 		this._bodyActiveBasis.classList.add(this._o.varIsShadow && this._o.type == 'solid' ? 'shadowed' : 'no-shadows');
-		// uppend events
+
+		// Append events
 		if (this._o.isLink) {
 			this._body.classList.add('linked');
 			this._bodyActive.classList.add('linked');
 			this._body.addEventListener('click', this._onClick);
 			this._bodyActive.addEventListener('click', this._onClick);
 		}
-
 		this._body.addEventListener('mouseover', this._onShowTooltip);
 		this._body.addEventListener('mousemove', this._onMoveTooltip);
 		this._body.addEventListener('mouseout', this._onHideTooltip);
@@ -950,6 +1016,7 @@ ${optStr}  };
 		this._bodyActive.addEventListener('mousemove', this._onMoveTooltip);
 		this._bodyActive.addEventListener('mouseout', this._onHideTooltip);
 	}
+
 	// event listeners
 	_onShowTooltip(evt) {
 		if (!this._o.isTooltip || this._o.ttipType !== 'own') {
@@ -1021,7 +1088,7 @@ ${optStr}  };
 			// check for options in JSON format and convert its to object in this case
 			const smartWidgetAlias = SmartWidgets.getAlias();
 			if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
-				options = SmartBar.JsonToOptions(options);
+				options = SmartBars.JsonToOptions(options);
 			}
 
             // validate and merge with own _o
@@ -1109,13 +1176,6 @@ ${optStr}  };
 			if (this._o.server != '' && this._o.target != '') {
 				SmartWidgets._httpGet(this._o.server + this._o.target)
 				.then((response) => {
-					// if (this._o.isAnimate) {
-					// 	this._body.setAttribute('style', `/* r:${this._normRadius}; */`);
-
-					// 	this._body.setAttribute("r", this._normRadius + this._normRadius/5);
-					// 	this._body.setAttribute('fill-opacity', 0);
-					// 	this._body.setAttribute('stroke-opacity', 0);
-					// }
 					data = JSON.parse(response);
 					this._data.clear();
 					this._data = new Set(data.target);
@@ -1164,15 +1224,7 @@ ${optStr}  };
 			// don't rebuld on set params!
 			let needRebuild = this.setParams(options, false);
 			if (typeof data.target === 'object') {
-				// if (this._o.isAnimate) {
-				// 	this._body.setAttribute('style', `/* r:${this._normRadius}; */`);
-
-				// 	this._body.setAttribute("r", this._normRadius + this._normRadius/5);
-				// 	this._body.setAttribute('fill-opacity', 0);
-				// 	this._body.setAttribute('stroke-opacity', 0);
-				// }
 				this._data = new Set([data.target]);
-				// needRebuild++
 			}
 			if (needRebuild) {
 				this._build();

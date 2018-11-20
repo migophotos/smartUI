@@ -17,6 +17,85 @@ class SmartPolygons extends SmartWidgets {
 	static getAlias() {
 		return 'stpgn';
 	}
+    /**
+     * build and returns an options object siutable for 'show()' function
+	 *
+	 * input: {
+	 * 	paramKey: value,	// custom prop is param-key
+	 *  paramKey: value		// custorm property is var-param-key
+	 * }
+	 * what = 'options';
+     * output: {
+     *  paramKey: value,	// custom prop is param-key
+     *  varParamKey: value,	// custom property is var-param-key
+     * }
+	 * what = 'any';
+     * output: {
+     *   stpgn-param-key: value,		// custom property is param-key
+     *   stpgn-var-param-key: value,	// custom property is var-param-key
+     * }
+     *
+     * @param {object} opt options object to be converted
+	 * @param {boolean} what the flag that enables (if it has any string exclude 'options' to convert all properties to css vars (used in web-components)
+     * @returns {object} options in form siutable for using
+     *
+     */
+    static buidOptionsAndCssVars(opt, what = 'options') {
+		const customProp = SmartPolygon.getCustomProperties();
+		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, what == 'options' ? '' : SmartPolygons.getAlias());
+	}
+
+	static getOptions(opt) {
+		return SmartPolygons.buidOptionsAndCssVars(opt);
+	}
+	static getCSS(opt) {
+		return SmartPolygons.buidOptionsAndCssVars(opt, 'css');
+	}
+	static getJSON(opt) {
+		return `'${JSON.stringify(SmartPolygons.getOptions(opt))}'`;
+	}
+	static getCompressedJSON(opt) {
+		const customProp = SmartPolygon.getCustomProperties();
+		const defOptions = SmartPolygon.defOptions();
+		const fullJson = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartPolygons.getAlias());
+		return `'${JSON.stringify(fullJson)}'`
+	}
+	/**
+	 * converts JSON representation of options into the options parameters object siutable for show() call
+	 */
+	static JsonToOptions(jsonOpt) {
+		const options = {
+		};
+		if (typeof jsonOpt === 'string' && jsonOpt.length) {
+			const tmpOpt = JSON.parse(jsonOpt);
+			const smartWidgetAlias = SmartWidgets.getAlias();
+			if (typeof tmpOpt[smartWidgetAlias] != 'undefined') {
+				// lets decompress options...
+				const optArr = tmpOpt[smartWidgetAlias].split('-');
+				const customProp = SmartPolygon.getCustomProperties();
+				let index = 1;
+				for (let prop of customProp) {
+					if (optArr[index] != '.') {
+						options[SmartWidgets.customProp2Param(prop)] = optArr[index];
+					}
+					index++;
+				}
+				SmartPolygon.convertNumericProps(options);
+				options.alias = optArr[0];
+				return options;
+			}
+			const aliasKey = `--${SmartPolygons.getAlias()}-`;
+			for (let key in tmpOpt) {
+				const paramName = key.replace(aliasKey, '');
+				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
+			}
+			SmartPolygon.convertNumericProps(options);
+			return options;
+		}
+		return null;
+	}
+
+
     static init(context = {}) {
         if (!window.SmartPolygons) {
             window.SmartPolygons = new SmartPolygons();
@@ -48,68 +127,6 @@ class SmartPolygons extends SmartWidgets {
 }
 
 class SmartPolygon {
-	/**
-	 * converts JSON representation of options into the options parameters object siutable for show() call
-	 */
-	static JsonToOptions(jsonOpt) {
-		const options = {
-		};
-		if (typeof jsonOpt === 'string' && jsonOpt.length) {
-			const tmpOpt = JSON.parse(jsonOpt);
-			const smartWidgetAlias = SmartWidgets.getAlias();
-			if (typeof tmpOpt[smartWidgetAlias] != 'undefined') {
-				// lets decompress options...
-				const optArr = tmpOpt[smartWidgetAlias].split('-');
-				const customProp = SmartPolygon.getCustomProperties();
-				let index = 1;
-				for (let prop of customProp) {
-					if (optArr[index] != '.') {
-						options[SmartWidgets.customProp2Param(prop)] = optArr[index];
-					}
-					index++;
-				}
-				this.convertNumericProps(options);
-				options.alias = optArr[0];
-				return options;
-			}
-			const aliasKey = `--${SmartPolygons.getAlias()}-`;
-			for (let key in tmpOpt) {
-				const paramName = key.replace(aliasKey, '');
-				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
-			}
-			this.convertNumericProps(options);
-			return options;
-		}
-		return null;
-	}
-
-    /**
-     * build and returns an options object siutable for 'show()' function
-	 *
-	 * input: {
-	 * 	paramKey: value,	// custom prop is param-key
-	 *  paramKey: value		// custorm property is var-param-key
-	 * }
-	 * what = 'options';
-     * output: {
-     *  paramKey: value,	// custom prop is param-key
-     *  varParamKey: value,	// custom property is var-param-key
-     * }
-	 * what = 'any';
-     * output: {
-     *   stpgn-param-key: value,		// custom property is param-key
-     *   stpgn-var-param-key: value,	// custom property is var-param-key
-     * }
-     *
-     * @param {object} opt options object to be converted
-	 * @param {boolean} what the flag that enables (if it has any string exclude 'options' to convert all properties to css vars (used in web-components)
-     * @returns {object} options in form siutable for using
-     *
-     */
-    static buidOptionsAndCssVars(opt, what = 'options') {
-		const customProp = SmartPolygon.getCustomProperties();
-		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, what == 'options' ? '' : SmartPolygons.getAlias());
-	}
 
 	/**
 	 * Build text representation of changed options for specific templates
@@ -129,7 +146,7 @@ class SmartPolygon {
 		switch (templateId) {
 			case 'def-custom-elem_btn':
 				// convert all options into css vars
-				dtO = this.buidOptionsAndCssVars(opt, 'css');
+				dtO = SmartPolygons.getCSS(opt);
 
                 template = '&lt;style>\n';
                 template += `  .${className} {\n`;
@@ -142,15 +159,12 @@ class SmartPolygon {
 				template += `&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">browser not support custom elements.&lt/smart-ui-polygon>\n`;
                 break;
 			case 'def-json_btn': {
-				// dtO = this.buidOptionsAndCssVars(opt);
-				const customProp = SmartPolygon.getCustomProperties();
-				const defOptions = SmartPolygon.defOptions();
-				dtO = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartPolygons.getAlias());
-				const jstr = `'${JSON.stringify(dtO)}'`;
+				// const jstr = SmartPolygons.getJSON(opt);	// get dirty parameters in json format
+				const jstr = SmartPolygons.getCompressedJSON(opt); // get all parameters in compressed json format
 				template = `${jstr}`;
 				template += '\n\n';
 				template +=
-				`// later, use static function SmartPolygon.JsonToOptions(options); to convert JSON string
+				`// later, use static function SmartPolygons.JsonToOptions(options); to convert JSON string
 // into 'options' object, sutable for SmartPolygon creation. For example:
 &lt;svg id="dashboard" ....
   &lt;g id="smart-widget">
@@ -167,7 +181,7 @@ if (el) {
   const pgn = new SmartPolygon(jsn, options);
   // or in case you want to change any parameters, convert the JSON string into object
   const options = {
-	  opt: SmartPolygon.JsonToOptions(opt);
+	  opt: SmartPolygons.JsonToOptions(opt);
 	  context: document.getElementById('dashboard'),
   }
   // change the radius of polygon as you want, for ex:
@@ -180,7 +194,7 @@ if (el) {
                 break;
             }
             case 'def-object-params_btn': {
-				dtO = this.buidOptionsAndCssVars(opt);
+				dtO = SmartPolygons.getOptions(opt);
 				let optStr = '';
 				for (let key in dtO) {
 					if (typeof dtO[key] === 'string') {
@@ -412,7 +426,7 @@ ${optStr}  };
 		}
 
 		if (typeof options.opt === 'string' && options.opt.length && options.opt.startsWith(smartWidgetAlias)) {
-			options.opt = SmartPolygon.JsonToOptions(options.opt);
+			options.opt = SmartPolygons.JsonToOptions(options.opt);
 		}
 
         // merge default options with specified
@@ -799,7 +813,7 @@ ${optStr}  };
 			// check for options in JSON format and convert its to object in this case
 			const smartWidgetAlias = SmartWidgets.getAlias();
 			if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
-				options = SmartPolygon.JsonToOptions(options);
+				options = SmartPolygons.JsonToOptions(options);
 			}
             // validate and merge with own _o
             SmartPolygon.convertNumericProps(options);

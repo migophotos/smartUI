@@ -146,7 +146,18 @@ class SmartWidgets {
 			tooltip: '$TARGET_NAME'
 		};
 		return df;
-    }
+	}
+	static setAttributes(elems, attrs) {
+		for (let el of elems) {
+			for (let attr in attrs) {
+				if (attr === 'text') {
+					el.textContent = attrs[attr];
+				} else {
+					el.setAttribute(attr, attrs[attr]);
+				}
+			}
+		}
+	}
     // creates svg element, sets attributes and append it to parent, if it not null
 	// the new element returned
 	// usage example: createElement('circle',{cx:50,cy:50,r:10})
