@@ -559,7 +559,7 @@ ${optStr}  };
 			// build the clip rectangle here, or chang it's size
 			if (rebuildActive !== 'none') {
 				SmartWidgets.addElement('rect', {
-					class: this._o.isAnimate ? 'animated' : ' ',
+					class: this._o.isAnimate ? 'stpgn animated' : 'stpgn',
 					x: activeRect.x,
 					y: activeRect.y,
 					width: activeRect.width,
@@ -605,12 +605,9 @@ ${optStr}  };
             y: this._rect.y + this._normRadius
 		};
 		if (this._o.role === 'demoMode') {
-			this._boundary = SmartWidgets.addElement('g', {
-				class: 'stpgn'
-			}, this._svgroot, this._svgdoc);
+			this._boundary = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
 			if (this._boundary) {
 				SmartWidgets.addElement('rect', {
-					class: 'stpgn',
 					x: this._rect.x,
 					y: this._rect.y,
 					width: this._rect.width,
@@ -620,7 +617,6 @@ ${optStr}  };
 					fill: 'none'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('circle', {
-					class: 'stpgn',
 					cx: centerPt.x,
 					cy: centerPt.y,
 					r: this._normRadius,
@@ -629,7 +625,6 @@ ${optStr}  };
 					fill: 'none'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
-					class: 'stpgn',
 					x1: this._rect.x,
 					y1: this._rect.y,
 					x2: this._rect.x + this._rect.width,
@@ -638,7 +633,6 @@ ${optStr}  };
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
-					class: 'stpgn',
 					x1: this._rect.x + this._rect.width,
 					y1: this._rect.y,
 					x2: this._rect.x,
@@ -647,7 +641,6 @@ ${optStr}  };
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
-					class: 'stpgn',
 					x1: this._rect.x + this._rect.width / 2,
 					y1: this._rect.y,
 					x2: this._rect.x + this._rect.width / 2,
@@ -656,7 +649,6 @@ ${optStr}  };
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
-					class: 'stpgn',
 					x1: this._rect.x,
 					y1: this._rect.y + this._rect.height / 2,
 					x2: this._rect.x + this._rect.width,
@@ -681,6 +673,7 @@ ${optStr}  };
 		}, this._svgroot, this._svgdoc);
 
 		this._bodyActive = SmartWidgets.addElement('polygon', {
+            // id: 'bodyActive',
             class: this._o.isAnimate ? 'stpgn animated' : 'stpgn',
             stroke: this._o.varStrokeColor,
             fill: this._o.varFillColor,

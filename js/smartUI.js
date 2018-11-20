@@ -568,6 +568,10 @@ if (!customElements.get('smart-ui-edittext')) {
         switch (name) {
             case 'value': {
                 let result = this.convertAndValidate(newValue);
+                // the first value is a default. Double click on slider will restore the current value to it
+                if (typeof this._firstValue === 'undefined') {
+                    this._firstValue = result;
+                }
                 this._o.value = result;
                 this._input.value = `${result} ${this._o.units}`;
                 this._slider.value = this._o.value;
@@ -576,7 +580,9 @@ if (!customElements.get('smart-ui-edittext')) {
         }
     }
 
-
+    clear() {
+        delete this._firstValue;
+    }
     convertAndValidate(val) {
         let result = null;
         if (parseFloat(this._o.step) - parseInt(this._o.step, 10) != 0) {
@@ -604,6 +610,9 @@ if (!customElements.get('smart-ui-edittext')) {
         }
         // convert to numbers
         utils.convertNumericProps(this._o);
+        if (this._o.value != '') {
+            this._firstValue = this._o.value;
+        }
         // get references to controls
         this._input  = this._shadowDOM.getElementById('IC');    // input
         this._minus  = this._shadowDOM.getElementById('MB');    // buttton '-'
@@ -630,6 +639,15 @@ if (!customElements.get('smart-ui-edittext')) {
 
             this._input.value = `${this._o.value} ${this._o.units}`;
         });
+
+		this._slider.addEventListener('dblclick', (evt) => {
+            if (typeof this._firstValue !== 'undefined') {
+                this._o.value = this._firstValue;
+                this.setAttribute('value', `${this._o.value}`);
+                this._input.value = `${this._o.value} ${this._o.units}`;
+            }
+        });
+
         // this._input.addEventListener('input', (evt) => {
         //     let result = this.convertAndValidate(this._input.value);
         //     this._o.value = result;

@@ -1303,7 +1303,11 @@
                         for (let el of els) {
                             const optionNameAttr = el.attributes['param'].value;
                             let optionName = SmartWidgets.customProp2Param(optionNameAttr);
-                            let optionValue = allParams[optionName]
+                            let optionValue = allParams[optionName];
+                            // clear original content before setting new
+                            if (typeof el.clear === 'function') {
+                                el.clear();
+                            }
                             el.setAttribute('value', `${optionValue}`);
                         }
                     }
