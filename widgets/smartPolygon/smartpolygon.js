@@ -41,7 +41,7 @@ class SmartPolygons extends SmartWidgets {
      *
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
-		const customProp = SmartPolygon.getCustomProperties();
+		const customProp = SmartPolygons.getCustomProperties();
 		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, what == 'options' ? '' : SmartPolygons.getAlias());
 	}
 
@@ -55,8 +55,8 @@ class SmartPolygons extends SmartWidgets {
 		return `'${JSON.stringify(SmartPolygons.getOptions(opt))}'`;
 	}
 	static getCompressedJSON(opt) {
-		const customProp = SmartPolygon.getCustomProperties();
-		const defOptions = SmartPolygon.defOptions();
+		const customProp = SmartPolygons.getCustomProperties();
+		const defOptions = SmartPolygons.defOptions();
 		const fullJson = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartPolygons.getAlias());
 		return `'${JSON.stringify(fullJson)}'`
 	}
@@ -72,7 +72,7 @@ class SmartPolygons extends SmartWidgets {
 			if (typeof tmpOpt[smartWidgetAlias] != 'undefined') {
 				// lets decompress options...
 				const optArr = tmpOpt[smartWidgetAlias].split('-');
-				const customProp = SmartPolygon.getCustomProperties();
+				const customProp = SmartPolygons.getCustomProperties();
 				let index = 1;
 				for (let prop of customProp) {
 					if (optArr[index] != '.') {
@@ -80,7 +80,7 @@ class SmartPolygons extends SmartWidgets {
 					}
 					index++;
 				}
-				SmartPolygon.convertNumericProps(options);
+				SmartPolygons.convertNumericProps(options);
 				options.alias = optArr[0];
 				return options;
 			}
@@ -89,141 +89,11 @@ class SmartPolygons extends SmartWidgets {
 				const paramName = key.replace(aliasKey, '');
 				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
 			}
-			SmartPolygon.convertNumericProps(options);
+			SmartPolygons.convertNumericProps(options);
 			return options;
 		}
 		return null;
 	}
-
-
-    static init(context = {}) {
-        if (!window.SmartPolygons) {
-            window.SmartPolygons = new SmartPolygons();
-        }
-        window.SmartPolygons.init(context);
-    }
-    static addElement(type, params, parent = null, doc = null) {
-        return super.addElement(type, params, parent, doc);
-    }
-
-    constructor() {
-        super();
-		this._alias = SmartPolygons.getAlias();
-		this.uniqueId = this._makeId(SmartPolygons.getAlias(), 0);
-	}
-
-	initCtrl(id, options) {
-		let ctrl = this.get(id);
-		if (!ctrl) {
-			ctrl = new SmartPolygon(id, options);
-			if (ctrl) {
-				ctrl.init(options);
-			}
-		}
-	}
-	unInitCtrl(id) {
-        // todo....
-	}
-}
-
-class SmartPolygon {
-
-	/**
-	 * Build text representation of changed options for specific templates
-	 * @param {object} opt Options
-	 * @param {string} templateId Specific template name.
-	 * The one from next: 'def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'
-	 */
-    static serializeOptions(opt, templateId) {
-		let template = '', className;
-		let dtO = null;
-		// disable emulation (this.option only for builder!)
-		if (typeof opt.isEmulate !== 'undefined') {
-			delete opt.isEmulate;
-		}
-
-		className = `${opt.isStar ? 'star' : 'polygon'}-${opt.anglesNumber}`;
-		switch (templateId) {
-			case 'def-custom-elem_btn':
-				// convert all options into css vars
-				dtO = SmartPolygons.getCSS(opt);
-
-                template = '&lt;style>\n';
-                template += `  .${className} {\n`;
-                // template += `    `
-                for (let key in dtO) {
-                    template += `    ${key}:${dtO[key]};\n`;
-                }
-                template += '  }\n';
-                template += '&lt;/style>\n';
-				template += `&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">browser not support custom elements.&lt/smart-ui-polygon>\n`;
-                break;
-			case 'def-json_btn': {
-				// const jstr = SmartPolygons.getJSON(opt);	// get dirty parameters in json format
-				const jstr = SmartPolygons.getCompressedJSON(opt); // get all parameters in compressed json format
-				template = `${jstr}`;
-				template += '\n\n';
-				template +=
-				`// later, use static function SmartPolygons.JsonToOptions(options); to convert JSON string
-// into 'options' object, sutable for SmartPolygon creation. For example:
-&lt;svg id="dashboard" ....
-  &lt;g id="smart-widget">
-  ....
-&lt;/svg>
-....
-const el = document.getElementById("smart-widget");
-if (el) {
-  const options = {
-	  context: document.getElementById('dashboard'),
-	  opt: ${jstr};
-  };
-  // create an instance of SmartPolygon widget
-  const pgn = new SmartPolygon(jsn, options);
-  // or in case you want to change any parameters, convert the JSON string into object
-  const options = {
-	  opt: SmartPolygons.JsonToOptions(opt);
-	  context: document.getElementById('dashboard'),
-  }
-  // change the radius of polygon as you want, for ex:
-  options.opt.radius = 50;
-
-  // and create an instanse of SmartPolygon widget
-  const pgn = new SmartPolygon(jsn, options);
-}
-`;
-                break;
-            }
-            case 'def-object-params_btn': {
-				dtO = SmartPolygons.getOptions(opt);
-				let optStr = '';
-				for (let key in dtO) {
-					if (typeof dtO[key] === 'string') {
-						optStr += `  ${key}: '${dtO[key]}',\n`;
-					} else {
-						optStr += `  ${key}: ${dtO[key]},\n`;
-					}
-				}
-				template +=
-				`
-const el = document.getElementById("jsn");
-if (el) {
-  const options = {
-${optStr}  };
-  // change the radius of polygon as you want, for ex:
-  options.radius = 50;
-  // create an instanse
-  const pgn = new SmartPolygon(jsn, options);
-}
-`;
-				break;
-			}
-            case 'def-svg_widget_btn':
-                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
-                break;
-        }
-        return template;
-	}
-
 	/**
 	 * Returns an array of custom properties. Each of the custom property has corresponding declarative attribute in form first-second == prefix-first-second
 	 * and option parameter with name "firstSecond".
@@ -368,6 +238,135 @@ ${optStr}  };
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
     }
+
+    static init(context = {}) {
+        if (!window.SmartPolygons) {
+            window.SmartPolygons = new SmartPolygons();
+        }
+        window.SmartPolygons.init(context);
+    }
+    static addElement(type, params, parent = null, doc = null) {
+        return super.addElement(type, params, parent, doc);
+    }
+
+    constructor() {
+        super();
+		this._alias = SmartPolygons.getAlias();
+		this.uniqueId = this._makeId(SmartPolygons.getAlias(), 0);
+	}
+
+	initCtrl(id, options) {
+		let ctrl = this.get(id);
+		if (!ctrl) {
+			ctrl = new SmartPolygon(id, options);
+			if (ctrl) {
+				ctrl.init(options);
+			}
+		}
+	}
+	unInitCtrl(id) {
+        // todo....
+	}
+}
+
+class SmartPolygon {
+
+	/**
+	 * Build text representation of changed options for specific templates
+	 * @param {object} opt Options
+	 * @param {string} templateId Specific template name.
+	 * The one from next: 'def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'
+	 */
+    static serializeOptions(opt, templateId) {
+		let template = '', className;
+		let dtO = null;
+		// disable emulation (this.option only for builder!)
+		if (typeof opt.isEmulate !== 'undefined') {
+			delete opt.isEmulate;
+		}
+
+		className = `${opt.isStar ? 'star' : 'polygon'}-${opt.anglesNumber}`;
+		switch (templateId) {
+			case 'def-custom-elem_btn':
+				// convert all options into css vars
+				dtO = SmartPolygons.getCSS(opt);
+
+                template = '&lt;style>\n';
+                template += `  .${className} {\n`;
+                // template += `    `
+                for (let key in dtO) {
+                    template += `    ${key}:${dtO[key]};\n`;
+                }
+                template += '  }\n';
+                template += '&lt;/style>\n';
+				template += `&lt;smart-ui-polygon class="${className}" id="ANY_UNIQUE_NUMBER">browser not support custom elements.&lt/smart-ui-polygon>\n`;
+                break;
+			case 'def-json_btn': {
+				// const jstr = SmartPolygons.getJSON(opt);	// get dirty parameters in json format
+				const jstr = SmartPolygons.getCompressedJSON(opt); // get all parameters in compressed json format
+				template = `${jstr}`;
+				template += '\n\n';
+				template +=
+				`// later, use static function SmartPolygons.JsonToOptions(options); to convert JSON string
+// into 'options' object, sutable for SmartPolygon creation. For example:
+&lt;svg id="dashboard" ....
+  &lt;g id="smart-widget">
+  ....
+&lt;/svg>
+....
+const el = document.getElementById("smart-widget");
+if (el) {
+  const options = {
+	  context: document.getElementById('dashboard'),
+	  opt: ${jstr};
+  };
+  // create an instance of SmartPolygon widget
+  const pgn = new SmartPolygon(jsn, options);
+  // or in case you want to change any parameters, convert the JSON string into object
+  const options = {
+	  opt: SmartPolygons.JsonToOptions(opt);
+	  context: document.getElementById('dashboard'),
+  }
+  // change the radius of polygon as you want, for ex:
+  options.opt.radius = 50;
+
+  // and create an instanse of SmartPolygon widget
+  const pgn = new SmartPolygon(jsn, options);
+}
+`;
+                break;
+            }
+            case 'def-object-params_btn': {
+				dtO = SmartPolygons.getOptions(opt);
+				let optStr = '';
+				for (let key in dtO) {
+					if (typeof dtO[key] === 'string') {
+						optStr += `  ${key}: '${dtO[key]}',\n`;
+					} else {
+						optStr += `  ${key}: ${dtO[key]},\n`;
+					}
+				}
+				template +=
+				`
+const el = document.getElementById("jsn");
+if (el) {
+  const options = {
+${optStr}  };
+  // change the radius of polygon as you want, for ex:
+  options.radius = 50;
+  // create an instanse
+  const pgn = new SmartPolygon(jsn, options);
+}
+`;
+				break;
+			}
+            case 'def-svg_widget_btn':
+                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+                break;
+        }
+        return template;
+	}
+
 	/**
 	 *
 	 * @param {string} id
@@ -388,23 +387,14 @@ ${optStr}  };
                 overflow: visible;
 				--no-color:	none;
             }
-			.run {
-				fill: var(--run-color);
-			}
-			.stop {
-				fill: var(--stop-color);
-			}
-			.shadowed {
+			.stpgn.shadowed {
 				filter: url(#drop-shadow);
 			}
-			.linked {
+			.stpgn.linked {
 				cursor: pointer;
 			}
-			.animated {
+			.stpgn.animated {
 				transition:all 1.5s;
-			}
-			.animated:hover {
-				r: 0;
 			}
 		`;
 		let gId = id;
@@ -415,10 +405,11 @@ ${optStr}  };
 		if (elem && elem.tagName === 'DIV') {
 			const elemId = window.SmartPolygons.getId();
 			const svgId = `${id}--${SmartPolygons.getAlias()}`;
-			elem.innerHTML = `${SmartWidgets.getSVGContext(svgId, elemId)}`;
+			this._shadowDOM = elem.attachShadow({mode: 'open'});
+			this._shadowDOM.innerHTML = `${SmartWidgets.getSVGContext(svgId, elemId)}`;
 			options = {
 				mode: 'html',
-				context: document.getElementById(svgId),
+				context: this._shadowDOM.getElementById(svgId),
 				opt: options
 			};
 			window.SmartBars.set(id, this);
@@ -430,9 +421,9 @@ ${optStr}  };
 		}
 
         // merge default options with specified
-        this._o = Object.assign({}, SmartPolygon.defOptions(), options.opt || {});
+        this._o = Object.assign({}, SmartPolygons.defOptions(), options.opt || {});
         // validate all properties
-        SmartPolygon.convertNumericProps(this._o);
+        SmartPolygons.convertNumericProps(this._o);
 
         this._mode      = options.mode || null; // in case of 'custom elements' initialization the 'mode' equals 'html'
         this.id         = gId; // <g id> inside of <svg>
@@ -447,10 +438,20 @@ ${optStr}  };
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
-        const style = SmartWidgets.addElement('style', {}, this._root, this._svgdoc);
-        style.textContent = txtStyle;
-        this._defs = SmartWidgets.addElement('defs', {}, this._root, this._svgdoc);
-		this._defs.innerHTML = window.SmartPolygons.defs;
+		let tmpId = `style--${SmartPolygons.getAlias()}`;
+		if (!this._root.getElementById(tmpId)) {
+			const style = SmartWidgets.addElement('style', {
+				id: tmpId
+			}, this._root, this._svgdoc);
+			style.textContent = txtStyle;
+		}
+		tmpId = `defs--${SmartPolygons.getAlias()}`;
+		if (!this._root.getElementById(tmpId)) {
+			this._defs = SmartWidgets.addElement('defs', {
+				id: tmpId
+			}, this._root, this._svgdoc);
+			this._defs.innerHTML = window.SmartPolygons.defs;
+		}
 		this._active = SmartWidgets.addElement('clipPath', {id: 'activeRect'}, this._root, this._svgdoc);
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
@@ -604,9 +605,12 @@ ${optStr}  };
             y: this._rect.y + this._normRadius
 		};
 		if (this._o.role === 'demoMode') {
-			this._boundary = SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc);
+			this._boundary = SmartWidgets.addElement('g', {
+				class: 'stpgn'
+			}, this._svgroot, this._svgdoc);
 			if (this._boundary) {
 				SmartWidgets.addElement('rect', {
+					class: 'stpgn',
 					x: this._rect.x,
 					y: this._rect.y,
 					width: this._rect.width,
@@ -616,6 +620,7 @@ ${optStr}  };
 					fill: 'none'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('circle', {
+					class: 'stpgn',
 					cx: centerPt.x,
 					cy: centerPt.y,
 					r: this._normRadius,
@@ -624,6 +629,7 @@ ${optStr}  };
 					fill: 'none'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
+					class: 'stpgn',
 					x1: this._rect.x,
 					y1: this._rect.y,
 					x2: this._rect.x + this._rect.width,
@@ -632,6 +638,7 @@ ${optStr}  };
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
+					class: 'stpgn',
 					x1: this._rect.x + this._rect.width,
 					y1: this._rect.y,
 					x2: this._rect.x,
@@ -640,6 +647,7 @@ ${optStr}  };
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
+					class: 'stpgn',
 					x1: this._rect.x + this._rect.width / 2,
 					y1: this._rect.y,
 					x2: this._rect.x + this._rect.width / 2,
@@ -648,6 +656,7 @@ ${optStr}  };
 					'stroke-dasharray': '4 2'
 				}, this._boundary, this._svgdoc);
 				SmartWidgets.addElement('line', {
+					class: 'stpgn',
 					x1: this._rect.x,
 					y1: this._rect.y + this._rect.height / 2,
 					x2: this._rect.x + this._rect.width,
@@ -660,7 +669,7 @@ ${optStr}  };
         // add base element to svg
         this._body = SmartWidgets.addElement('polygon', {
             // id: 'body',
-            class: this._o.isAnimate ? 'animated' : ' ',
+            class: this._o.isAnimate ? 'stpgn animated' : 'stpgn',
             stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
             fill: `${this._o.isFillBkg ? this._o.varFillColor : 'none'}`,
             'stroke-width': this._o.varStrokeWidth,
@@ -672,8 +681,7 @@ ${optStr}  };
 		}, this._svgroot, this._svgdoc);
 
 		this._bodyActive = SmartWidgets.addElement('polygon', {
-            // id: 'bodyActive',
-            class: this._o.isAnimate ? 'animated' : ' ',
+            class: this._o.isAnimate ? 'stpgn animated' : 'stpgn',
             stroke: this._o.varStrokeColor,
             fill: this._o.varFillColor,
             'stroke-width': this._o.varStrokeWidth,
@@ -816,7 +824,7 @@ ${optStr}  };
 				options = SmartPolygons.JsonToOptions(options);
 			}
             // validate and merge with own _o
-            SmartPolygon.convertNumericProps(options);
+            SmartPolygons.convertNumericProps(options);
             this._o = Object.assign({}, this._o, options);
         }
         const rc = this._svgroot.firstElementChild;
@@ -1002,8 +1010,8 @@ ${optStr}  };
 		return dataEx;
 	}
 	getParams(filter = 'all') {
-		const customProp = SmartPolygon.getCustomProperties();
-		const defOptions = SmartPolygon.defOptions();
+		const customProp = SmartPolygons.getCustomProperties();
+		const defOptions = SmartPolygons.defOptions();
 		return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
 	}
 	setParam(name, value) {
@@ -1013,7 +1021,7 @@ ${optStr}  };
 		const opt = {};
 		opt[name] = value;
 		// convert to numbers specified by name property
-		SmartPolygon.convertNumericProps(opt, name);
+		SmartPolygons.convertNumericProps(opt, name);
 
 		if (this._body) {
 			this.setParams(opt);
@@ -1026,7 +1034,7 @@ ${optStr}  };
 	 */
 	resetParams(options = null) {
 		if (options) {
-			this._o = Object.assign({}, SmartPolygon.defOptions(), options);
+			this._o = Object.assign({}, SmartPolygons.defOptions(), options);
 			this._build();
 		}
 	}
@@ -1036,7 +1044,7 @@ ${optStr}  };
 			return false;
 		}
 		// convert all known properties to numbers
-		SmartPolygon.convertNumericProps(options);
+		SmartPolygons.convertNumericProps(options);
 		this._o = Object.assign({}, this._o, options);
 
 		// some properties changing requires rebuilding, lets find its!
@@ -1134,7 +1142,7 @@ class SmartPolygonElement extends HTMLElement {
 
 	// attributes changing processing
 	static get observedAttributes() {
-		return SmartPolygon.getCustomProperties();
+		return SmartPolygons.getCustomProperties();
 	}
 	attributeChangedCallback(name, oldValue, newValue) {
 		// update own property
@@ -1147,7 +1155,7 @@ class SmartPolygonElement extends HTMLElement {
     connectedCallback() {
 		// getting properties in form 'stpgn-XXX' and 'sttip-var-XXX' from styles
 		const compStyle = getComputedStyle(this);
-		const customProp = SmartPolygon.getCustomProperties();
+		const customProp = SmartPolygons.getCustomProperties();
 		for (let n = 0; n < customProp.length; n++) {
 			const prop = `--${SmartPolygons.getAlias()}-${customProp[n]}`;
 			const propKey = SmartPolygons.customProp2Param(`${customProp[n]}`);

@@ -42,7 +42,7 @@ class SmartBars extends SmartWidgets {
      *
      */
     static buidOptionsAndCssVars(opt, what = 'options') {
-		const customProp = SmartBar.getCustomProperties();
+		const customProp = SmartBars.getCustomProperties();
 		return SmartWidgets.buidOptionsAndCssVars(opt, customProp, what == 'options' ? '' : SmartBars.getAlias());
 	}
 
@@ -56,8 +56,8 @@ class SmartBars extends SmartWidgets {
 		return `'${JSON.stringify(SmartBars.getOptions(opt))}'`;
 	}
 	static getCompressedJSON(opt) {
-		const customProp = SmartBar.getCustomProperties();
-		const defOptions = SmartBar.defOptions();
+		const customProp = SmartBars.getCustomProperties();
+		const defOptions = SmartBars.defOptions();
 		const fullJson = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartBars.getAlias());
 		return `'${JSON.stringify(fullJson)}'`
 	}
@@ -81,7 +81,7 @@ class SmartBars extends SmartWidgets {
 			if (typeof tmpOpt[smartWidgetAlias] != 'undefined') {
 				// lets decompress options...
 				const optArr = tmpOpt[smartWidgetAlias].split('-');
-				const customProp = SmartBar.getCustomProperties();
+				const customProp = SmartBars.getCustomProperties();
 				let index = 1;
 				for (let prop of customProp) {
 					if (optArr[index] != '.') {
@@ -89,7 +89,7 @@ class SmartBars extends SmartWidgets {
 					}
 					index++;
 				}
-				SmartBar.convertNumericProps(options);
+				SmartBars.convertNumericProps(options);
 				options.alias = optArr[0];
 				return options;
 			}
@@ -98,128 +98,10 @@ class SmartBars extends SmartWidgets {
 				const paramName = key.replace(aliasKey, '');
 				options[SmartWidgets.customProp2Param(paramName)] = tmpOpt[key];
 			}
-			SmartBar.convertNumericProps(options);
+			SmartBars.convertNumericProps(options);
 			return options;
 		}
 		return null;
-	}
-	
-    static addElement(type, params, parent = null, doc = null) {
-        return super.addElement(type, params, parent, doc);
-    }
-
-    constructor() {
-		super();
-		this._alias = SmartBars.getAlias();
-		this.uniqueId = this._makeId(this._alias, 0);
-	}
-
-	initCtrl(id, options) {
-		let ctrl = this.get(id);
-		if (!ctrl) {
-			ctrl = new SmartBar(id, options);
-			if (ctrl) {
-				ctrl.init(options);
-			}
-		}
-	}
-	unInitCtrl(id) {
-        // todo....  #E3D44D
-	}
-}
-
-class SmartBar {
-
-	/**
-	 * Build text representation of changed options for specific templates
-	 * @param {object} opt Options
-	 * @param {string} templateId Specific template name.
-	 * The one from next: 'def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'
-	 */
-    static serializeOptions(opt, templateId) {
-		let template = '', className;
-		let dtO = null;
-		// disable emulation (this.option only for builder!)
-		if (typeof opt.isEmulate !== 'undefined') {
-			delete opt.isEmulate;
-		}
-
-		className = `${opt.orient == 'ver' ? 'vert' : 'hor'}-${opt.type == 'discrete' ? 'dots' : 'line'}`;
-		switch (templateId) {
-			case 'def-custom-elem_btn':
-				// convert all options into css vars
-				dtO = SmartBars.getCSS(opt);
-                template = '&lt;style>\n';
-                template += `  .${className} {\n`;
-                // template += `    `
-                for (let key in dtO) {
-                    template += `    ${key}:${dtO[key]};\n`;
-                }
-                template += '  }\n';
-                template += '&lt;/style>\n';
-				template += `&lt;smart-ui-bar class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-bar>\n`;
-                break;
-			case 'def-json_btn': {
-				// const jstr = SmartBar.getJSON(opt);	// get dirty parameters in json format
-				const jstr = SmartBars.getCompressedJSON(opt); // get all parameters in compressed json format
-				template = `${jstr}`;
-				template += '\n\n';
-				template +=
-				`// later, use static function SmartBars.JsonToOptions(options); to convert JSON string
-// into 'options' object, sutable for SmartBar creation. For example:
-&lt;svg id="dashboard" ....
-  &lt;g id="smart-widget">
-  ....
-&lt;/svg>
-....
-const el = document.getElementById("smart-widget");
-if (el) {
-  const options = {
-	  context: document.getElementById('dashboard'),
-	  opt: ${jstr};
-  };
-  // create an instance of SmartPolygon widget
-  const pgn = new SmartBar(jsn, options);
-  // or in case you want to change any parameters, convert the JSON string into object
-  const options = {
-	  opt: SmartBars.JsonToOptions(opt);
-	  context: document.getElementById('dashboard'),
-  }
-  // change the width of bar as you want, for ex:
-  options.width = 120;
-  // and create an instanse of SmartBar widget
-  const bar = new SmartBar(jsn, options);
-}
-`;
-                break;
-            }
-            case 'def-object-params_btn': {
-				dtO = SmartBars.getOptions(opt);
-				let optStr = '';
-				for (let key in dtO) {
-					if (typeof dtO[key] === 'string') {
-						optStr += `  ${key}: '${dtO[key]}',\n`;
-					} else {
-						optStr += `  ${key}: ${dtO[key]},\n`;
-					}
-				}
-				template +=
-				`
-const el = document.getElementById("jsn");
-if (el) {
-  const options = {
-${optStr}  };
-  // create an instanse
-  const bar = new SmartBar(jsn, options);
-}
-`;
-				break;
-			}
-            case 'def-svg_widget_btn':
-                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
-                break;
-        }
-        return template;
 	}
 	/**
 	 * Returns an array of custom properties. Each of the custom property has corresponding declarative attribute in form first-second == prefix-first-second
@@ -373,6 +255,120 @@ ${optStr}  };
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
 	}
+	
+    constructor() {
+		super();
+		this._alias = SmartBars.getAlias();
+		this.uniqueId = this._makeId(this._alias, 0);
+	}
+
+	initCtrl(id, options) {
+		let ctrl = this.get(id);
+		if (!ctrl) {
+			ctrl = new SmartBar(id, options);
+			if (ctrl) {
+				ctrl.init(options);
+			}
+		}
+	}
+	unInitCtrl(id) {
+        // todo....  #E3D44D
+	}
+}
+
+class SmartBar {
+
+	/**
+	 * Build text representation of changed options for specific templates
+	 * @param {object} opt Options
+	 * @param {string} templateId Specific template name.
+	 * The one from next: 'def-custom-elem_btn', 'def-json_btn', 'def-object-params_btn', 'def-svg_widget_btn'
+	 */
+    static serializeOptions(opt, templateId) {
+		let template = '', className;
+		let dtO = null;
+		// disable emulation (this.option only for builder!)
+		if (typeof opt.isEmulate !== 'undefined') {
+			delete opt.isEmulate;
+		}
+
+		className = `${opt.orient == 'ver' ? 'vert' : 'hor'}-${opt.type == 'discrete' ? 'dots' : 'line'}`;
+		switch (templateId) {
+			case 'def-custom-elem_btn':
+				// convert all options into css vars
+				dtO = SmartBars.getCSS(opt);
+                template = '&lt;style>\n';
+                template += `  .${className} {\n`;
+                // template += `    `
+                for (let key in dtO) {
+                    template += `    ${key}:${dtO[key]};\n`;
+                }
+                template += '  }\n';
+                template += '&lt;/style>\n';
+				template += `&lt;smart-ui-bar class="${className}" id="ANY_UNIQUE_NUMBER">This browser does not support custom elements.&lt/smart-ui-bar>\n`;
+                break;
+			case 'def-json_btn': {
+				// const jstr = SmartBar.getJSON(opt);	// get dirty parameters in json format
+				const jstr = SmartBars.getCompressedJSON(opt); // get all parameters in compressed json format
+				template = `${jstr}`;
+				template += '\n\n';
+				template +=
+				`// later, use static function SmartBars.JsonToOptions(options); to convert JSON string
+// into 'options' object, sutable for SmartBar creation. For example:
+&lt;svg id="dashboard" ....
+  &lt;g id="smart-widget">
+  ....
+&lt;/svg>
+....
+const el = document.getElementById("smart-widget");
+if (el) {
+  const options = {
+	  context: document.getElementById('dashboard'),
+	  opt: ${jstr};
+  };
+  // create an instance of SmartPolygon widget
+  const pgn = new SmartBar(jsn, options);
+  // or in case you want to change any parameters, convert the JSON string into object
+  const options = {
+	  opt: SmartBars.JsonToOptions(opt);
+	  context: document.getElementById('dashboard'),
+  }
+  // change the width of bar as you want, for ex:
+  options.width = 120;
+  // and create an instanse of SmartBar widget
+  const bar = new SmartBar(jsn, options);
+}
+`;
+                break;
+            }
+            case 'def-object-params_btn': {
+				dtO = SmartBars.getOptions(opt);
+				let optStr = '';
+				for (let key in dtO) {
+					if (typeof dtO[key] === 'string') {
+						optStr += `  ${key}: '${dtO[key]}',\n`;
+					} else {
+						optStr += `  ${key}: ${dtO[key]},\n`;
+					}
+				}
+				template +=
+				`
+const el = document.getElementById("jsn");
+if (el) {
+  const options = {
+${optStr}  };
+  // create an instanse
+  const bar = new SmartBar(jsn, options);
+}
+`;
+				break;
+			}
+            case 'def-svg_widget_btn':
+                template = '&ltsmart-ui-custom-element class="smart-ui-custom-elem">Yout browser does not support custom elements.&lt/smart-ui-custom-element>';
+                break;
+        }
+        return template;
+	}
 	/**
 	 *
 	 * @param {string} id
@@ -393,23 +389,14 @@ ${optStr}  };
                 overflow: visible;
 				--no-color:	none;
             }
-			.run {
-				fill: var(--run-color);
-			}
-			.stop {
-				fill: var(--stop-color);
-			}
-			.shadowed {
+			.stbar.shadowed {
 				filter: url(#drop-shadow);
 			}
-			.linked {
+			.stbar.linked {
 				cursor: pointer;
 			}
-			.animated {
+			.stbar.animated {
 				transition:all 1.5s;
-			}
-			.animated:hover {
-				r: 0;
 			}
 		`;
 		let gId = id;
@@ -420,10 +407,11 @@ ${optStr}  };
 		if (elem && elem.tagName === 'DIV') {
 			const elemId = window.SmartBars.getId();
 			const svgId = `${id}--${SmartBars.getAlias()}`;
-			elem.innerHTML = `${SmartWidgets.getSVGContext(svgId, elemId)}`;
+			this._shadowDOM = elem.attachShadow({mode: 'open'});
+			this._shadowDOM.innerHTML = `${SmartWidgets.getSVGContext(svgId, elemId)}`;
 			options = {
 				mode: 'html',
-				context: document.getElementById(svgId),
+				context: this._shadowDOM.getElementById(svgId),
 				opt: options
 			};
 			window.SmartBars.set(id, this);
@@ -435,9 +423,9 @@ ${optStr}  };
 		}
 
         // merge default options with specified
-        this._o = Object.assign({}, SmartBar.defOptions(), options.opt || {});
+        this._o = Object.assign({}, SmartBars.defOptions(), options.opt || {});
         // validate all properties
-        SmartBar.convertNumericProps(this._o);
+        SmartBars.convertNumericProps(this._o);
 
         this._mode      = options.mode || null; // in case of 'custom elements' initialization the 'mode' equals 'html'
         this.id         = gId; // <g id> inside of <svg>
@@ -458,10 +446,20 @@ ${optStr}  };
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
-        const style = SmartWidgets.addElement('style', {}, this._root, this._svgdoc);
-        style.textContent = txtStyle;
-        this._defs = SmartWidgets.addElement('defs', {}, this._root, this._svgdoc);
-		this._defs.innerHTML = window.SmartBars.defs;
+		let tmpId = `style--${SmartBars.getAlias()}`;
+		if (!this._root.getElementById(tmpId)) {
+			const style = SmartWidgets.addElement('style', {
+				id: tmpId
+			}, this._root, this._svgdoc);
+			style.textContent = txtStyle;
+		}
+		tmpId = `defs--${SmartBars.getAlias()}`
+		if (!this._root.getElementById(tmpId)) {
+			this._defs = SmartWidgets.addElement('defs', {
+				id: tmpId
+			}, this._root, this._svgdoc);
+			this._defs.innerHTML = window.SmartBars.defs;
+		}
 		this._active = SmartWidgets.addElement('clipPath', {id: `${this.id}-activeRect`}, this._svgroot, this._svgdoc);
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
@@ -640,6 +638,7 @@ ${optStr}  };
 						}
 
 						SmartWidgets.addElement('rect', {
+							class: 'stbar',
 							x: left,
 							y: top,
 							width: width,
@@ -715,7 +714,7 @@ ${optStr}  };
 							});
 						} else {
 							SmartWidgets.addElement('rect', {
-								class: this._o.isAnimate ? 'animated' : ' ',
+								class: this._o.isAnimate ? 'stbar animated' : 'stbar',
 								x: activeRect.x,
 								y: activeRect.y,
 								width: activeRect.width,
@@ -861,7 +860,7 @@ ${optStr}  };
 
 		// Create body rectangle
 		this._body = SmartWidgets.addElement('rect', {
-			class: this._o.isAnimate ? 'animated' : ' ',
+			class: `stbar ${this._o.isAnimate ? 'animated' : ' '}`,
 			stroke: `${this._o.isFillStroke ? this._o.varStrokeColor : 'none'}`,
 			fill: `${this._o.isFillBkg ? this._o.varFillColor : 'none'}`,
 			'stroke-width': this._o.varStrokeWidth,
@@ -874,7 +873,7 @@ ${optStr}  };
 		}, this._svgroot, this._svgdoc);
 
 		// Create group for thresholds
-		this._activeThrs = SmartWidgets.addElement('g', {class: 'thresholds'}, this._svgroot, this._svgdoc);
+		this._activeThrs = SmartWidgets.addElement('g', {class: 'stbar thresholds'}, this._svgroot, this._svgdoc);
 
 		// Build active path
 		let path = '';
@@ -904,7 +903,7 @@ ${optStr}  };
 
 		// Create under active (for conturing) element
 		this._bodyActiveBasis = SmartWidgets.addElement('path', {
-            class: 'bodyActiveBasis',
+            class: 'stbar bodyActiveBasis',
             stroke: this._o.isShowThr ? this._o.varFontColor : this._o.varStrokeColor,
             fill: 'none',
             'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
@@ -916,7 +915,7 @@ ${optStr}  };
 		// Create active element: rect or path
 		if (this._o.isShowThr) { // In the case of allowed display of threshold values draw rect instead path
 			this._bodyActive = SmartWidgets.addElement('rect', {
-				class: this._o.isAnimate ? 'bodyActive animated' : 'bodyActive',
+				class: this._o.isAnimate ? 'bodyActive stbar animated' : 'bodyActive stbar',
 				stroke: this._o.varStrokeColor,
 				fill: '#ffffff',
 				'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
@@ -924,7 +923,7 @@ ${optStr}  };
 			}, this._svgroot, this._svgdoc);
 		} else { // In the regular case draw path
 			this._bodyActive = SmartWidgets.addElement('path', {
-				class: this._o.isAnimate ? 'bodyActive animated' : 'bodyActive',
+				class: this._o.isAnimate ? 'bodyActive animated stbar' : 'bodyActive stbar',
 				stroke: this._o.varStrokeColor,
 				fill: '#ffffff',
 				'stroke-width': this._o.varStrokeWidth > 1 ? 1 : this._o.varStrokeWidth,
@@ -935,12 +934,13 @@ ${optStr}  };
 		}
 
 		// Create group for thrends
-		this._activeTrends = SmartWidgets.addElement('g', {class: 'trends'}, this._svgroot, this._svgdoc);
+		this._activeTrends = SmartWidgets.addElement('g', {class: 'stbar trends'}, this._svgroot, this._svgdoc);
 
 		// Create scale if enabled
 		if (this._o.scalePosition !== 'none') {
-			this._bodyScale = SmartWidgets.addElement('g', {class: 'scale'}, this._svgroot, this._svgdoc);
+			this._bodyScale = SmartWidgets.addElement('g', {class: 'stbar scale'}, this._svgroot, this._svgdoc);
 			SmartWidgets.addElement('line', {
+				class: 'stbar',
 				x1: this._barBody.scale.x1,
 				y1: this._barBody.scale.y1,
 				x2: this._barBody.scale.x2,
@@ -973,6 +973,7 @@ ${optStr}  };
 			for (let i = 0; i < 3; i++) {
 				let numb = 50;
 				SmartWidgets.addElement('circle', {
+					class: 'stbar',
 					fill: 'none',
 					'stroke-width': 1,
 					stroke: this._o.isShowThr ? this._o.varFontColor : this._o.varStrokeColor,
@@ -981,7 +982,7 @@ ${optStr}  };
 					r: 1
 				}, this._bodyScale, this._svgdoc);
 				this._scaleTextA[i] = SmartWidgets.addElement('text', {
-					// id: `${this.id}-V${i}`,
+					class: 'stbar',
 					'text-anchor': anchorsA[i],
 					'pointer-events': 'none',
 					'font-family': this._o.varFontFamily,
@@ -1092,7 +1093,7 @@ ${optStr}  };
 			}
 
             // validate and merge with own _o
-            SmartBar.convertNumericProps(options);
+            SmartBars.convertNumericProps(options);
             this._o = Object.assign({}, this._o, options);
         }
         const rc = this._svgroot.firstElementChild;
@@ -1268,8 +1269,8 @@ ${optStr}  };
 		return dataEx;
 	}
 	getParams(filter = 'all') {
-		const customProp = SmartBar.getCustomProperties();		// get an array of custom properties
-		const defOptions = SmartBar.defOptions();
+		const customProp = SmartBars.getCustomProperties();		// get an array of custom properties
+		const defOptions = SmartBars.defOptions();
 		return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
 	}
 	setParam(name, value) {
@@ -1279,7 +1280,7 @@ ${optStr}  };
 		const opt = {};
 		opt[name] = value;
 		// convert to numbers specified by name property
-		SmartBar.convertNumericProps(opt, name);
+		SmartBars.convertNumericProps(opt, name);
 
 		if (this._body) {
 			this.setParams(opt);
@@ -1292,7 +1293,7 @@ ${optStr}  };
 	 */
 	resetParams(options = null) {
 		if (options) {
-			this._o = Object.assign({}, SmartBar.defOptions(), options);
+			this._o = Object.assign({}, SmartBars.defOptions(), options);
 			this._build();
 		}
 	}
@@ -1302,7 +1303,7 @@ ${optStr}  };
 			return false;
 		}
 		// convert all known properties to numbers
-		SmartBar.convertNumericProps(options);
+		SmartBars.convertNumericProps(options);
 		this._o = Object.assign({}, this._o, options);
 
 		// some properties changing requires rebuilding, lets find its!
@@ -1393,7 +1394,7 @@ class SmartBarElement extends HTMLElement {
 
 	// attributes changing processing
 	static get observedAttributes() {
-		return SmartBar.getCustomProperties();
+		return SmartBars.getCustomProperties();
 	}
 	attributeChangedCallback(name, oldValue, newValue) {
 		// update own property
@@ -1406,7 +1407,7 @@ class SmartBarElement extends HTMLElement {
     connectedCallback() {
 		// getting properties in form 'stbar-XXX' and 'stbar-var-XXX' from styles
 		const compStyle = getComputedStyle(this);
-		const customProp = SmartBar.getCustomProperties();
+		const customProp = SmartBars.getCustomProperties();
 		for (let n = 0; n < customProp.length; n++) {
 			const prop = `--${SmartBars.getAlias()}-${customProp[n]}`;
 			const propKey = SmartWidgets.customProp2Param(`${customProp[n]}`);

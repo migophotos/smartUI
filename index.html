@@ -1320,7 +1320,7 @@
                         switch (selWidget) {
                             case 'smartpgn': {
                                 wdgOpt.context = document.getElementById('try-it');
-                                el = window.SmartPolygons.get('pgn-wdg');
+                                el = window.SmartPolygons.get(id);
                                 if (!el) {
                                     el = new SmartPolygon(id, wdgOpt);
                                 } else if (el && el.isInited()) {
@@ -1331,7 +1331,7 @@
                             }
                             case 'smartbar': {
                                 wdgOpt.context = document.getElementById('bar-try-it');
-                                el = window.SmartBars.get('bar-wdg');
+                                el = window.SmartBars.get(id);
                                 if (!el) {
                                     el = new SmartBar(id, wdgOpt);
                                 } else if (el && el.isInited()) {
@@ -1456,7 +1456,7 @@
                             sel = evt.currentTarget.querySelector('smart-ui-polygon');
                             if (sel) {
                                 const dirtyParams = sel.getCtrl().getParams('dirty');
-                                let   allParams = SmartPolygon.defOptions();
+                                let   allParams = SmartPolygons.defOptions();
                                 allParams = Object.assign({}, allParams, dirtyParams);
                                 // remove radius, interval, set is-tooltip and is-emulate
                                 delete allParams.radius;
@@ -1519,7 +1519,7 @@
                             sel = evt.currentTarget.querySelector('smart-ui-bar');
                             if (sel) {
                                 const dirtyParams = sel.getCtrl().getParams('dirty');
-                                let   allParams = SmartBar.defOptions();
+                                let   allParams = SmartBars.defOptions();
                                 allParams = Object.assign({}, allParams, dirtyParams);
                                 // remove radius, interval, set is-tooltip and is-emulate
                                 delete allParams.radius;
