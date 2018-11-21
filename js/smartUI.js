@@ -1257,6 +1257,30 @@ class SmartUiColorBox extends HTMLElement {
         this._input     = this._shadowDOM.getElementById('IC');     // text input
         this._colorBox  = this._shadowDOM.getElementById('colorbox');
 
+        this._colorBox.addEventListener('wheel', (evt) => {
+            evt.preventDefault();
+
+            const cr = this._colorBox.value; // `${this._colorBox.value}`;
+            const c = w3color(cr);
+
+            const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
+            const K = evt.ctrlKey ? 0.01 : evt.shiftKey ? 0.01 : 1;
+			const delta = evt.deltaY || evt.detail || evt.wheelDelta;
+			if (delta > 0) {
+                c[P] = c[P] + K;
+            } else {
+                c[P] = c[P] - K;
+            }
+            const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
+            const s = c.sat > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
+            const l = c.lightness > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
+            const c2 = w3color("hsl(" + h + "," + s + "," + l + ")");
+            
+            this._o.value = c2.valid ? c2.toHexString() : '#000000';
+            this.setAttribute('value', `${this._o.value}`);
+            this._colorBox.value = this._o.value;
+        });
+
         this._colorBox.addEventListener('change', (evt) => {
             this._o.value = `${this._colorBox.value}`;
             this.setAttribute('value', `${this._o.value}`);
