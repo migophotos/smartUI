@@ -1272,8 +1272,8 @@ class SmartUiColorBox extends HTMLElement {
                 c[P] = c[P] - K;
             }
             const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
-            const s = c.sat > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
-            const l = c.lightness > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
+            const s = c.sat; // > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
+            const l = c.lightness; // > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
             const c2 = w3color("hsl(" + h + "," + s + "," + l + ")");
             
             this._o.value = c2.valid ? c2.toHexString() : '#000000';
