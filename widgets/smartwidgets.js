@@ -37,13 +37,13 @@ class StateToColors extends Map {
 			for (let st of states) {
 				if (st.includes(':')) {
 					s2c = st.split(':');
-					if (typeof s2c[0] === 'string' && typeof s2c[1] === 'string') {
-						super.set(s2c[0], s2c[1]);
+					if (typeof s2c[1] !== 'undefined') {
+						super.set(+s2c[0], s2c[1]);
 					}
 				} else {
 					s2c = st.split('#');
-					if (typeof s2c[0] === 'string' && typeof s2c[1] === 'string') {
-						super.set(s2c[0], `#${s2c[1]}`);
+					if (typeof s2c[1] !== 'undefined') {
+						super.set(+s2c[0], `#${s2c[1]}`);
 					}
 				}
 			}
@@ -60,8 +60,21 @@ class StateToColors extends Map {
 			}
 		}
 	}
-	get(state = null) {
-		if (state) {
+	delete(state = '') {
+		if (typeof state === 'number') {
+			state = state.toString();
+		}
+
+		if (state != '') {
+			super.delete(state);
+		}
+	}
+	get(state = '') {
+		if (typeof state === 'number') {
+			state = state.toString();
+		}
+
+		if (state != '') {
 			return super.get(state);
 		}
 		let str = '';
@@ -71,12 +84,15 @@ class StateToColors extends Map {
 		str = str.slice(0, -1);
 		return str;
 	}
-	set(state, value = null, useAsGlobal = 0) {
-		if (!value) {
+	set(state, value = '', useAsGlobal = 0) {
+		if (typeof state === 'number') {
+			state = state.toString();
+		}
+		if (value == '') {
 			this.init(state, useAsGlobal);
 			return;
 		}
-		super.set(`${state}`, value.startsWith('#') ? value : `#${value}`);
+		super.set(state, value.startsWith('#') ? value : `#${value}`);
 	}
 	size() {
 		return super.size;

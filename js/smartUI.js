@@ -1548,9 +1548,11 @@ class SmartUiColorPalette extends HTMLElement {
 				this._btnGrArr[n].setAttribute('display', 'none');
 			});
 		});
-		this._paletteArr.forEach((btn) => {
-			btn.addEventListener('click', (evt) => {
-				const n = Number(btn.id.replace('state-', ''));
+		this._paletteArr.forEach((sel) => {
+			sel.addEventListener('click', (evt) => {
+                const n = Number(sel.id.replace('state-', ''));
+                this._s2c.delete(n);
+                this.setAttribute('value', this._s2c.get());
 				this._btnGrArr[n].removeAttribute('display');
 			});
 		});
@@ -1575,21 +1577,22 @@ class SmartUiColorPalette extends HTMLElement {
 				const c = w3color(cr);
 
 				const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
-				let K = evt.ctrlKey ? 0.1 : evt.shiftKey ? 0.1 : 10;
+				let K = evt.ctrlKey ? 0.01 : evt.shiftKey ? 0.01 : 1;
 				if (evt.altKey) {
-					K = K / 10;
+					K = K * 5;
 				}
 				const delta = evt.deltaY || evt.detail || evt.wheelDelta;
 				if (delta > 0) {
 					c[P] = c[P] + K;
 				} else {
 					c[P] = c[P] - K;
-				}
+                }
 				const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
 				const s = c.sat; // > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
 				const l = c.lightness; // > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
-				// const c2 = w3color("hsl(" + h + "," + s + "," + l + ")");
+
 				const c2 = w3color(`hsl(${h},${s},${l})`);
+                console.log(`hue = ${h}, sat = ${s}, lightness = ${l}, color = ${c2.toHexString()} is ${c2.valid ? 'valid' : 'invalid'}`);
 
 				this._o.value = c2.valid ? c2.toHexString() : '#000000';
 				evt.target.setAttribute('fill', this._o.value);
