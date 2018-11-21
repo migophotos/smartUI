@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* eslint-disable indent */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-multi-spaces) */
@@ -255,7 +256,7 @@ class SmartBars extends SmartWidgets {
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
 	}
-	
+
     constructor() {
 		super();
 		this._alias = SmartBars.getAlias();
@@ -532,14 +533,14 @@ ${optStr}  };
 					}
 				}
 
-				// In the case of allowed display of threshold values, the indicator behavior should be changed. 
+				// In the case of allowed display of threshold values, the indicator behavior should be changed.
 				// To do this, set a special flag, which we will focus on in the future ...
 				let changeRole = false;
 				if (this._o.isShowThr && this._activeThrs && dt.thr) {
 					changeRole = true;
 				}
 
-				// Resizing of the active element, and the colors of the indicator depending on the 
+				// Resizing of the active element, and the colors of the indicator depending on the
 				// signal value and the selected optional parameters
 				const maxValue = parseInt(dt.max, 10) || this._o.maxValue;
 				const max100 = this._o.orient === 'hor' ? activeRect.width : activeRect.height;
@@ -611,7 +612,7 @@ ${optStr}  };
 						tha.push({
 							value: parseFloat(th2c[0]) * onePCT,
 							color: `#${th2c[1]}`
-						})	
+						})
 					}
 					SmartWidgets.sortDataByParam(tha, 'value', 0);
 					for (let thr of tha) {
@@ -620,7 +621,7 @@ ${optStr}  };
 						if (this._o.orient === 'hor') {
 							top = this._barBody.active.y;
 							height = this._barBody.active.h;
-							width = thr.value; 
+							width = thr.value;
 							if (this._o.aligning === 'left') {
 								left = (this._barBody.active.x + this._barBody.active.w) - thr.value;
 							} else {
@@ -733,7 +734,7 @@ ${optStr}  };
 				} else {
 					this._bodyActive.removeAttribute('clip-path');
 				}
-		
+
 			}
 		}
 	}

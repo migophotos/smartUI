@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-multi-spaces */
 /* eslint-disable no-prototype-builtins */
@@ -23,6 +24,7 @@ class utils {
 			'max',
 			'min',
 			'step',
+			'count',
 			'value'
 		];
 		let count = 0;
@@ -647,14 +649,7 @@ if (!customElements.get('smart-ui-edittext')) {
                 this._input.value = `${this._o.value} ${this._o.units}`;
             }
         });
-
-        // this._input.addEventListener('input', (evt) => {
-        //     let result = this.convertAndValidate(this._input.value);
-        //     this._o.value = result;
-        //     this.setAttribute('value', `${this._o.value}`);
-
-        //     this._slider.value = this._o.value;
-		// });
+		// input edit control
 		this._input.addEventListener('wheel', (e) => {
 			let K = e.ctrlKey ? 10 : e.shiftKey ? 5 : 1;
 			let delta = e.deltaY || e.detail || e.wheelDelta;
@@ -1070,7 +1065,6 @@ class SmartUiCheckBox extends HTMLElement {
     }
 }
 
-
 if (!customElements.get('smart-ui-checkbox')) {
     customElements.define('smart-ui-checkbox', SmartUiCheckBox);
 }
@@ -1248,6 +1242,7 @@ class SmartUiColorBox extends HTMLElement {
     }
 
     connectedCallback() {
+		// SmartTooltip.initTooltip
         // get all attributes into _o (options)
         this._o = {};
         for (let attr of this.attributes) {
@@ -1264,7 +1259,10 @@ class SmartUiColorBox extends HTMLElement {
             const c = w3color(cr);
 
             const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
-            const K = evt.ctrlKey ? 0.01 : evt.shiftKey ? 0.01 : 1;
+			let K = evt.ctrlKey ? 0.1 : evt.shiftKey ? 0.1 : 10;
+			if (evt.altKey) {
+				K = K / 10;
+			}
 			const delta = evt.deltaY || evt.detail || evt.wheelDelta;
 			if (delta > 0) {
                 c[P] = c[P] + K;
@@ -1275,7 +1273,7 @@ class SmartUiColorBox extends HTMLElement {
             const s = c.sat; // > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
             const l = c.lightness; // > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
             const c2 = w3color("hsl(" + h + "," + s + "," + l + ")");
-            
+
             this._o.value = c2.valid ? c2.toHexString() : '#000000';
             this.setAttribute('value', `${this._o.value}`);
             this._colorBox.value = this._o.value;
@@ -1298,3 +1296,314 @@ class SmartUiColorBox extends HTMLElement {
 if (!customElements.get('smart-ui-colorbox')) {
     customElements.define('smart-ui-colorbox', SmartUiColorBox);
 }
+
+class SmartUiColorPalette extends HTMLElement {
+    constructor() {
+        super();
+        this._shadowDOM = this.attachShadow({mode: 'open'});
+		if (!this._shadowDOM) {
+            throw new Error('Unfortunately, your browser does not support shadow DOM v1.');
+        }
+        this._shadowDOM.innerHTML = `
+            <style>
+                :host {
+                    all: initial;
+                    color: rgba( 102,227,255, 0.4 );
+                }
+                :host([disabled]) { /* style when host has disabled attribute. */
+                    pointer-events: none;
+                    opacity: 0.2;
+                }
+
+                .iconfill {
+                    fill: #ffffff;
+                    opacity: 0.8;
+                }
+                .iconfill:hover {
+                    opacity: 1;
+                }
+                .title:hover {
+                    opacity: 1;
+                }
+
+                .smartcontainer {
+                    font-family: Helvetica, sans-serif;
+                    color: rgba( 255,255,255, 0.8 );
+
+                }
+                .smartcontainer .title {
+                    text-transform: uppercase;
+                    font-size: 9px;
+                    -webkit-font-smoothing: subpixel-antialiased;
+                    height: 12px;
+                }
+
+                .smartcontainer .controls {
+                    display: inline-block;
+                    margin-bottom: 3px;
+                    margin-left: 2px;
+                    vertical-align: top;
+                }
+
+                .svgcontainer {
+                    position: relative;
+                    display: inline-block;
+                    overflow: hidden;
+                    margin-bottom: 3px;
+                    vertical-align: top;
+                }
+
+                /* plus and minus buttons */
+                .plusminus {
+                    display: block;
+                    float: left;
+                    /* width: 33px; */
+                    height: 16px;
+                    overflow: hidden;
+                    margin-top: 3px;
+                }
+
+                .slider {
+                    display: block;
+                    float: left;
+                    overflow: unset;
+                    margin: 6px 12px 0 0;
+                }
+                .smartcontainer input {
+                    color: rgba( 255,255,255, 1 );
+                    display: block;
+                    float: left;
+                    width: 190px;
+                    background: none;
+                    border: 1px solid;
+                    margin: 2px 4px 2px 0px;
+                    padding: 1px 3px 2px 3px;
+                    font-size: 11px;
+                    text-align: left;
+                    opacity: 0.8;
+                }
+                .smartcontainer input:hover {
+                    opacity: 1;
+                }
+
+
+                /* styling input[type-range] */
+                input[type=range] {
+                    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+                    height:2px;
+                    width:100%;
+                    cursor: pointer;
+                    background: transparent;
+                    margin-bottom: 10px;
+                }
+                input[type=range]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    border: 1px solid #fff;
+                    height: 16px;
+                    width: 16px;
+                    border-radius: 8px;
+                    background: #009fff;
+                    cursor: pointer;
+                    margin-top: 0px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+                }
+                input:focus {
+                    outline: none;
+                }
+
+            </style>
+            <div class="smartcontainer">
+                <div class="icon svgcontainer">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="35px" height="34px" viewBox="0 0 35 34">
+                        <g class="iconfill">
+                        <image xlink:href="${this.getAttribute('image')}" x="0" y="0" width="35px" height="34px"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="controls">
+                    <div class="title">${_(this.getAttribute('title'))}</div>
+
+                    <input id="IC" type="text" value="${this.getAttribute('value')}" />
+				</div>
+                <div class="icon svgcontainer">
+                    <svg id="sel-palette" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    overflow="scroll" xml:space="preserve" x="0px" y="0px" width="35px" height="34px" viewBox="0 0 35 34">
+                        <g id="palette">
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        `;
+    }
+    static get observedAttributes() {
+		return 	['value'];
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (!this._o) {
+            return;
+        }
+
+        switch (name) {
+            case 'value': {
+                this._o.value = newValue;
+                this._input.value = `${this._o.value}`;
+                break;
+            }
+        }
+    }
+
+	connectedCallback() {
+		// get all attributes into _o (options)
+		this._s2c = new StateToColors();
+        this._o = {};
+        for (let attr of this.attributes) {
+			this._o[attr.name] = attr.value;
+		}
+		this._o.count = this._o.count || 9;
+        // convert to numbers
+		utils.convertNumericProps(this._o);
+
+		const paletteG = this._shadowDOM.getElementById('palette');
+		if (!paletteG || typeof SmartWidgets === 'undefined') {
+			throw new ReferenceError('SmartWidget cannot be found');
+		}
+		this._btnGrArr = [];
+		this._buttonArr = [];
+		this._paletteArr = [];
+		const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
+		const fontSize = '12px';
+		const step = 10, gap = 10;
+		let width = 66, height = 30, offsetX = gap, offsetY = gap;
+		const bRect = SmartWidgets.addElement('rect', {
+			// visibility: 'hidden',
+			x: 0,
+			y: 0,
+			width: `${(offsetX * 2) + (width * 3) + (step * 2)}`,
+			height: `${(offsetY * 2) + (height * 3) + (step * 2)}`,
+			fill: 'none',
+			stroke: '#ffffff'
+		}, paletteG, paletteG.ownerDocument);
+		for (let n = 0; n < this._o.count; n++) {
+			if (n && n % 3 == 0) {
+				offsetX = gap;
+				offsetY += step + height;
+			}
+			this._paletteArr.push(SmartWidgets.addElement('rect', {
+				id: `state-${n}`,
+				x: offsetX,
+				y: offsetY,
+				width: width,
+				height: height,
+				fill: '#ffffff',
+				stroke: '#000000'
+			}, paletteG, paletteG.ownerDocument));
+			SmartWidgets.addElement('text', {
+				text: `State ${n}`,
+				x: offsetX + (width / 2),
+				y: offsetY + (height / 2),
+				fill: '#000000',
+				'text-anchor': 'middle',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': fontSize
+			}, paletteG, paletteG.ownerDocument);
+
+			this._btnGrArr.push(SmartWidgets.addElement('g', {}, paletteG, paletteG.ownerDocument));
+			this._buttonArr.push(SmartWidgets.addElement('rect', {
+				id: `btn-${n}`,
+				x: offsetX,
+				y: offsetY,
+				width: width,
+				height: height,
+				fill: '#8f8f8f',
+				stroke: '#ffffff'
+			}, this._btnGrArr[n], paletteG.ownerDocument));
+			SmartWidgets.addElement('text', {
+				text: 'default',
+				x: offsetX + (width / 2),
+				y: offsetY + (height / 2),
+				fill: '#ffffff',
+				'text-anchor': 'middle',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': fontSize
+			}, this._btnGrArr[n], paletteG.ownerDocument);
+
+			offsetX += step + width;
+		}
+		const size = {
+			w: +bRect.getAttribute('width'),
+			h: +bRect.getAttribute('height')
+		};
+		const svgRoot = this._shadowDOM.getElementById('sel-palette');
+		svgRoot.setAttribute('height', size.h);
+		svgRoot.setAttribute('width', size.w);
+		svgRoot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
+
+		this._buttonArr.forEach((btn) => {
+			btn.addEventListener('click', (evt) => {
+				const n = Number(btn.id.replace('btn-', ''));
+				this._btnGrArr[n].setAttribute('display', 'none');
+			});
+		});
+		this._paletteArr.forEach((btn) => {
+			btn.addEventListener('click', (evt) => {
+				const n = Number(btn.id.replace('state-', ''));
+				this._btnGrArr[n].removeAttribute('display');
+			});
+		});
+
+        // get references to controls
+        this._input  = this._shadowDOM.getElementById('IC');    // input
+        // this._input.addEventListener('input', (evt) => {
+        //     this._o.value = this._input.value;
+        //     this.setAttribute('value', `${this._o.value}`);
+        // });
+        this._input.addEventListener('change', (evt) => {
+            this._o.value = this._input.value;
+            this.setAttribute('value', `${this._o.value}`);
+		});
+
+		this._paletteArr.forEach((sel) => {
+			sel.addEventListener('wheel', (evt) => {
+				evt.preventDefault();
+				const stateN = Number(evt.target.id.split('-')[1]);
+
+				const cr = evt.target.getAttribute('fill'); // `${this._colorBox.value}`;
+				const c = w3color(cr);
+
+				const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
+				let K = evt.ctrlKey ? 0.1 : evt.shiftKey ? 0.1 : 10;
+				if (evt.altKey) {
+					K = K / 10;
+				}
+				const delta = evt.deltaY || evt.detail || evt.wheelDelta;
+				if (delta > 0) {
+					c[P] = c[P] + K;
+				} else {
+					c[P] = c[P] - K;
+				}
+				const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
+				const s = c.sat; // > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
+				const l = c.lightness; // > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
+				// const c2 = w3color("hsl(" + h + "," + s + "," + l + ")");
+				const c2 = w3color(`hsl(${h},${s},${l})`);
+
+				this._o.value = c2.valid ? c2.toHexString() : '#000000';
+				evt.target.setAttribute('fill', this._o.value);
+
+				this._s2c.set(stateN, this._o.value);
+				this.setAttribute('value', this._s2c.get());
+			});
+		});
+	}
+	disconnectedCallback() {
+        this.className = this.className;
+    }
+}
+if (!customElements.get('smart-ui-colorpalette')) {
+    customElements.define('smart-ui-colorpalette', SmartUiColorPalette);
+}
+

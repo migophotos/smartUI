@@ -727,7 +727,7 @@
                                         --stbar-var-font-color:#fefdff;
                                         --stbar-is-show-thr:1;
                                         --stbar-state-colors:0;
-                                    }                                    
+                                    }
                                     .black-line-bar {
                                         --stbar-position:cd;
                                         --stbar-type:solid;
@@ -993,7 +993,7 @@
                                 <h2>Параметры окна подсказки</h2>
                                 <div style="display: block;">
                                     <smart-ui-editslider name="sttip-param" param="var-frame-opacity" title="Непрозрачность" value="" units="" min="0" max="1" step="0.05" image="images/frame-opacity.svg">edit control with slider</smart-ui-editslider>
-                                    <smart-ui-colorbox name="sttip-param" param="var-frame-fill" title="Цвет фона" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
+                                    <smart-ui-colorbox name="sttip-param" param="var-frame-fill" title="Цвет фона" value="#000000" image="images/select_color3_off.svg" >color selector</smart-ui-colorbox>
                                     <smart-ui-colorbox name="sttip-param" param="var-border-color" title="Цвет обводки" value="#000000" image="images/select_color3_off.svg">color selector</smart-ui-colorbox>
                                     <smart-ui-editslider name="sttip-param" param="var-border-width" title="Толщина обводки" value="" units="" min="0" max="10" step="0.5" image="images/border_width_off.svg">edit control with slider</smart-ui-editslider>
                                     <smart-ui-editslider name="sttip-param" param="var-border-radius" title="Скругление углов" value="" units="px" min="0" max="20" step="1" image="images/border_radius_off.svg">edit control with slider</smart-ui-editslider>
@@ -1177,7 +1177,8 @@
                                 <h2>Установка соотношения между состоянием и цветом</h2>
                                 <div style="display: block;">
                                     <smart-ui-checkbox name="stbar-param" param="is-global-colors" title="Использовать глобальные настройки цвета" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
-                                    <smart-ui-edittext name="stbar-param" param="state-colors" title="Цвета состояний через запятую" value="" image="images/font_family_off.svg"></smart-ui-edittext>
+                                    <!-- <smart-ui-edittext name="stbar-param" param="state-colors" title="Цвета состояний через запятую" value="" image="images/font_family_off.svg"></smart-ui-edittext> -->
+                                    <smart-ui-colorpalette name="stbar-param" param="state-colors" title="Выбор цветов" value="" image="images/font_family_off.svg"></smart-ui-colorpalette>
                                 </div>
                             </div>
                         </div>
@@ -1208,14 +1209,14 @@
                 </div>
             </div>
         </div>
-        <script src="js/w3color.js"></script>
-        <script src="js/smartUI.js"></script>
         <script src="widgets/smartTooltip/smarttooltip.js"></script>
         <script src="widgets/smartPie/smartpie.js"></script>
         <script src="widgets/smartwidgets.js"></script>
         <script src="widgets/smartPolygon/smartpolygon.js"></script>
         <script src="widgets/smartBar/smartbar.js"></script>
         <script src="widgets/smartGauge/smartgauge.js"></script>
+        <script src="js/w3color.js"></script>
+        <script src="js/smartUI.js"></script>
 
         <script>
             if (typeof require !== 'undefined') {
