@@ -1471,7 +1471,7 @@ class SmartUiColorPalette extends HTMLElement {
 		this._buttonArr = [];
 		this._paletteArr = [];
 		const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
-		const fontSize = '12px';
+		const fontSize = '10px';
 		const step = 10, gap = 10;
 		let width = 66, height = 30, offsetX = gap, offsetY = gap;
 		const bRect = SmartWidgets.addElement('rect', {
@@ -1506,7 +1506,11 @@ class SmartUiColorPalette extends HTMLElement {
 				'dominant-baseline': 'middle',
 				'pointer-events': 'none',
 				'font-family': fontFamily,
-				'font-size': fontSize
+                'font-size': fontSize,
+                // 'paint-order': 'stroke',
+                // stroke: 'black',
+                // 'stroke-width': "1",
+                'stroke-linejoin': "round"
 			}, paletteG, paletteG.ownerDocument);
 
 			this._btnGrArr.push(SmartWidgets.addElement('g', {}, paletteG, paletteG.ownerDocument));
@@ -1520,12 +1524,13 @@ class SmartUiColorPalette extends HTMLElement {
 				stroke: '#ffffff'
 			}, this._btnGrArr[n], paletteG.ownerDocument));
 			SmartWidgets.addElement('text', {
-				text: 'default',
+				text: `${n} - default`,
 				x: offsetX + (width / 2),
 				y: offsetY + (height / 2),
 				fill: '#ffffff',
 				'text-anchor': 'middle',
 				'dominant-baseline': 'middle',
+				'alignment-baseline': 'middle',
 				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': fontSize
