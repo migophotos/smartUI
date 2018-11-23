@@ -39,12 +39,12 @@ class StateToColors extends Map {
 				if (st.includes(':')) {
 					s2c = st.split(':');
 					if (typeof s2c[1] !== 'undefined') {
-						super.set(+s2c[0], s2c[1]);
+						super.set(s2c[0].toString(), s2c[1]);
 					}
 				} else {
 					s2c = st.split('#');
 					if (typeof s2c[1] !== 'undefined') {
-						super.set(+s2c[0], `#${s2c[1]}`);
+						super.set(s2c[0].toString(), `#${s2c[1]}`);
 					}
 				}
 			}
