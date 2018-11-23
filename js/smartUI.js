@@ -1446,7 +1446,19 @@ class SmartUiColorPalette extends HTMLElement {
         switch (name) {
             case 'value': {
                 this._o.value = newValue;
-                this._input.value = `${this._o.value}`;
+				this._input.value = `${this._o.value}`;
+
+				this._s2c.set(this._input.value);
+				for (let n = 0; n < 9; n++) {
+					const crDef = this._s2c.get(n);
+					if (crDef) {
+						this._btnGrArr[n].setAttribute('display', 'none');
+						this._paletteArr[n].setAttribute('fill', crDef);
+					} else {
+						this._btnGrArr[n].removeAttribute('display');
+					}
+				}
+
                 break;
             }
         }
