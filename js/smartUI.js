@@ -1467,12 +1467,14 @@ class SmartUiColorPalette extends HTMLElement {
 		if (!paletteG || typeof SmartWidgets === 'undefined') {
 			throw new ReferenceError('SmartWidget cannot be found');
 		}
+		this.copyColorArr = [];
+
 		this._btnGrArr = [];
 		this._buttonArr = [];
 		this._paletteArr = [];
 		const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
 		const fontSize = '10px';
-		const step = 10, gap = 10;
+		const step = 20, gap = 10;
 		let width = 66, height = 30, offsetX = gap, offsetY = gap;
 		const bRect = SmartWidgets.addElement('rect', {
 			// visibility: 'hidden',
@@ -1510,7 +1512,7 @@ class SmartUiColorPalette extends HTMLElement {
                 // 'paint-order': 'stroke',
                 // stroke: 'black',
                 // 'stroke-width': "1",
-                'stroke-linejoin': "round"
+                'stroke-linejoin': 'round'
 			}, paletteG, paletteG.ownerDocument);
 
 			this._btnGrArr.push(SmartWidgets.addElement('g', {}, paletteG, paletteG.ownerDocument));
@@ -1542,6 +1544,8 @@ class SmartUiColorPalette extends HTMLElement {
 			w: +bRect.getAttribute('width'),
 			h: +bRect.getAttribute('height')
 		};
+
+		// resize svg
 		const svgRoot = this._shadowDOM.getElementById('sel-palette');
 		svgRoot.setAttribute('height', size.h);
 		svgRoot.setAttribute('width', size.w);
@@ -1551,6 +1555,13 @@ class SmartUiColorPalette extends HTMLElement {
 			btn.addEventListener('click', (evt) => {
 				const n = Number(btn.id.replace('btn-', ''));
 				this._btnGrArr[n].setAttribute('display', 'none');
+				let cr = this._s2c.get(n);
+				if (n && !cr) {
+					cr = this._s2c.get(n - 1);
+				}
+				if (cr) {
+					this._paletteArr[n].setAttribute('fill', cr);
+				}
 			});
 		});
 		this._paletteArr.forEach((sel) => {

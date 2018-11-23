@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="65px" height="65px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="pal_on">
+        <rect x="0.5" y="0.5" width="64" height="64" style="fill:#434343;stroke:#000;stroke-width:1px;"/>
+        <rect id="selector-1" serif:id="selector 1" x="4.411" y="4.922" width="16" height="16" style="fill:#0d28f2;stroke:#fff;stroke-width:1px;"/>
+        <rect id="selector-11" serif:id="selector 1" x="24.411" y="4.922" width="16" height="16" style="fill:#26d9b9;stroke:#fff;stroke-width:1px;"/>
+        <rect id="selector-12" serif:id="selector 1" x="44.411" y="4.922" width="16" height="16" style="fill:#50d926;stroke:#fff;stroke-width:1px;"/>
+        <rect id="selector-13" serif:id="selector 1" x="4.411" y="24.922" width="16" height="16" style="fill:#ced926;stroke:#fff;stroke-width:1px;"/>
+        <rect id="selector-14" serif:id="selector 1" x="24.411" y="24.922" width="16" height="16" style="fill:#d96526;stroke:#fff;stroke-width:1px;"/>
+        <rect id="selector-15" serif:id="selector 1" x="44.411" y="24.922" width="16" height="16" style="fill:#ff004d;stroke:#fff;stroke-width:1px;"/>
+        <rect id="selector-16" serif:id="selector 1" x="4.411" y="44.922" width="16" height="16" style="stroke:#fff;stroke-width:1px;"/>
+        <rect id="selector-17" serif:id="selector 1" x="24.411" y="44.922" width="16" height="16" style="fill:#8493ff;stroke:#fff;stroke-width:1px;"/>
+        <rect id="selector-18" serif:id="selector 1" x="44.411" y="44.922" width="16" height="16" style="fill:#c5c5c5;stroke:#fff;stroke-width:1px;"/>
+    </g>
+</svg>

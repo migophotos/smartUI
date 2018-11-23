@@ -184,6 +184,7 @@
                     <smart-ui-button class="widgets-btn" id="smartpie_btn" targets="smartpie_cat,smartpie_opt,smarttpie_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/pie_on.svg" imageOff="images/pie_off.svg"  data-sttip-tooltip="Настроить параметры виджета SmartPie"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartpgn_btn" targets="smartpgn_cat,smartpgn_opt,smartpgn_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/polygon_on.svg" imageOff="images/polygon_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartPolygon"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartbar_btn" targets="smartbar_cat,smartbar_opt,smartbar_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/bar_on.svg" imageOff="images/bar_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartBar"></smart-ui-button>
+                    <smart-ui-button class="widgets-btn" id="smartpal_btn" targets="smartpal_cat,smartpal_opt,smartpal_page" type="radio" state="off" image-width="64" image-height="64" imageOn="images/palette_on.svg" imageOff="images/palette_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartPalette"></smart-ui-button>
                     <smart-ui-button class="widgets-btn" id="smartgauge_btn" targets="smartgauge_cat,smartgauge_opt,smartgauge_examp" type="radio" state="off" image-width="64" image-height="64" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры виджета SmartGauge"></smart-ui-button>
             </div>
             <div class="bottom-panel">
@@ -506,9 +507,9 @@
                                     margin-top: 10px;
                                     text-align: center;
                                 }
-                                .stpgn-example-cont smart-pie {
-                                    display: inherit;
-                                    border: 2px gray solid;
+                                .stpgn-example-cont smart-ui-polygon {
+                                    display: contents;
+                                    /* border: 2px gray solid; */
                                     cursor: default;
                                 }
 
@@ -666,9 +667,9 @@
                                         margin-top: 10px;
                                         text-align: center;
                                     }
-                                    .stbar-example-cont smart-pie {
-                                        display: inherit;
-                                        border: 2px gray solid;
+                                    .stbar-example-cont smart-ui-bar {
+                                        display: contents;
+                                        /* border: 2px gray solid; */
                                         cursor: default;
                                     }
 
@@ -911,7 +912,113 @@
 
                                     </div>
                                 </div>
+                        </div>
+                        <div class="widget-example" id="smartpal_page" style="display: none; position: relative;">
+                            <style>
+                                .palette-ml {
+                                    -webkit-column-count: 4;
+                                    column-count: 3;
+                                }
+                                .stpal-ml-p_content-ctrl {
+                                    cursor: pointer;
+                                }
+                                .stpal-example-grid {
+                                    /* display: grid; */
+                                    height: 100%;
+                                    grid-template-columns: 0.4fr 2.2fr 0.4fr;
+                                    grid-template-rows: 0.7fr 1.6fr 0.7fr;
+                                    grid-gap: 1px 1px;
+                                    grid-template-areas: ". stpal-example-descr ." ". stpal-example-cont ." ". . .";
+                                    }
+                                .example-grid--shown {
+                                    display: grid;
+                                }
+                                .example-grid--hidden {
+                                    display: none;
+                                }
+                                .stpal-example-descr { grid-area: stpal-example-descr; }
+                                .stpal-example-cont { grid-area: stpal-example-cont; }
+
+                                .stpal-example-descr p {
+                                    font-size: 2em;
+                                    color: rgba(0, 171, 6, 0.8);
+                                    transition: bcolor 0.6s;
+                                    margin-top: 10px;
+                                    text-align: center;
+                                }
+                                .stpal-example-cont smart-ui-palette {
+                                    display: contents;
+                                    /* border: 2px gray solid; */
+                                    cursor: default;
+                                }
+
+                                .default {
+                                    --stpal-is-global-colors:0;
+                                    --stpal-state-colors:0:#0080c0,1:#008000,2:#ffff15,3:#ff2f2f,4:#9f0000,5:#f0f0f0;
+                                }
+                            </style>
+                            <div class="ml palette-ml">
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="stpal-ml-p_content-ctrl">
+                                            <p>"Default Palette"</p>
+                                            <smart-ui-palette class="default demoMode" id="pal-01"></smart-ui-palette>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="stpal-ml-p_content-ctrl">
+                                            <p>"Default Palette"</p>
+                                            <smart-ui-palette class="default demoMode" id="pal-02"></smart-ui-palette>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="stpal-ml-p_content-ctrl">
+                                            <p>"Default Palette"</p>
+                                            <smart-ui-palette class="default demoMode" id="pal-03"></smart-ui-palette>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="stpal-ml-p_content-ctrl">
+                                            <p>"Default Palette"</p>
+                                            <smart-ui-palette class="default demoMode" id="pal-04"></smart-ui-palette>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="stpal-ml-p_content-ctrl">
+                                            <p>"Default Palette"</p>
+                                            <smart-ui-palette class="default demoMode" id="pal-05"></smart-ui-palette>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-p">
+                                    <div class="ml-p_content">
+                                        <div class="stpal-ml-p_content-ctrl">
+                                            <p>"Default Palette"</p>
+                                            <smart-ui-palette class="default demoMode" id="pal-06"></smart-ui-palette>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            <div id="stpal-over-panel" class="over-hidden">
+                                <div id="stpal-example-grid" class="stpal-example-grid example-grid--hidden">
+                                    <div class="stapl-example-descr">
+                                        <p id="stpal-example-descr"></p>
+                                    </div>
+                                    <div class="stpal-example-cont no-legend">
+                                        <smart-ui-palette class="stpal-example" id="stpal-example" role="demoMode"></smart-ui-palette>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
 
                     </div>
                 </div>
@@ -934,7 +1041,6 @@
                         <smart-ui-button class="categories-btn" id="pie_ui_params_btn" targets="pie-ui-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Настроить параметры интерфейса, такие как фонт, цвет, размер и т.д."></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                     </div>
-
                     <div id="smartpgn_cat" style="display: none;">
                         <smart-ui-button class="categories-btn" id="pgn_params_btn" targets="pgn-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры полигона, такие как количество вершин, отображение звезды, направление индикатора и др."></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
@@ -945,7 +1051,6 @@
                         <smart-ui-button class="categories-btn" id="pgn_state-colors_btn" targets="pgn-state-colors_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg"  data-sttip-tooltip="Задать соответствие между состояниеи сигнала и цветом отображения"></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
                     </div>
-
                     <div id="smartbar_cat" style="display: none;">
                         <smart-ui-button class="categories-btn" id="bar_params_btn" targets="bar-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить основные параметры, такие как ориентация, тип индикатора, отображение и положение шкалы, направление индикатора, тени, анимация и др."></smart-ui-button>
                         <smart-ui-spacer class="ver-small"></smart-ui-spacer>
@@ -960,7 +1065,9 @@
                         <smart-ui-button class="categories-btn" id="bar-rt-params_btn" targets="bar-rt-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметы обновления данных и переходов"></smart-ui-button>
 
                     </div>
-
+                    <div id="smartpal_cat" style="display: none;">
+                        <smart-ui-button class="categories-btn" id="pal-state-colors_btn" targets="pal-state-colors_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Задать соответствие между состояниеи сигнала и цветом отображения"></smart-ui-button>
+                    </div>
 
                     <div id="smartgauge_cat" style="display: none;">
                         <smart-ui-button class="categories-btn" id="gauge_params_btn" targets="gauge-params_pan" type="radio" state="off" imageOn="images/gauge_on.svg" imageOff="images/gauge_off.svg" data-sttip-tooltip="Настроить параметры индикатора, такие как тип, вид стрелок, количество шкал и др."></smart-ui-button>
@@ -1183,6 +1290,17 @@
                             </div>
                         </div>
 
+                        <div id="smartpal_opt" style="display: none;">
+                            </div>
+                            <div id="pal-state-colors_pan" class="overlay" style="max-height: 766px; display: none;">
+                                <h2>Установка соотношения между состоянием и цветом</h2>
+                                <div style="display: block;">
+                                    <smart-ui-checkbox name="stpal-param" param="is-global-colors" title="Использовать глобальные настройки цвета" value="" image="images/is_shadow_off.svg" iw="65" ih="22.5" imageOn="images/switch_on.svg" imageOff="images/switch_off.svg">edit control with slider</smart-ui-checkbox>
+                                    <smart-ui-colorpalette name="stpal-param" param="state-colors" title="Выбор цветов" value="" image="images/font_family_off.svg"></smart-ui-colorpalette>
+                                </div>
+                            </div>
+                        </div>
+
 
                         <div id="smartgauge_opt" style="display: none;">
                             <div id="gauge-params_pan" class="overlay" style="max-height: 766px; display: none;">
@@ -1214,6 +1332,7 @@
         <script src="widgets/smartwidgets.js"></script>
         <script src="widgets/smartPolygon/smartpolygon.js"></script>
         <script src="widgets/smartBar/smartbar.js"></script>
+        <script src="widgets/smartPalette/smartpalette.js"></script>
         <script src="widgets/smartGauge/smartgauge.js"></script>
         <script src="js/w3color.js"></script>
         <script src="js/smartUI.js"></script>
@@ -1350,6 +1469,8 @@
                                 }
                                 break;
                             }
+                            default:
+                                break
                         }
                     }
 
@@ -1380,6 +1501,15 @@
                                 delete dirtyOptions.radius;
                                 delete dirtyOptions.role;
                                 srcText = SmartBar.serializeOptions(dirtyOptions, id);
+                                if (id == 'def-svg_widget_btn') {
+                                    scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
+                                } else {
+                                    scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
+                                }
+                            } else if (selWidget === 'smartpal') {
+                                delete dirtyOptions.radius;
+                                delete dirtyOptions.role;
+                                srcText = SmartPalette.serializeOptions(dirtyOptions, id);
                                 if (id == 'def-svg_widget_btn') {
                                     scrTargetContainer.innerHTML = `<code>${srcText}</code>`;
                                 } else {
@@ -1565,6 +1695,49 @@
                         });
                     }
 
+                    // stpal example panel processing
+                    const stpal_over_panel = document.getElementById('stpal-over-panel');
+                    stpal_over_panel.addEventListener('click', (evt) => {
+                        evt.preventDefault();
+                        if (evt.target.id == 'stpal-example') {
+                            return;
+                        }
+                        stpal_over_panel.classList.remove('over-shown');
+                        tmp = document.getElementById('stpal-example-grid');
+                        tmp.classList.add('example-grid--hidden');
+                        tmp.classList.remove('example-grid--shown');
+                    });
+                    // click on one palette example
+                    els = document.getElementsByClassName('stpal-ml-p_content-ctrl');
+                    for (let el of els) {
+                        el.addEventListener('click', (evt) => {
+                            evt.preventDefault();
+                            sel = evt.currentTarget.querySelector('smart-ui-palette');
+                            if (sel) {
+                                const dirtyParams = sel.getCtrl().getParams('dirty');
+                                let   allParams = SmartPalettes.defOptions();
+                                allParams = Object.assign({}, allParams, dirtyParams);
+                                allParams.role = 'demoMode';
+
+                                tmp = document.getElementById('stpal-example');
+                                tmp.getCtrl().setParams(allParams, true);
+                                // now disable responding on future settings changing
+                                //tmp.getCtrl().dontRespond = true;
+                                updateUIPanels('stpal-param', 'stpal-example');
+                                // enable responding ->  try to find how todo this
+                                //tmp.getCtrl().dontRespond = false;
+
+                                tmp = document.getElementById('stpal-example-descr');
+                                // tmp.textContent = `${allParams.orient == 'ver' ? 'Vertical Bar' : 'Horizontal Bar'}`;
+
+                                tmp = document.getElementById('stpal-example-grid');
+                                tmp.classList.remove('example-grid--hidden');
+                                tmp.classList.add('example-grid--shown');
+                            }
+                            stpal_over_panel.classList.add('over-shown');
+                        });
+                    }
+
 
                     // translate title attributes in-place
                     // file vocabulary.js has function _(str) and returns translated text or original if translation is not found
@@ -1592,6 +1765,12 @@
                     // translate title attributes in-place
                     // 'stbar-param' is a name attribute of all elements on 'smartbar_opt' panels
                     els = document.getElementsByName('stbar-param');
+                    for (let el of els) {
+                        el.attributes.title.textContent = _(el.attributes.title.value);
+                    }
+                    // translate title attributes in-place
+                    // 'stpal-param' is a name attribute of all elements on 'smartpal_opt' panels
+                    els = document.getElementsByName('stpal-param');
                     for (let el of els) {
                         el.attributes.title.textContent = _(el.attributes.title.value);
                     }
@@ -1659,6 +1838,13 @@
                                     elem = document.getElementById('stbar-example');
                                     dirtyOpt = elem.getCtrl().getParams('dirty');
                                     updateTryItElement(selWidget, 'bar-wdg', dirtyOpt);
+                                    updateSourcePanels(selWidget, dirtyOpt);
+                                    break;
+                                }
+                                case 'smartbar': {
+                                    elem = document.getElementById('stpal-example');
+                                    dirtyOpt = elem.getCtrl().getParams('dirty');
+                                    // updateTryItElement(selWidget, 'bar-wdg', dirtyOpt);
                                     updateSourcePanels(selWidget, dirtyOpt);
                                     break;
                                 }
@@ -1740,6 +1926,13 @@
                                     dirtyOpt = elem.getCtrl().getParams('dirty');
                                     updateTryItElement(selWidget, 'bar-wdg', dirtyOpt);
                                     updateSourcePanels(selWidget, dirtyOpt);
+                                }
+                                if (selWidget === 'smartpal') {
+                                    elem = document.getElementById('stpal-example');
+                                    elem.getCtrl().setParam(SmartWidgets.customProp2Param(optionName), optionValue);
+                                    dirtyOpt = elem.getCtrl().getParams('dirty');
+                                    // updateTryItElement(selWidget, 'bar-wdg', dirtyOpt);
+                                    updateSourcePanels(selWidget, dirtyOpt);
 
                                 }
                                 if (selWidget === 'smarttooltip') {
@@ -1782,6 +1975,11 @@
                         subtree: true
                     });
                     observer.observe(document.getElementById('smartbar_opt'), {
+                        attributeFilter: [ "state", "value" ],
+                        attributeOldValue: false,
+                        subtree: true
+                    });
+                    observer.observe(document.getElementById('smartpal_opt'), {
                         attributeFilter: [ "state", "value" ],
                         attributeOldValue: false,
                         subtree: true

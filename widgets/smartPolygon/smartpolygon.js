@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* eslint-disable indent */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-multi-spaces) */
@@ -667,7 +668,7 @@ ${optStr}  };
             'stroke-width': this._o.varStrokeWidth,
             'stroke-opacity': this._o.varOpacity,
             'fill-opacity':  this._o.varOpacity,
-			points: this._buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y,
+			points: SmartWidgets.buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y,
 				this._normRadius, this._o.startAngle,
 				this._o.rotation, 0, this._o.isStar ? this._o.innerRadius : 0)
 		}, this._svgroot, this._svgdoc);
@@ -681,7 +682,7 @@ ${optStr}  };
 			'fill-opacity':  this._o.varOpacity,
 			'stroke-linejoin': 'miter',
 			'stroke-miterlimit': '50',
-			points: this._buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y,
+			points: SmartWidgets.buildPolygon(this._o.anglesNumber, centerPt.x, centerPt.y,
 				this._normRadius, this._o.startAngle,
 				this._o.rotation, 1, this._o.isStar ? this._o.innerRadius : 0)
 		}, this._svgroot, this._svgdoc);
@@ -706,50 +707,6 @@ ${optStr}  };
 	}
 
 
-    /**
-     * Builds and return the path for regular polygon and stars
-     * @param {number} n The number of corners of a regular polygon. Default is 4
-     * @param {number} x X position of center point
-     * @param {number} y Y position of center point
-     * @param {number} r Radius of inscribed circle
-     * @param {number} angle Starting Angle in degrees
-     * @param {number} rotate rotate start angle
-     * @param {number} counterclockwise
-     * @param {number} star Inner radius for star in percents to r
-     */
-	_buildPolygon(n, x, y, r, angle, rotate, counterclockwise, star) {
-        counterclockwise = counterclockwise || 0;
-		star = star || 0;
-
-        angle = angle || 0;
-        if (star) {
-            angle /= 2;
-            n *= 2;
-        }
-		angle = (angle + rotate) * Math.PI / 180;  // convert degrees to radians
-		const innerRadius = r / 100 * star;
-        let points;
-        if (star) {
-            points = `${x + innerRadius * Math.sin(angle)},${y - innerRadius * Math.cos(angle)}`;
-        } else {
-            points = `${x + r * Math.sin(angle)},${y - r * Math.cos(angle)}`;
-        }
-        let delta = 2 * Math.PI / n;
-
-		for (let i = 1; i < n; i++) {
-            angle += counterclockwise ? -delta : delta; // correct an angle
-            if (star) {
-                if (i % 2) {
-                    points += ` ${x + r * Math.sin(angle)},${y - r * Math.cos(angle)}`;
-                } else {
-                    points += ` ${x + innerRadius * Math.sin(angle)},${y - innerRadius * Math.cos(angle)}`;
-                }
-            } else {
-                points += ` ${x + r * Math.sin(angle)},${y - r * Math.cos(angle)}`;
-            }
-		}
-        return points;
-    }
 
 	// event listeners
 	_onShowTooltip(evt) {

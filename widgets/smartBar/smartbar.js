@@ -60,7 +60,7 @@ class SmartBars extends SmartWidgets {
 		const customProp = SmartBars.getCustomProperties();
 		const defOptions = SmartBars.defOptions();
 		const fullJson = SmartWidgets.getCustomParams(customProp, defOptions, opt, 'all', SmartBars.getAlias());
-		return `'${JSON.stringify(fullJson)}'`
+		return `'${JSON.stringify(fullJson)}'`;
 	}
 
     static init(context = {}) {
@@ -226,7 +226,6 @@ class SmartBars extends SmartWidgets {
 			isShowTrends: 0,
 			isGlobalColors: 1,
 			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
-
         };
     }
     static convertNumericProps(options = {}, propName) {
