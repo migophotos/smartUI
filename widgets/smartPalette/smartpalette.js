@@ -274,7 +274,7 @@ ${optStr}  };
 		const fontSize = '10px';
 		const step = 12, gap = 10;
 		let width = 66, height = 30, offsetX = gap, offsetY = gap;
-		const bRect = SmartWidgets.addElement('rect', {
+		this._body = SmartWidgets.addElement('rect', {
 			// visibility: 'hidden',
 			x: 0,
 			y: 0,
@@ -339,8 +339,8 @@ ${optStr}  };
 			offsetX += step + width;
 		}
 		const size = {
-			w: +bRect.getAttribute('width'),
-			h: +bRect.getAttribute('height')
+			w: +this._body.getAttribute('width'),
+			h: +this._body.getAttribute('height')
 		};
 		this._svgroot.setAttribute('height', size.h);
 		this._svgroot.setAttribute('width', size.w);
@@ -398,6 +398,19 @@ ${optStr}  };
 					this._o.stateColors = this._s2c.get();
 				});
 			});
+		}
+		this._setStateColors();
+	}
+	_setStateColors() {
+		this._s2c.set(this._o.stateColors);
+		for (let n = 0; n < 9; n++) {
+			const crDef = this._s2c.get(n);
+			if (crDef) {
+				this._btnGrArr[n].setAttribute('display', 'none');
+				this._paletteArr[n].setAttribute('fill', crDef);
+			} else {
+				this._btnGrArr[n].removeAttribute('display');
+			}
 		}
 	}
 
@@ -508,8 +521,11 @@ ${optStr}  };
 		this._o = Object.assign({}, this._o, options);
 
 		// some properties changing requires rebuilding, lets find its!
-		for (let key in options) {
+		for (let key in this._o) {
 			switch (key) {
+				case 'stateColors':
+					this._setStateColors();
+				break;
 				default:
 					needRebuild++;
 					break;

@@ -1458,7 +1458,6 @@ class SmartUiColorPalette extends HTMLElement {
 						this._btnGrArr[n].removeAttribute('display');
 					}
 				}
-
                 break;
             }
         }
@@ -1622,11 +1621,12 @@ class SmartUiColorPalette extends HTMLElement {
 				const c2 = w3color(`hsl(${h},${s},${l})`);
                 console.log(`hue = ${h}, sat = ${s}, lightness = ${l}, color = ${c2.toHexString()} is ${c2.valid ? 'valid' : 'invalid'}`);
 
-				this._o.value = c2.valid ? c2.toHexString() : '#000000';
+                const newCr = c2.valid ? c2.toHexString() : '#000000';
+				this._s2c.set(stateN, newCr);
+                this._o.value = this._s2c.get();
 				evt.target.setAttribute('fill', this._o.value);
 
-				this._s2c.set(stateN, this._o.value);
-				this.setAttribute('value', this._s2c.get());
+				this.setAttribute('value', this._o.value);
 			});
 		});
 	}
