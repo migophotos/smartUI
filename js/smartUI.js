@@ -1507,7 +1507,7 @@ class SmartUiColorPalette extends HTMLElement {
 				y: offsetY,
 				width: width,
 				height: height,
-				fill: '#ffffff',
+				fill: 'none',
 				stroke: '#000000'
 			}, paletteG, paletteG.ownerDocument));
 			SmartWidgets.addElement('text', {
@@ -1567,11 +1567,18 @@ class SmartUiColorPalette extends HTMLElement {
 				const n = Number(btn.id.replace('btn-', ''));
 				this._btnGrArr[n].setAttribute('display', 'none');
 				let cr = this._s2c.get(n);
-				if (n && !cr) {
-					cr = this._s2c.get(n - 1);
+                if (!cr) { // lets try to find the color in 'anoter' place
+                    cr = this._paletteArr[n].getAttribute('fill');
+                    if (!cr || cr == 'none') {
+                        cr = n ? this._s2c.get(n - 1) || '#888888' : '#888888';
+                    }
 				}
 				if (cr) {
-					this._paletteArr[n].setAttribute('fill', cr);
+                    this._s2c.set(n, cr);
+                    this._o.value = this._s2c.get();
+                    this._paletteArr[n].setAttribute('fill', cr);
+                    
+                    this.setAttribute('value', this._o.value);
 				}
 			});
 		});
