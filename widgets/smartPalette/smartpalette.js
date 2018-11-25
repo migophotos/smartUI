@@ -267,137 +267,140 @@ ${optStr}  };
         // convert to numbers
 		SmartPalettes.convertNumericProps(this._o);
 
-		this._btnGrArr = [];
-		this._buttonArr = [];
-		this._paletteArr = [];
-		const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
-		const fontSize = '10px';
-		const step = 12, gap = 10;
-		let width = 66, height = 30, offsetX = gap, offsetY = gap;
-		this._body = SmartWidgets.addElement('rect', {
-			// visibility: 'hidden',
-			x: 0,
-			y: 0,
-			width: `${(offsetX * 2) + (width * 3) + (step * 2)}`,
-			height: `${(offsetY * 2) + (height * 3) + (step * 2)}`,
-			fill: 'none',
-			stroke: '#ffffff'
-		}, this._svgroot, this._svgdoc);
-		for (let n = 0; n < this._o.count; n++) {
-			if (n && n % 3 == 0) {
-				offsetX = gap;
-				offsetY += step + height;
-			}
-			this._paletteArr.push(SmartWidgets.addElement('rect', {
-				id: `state-${n}`,
-				x: offsetX,
-				y: offsetY,
-				width: width,
-				height: height,
-				fill: '#ffffff',
-				stroke: '#000000'
-			}, this._svgroot, this._svgdoc));
-			SmartWidgets.addElement('text', {
-				text: `State ${n}`,
-				x: offsetX + (width / 2),
-				y: offsetY + (height / 2),
-				fill: '#000000',
-				'text-anchor': 'middle',
-				'dominant-baseline': 'middle',
-				'pointer-events': 'none',
-				'font-family': fontFamily,
-                'font-size': fontSize,
-                // 'paint-order': 'stroke',
-                // stroke: 'black',
-                // 'stroke-width': "1",
-                'stroke-linejoin': 'round'
-			}, this._svgroot, this._svgdoc);
+		if (!this._body) {
+				this._btnGrArr = [];
+				this._buttonArr = [];
+				this._paletteArr = [];
+				const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
+				const fontSize = '10px';
+				const step = 12, gap = 10;
+				let width = 66, height = 30, offsetX = gap, offsetY = gap;
 
-			this._btnGrArr.push(SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc));
-			this._buttonArr.push(SmartWidgets.addElement('rect', {
-				id: `btn-${n}`,
-				x: offsetX,
-				y: offsetY,
-				width: width,
-				height: height,
-				fill: '#8f8f8f',
+				this._body = SmartWidgets.addElement('rect', {
+				// visibility: 'hidden',
+				x: 0,
+				y: 0,
+				width: `${(offsetX * 2) + (width * 3) + (step * 2)}`,
+				height: `${(offsetY * 2) + (height * 3) + (step * 2)}`,
+				fill: 'none',
 				stroke: '#ffffff'
-			}, this._btnGrArr[n], this._svgdoc));
-			SmartWidgets.addElement('text', {
-				text: `${n} - default`,
-				x: offsetX + (width / 2),
-				y: offsetY + (height / 2),
-				fill: '#ffffff',
-				'text-anchor': 'middle',
-				'dominant-baseline': 'middle',
-				'alignment-baseline': 'middle',
-				'pointer-events': 'none',
-				'font-family': fontFamily,
-				'font-size': fontSize
-			}, this._btnGrArr[n], this._svgdoc);
+			}, this._svgroot, this._svgdoc);
+			for (let n = 0; n < this._o.count; n++) {
+				if (n && n % 3 == 0) {
+					offsetX = gap;
+					offsetY += step + height;
+				}
+				this._paletteArr.push(SmartWidgets.addElement('rect', {
+					id: `state-${n}`,
+					x: offsetX,
+					y: offsetY,
+					width: width,
+					height: height,
+					fill: '#ffffff',
+					stroke: '#000000'
+				}, this._svgroot, this._svgdoc));
+				SmartWidgets.addElement('text', {
+					text: `State ${n}`,
+					x: offsetX + (width / 2),
+					y: offsetY + (height / 2),
+					fill: '#000000',
+					'text-anchor': 'middle',
+					'dominant-baseline': 'middle',
+					'pointer-events': 'none',
+					'font-family': fontFamily,
+					'font-size': fontSize,
+					// 'paint-order': 'stroke',
+					// stroke: 'black',
+					// 'stroke-width': "1",
+					'stroke-linejoin': 'round'
+				}, this._svgroot, this._svgdoc);
 
-			offsetX += step + width;
-		}
-		const size = {
-			w: +this._body.getAttribute('width'),
-			h: +this._body.getAttribute('height')
-		};
-		this._svgroot.setAttribute('height', size.h);
-		this._svgroot.setAttribute('width', size.w);
-		this._svgroot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
+				this._btnGrArr.push(SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc));
+				this._buttonArr.push(SmartWidgets.addElement('rect', {
+					id: `btn-${n}`,
+					x: offsetX,
+					y: offsetY,
+					width: width,
+					height: height,
+					fill: '#8f8f8f',
+					stroke: '#ffffff'
+				}, this._btnGrArr[n], this._svgdoc));
+				SmartWidgets.addElement('text', {
+					text: `${n} - default`,
+					x: offsetX + (width / 2),
+					y: offsetY + (height / 2),
+					fill: '#ffffff',
+					'text-anchor': 'middle',
+					'dominant-baseline': 'middle',
+					'alignment-baseline': 'middle',
+					'pointer-events': 'none',
+					'font-family': fontFamily,
+					'font-size': fontSize
+				}, this._btnGrArr[n], this._svgdoc);
 
-		if (this._mode != 'html') {
-			this._buttonArr.forEach((btn) => {
-				btn.addEventListener('click', (evt) => {
-					const n = Number(btn.id.replace('btn-', ''));
-					this._btnGrArr[n].setAttribute('display', 'none');
-					let cr = this._s2c.get(n);
-					if (n && !cr) {
-						cr = this._s2c.get(n - 1);
-					}
-					if (cr) {
-						this._paletteArr[n].setAttribute('fill', cr);
-					}
+				offsetX += step + width;
+			}
+			const size = {
+				w: +this._body.getAttribute('width'),
+				h: +this._body.getAttribute('height')
+			};
+			this._svgroot.setAttribute('height', size.h);
+			this._svgroot.setAttribute('width', size.w);
+			this._svgroot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
+
+			if (this._mode != 'html') {
+				this._buttonArr.forEach((btn) => {
+					btn.addEventListener('click', (evt) => {
+						const n = Number(btn.id.replace('btn-', ''));
+						this._btnGrArr[n].setAttribute('display', 'none');
+						let cr = this._s2c.get(n);
+						if (n && !cr) {
+							cr = this._s2c.get(n - 1);
+						}
+						if (cr) {
+							this._paletteArr[n].setAttribute('fill', cr);
+						}
+					});
 				});
-			});
-			this._paletteArr.forEach((sel) => {
-				sel.addEventListener('click', (evt) => {
-					const n = Number(sel.id.replace('state-', ''));
-					this._s2c.delete(n);
-					this._o.stateColors = this._s2c.get();
-					this._btnGrArr[n].removeAttribute('display');
+				this._paletteArr.forEach((sel) => {
+					sel.addEventListener('click', (evt) => {
+						const n = Number(sel.id.replace('state-', ''));
+						this._s2c.delete(n);
+						this._o.stateColors = this._s2c.get();
+						this._btnGrArr[n].removeAttribute('display');
+					});
+					sel.addEventListener('wheel', (evt) => {
+						evt.preventDefault();
+						const stateN = Number(evt.target.id.split('-')[1]);
+
+						const cr = evt.target.getAttribute('fill'); // `${this._colorBox.value}`;
+						const c = w3color(cr);
+
+						const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
+						let K = evt.ctrlKey ? 0.01 : evt.shiftKey ? 0.01 : 1;
+						if (evt.altKey) {
+							K = K * 5;
+						}
+						const delta = evt.deltaY || evt.detail || evt.wheelDelta;
+						if (delta > 0) {
+							c[P] = c[P] + K;
+						} else {
+							c[P] = c[P] - K;
+						}
+						const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
+						const s = c.sat; // > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
+						const l = c.lightness; // > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
+
+						const c2 = w3color(`hsl(${h},${s},${l})`);
+
+						this._o.value = c2.valid ? c2.toHexString() : '#000000';
+						evt.target.setAttribute('fill', this._o.value);
+
+						this._s2c.set(stateN, this._o.value);
+						this._o.stateColors = this._s2c.get();
+					});
 				});
-				sel.addEventListener('wheel', (evt) => {
-					evt.preventDefault();
-					const stateN = Number(evt.target.id.split('-')[1]);
-
-					const cr = evt.target.getAttribute('fill'); // `${this._colorBox.value}`;
-					const c = w3color(cr);
-
-					const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
-					let K = evt.ctrlKey ? 0.01 : evt.shiftKey ? 0.01 : 1;
-					if (evt.altKey) {
-						K = K * 5;
-					}
-					const delta = evt.deltaY || evt.detail || evt.wheelDelta;
-					if (delta > 0) {
-						c[P] = c[P] + K;
-					} else {
-						c[P] = c[P] - K;
-					}
-					const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
-					const s = c.sat; // > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
-					const l = c.lightness; // > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
-
-					const c2 = w3color(`hsl(${h},${s},${l})`);
-
-					this._o.value = c2.valid ? c2.toHexString() : '#000000';
-					evt.target.setAttribute('fill', this._o.value);
-
-					this._s2c.set(stateN, this._o.value);
-					this._o.stateColors = this._s2c.get();
-				});
-			});
+			}
 		}
 		this._setStateColors();
 	}
