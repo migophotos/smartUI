@@ -959,10 +959,36 @@ ${optStr}  };
 		}
 		return dataEx;
 	}
+	/**
+	 * Get parameters of Smart Widget
+	 * @param {string} filter 'all', 'dirty', 'def', 'vars', 'names', 'css', 'json', 'cjson'
+	 * @returns smart object parameters in form specified by filter
+	 */
 	getParams(filter = 'all') {
-		const customProp = SmartPolygons.getCustomProperties();
+		let opt;
+		const customProp = SmartPolygons.getCustomProperties();		// get an array of custom properties
 		const defOptions = SmartPolygons.defOptions();
-		return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
+		switch (filter) {
+			case 'cjson': // compressed json
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'all', SmartPolygons.getAlias());
+				return SmartPolygons.getCompressedJSON(opt);
+			case 'json':
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty', 'none');
+				return SmartPolygons.getJSON(opt);
+			case 'css':
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty', 'none');
+				return SmartPolygons.getCSS(opt);
+			case 'names':
+				return SmartWidgets.getCustomParams(customProp, defOptions);
+			case 'vars':
+				return customProp;
+			case 'def':
+				return defOptions;
+			case 'dirty':
+			case 'all':
+			default:
+				return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
+		}
 	}
 	setParam(name, value) {
 		if (this.dontRespond) {	// don't respond on changing parameters when updating user panels in UI Builder (for example)

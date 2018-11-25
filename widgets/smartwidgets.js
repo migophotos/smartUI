@@ -517,7 +517,7 @@ class SmartWidgets {
 	static getCustomParams(custProp, defOpt, opt = null, filter = 'all', alias = 'none') {
 		const paramsArray = [];
 		for (let prop of custProp) {
-			paramsArray.push(SmartPolygons.customProp2Param(prop));
+			paramsArray.push(SmartWidgets.customProp2Param(prop));
 		}
 		if (!opt) {
 			return paramsArray;

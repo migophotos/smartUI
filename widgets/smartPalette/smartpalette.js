@@ -89,7 +89,7 @@ class SmartPalettes extends SmartWidgets {
 			role: '',			// in demo mode this parameter has value 'demoMode'
 			alias: SmartPalettes.getAlias(),
 			isGlobalColors: 1,
-			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
+			stateColors: '0:#0080c0,1:#008000,2:#ffff15,3:#ff2f2f,4:#9f0000,5:#f0f0f0'
 		};
 	}
 	static convertNumericProps(options = {}, propName) {
@@ -348,7 +348,7 @@ ${optStr}  };
 			this._svgroot.setAttribute('width', size.w);
 			this._svgroot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
 
-			if (this._mode != 'html') {
+			if (1 /*this._mode != 'html'*/) {
 				this._buttonArr.forEach((btn) => {
 					btn.addEventListener('click', (evt) => {
 						const n = Number(btn.id.replace('btn-', ''));
@@ -490,10 +490,36 @@ ${optStr}  };
 	generateExData() {
 		console.log('Runtime updates for this widget not applicable');
 	}
+	/**
+	 * Get parameters of Smart Widget
+	 * @param {string} filter 'all', 'dirty', 'def', 'vars', 'names', 'css', 'json', 'cjson'
+	 * @returns smart object parameters in form specified by filter
+	 */
 	getParams(filter = 'all') {
+		let opt;
 		const customProp = SmartPalettes.getCustomProperties();		// get an array of custom properties
 		const defOptions = SmartPalettes.defOptions();
-		return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
+		switch (filter) {
+			case 'cjson': // compressed json
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'all', SmartPalettes.getAlias());
+				return SmartPalettes.getCompressedJSON(opt);
+			case 'json':
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty', 'none');
+				return SmartPalettes.getJSON(opt);
+			case 'css':
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty', 'none');
+				return SmartPalettes.getCSS(opt);
+			case 'names':
+				return SmartWidgets.getCustomParams(customProp, defOptions);
+			case 'vars':
+				return customProp;
+			case 'def':
+				return defOptions;
+			case 'dirty':
+			case 'all':
+			default:
+				return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
+		}
 	}
 	setParam(name, value) {
 		if (this.dontRespond) {	// don't respond on changing parameters when updating user panels in UI Builder (for example)
