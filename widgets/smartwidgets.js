@@ -26,6 +26,12 @@ class SmartHeap extends Map {
  * for example: 1#00ff00,2#00aabb,3#ff0000,... or old format: 1:#00ff00;2:#00aabb;3:#ff0000,...
  */
 class StateToColors extends Map {
+	constructor(stateColorsDef = null, useAsGlobal = 0) {
+		super();
+		if (typeof stateColorsDef === 'string') {
+			this.init(stateColorsDef, useAsGlobal);
+		}
+	}
 	init(stateDef, useAsGlobal = 0) {
 		super.clear();
 		if (typeof stateDef === 'string' && stateDef.length) {
@@ -683,7 +689,17 @@ class SmartWidgets {
         }
 	}
 }
-
+/**
+ * Scrollable Container is an analog of html options list
+ * The class constructor gots an ID of parent's <g> element as 'ud' and 
+ * options parameters as 'options' object.
+ * This two parameters must to be specified!
+ * The structure of options:
+ * context 	- an SVG context
+ * width 	- the width of scrollable container, or 36 by default
+ * height	- the height of scrollable container, or 36 be default
+ * gap		- the gap between items and body border
+ */
 class ScrollableContainer {
 	constructor(id = null, options = null) {
 		if (!id || !options) {
@@ -696,15 +712,17 @@ class ScrollableContainer {
 		this._svgroot	= this._root.getElementById(id);
 		this._svgdoc	= this._svgroot.ownerDocument;
 
-		this._width		= options.width || 36;
-		this._height	= options.height || 36;
+		this._width		= options.width || 36;	// container width
+		this._height	= options.height || 36;	// container height
+		this._rowHeight = options.row;			// rows height
+		this._gap		= options.gap || 4,		// gap between rows and around of items
 
 		this._body = SmartWidgets.addElement('g', {
 			class: 'scroll-container-body',
 			'clip-path': `url(#${this._id}-clippath)`
 		}, this._svgroot, this._svgdoc);
 
-		this._clipPace = SmartWidgets.addElement('clipPath', {
+		this._clipFace = SmartWidgets.addElement('clipPath', {
 			id: `${this._id}-clippath`
 		}, this._svgroot, this._svgdoc);
 		this._face = SmartWidgets.addElement('rect', {
@@ -713,7 +731,7 @@ class ScrollableContainer {
 			y: 0,
 			width: this._width,
 			height: this._height
-		}, this._clipPace, this._svgdoc);
+		}, this._clipFace, this._svgdoc);
 
 		this._bodyActiveG = SmartWidgets.addElement('g', {
 			class: 'scroll-container-body_g'
@@ -725,11 +743,12 @@ class ScrollableContainer {
 			y: 0,
 			width: this._width,
 			height: this._height * 2,
-			fill: '#aaaaff',
+			fill: '#666666',
 			stroke: '#ffffff',
 			'stroke-width': 2
 		}, this._bodyActiveG, this._svgdoc);
 		this._bodyActiveG.addEventListener('wheel', (evt) => {
+			evt.preventDefault();
 			let scroll = Number(this._bodyActiveG.dataset['offset']) || 0;
 			const delta = evt.deltaY || evt.detail || evt.wheelDelta;
 			if (delta > 0) {
@@ -752,21 +771,47 @@ class ScrollableContainer {
 			}
 		});
 	}
+	/**
+	 * Add new element into container collection.
+	 * The structure of 'elem' object:
+	 * id		- element's Id
+	 * cb		- callback function that must create an element
+	 * @param {object} elem 
+	 */
 	add(elem) {
-		const offset = 2 + (this._heap.size * (32 + 2));
-		// temporary draw new element as colored rectangle
-		const item = SmartWidgets.addElement('rect', {
-			id: elem.id, // `${this._id}-item-${this._heap.size}`,
-			x: 2,
-			y: offset,
-			width: 32,
-			height: 32,
-			stroke: '#ffffff',
-			'stroke-width': 0.5,
-			fill: '#ffaaaa',
-			tabindex: this._heap.size
-		}, this._bodyActiveG, this._svgdoc);
-		this._bodyActiveBkg.setAttribute('height', offset + 32);
+		const iWidth = this._width - (2 * this._gap);
+		const iHeight = this._rowHeight || iWidth;
+		const offset = this._gap + (this._heap.size * (iHeight + this._gap));
+		let item = null;
+
+		if (typeof elem.cb === 'function') {
+			item = elem.cb(this._bodyActiveG, {
+				x: this._gap,
+				y: offset,
+				width: iWidth,
+				height: iHeight,	
+				id: elem.id,
+				stroke: '#ffffff',
+				'stroke-width': 2,
+				tabindex: this._heap.size,
+				data: elem.data,
+				owner: elem.owner
+			});
+		} else {
+			// draw new element just as colored rectangle
+			item = SmartWidgets.addElement('rect', {
+				id: elem.id,
+				x: this._gap,
+				y: offset,
+				width: iWidth,
+				height: iHeight,
+				stroke: '#ffffff',
+				'stroke-width': 0.5,
+				fill: '#ffaaaa',
+				tabindex: this._heap.size
+			}, this._bodyActiveG, this._svgdoc);
+		}
+		this._bodyActiveBkg.setAttribute('height', offset + iHeight + this._gap);
 		this._heap.set(elem.id, elem);
 		return item;
 	}

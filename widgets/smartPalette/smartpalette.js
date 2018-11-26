@@ -244,6 +244,7 @@ ${optStr}  };
 
 		this._data      = null; // last received from data provider (server + target)
 		this._s2c       = new StateToColors();
+		this._s2c_2		= new StateToColors();
 
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
@@ -292,13 +293,19 @@ ${optStr}  };
 				stroke: '#ffffff'
 			}, this._bodyG, this._svgdoc);
 
-			const offset = 36;
+			const offset = 64;
 			const size = {
 				w: +this._body.getAttribute('width') + offset + gap,
 				h: +this._body.getAttribute('height')
 			};
 			this._bodyG.setAttribute('transform', `translate(${offset + gap}, 0)`);
-			this._themes = new ScrollableContainer(themsGId, {width: offset, height: size.h, context: this._root});
+			this._themes = new ScrollableContainer(themsGId, {
+				width: offset, 
+				height: size.h, 
+				gap: 6,
+				row: 32,
+				context: this._root
+			});
 
 			for (let n = 0; n < this._o.count; n++) {
 				if (n && n % 3 == 0) {
@@ -417,10 +424,11 @@ ${optStr}  };
 		this._setStateColors();
 		this._getTemplates();
 	}
-	_setStateColors() {
-		this._s2c.set(this._o.stateColors);
+	_setStateColors(s2c = null) {
+		const s2c_ref = s2c ? s2c : this._s2c;
+		s2c_ref.set(this._o.stateColors);
 		for (let n = 0; n < 9; n++) {
-			const crDef = this._s2c.get(n);
+			const crDef = s2c_ref.get(n);
 			if (crDef) {
 				this._btnGrArr[n].setAttribute('display', 'none');
 				this._paletteArr[n].setAttribute('fill', crDef);
@@ -434,23 +442,73 @@ ${optStr}  };
 			if (SMART_WIDGETS[n].match('stpal-')) {
 				let theme = {
 					id: `theme-${n}`,
-					template: SMART_WIDGETS[n]
+					data: SMART_WIDGETS[n],
+					cb: this._drawItem,
+					owner: this._mode === 'html' ? this._root.getRootNode().host.id : this.id
 				};
 				const themeElem = this._themes.add(theme);
 				if (themeElem) {
 					themeElem.addEventListener('click', (evt) => {
+						evt.preventDefault();
 						const target = evt.target;
 						// const ida = target.id.split('-');
 						// const selId = ida[ida.length - 1];
 						theme = this._themes.get(target.id);
 
-						const opt = SmartPalettes.JsonToOptions(theme.template);
+						const opt = SmartPalettes.JsonToOptions(theme.data);
 						this._o.stateColors = opt.stateColors;
-						this._setStateColors();
+						this._setStateColors(this._s2c_2);
 					});
 				}
 			}
 		}
+	}
+	/**
+	 * Callback function for creating item inside scrollable container (see ScrollableContainer.add(...))
+	 * @param {object} root container <g> element into wich new item will be appended 
+	 * @param {object} data id, coordinates, color and other data of item that will be appended
+	 * @returns reference on created item
+	 */
+	_drawItem(root, data) {
+		const ownerRef = window.SmartPalettes.get(data.owner);
+		const opt = SmartPalettes.JsonToOptions(data.data);
+		ownerRef._s2c_2.set(opt.stateColors);
+
+		const item = SmartWidgets.addElement('g', {}, root, ownerRef._svgdoc);
+		SmartWidgets.addElement('rect', {
+			id: data.id,
+			x: data.x,
+			y: data.y,
+			width: data.width,
+			height: data.height,
+			stroke: data.stroke,
+			'stroke-width': data['stroke-width'],
+			fill: '#666666',
+			tabindex: data.tabindex
+		}, item, ownerRef._svgdoc);
+	
+		let w = (data.width - data['stroke-width']) / 3;
+		let h = (data.height - data['stroke-width']) / 3;
+		let dx = data.x + data['stroke-width']/2, dy = data.y + data['stroke-width']/2;
+		for (let n = 0; n < 9; n++) {
+			const crDef = ownerRef._s2c_2.get(n)
+			if (n && n % 3 == 0) {
+				dx = data.x + data['stroke-width']/2;
+				dy += h;
+			}
+			SmartWidgets.addElement('rect', {
+				x: dx,
+				y: dy,
+				width: w,
+				height: h,
+				stroke: 'none',
+				'stroke-width': 0,
+				fill: crDef ? crDef : 'none',
+				'pointer-events': 'none'
+			}, item, ownerRef._svgdoc);
+			dx += w;
+		}	
+		return item;
 	}
 
 	// API
