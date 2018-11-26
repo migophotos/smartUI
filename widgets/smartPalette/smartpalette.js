@@ -275,7 +275,13 @@ ${optStr}  };
 				const fontSize = '10px';
 				const step = 12, gap = 10;
 				let width = 66, height = 30, offsetX = gap, offsetY = gap;
+				let themsGId = `${this.id}-themes`;
+				this._containerG = SmartWidgets.addElement('g', {
+					id: themsGId
+				}, this._svgroot, this._svgdoc);
 
+				this._bodyG = SmartWidgets.addElement('g', {
+				}, this._svgroot, this._svgdoc);
 				this._body = SmartWidgets.addElement('rect', {
 				// visibility: 'hidden',
 				x: 0,
@@ -284,7 +290,16 @@ ${optStr}  };
 				height: `${(offsetY * 2) + (height * 3) + (step * 2)}`,
 				fill: 'none',
 				stroke: '#ffffff'
-			}, this._svgroot, this._svgdoc);
+			}, this._bodyG, this._svgdoc);
+
+			const offset = 36;
+			const size = {
+				w: +this._body.getAttribute('width') + offset + gap,
+				h: +this._body.getAttribute('height')
+			};
+			this._bodyG.setAttribute('transform', `translate(${offset + gap}, 0)`);
+			this._themes = new ScrollableContainer(themsGId, {width: offset, height: size.h, context: this._root});
+
 			for (let n = 0; n < this._o.count; n++) {
 				if (n && n % 3 == 0) {
 					offsetX = gap;
@@ -298,7 +313,7 @@ ${optStr}  };
 					height: height,
 					fill: '#ffffff',
 					stroke: '#000000'
-				}, this._svgroot, this._svgdoc));
+				}, this._bodyG, this._svgdoc));
 				SmartWidgets.addElement('text', {
 					text: `State ${n}`,
 					x: offsetX + (width / 2),
@@ -313,9 +328,9 @@ ${optStr}  };
 					// stroke: 'black',
 					// 'stroke-width': "1",
 					'stroke-linejoin': 'round'
-				}, this._svgroot, this._svgdoc);
+				}, this._bodyG, this._svgdoc);
 
-				this._btnGrArr.push(SmartWidgets.addElement('g', {}, this._svgroot, this._svgdoc));
+				this._btnGrArr.push(SmartWidgets.addElement('g', {}, this._bodyG, this._svgdoc));
 				this._buttonArr.push(SmartWidgets.addElement('rect', {
 					id: `btn-${n}`,
 					x: offsetX,
@@ -340,10 +355,7 @@ ${optStr}  };
 
 				offsetX += step + width;
 			}
-			const size = {
-				w: +this._body.getAttribute('width'),
-				h: +this._body.getAttribute('height')
-			};
+
 			this._svgroot.setAttribute('height', size.h);
 			this._svgroot.setAttribute('width', size.w);
 			this._svgroot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
@@ -403,6 +415,7 @@ ${optStr}  };
 			}
 		}
 		this._setStateColors();
+		this._getTemplates();
 	}
 	_setStateColors() {
 		this._s2c.set(this._o.stateColors);
@@ -413,6 +426,29 @@ ${optStr}  };
 				this._paletteArr[n].setAttribute('fill', crDef);
 			} else {
 				this._btnGrArr[n].removeAttribute('display');
+			}
+		}
+	}
+	_getTemplates() {
+		for (let n = 0; n < SMART_WIDGETS.length; n++) {
+			if (SMART_WIDGETS[n].match('stpal-')) {
+				let theme = {
+					id: `theme-${n}`,
+					template: SMART_WIDGETS[n]
+				};
+				const themeElem = this._themes.add(theme);
+				if (themeElem) {
+					themeElem.addEventListener('click', (evt) => {
+						const target = evt.target;
+						// const ida = target.id.split('-');
+						// const selId = ida[ida.length - 1];
+						theme = this._themes.get(target.id);
+
+						const opt = SmartPalettes.JsonToOptions(theme.template);
+						this._o.stateColors = opt.stateColors;
+						this._setStateColors();
+					});
+				}
 			}
 		}
 	}
@@ -555,10 +591,10 @@ ${optStr}  };
 			switch (key) {
 				case 'stateColors':
 					this._setStateColors();
-				break;
-				default:
-					needRebuild++;
 					break;
+				// default:
+				// 	needRebuild++;
+				// 	break;
 			}
 		}
 		if (rebuild && needRebuild) {

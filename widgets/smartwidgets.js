@@ -684,3 +684,93 @@ class SmartWidgets {
 	}
 }
 
+class ScrollableContainer {
+	constructor(id = null, options = null) {
+		if (!id || !options) {
+			throw new ReferenceError('id and options cannot be undefined!');
+		}
+		this._heap = new Map();
+
+		this._id		= id;
+		this._root		= options.context;
+		this._svgroot	= this._root.getElementById(id);
+		this._svgdoc	= this._svgroot.ownerDocument;
+
+		this._width		= options.width || 36;
+		this._height	= options.height || 36;
+
+		this._body = SmartWidgets.addElement('g', {
+			class: 'scroll-container-body',
+			'clip-path': `url(#${this._id}-clippath)`
+		}, this._svgroot, this._svgdoc);
+
+		this._clipPace = SmartWidgets.addElement('clipPath', {
+			id: `${this._id}-clippath`
+		}, this._svgroot, this._svgdoc);
+		this._face = SmartWidgets.addElement('rect', {
+			id: `${this._id}-clipface`,
+			x: 0,
+			y: 0,
+			width: this._width,
+			height: this._height
+		}, this._clipPace, this._svgdoc);
+
+		this._bodyActiveG = SmartWidgets.addElement('g', {
+			class: 'scroll-container-body_g'
+		}, this._body, this._svgdoc);
+
+		this._bodyActiveBkg = SmartWidgets.addElement('rect', {
+			class: 'scroll-container-body_g_bkg',
+			x: 0,
+			y: 0,
+			width: this._width,
+			height: this._height * 2,
+			fill: '#aaaaff',
+			stroke: '#ffffff',
+			'stroke-width': 2
+		}, this._bodyActiveG, this._svgdoc);
+		this._bodyActiveG.addEventListener('wheel', (evt) => {
+			let scroll = Number(this._bodyActiveG.dataset['offset']) || 0;
+			const delta = evt.deltaY || evt.detail || evt.wheelDelta;
+			if (delta > 0) {
+				scroll -= 2;
+			} else {
+				scroll += 2;
+			}
+			// const lastItem = this._root.getElementById(`${this._id}-item-${this._heap.size - 1}`);
+			// const clipFace = this._face.getBoundingClientRect();
+			// const location = lastItem.getBoundingClientRect();
+			// if (delta > 0 && location.bottom < clipFace.bottom) {
+			// 	this._bodyActiveG.setAttribute('transform', `translate(0, ${scroll})`);
+			// 	this._bodyActiveG.dataset['offset'] = scroll;
+			// 	return;
+			// }
+
+			if (scroll <= 0) {
+				this._bodyActiveG.setAttribute('transform', `translate(0, ${scroll})`);
+				this._bodyActiveG.dataset['offset'] = scroll;
+			}
+		});
+	}
+	add(elem) {
+		const offset = 2 + (this._heap.size * (32 + 2));
+		// temporary draw new element as colored rectangle
+		const item = SmartWidgets.addElement('rect', {
+			id: elem.id, // `${this._id}-item-${this._heap.size}`,
+			x: 2,
+			y: offset,
+			width: 32,
+			height: 32,
+			stroke: '#ffffff',
+			'stroke-width': 0.5,
+			fill: '#ffaaaa',
+			tabindex: this._heap.size
+		}, this._bodyActiveG, this._svgdoc);
+		this._bodyActiveBkg.setAttribute('height', offset + 32);
+		this._heap.set(elem.id, elem);
+		return item;
+	}
+	get(id) {
+		return this._heap.get(id);
+	}
+}

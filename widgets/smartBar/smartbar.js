@@ -611,7 +611,7 @@ ${optStr}  };
 						tha.push({
 							value: parseFloat(th2c[0]) * onePCT,
 							color: `#${th2c[1]}`
-						})
+						});
 					}
 					SmartWidgets.sortDataByParam(tha, 'value', 0);
 					for (let thr of tha) {
