@@ -274,8 +274,8 @@ ${optStr}  };
 				this._paletteArr = [];
 				const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
 				const fontSize = '10px';
-				const step = 12, gap = 10;
-				let width = 66, height = 30, offsetX = gap, offsetY = gap;
+				const step = 6, gap = 6;
+				let width = 60, height = 40, offsetX = gap, offsetY = gap;
 				let themsGId = `${this.id}-themes`;
 				this._containerG = SmartWidgets.addElement('g', {
 					id: themsGId
@@ -289,16 +289,16 @@ ${optStr}  };
 				y: 0,
 				width: `${(offsetX * 2) + (width * 3) + (step * 2)}`,
 				height: `${(offsetY * 2) + (height * 3) + (step * 2)}`,
-				fill: 'none',
+				fill: '#666666',
 				stroke: '#ffffff'
 			}, this._bodyG, this._svgdoc);
 
-			const offset = 64;
+			const offset = 50;
 			const size = {
 				w: +this._body.getAttribute('width') + offset + gap,
 				h: +this._body.getAttribute('height')
 			};
-			this._bodyG.setAttribute('transform', `translate(${offset + gap}, 0)`);
+			this._bodyG.setAttribute('transform', `translate(${offset + gap * 2}, 0)`);
 			this._themes = new ScrollableContainer(themsGId, {
 				width: offset, 
 				height: size.h, 
@@ -319,7 +319,7 @@ ${optStr}  };
 					width: width,
 					height: height,
 					fill: '#ffffff',
-					stroke: '#000000'
+					stroke: '#ffffff'
 				}, this._bodyG, this._svgdoc));
 				SmartWidgets.addElement('text', {
 					text: `State ${n}`,

@@ -729,7 +729,7 @@ class ScrollableContainer {
 			id: `${this._id}-clipface`,
 			x: 0,
 			y: 0,
-			width: this._width,
+			width: this._width + this._gap,
 			height: this._height
 		}, this._clipFace, this._svgdoc);
 
@@ -741,7 +741,7 @@ class ScrollableContainer {
 			class: 'scroll-container-body_g_bkg',
 			x: 0,
 			y: 0,
-			width: this._width,
+			width: this._width + this._gap,
 			height: this._height * 2,
 			fill: '#666666',
 			stroke: '#ffffff',
