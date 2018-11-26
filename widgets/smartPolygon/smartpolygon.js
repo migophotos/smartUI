@@ -970,7 +970,8 @@ ${optStr}  };
 		const defOptions = SmartPolygons.defOptions();
 		switch (filter) {
 			case 'cjson': // compressed json
-				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'all', SmartPolygons.getAlias());
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty');
+				delete opt.role;
 				return SmartPolygons.getCompressedJSON(opt);
 			case 'json':
 				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty', 'none');

@@ -1279,7 +1279,8 @@ ${optStr}  };
 		const defOptions = SmartBars.defOptions();
 		switch (filter) {
 			case 'cjson': // compressed json
-				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'all', SmartBars.getAlias());
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty');
+				delete opt.role;
 				return SmartBars.getCompressedJSON(opt);
 			case 'json':
 				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty', 'none');

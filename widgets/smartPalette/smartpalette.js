@@ -501,7 +501,8 @@ ${optStr}  };
 		const defOptions = SmartPalettes.defOptions();
 		switch (filter) {
 			case 'cjson': // compressed json
-				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'all', SmartPalettes.getAlias());
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty');
+				delete opt.role;
 				return SmartPalettes.getCompressedJSON(opt);
 			case 'json':
 				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty', 'none');

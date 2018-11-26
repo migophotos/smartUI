@@ -53,5 +53,5 @@ const SMART_WIDGETS = [
     '{"stwidget":"stpal-.-.-0-0#0080c0,1#008000,2#ffff15,3#ff2f2f,4#9f0000,5#292929"}',
     '{"stwidget":"stpal-.-.-0-0#70cfff,1#0aff0a,2#ffff14,3#ff6b6b,4#ff52ff,5#aa80ff,6#000000,7#8c8c8c,8#ffffff"}',
     '{"stwidget":"stpal-.-.-0-0#007dfa,1#25cb8b,2#2cff14,3#f8ff2e,4#ffa352,5#ff668f,8#121212,6#df3adf,7#9f4bd2"}',
-
+    '{"stwidget":"stpal-.-.-0-0#00b3fa,1#0075fa,2#7d00fa,3#d000fa,4#fa00c8,5#fa0060,6#fa7d00,7#fad000,8#affa00"}',
 ];
