@@ -298,11 +298,11 @@ ${optStr}  };
 				w: +this._body.getAttribute('width') + offset + gap,
 				h: +this._body.getAttribute('height')
 			};
-			this._bodyG.setAttribute('transform', `translate(${offset + gap * 2}, 0)`);
+			this._bodyG.setAttribute('transform', `translate(${offset + (gap * 2)}, 0)`);
 			this._themes = new ScrollableContainer(themsGId, {
-				width: offset, 
-				height: size.h, 
-				gap: 6,
+				width: offset,
+				height: size.h,
+				gap: gap,
 				row: 32,
 				context: this._root
 			});
@@ -465,7 +465,7 @@ ${optStr}  };
 	}
 	/**
 	 * Callback function for creating item inside scrollable container (see ScrollableContainer.add(...))
-	 * @param {object} root container <g> element into wich new item will be appended 
+	 * @param {object} root container <g> element into wich new item will be appended
 	 * @param {object} data id, coordinates, color and other data of item that will be appended
 	 * @returns reference on created item
 	 */
@@ -486,7 +486,7 @@ ${optStr}  };
 			fill: '#666666',
 			tabindex: data.tabindex
 		}, item, ownerRef._svgdoc);
-	
+
 		let w = (data.width - data['stroke-width']) / 3;
 		let h = (data.height - data['stroke-width']) / 3;
 		let dx = data.x + data['stroke-width']/2, dy = data.y + data['stroke-width']/2;
@@ -503,11 +503,11 @@ ${optStr}  };
 				height: h,
 				stroke: 'none',
 				'stroke-width': 0,
-				fill: crDef ? crDef : 'none',
+				fill: crDef || 'none',
 				'pointer-events': 'none'
 			}, item, ownerRef._svgdoc);
 			dx += w;
-		}	
+		}
 		return item;
 	}
 
