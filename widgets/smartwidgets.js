@@ -170,6 +170,7 @@ class SmartWidgets {
 		};
 		return df;
 	}
+	// set specified attributes {attr: value,...} to array of element [el1,el2,...]
 	static setAttributes(elems, attrs) {
 		for (let el of elems) {
 			for (let attr in attrs) {
@@ -262,7 +263,25 @@ class SmartWidgets {
             }
 		}
         return points;
-    }
+	}
+
+	/**
+	 * translate DOM client pixels coordinates (screen coordinates) to SVG units with mapping to specified transformed  SVGElement, or svg
+	 * @param {SVGElement} element transformed SVGElement, or svg
+	 * @param {*} x	x-coordinate to be translated
+	 * @param {*} y y-coordinate to be translated
+	 * @returns translated SVGPoint
+	 */
+	static svgPoint(element = null, x = '', y = '') {
+		if (!element || x == '' || y == '') {
+			return null;
+		}
+		const target = element.nodeName === 'svg' ? element : element.nearestViewportElement;
+		const pt = target.createSVGPoint();
+		pt.x = +x;
+		pt.y = +y;
+		return pt.matrixTransform(element.getScreenCTM().inverse());
+	}
 
 
 	// http get returns promis
@@ -806,15 +825,17 @@ class ScrollableContainer {
 		});
 
 		this._scrollbarActive.addEventListener('click', (evt) => {
-			const pnt = this._scrollbarLine.ownerSVGElement.createSVGPoint();
-			pnt.x = evt.clientX;
-			pnt.y = evt.clientY;
-			// elements transformed and/or in different(svg) viewports
-			const sCTM = this._scrollbarLine.getScreenCTM();
-			const Pnt = pnt.matrixTransform(sCTM.inverse());
-
-			console.log(`${pnt.y} -> ${Pnt.y}`);
+			const Pnt = SmartWidgets.svgPoint(this._scrollbarLine, evt.clientX, evt.clientY);
+			console.log(`-> ${Pnt.y}`);
 			this._scrollbarButt.setAttribute('transform', `translate(0, ${Pnt.y - 10})`);
+
+			let scroll = Number(this._bodyActiveG.dataset['offset']) || 0;
+			const K = (this._height - 43) / this._height;
+			const Pnt1 = SmartWidgets.svgPoint(this._scrollbarButt, evt.clientX, evt.clientY);
+			scroll -= ((Pnt1.y - 5) * K);
+			this._bodyActiveG.setAttribute('transform', `translate(0, ${scroll})`);
+			this._bodyActiveG.dataset['offset'] = scroll;
+
 		});
 
 		this._bodyActiveG.addEventListener('wheel', (evt) => {
@@ -895,92 +916,68 @@ class ScrollableContainer {
 			if (evt.target.classList.contains('dragTarget')) {
 				if (evt.target.classList.contains('scroll-container-bar_butt')) {
 					this._dragTarget = evt.target;
-					// reference point to its respective viewport
-					const pnt = this._dragTarget.ownerSVGElement.createSVGPoint();
-					pnt.x = evt.clientX;
-					pnt.y = evt.clientY;
-					// elements transformed and/or in different(svg) viewports
-					const sCTM = this._dragTarget.getScreenCTM();
-					const Pnt = pnt.matrixTransform(sCTM.inverse());
-
+					// translate screen (evt.clientX and evt.clientY) coordinates to svg target
+					const pnt = SmartWidgets.svgPoint(this._dragTarget, evt.clientX, evt.clientY);
+					this._offsetX = pnt.x;
+					this._offsetY = pnt.y;
 					this._transformRequestObj = this._dragTarget.ownerSVGElement.createSVGTransform();
 					// attach new or existing transform to element, init its transform list
 					const myTransListAnim = this._dragTarget.transform;
 					this._transList = myTransListAnim.baseVal;
-
-					this._offsetX = Pnt.x;
-					this._offsetY = Pnt.y;
-
+					// set flag that enables dragging
 					this._isDragging = true;
 				}
 			}
-
 		}
 	}
 	_continueDrag(evt) {
 		if (this._isDragging) {
-			const pnt = this._dragTarget.ownerSVGElement.createSVGPoint();
-			pnt.x = evt.clientX;
-			pnt.y = evt.clientY;
-			// elements in different(svg) viewports, and/or transformed
-			const sCTM = this._dragTarget.getScreenCTM();
-			const Pnt = pnt.matrixTransform(sCTM.inverse());
+			const dt = this._dragTarget.getBoundingClientRect();
+			let tdt = SmartWidgets.svgPoint(this._face, dt.left, dt.top);
+			if (tdt.y < 5) {
+				return;
+			}
+			tdt = SmartWidgets.svgPoint(this._face, dt.left, dt.bottom);
+			if (tdt.y > this._height - 5) {
+				return;
+			}
 
-			// const pt1 = this._root.createSVGPoint();
-			// const rc = this._face.getBoundingClientRect();
-			// pt1.x = rc.left;
-			// pt1.y = rc.bottom;
-			// const tpt = pt1.matrixTransform(this._face.getScreenCTM().inverse());
-
-			// const pt2 = this._root.createSVGPoint();
-			// const rc2 = this._dragTarget.getBoundingClientRect();
-			// pt2.x = rc2.left;
-			// pt2.y = rc2.bottom;
-			// const tpt2 = pt2.matrixTransform(this._dragTarget.getScreenCTM().inverse());
-
-			// console.log(`${pnt.y} : ${Pnt.y} : ${this._height} :: ${pt1.y} : ${tpt.y} :: ${pt2.y} : ${tpt2.y}`);
-
+			const Pnt = SmartWidgets.svgPoint(this._dragTarget, evt.clientX, evt.clientY);
 			Pnt.x -= this._offsetX;
 			Pnt.y -= this._offsetY;
 
 			// check minimal top and maximal bottom positions
 			const ptMinMax = this._face.getBoundingClientRect();
-			const posMinMax = {
-				min: ptMinMax.top,
-				max: ptMinMax.bottom
-			};
-			const rc2 = this._dragTarget.getBoundingClientRect();
 
-			console.log(`${rc2.bottom} -> ${posMinMax.max}`);
+			this._transformRequestObj.setTranslate(0, Pnt.y);
+			this._transList.appendItem(this._transformRequestObj);
+			this._transList.consolidate();
 
-			if (rc2.top > posMinMax.min && rc2.bottom < posMinMax.max) {
-				// this._transformRequestObj.setTranslate(Pnt.x, Pnt.y);
-				console.log(`move on ${Pnt.y} points`);
-				this._transformRequestObj.setTranslate(0, Pnt.y);
-				this._transList.appendItem(this._transformRequestObj);
-				this._transList.consolidate();
-			} else {
-				let dy;
-				if (rc2.top < posMinMax.min) {
-					dy = posMinMax.min - rc2.top;
-					this._transformRequestObj.setTranslate(0, Pnt.y + dy + 5);
-				}
-				if (rc2.bottom > posMinMax.max) {
-					dy = rc2.bottom - posMinMax.max;
-					this._transformRequestObj.setTranslate(0, Pnt.y - dy - 5);
-				}
-				this._transList.appendItem(this._transformRequestObj);
-				this._transList.consolidate();
-			}
 			let scroll = Number(this._bodyActiveG.dataset['offset']) || 0;
-			const K = (this._height - 40) / this._height;
+			const K = (this._height - 43) / this._height;
 			console.log(`scroll on ${(Pnt.y * K)} points`);
-			scroll += (Pnt.y * K);
-			this._bodyActiveG.setAttribute('transform', `translate(0, ${-scroll})`);
+			scroll -= (Pnt.y * K);
+			this._bodyActiveG.setAttribute('transform', `translate(0, ${scroll})`);
 			this._bodyActiveG.dataset['offset'] = scroll;
 		}
 	}
 	_endDrag(evt) {
+		if (this._isDragging) {
+			const dt = this._dragTarget.getBoundingClientRect();
+			let tdt = SmartWidgets.svgPoint(this._face, dt.left, dt.top);
+			if (tdt.y < 5) {
+				this._scrollbarButt.setAttribute('transform', `translate(0, 0)`);
+				this._bodyActiveG.setAttribute('transform', `translate(0, ${0})`);
+				this._bodyActiveG.dataset['offset'] = 0;
+
+			}
+			tdt = SmartWidgets.svgPoint(this._face, dt.left, dt.bottom);
+			if (tdt.y > this._height - 5) {
+				this._scrollbarButt.setAttribute('transform', `translate(0, ${this._height - 5})`);
+				this._bodyActiveG.setAttribute('transform', `translate(0, ${0})`);
+				this._bodyActiveG.dataset['offset'] = 0;
+			}
+		}
 		this._isDragging = false;
 	}
 }
