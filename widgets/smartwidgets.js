@@ -973,8 +973,10 @@ class ScrollableContainer {
 			}
 			tdt = SmartWidgets.svgPoint(this._face, dt.left, dt.bottom);
 			if (tdt.y > this._height - 5) {
-				this._scrollbarButt.setAttribute('transform', `translate(0, ${this._height - 5})`);
-				this._bodyActiveG.setAttribute('transform', `translate(0, ${0})`);
+				const cra = this._bodyActiveG.getBoundingClientRect();
+				const len = cra.height - this._height;
+				this._scrollbarButt.setAttribute('transform', `translate(0, ${this._height - 22})`);
+				this._bodyActiveG.setAttribute('transform', `translate(0, ${-len})`);
 				this._bodyActiveG.dataset['offset'] = 0;
 			}
 		}
