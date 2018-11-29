@@ -739,6 +739,8 @@ class ScrollableContainer {
 		this._rowHeight = options.row;			// rows height
 		this._gap		= options.gap || 4;		// gap between rows and around of items
 
+		this._containerHeight = this._height;
+
 		this._body = SmartWidgets.addElement('g', {
 			class: 'scroll-container-body',
 			'clip-path': `url(#${this._id}-clippath)`
@@ -751,7 +753,7 @@ class ScrollableContainer {
 			id: `${this._id}-clipface`,
 			x: 0,
 			y: 0,
-			width: this._width + this._gap + (this._gap / 2),
+			width: this._width, // + this._gap + (this._gap / 2),
 			height: this._height
 		}, this._clipFace, this._svgdoc);
 
@@ -764,99 +766,36 @@ class ScrollableContainer {
 			class: 'scroll-container-body_g_bkg',
 			x: 0,
 			y: 0,
-			width: this._width + this._gap + (this._gap / 2),
-			height: this._height * 2,
-			fill: '#666666',
-			stroke: '#ffffff',
-			'stroke-width': 2
+			width: this._width,  // + this._gap + (this._gap / 2),
+			height: this._containerHeight,
+			fill: '#666666'
+			// stroke: 'red',
+			// 'stroke-width': 1,
+			// 'fill-opacity': 0.3
 		}, this._bodyActiveG, this._svgdoc);
 
-		// draw scrollbar
-		this._scrollbarG = SmartWidgets.addElement('g', {	// scrollbar group
-			class: 'scroll-container-bar_g',
-			transform: `translate(${this._width - 1}, 0)`
-		}, this._body, this._svgdoc);
-		this._scrollbarActive = SmartWidgets.addElement('rect', {	// scrollbar active zone
-			class: 'scroll-container-bar_line',
-			x: -2,
-			y: 10,
-			width: 7,
-			height: this._height - 20,
-			fill: '#666666'
-		}, this._scrollbarG, this._svgdoc);
-		this._scrollbarLine = SmartWidgets.addElement('rect', {	// scrollbar line
-			class: 'scroll-container-bar_line',
-			x: 2,
-			y: 10,
-			width: 1,
-			height: this._height - 20,
-			fill: '#999999',
-			'pointer-events': 'none'
-		}, this._scrollbarG, this._svgdoc);
+		// this._body.addEventListener('mousedown', this._startDrag);
+		// this._body.addEventListener('mousemove', this._continueDrag);
+		// this._body.addEventListener('mouseup', this._endDrag);
 
-		this._scrollbarButt = SmartWidgets.addElement('rect', { // scrollbar button
-			class: 'scroll-container-bar_butt dragTarget',
-			rx: 2,
-			x: 0,
-			y: 5,
-			width: 5,
-			height: 10,
-			fill: '#999999',
-			stroke: '#ffffff',
-			'stroke-width': 0.6
-		}, this._scrollbarG, this._svgdoc);
-
-		this._body.addEventListener('mousedown', this._startDrag);
-		this._body.addEventListener('mousemove', this._continueDrag);
-		this._body.addEventListener('mouseup', this._endDrag);
-
-		this._scrollbarButt.addEventListener('mouseover', (evt) => {
-			this._scrollbarButt.setAttribute('fill', '#cccccc');
-		});
-		this._scrollbarButt.addEventListener('mouseout', (evt) => {
-			this._scrollbarButt.setAttribute('fill', '#999999');
-		});
-
-		this._scrollbarActive.addEventListener('mouseover', (evt) => {
-			this._scrollbarLine.setAttribute('fill', '#cccccc');
-		});
-		this._scrollbarActive.addEventListener('mouseout', (evt) => {
-			this._scrollbarLine.setAttribute('fill', '#999999');
-		});
-
-		this._scrollbarActive.addEventListener('click', (evt) => {
-			const Pnt = SmartWidgets.svgPoint(this._scrollbarLine, evt.clientX, evt.clientY);
-			console.log(`-> ${Pnt.y}`);
-			this._scrollbarButt.setAttribute('transform', `translate(0, ${Pnt.y - 10})`);
-
-			let scroll = Number(this._bodyActiveG.dataset['offset']) || 0;
-			const K = (this._height - 43) / this._height;
-			const Pnt1 = SmartWidgets.svgPoint(this._scrollbarButt, evt.clientX, evt.clientY);
-			scroll -= ((Pnt1.y - 5) * K);
-			this._bodyActiveG.setAttribute('transform', `translate(0, ${scroll})`);
-			this._bodyActiveG.dataset['offset'] = scroll;
-
-		});
-
+		// scroll
 		this._bodyActiveG.addEventListener('wheel', (evt) => {
 			evt.preventDefault();
 			let scroll = Number(this._bodyActiveG.dataset['offset']) || 0;
 			const delta = evt.deltaY || evt.detail || evt.wheelDelta;
-			if (delta > 0) {
-				scroll -= 2;
-			} else {
-				scroll += 2;
+			let K = 1;
+			if (evt.ctrlKey) {
+				K = 10;
 			}
-			// const lastItem = this._root.getElementById(`${this._id}-item-${this._heap.size - 1}`);
-			// const clipFace = this._face.getBoundingClientRect();
-			// const location = lastItem.getBoundingClientRect();
-			// if (delta > 0 && location.bottom < clipFace.bottom) {
-			// 	this._bodyActiveG.setAttribute('transform', `translate(0, ${scroll})`);
-			// 	this._bodyActiveG.dataset['offset'] = scroll;
-			// 	return;
-			// }
 
-			if (scroll <= 0) {
+			if (delta > 0) {
+				scroll -= 2 * K;
+			} else {
+				scroll += 2 * K;
+			}
+			const scrollMax = -(this._containerHeight - this._height);
+
+			if (scroll <= 0 && scroll > scrollMax) {
 				this._bodyActiveG.setAttribute('transform', `translate(0, ${scroll})`);
 				this._bodyActiveG.dataset['offset'] = scroll;
 			}
@@ -902,7 +841,8 @@ class ScrollableContainer {
 				tabindex: this._heap.size
 			}, this._bodyActiveG, this._svgdoc);
 		}
-		this._bodyActiveBkg.setAttribute('height', offset + iHeight + this._gap);
+		this._containerHeight = offset + iHeight + this._gap;
+		this._bodyActiveBkg.setAttribute('height', this._containerHeight);
 		this._heap.set(elem.id, elem);
 		return item;
 	}
@@ -912,75 +852,9 @@ class ScrollableContainer {
 
 	// private api
 	_startDrag(evt) {
-		if (!this._isDragging) {	// prevent dragging conflicts on other draggable elements
-			if (evt.target.classList.contains('dragTarget')) {
-				if (evt.target.classList.contains('scroll-container-bar_butt')) {
-					this._dragTarget = evt.target;
-					// translate screen (evt.clientX and evt.clientY) coordinates to svg target
-					const pnt = SmartWidgets.svgPoint(this._dragTarget, evt.clientX, evt.clientY);
-					this._offsetX = pnt.x;
-					this._offsetY = pnt.y;
-					this._transformRequestObj = this._dragTarget.ownerSVGElement.createSVGTransform();
-					// attach new or existing transform to element, init its transform list
-					const myTransListAnim = this._dragTarget.transform;
-					this._transList = myTransListAnim.baseVal;
-					// set flag that enables dragging
-					this._isDragging = true;
-				}
-			}
-		}
 	}
 	_continueDrag(evt) {
-		if (this._isDragging) {
-			const dt = this._dragTarget.getBoundingClientRect();
-			let tdt = SmartWidgets.svgPoint(this._face, dt.left, dt.top);
-			if (tdt.y < 5) {
-				return;
-			}
-			tdt = SmartWidgets.svgPoint(this._face, dt.left, dt.bottom);
-			if (tdt.y > this._height - 5) {
-				return;
-			}
-
-			const Pnt = SmartWidgets.svgPoint(this._dragTarget, evt.clientX, evt.clientY);
-			Pnt.x -= this._offsetX;
-			Pnt.y -= this._offsetY;
-
-			// check minimal top and maximal bottom positions
-			const ptMinMax = this._face.getBoundingClientRect();
-
-			this._transformRequestObj.setTranslate(0, Pnt.y);
-			this._transList.appendItem(this._transformRequestObj);
-			this._transList.consolidate();
-
-			let scroll = Number(this._bodyActiveG.dataset['offset']) || 0;
-			const K = (this._height - 43) / this._height;
-			console.log(`scroll on ${(Pnt.y * K)} points`);
-			scroll -= (Pnt.y * K);
-			this._bodyActiveG.setAttribute('transform', `translate(0, ${scroll})`);
-			this._bodyActiveG.dataset['offset'] = scroll;
-		}
 	}
 	_endDrag(evt) {
-		if (this._isDragging) {
-			const dt = this._dragTarget.getBoundingClientRect();
-			let tdt = SmartWidgets.svgPoint(this._face, dt.left, dt.top);
-			if (tdt.y < 5) {
-				this._scrollbarButt.setAttribute('transform', `translate(0, 0)`);
-				this._bodyActiveG.setAttribute('transform', `translate(0, ${0})`);
-				this._bodyActiveG.dataset['offset'] = 0;
-
-			}
-			tdt = SmartWidgets.svgPoint(this._face, dt.left, dt.bottom);
-			if (tdt.y > this._height - 5) {
-				const cra = this._bodyActiveG.getBoundingClientRect();
-				// const tcra1 = SmartWidgets.svgPoint(this._bodyActiveG, dt.left, dt.top);
-				const len = cra.height - this._height;
-				this._scrollbarButt.setAttribute('transform', `translate(0, ${this._height - 22})`);
-				this._bodyActiveG.setAttribute('transform', `translate(0, ${-len})`);
-				this._bodyActiveG.dataset['offset'] = 0;
-			}
-		}
-		this._isDragging = false;
 	}
 }

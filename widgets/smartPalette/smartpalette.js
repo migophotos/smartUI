@@ -269,22 +269,21 @@ ${optStr}  };
 		SmartPalettes.convertNumericProps(this._o);
 
 		if (!this._body) {
-				this._btnGrArr = [];
-				this._buttonArr = [];
-				this._paletteArr = [];
-				const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
-				const fontSize = '10px';
-				const step = 6, gap = 6;
-				let width = 60, height = 40, offsetX = gap, offsetY = gap;
-				let themsGId = `${this.id}-themes`;
-				this._containerG = SmartWidgets.addElement('g', {
-					id: themsGId
-				}, this._svgroot, this._svgdoc);
+			this._btnGrArr = [];
+			this._buttonArr = [];
+			this._paletteArr = [];
+			const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
+			const fontSize = '10px';
+			const step = 6, gap = 6;
+			let width = 60, height = 40, offsetX = gap, offsetY = gap;
+			let themsGId = `${this.id}-themes`;
+			this._containerG = SmartWidgets.addElement('g', {
+				id: themsGId
+			}, this._svgroot, this._svgdoc);
 
-				this._bodyG = SmartWidgets.addElement('g', {
-				}, this._svgroot, this._svgdoc);
-				this._body = SmartWidgets.addElement('rect', {
-				// visibility: 'hidden',
+			this._bodyG = SmartWidgets.addElement('g', {
+			}, this._svgroot, this._svgdoc);
+			this._body = SmartWidgets.addElement('rect', {
 				x: 0,
 				y: 0,
 				width: `${(offsetX * 2) + (width * 3) + (step * 2)}`,
@@ -367,7 +366,7 @@ ${optStr}  };
 			this._svgroot.setAttribute('width', size.w);
 			this._svgroot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
 
-			if (1 /*this._mode != 'html'*/) {
+			if (1) {
 				this._buttonArr.forEach((btn) => {
 					btn.addEventListener('click', (evt) => {
 						const n = Number(btn.id.replace('btn-', ''));
@@ -534,10 +533,10 @@ ${optStr}  };
             this._o = Object.assign({}, this._o, options);
         }
         const rc = this._svgroot.firstElementChild;
-        this._rect = rc.getBBox();
-        rc.setAttribute('display', 'none');
-        if (!this._mode) {
-			if (this._rect.width == 0 || this._rect.height == 0) {
+        if (rc && !this._mode) {
+			this._rect = rc.getBBox();
+			rc.setAttribute('display', 'none');
+				if (this._rect.width == 0 || this._rect.height == 0) {
 				this._rect.x = Number(rc.getAttribute('x'));
 				this._rect.y = Number(rc.getAttribute('y'));
 				// get size from attributes!
