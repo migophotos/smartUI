@@ -245,6 +245,7 @@ ${optStr}  };
 		this._data      = null; // last received from data provider (server + target)
 		this._s2c       = new StateToColors();
 		this._s2c_2		= new StateToColors();
+		this._setValueCallback = options.cb || null;
 
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
@@ -293,11 +294,12 @@ ${optStr}  };
 			}, this._bodyG, this._svgdoc);
 
 			const offset = 50;
+			const distance = gap + offset + step;
 			const size = {
-				w: +this._body.getAttribute('width') + offset + gap,
+				w: +this._body.getAttribute('width') + distance,
 				h: +this._body.getAttribute('height')
 			};
-			this._bodyG.setAttribute('transform', `translate(${offset + (gap * 2)}, 0)`);
+			this._bodyG.setAttribute('transform', `translate(${distance}, 0)`);
 			this._themes = new ScrollableContainer(themsGId, {
 				width: offset,
 				height: size.h,
@@ -386,6 +388,11 @@ ${optStr}  };
 						this._s2c.delete(n);
 						this._o.stateColors = this._s2c.get();
 						this._btnGrArr[n].removeAttribute('display');
+
+						if (this._setValueCallback) {
+							this._setValueCallback(this._o.stateColors);
+						}
+
 					});
 					sel.addEventListener('wheel', (evt) => {
 						evt.preventDefault();
@@ -416,6 +423,10 @@ ${optStr}  };
 
 						this._s2c.set(stateN, this._o.value);
 						this._o.stateColors = this._s2c.get();
+
+						if (this._setValueCallback) {
+							this._setValueCallback(this._o.stateColors);
+						}
 					});
 				});
 			}
@@ -424,10 +435,10 @@ ${optStr}  };
 		this._getTemplates();
 	}
 	_setStateColors(s2c = null) {
-		const s2c_ref = s2c ? s2c : this._s2c;
-		s2c_ref.set(this._o.stateColors);
+		const s2cRef = s2c || this._s2c;
+		s2cRef.set(this._o.stateColors);
 		for (let n = 0; n < 9; n++) {
-			const crDef = s2c_ref.get(n);
+			const crDef = s2cRef.get(n);
 			if (crDef) {
 				this._btnGrArr[n].setAttribute('display', 'none');
 				this._paletteArr[n].setAttribute('fill', crDef);
@@ -457,6 +468,11 @@ ${optStr}  };
 						const opt = SmartPalettes.JsonToOptions(theme.data);
 						this._o.stateColors = opt.stateColors;
 						this._setStateColors(this._s2c_2);
+
+						// callback to owner about changing value
+						if (this._setValueCallback) {
+							this._setValueCallback(opt.stateColors);
+						}
 					});
 				}
 			}
@@ -533,18 +549,21 @@ ${optStr}  };
             this._o = Object.assign({}, this._o, options);
         }
         const rc = this._svgroot.firstElementChild;
-        if (rc && !this._mode) {
+		if (rc) {
 			this._rect = rc.getBBox();
 			rc.setAttribute('display', 'none');
+			if (!this._mode) {
 				if (this._rect.width == 0 || this._rect.height == 0) {
-				this._rect.x = Number(rc.getAttribute('x'));
-				this._rect.y = Number(rc.getAttribute('y'));
-				// get size from attributes!
-				this._rect.width = Number(rc.getAttribute('width'));
-				// will be ignored. thickness will be used instead of height!
-				this._rect.height = Number(rc.getAttribute('height'));
+					this._rect.x = Number(rc.getAttribute('x'));
+					this._rect.y = Number(rc.getAttribute('y'));
+					// get size from attributes!
+					this._rect.width = Number(rc.getAttribute('width'));
+					// will be ignored. thickness will be used instead of height!
+					this._rect.height = Number(rc.getAttribute('height'));
+				}
 			}
-        } else {
+		}
+		if (this._mode) {
 			// calculate svg rectangle and coordinates
 			this._rect = {
 				x: 0,

@@ -1299,7 +1299,9 @@ if (!customElements.get('smart-ui-colorbox')) {
 
 class SmartUiColorPalette extends HTMLElement {
     constructor() {
-        super();
+		super();
+		this.setValue = this.setValue.bind(this);
+
         this._shadowDOM = this.attachShadow({mode: 'open'});
 		if (!this._shadowDOM) {
             throw new Error('Unfortunately, your browser does not support shadow DOM v1.');
@@ -1434,7 +1436,10 @@ class SmartUiColorPalette extends HTMLElement {
                 </div>
             </div>
         `;
-    }
+	}
+	setValue(val) {
+		this.setAttribute('value', val);
+	}
     static get observedAttributes() {
 		return 	['value'];
     }
@@ -1447,17 +1452,18 @@ class SmartUiColorPalette extends HTMLElement {
             case 'value': {
                 this._o.value = newValue;
 				this._input.value = `${this._o.value}`;
+				this._ctrl.setParams({stateColors: newValue});
 
-				this._s2c.set(this._input.value);
-				for (let n = 0; n < 9; n++) {
-					const crDef = this._s2c.get(n);
-					if (crDef) {
-						this._btnGrArr[n].setAttribute('display', 'none');
-						this._paletteArr[n].setAttribute('fill', crDef);
-					} else {
-						this._btnGrArr[n].removeAttribute('display');
-					}
-				}
+				// this._s2c.set(this._input.value);
+				// for (let n = 0; n < 9; n++) {
+				// 	const crDef = this._s2c.get(n);
+				// 	if (crDef) {
+				// 		this._btnGrArr[n].setAttribute('display', 'none');
+				// 		this._paletteArr[n].setAttribute('fill', crDef);
+				// 	} else {
+				// 		this._btnGrArr[n].removeAttribute('display');
+				// 	}
+				// }
                 break;
             }
         }
@@ -1471,6 +1477,18 @@ class SmartUiColorPalette extends HTMLElement {
 
 		this.svgroot = paletteG;
 		this._svgdoc = paletteG.ownerDocument;
+
+		// get references to controls
+		this._input  = this._shadowDOM.getElementById('IC');    // input
+		// this._input.addEventListener('input', (evt) => {
+		//     this._o.value = this._input.value;
+		//     this.setAttribute('value', `${this._o.value}`);
+		// });
+		this._input.addEventListener('change', (evt) => {
+			this._o.value = this._input.value;
+			this.setAttribute('value', `${this._o.value}`);
+		});
+
 		// get all attributes into _o (options)
 		this._s2c = new StateToColors();
         this._o = {};
@@ -1482,6 +1500,7 @@ class SmartUiColorPalette extends HTMLElement {
 		utils.convertNumericProps(this._o);
 
 		const options = {
+			cb: this.setValue,
 			context: this._shadowDOM.getElementById('sel-palette'),
 			opt: '{"stwidget":"stpal-.-.-0-0#0080c0,1#008000,2#ffff15,3#ff852e,4#ff0550,5#b400cc,6#424242"}'
 		};
@@ -1612,16 +1631,6 @@ class SmartUiColorPalette extends HTMLElement {
 		// 		});
 		// 	});
 
-		// 	// get references to controls
-		// 	this._input  = this._shadowDOM.getElementById('IC');    // input
-		// 	// this._input.addEventListener('input', (evt) => {
-		// 	//     this._o.value = this._input.value;
-		// 	//     this.setAttribute('value', `${this._o.value}`);
-		// 	// });
-		// 	this._input.addEventListener('change', (evt) => {
-		// 		this._o.value = this._input.value;
-		// 		this.setAttribute('value', `${this._o.value}`);
-		// 	});
 
 		// 	this._paletteArr.forEach((sel) => {
 		// 		sel.addEventListener('wheel', (evt) => {

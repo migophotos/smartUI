@@ -51,10 +51,14 @@ const SMART_WIDGETS = [
     '{"stwidget":"stpgn-.-.-.-.-.-.-.-80-.-.-128-.-.-.-.-.-.-1-.-.-.-.-0-.-.-.-.-.-none-.-.-.-.-.-0.5-.-.-0"}',
 
     '{"stwidget":"stpal-.-.-0-0#0080c0,1#008000,2#ffff15,3#ff852e,4#ff0550,5#b400cc,6#424242"}',
-    '{"stwidget":"stpal-.-.-0-0#0080c0,1#008000,2#ffff15,3#ff2f2f,4#9f0000,5#292929"}',
+	'{"stwidget":"stpal-.-.-0-0#0080c0,1#008000,2#ffff15,3#ff2f2f,4#9f0000,5#292929"}',
+	'{"stwidget":"stpal-.-.-0-0#FFFFFF,1#FEFE74,2#376CFE,3#FE5849,4#0B193F"}',
+	'{"stwidget":"stpal-.-.-0-0#FFFFFF,1#FE4736,2#FEFE5F,3#255FFE,4#3B3B0A"}',
+
     '{"stwidget":"stpal-.-.-0-0#70cfff,1#0aff0a,2#ffff14,3#ff6b6b,4#ff52ff,5#aa80ff,6#000000,7#8c8c8c,8#ffffff"}',
     '{"stwidget":"stpal-.-.-0-0#007dfa,1#25cb8b,2#2cff14,3#f8ff2e,4#ffa352,5#ff668f,8#121212,6#df3adf,7#9f4bd2"}',
 	'{"stwidget":"stpal-.-.-0-0#00b3fa,1#0075fa,2#7d00fa,3#d000fa,4#fa00c8,5#fa0060,6#fa7d00,7#fad000,8#affa00"}',
 	'{"stwidget":"stpal-.-.-0-0#85d6ff,1#85ff85,2#ffff8f,3#ff7070,4#ff3333,5#ff47a0,6#df61ff,7#9a57ff,8#675cff"}',
+	'{"stwidget":"stpal-.-.-0-0#70a0ff,1#0affbe,2#9ae65b,3#dffe6c,4#febc6c,5#fe736c,6#fe6cb7,7#f06cfe,8#a66cfe"}'
 
 ];
