@@ -299,14 +299,17 @@ ${optStr}  };
 				w: +this._body.getAttribute('width') + distance,
 				h: +this._body.getAttribute('height')
 			};
-			this._bodyG.setAttribute('transform', `translate(${distance}, 0)`);
-			this._themes = new ScrollableContainer(themsGId, {
-				width: offset,
-				height: size.h,
-				gap: gap,
-				row: 32,
-				context: this._root
-			});
+
+			if (this._o.role !== 'demoMode') {
+				this._bodyG.setAttribute('transform', `translate(${distance}, 0)`);
+				this._themes = new ScrollableContainer(themsGId, {
+					width: offset,
+					height: size.h,
+					gap: gap,
+					row: 32,
+					context: this._root
+				});
+			}
 
 			for (let n = 0; n < this._o.count; n++) {
 				if (n && n % 3 == 0) {
@@ -432,11 +435,13 @@ ${optStr}  };
 			}
 		}
 		this._setStateColors();
-		this._getTemplates();
+		if (this._o.role !== 'demoMode') {
+			this._getTemplates();
+		}
 	}
 	_setStateColors(s2c = null) {
 		const s2cRef = s2c || this._s2c;
-		s2cRef.set(this._o.stateColors);
+		s2cRef.set(this._o.stateColors, '', this._o.isGlobalColors);
 		for (let n = 0; n < 9; n++) {
 			const crDef = s2cRef.get(n);
 			if (crDef) {
