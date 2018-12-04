@@ -247,6 +247,9 @@ ${optStr}  };
 		this._s2c_2		= new StateToColors();
 		this._setValueCallback = options.cb || null;
 
+		this._satCtrl	= null;	// saturations slider with role = 'ctrl'
+		this._lumCtrl	= null;	// luminance slider with role = 'ctrl'
+
 		this._intervalCounter = 0;
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
@@ -471,6 +474,12 @@ ${optStr}  };
 
 						if (this._setValueCallback) {
 							this._setValueCallback(this._o.stateColors);
+						}
+						if (this._satCtrl) {
+							this._satCtrl.update({target:{value:s * 100, color: this._o.value}});
+						}
+						if (this._lumCtrl) {
+							this._lumCtrl.update({target:{value:l * 100, color: this._o.value}});
 						}
 					});
 				});
