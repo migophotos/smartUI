@@ -112,7 +112,7 @@ class SmartBars extends SmartWidgets {
 	 */
 	static getCustomProperties() {
 		return [
-			'role',				// in demo mode this parameter has value 'demoMode'
+			'role',				// in demo mode this parameter has value 'demoMode', in an interactive mode it will be 'ctrl'
 			'alias',			// 'stbar'
 			'type',				// The type of bar bady: 'solid' or 'discrete'
             'orient',			// Orientation of widget. 'hor' - horizontal, or 'vert' - vertical. Default is 'hor'

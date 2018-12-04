@@ -292,16 +292,55 @@ ${optStr}  };
 				fill: '#666666',
 				stroke: '#ffffff'
 			}, this._bodyG, this._svgdoc);
+			if (this._mode !== 'html') {
+				// create container for Saturation control
+				this._satG =  SmartWidgets.addElement('g', {
+					id: 'sat-g'
+				}, this._svgroot, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					id: 'sat-ctrl',
+					x: 0,
+					y: 0,
+					width: 134,
+					height: 50
+				}, this._satG, this._svgdoc);
+				this._satCtrl = new SmartBar('sat-g', {
+					context: this._root,
+					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-left-.-.-.-cd-.-.-Saturation, $VALUE$%- -.-.-0-.-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
+				});
+				this._satCtrl.update({target:{value: 50, color: 'white'}});
+
+				// create container for Luminance control
+				this._lumG =  SmartWidgets.addElement('g', {
+					id: 'lum-g'
+				}, this._svgroot, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					id: 'lum-ctrl',
+					x: 0,
+					y: 0,
+					width: 134,
+					height: 50
+				}, this._lumG, this._svgdoc);
+				this._lumCtrl = new SmartBar('lum-g', {
+					context: this._root,
+					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-.-.-.-.-cd-.-.-Luminance, $VALUE$%- -.-.-0-.-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
+				});
+				this._lumCtrl.update({target:{value: 50, color: 'white'}});
+			}
 
 			const offset = 50;
 			const distance = gap + offset + step;
 			const size = {
-				w: +this._body.getAttribute('width') + distance,
+				w: +this._body.getAttribute('width') + distance + (this._mode !== 'html' ? 150 + (gap * 2) : 0),
 				h: +this._body.getAttribute('height')
 			};
 
 			if (this._o.role !== 'demoMode') {
 				this._bodyG.setAttribute('transform', `translate(${distance}, 0)`);
+				if (this._mode !== 'html') {
+					this._satG.setAttribute('transform', `translate(${286}, 0)`);
+					this._lumG.setAttribute('transform', `translate(${316}, 0)`);
+				}
 				this._themes = new ScrollableContainer(themsGId, {
 					width: offset,
 					height: size.h,
@@ -406,6 +445,9 @@ ${optStr}  };
 
 						const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
 						let K = evt.ctrlKey ? 0.01 : evt.shiftKey ? 0.01 : 1;
+						if (K == 1) {
+							K = 11.25;	// HSL
+						}
 						if (evt.altKey) {
 							K = K * 5;
 						}
