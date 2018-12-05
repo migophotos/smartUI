@@ -440,7 +440,7 @@ ${optStr}  };
 			this._svgroot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
 
 			if (1) {
-				if (this._satCtrl) {
+				if (this._satCtrl && this._satCtrl) {
 					this._satG.addEventListener('wheel', (evt) => {
 						if (this._paletteSelState >= 0) {
 							const stateElem = this._paletteArr[this._paletteSelState];
@@ -448,20 +448,22 @@ ${optStr}  };
 							const c = w3color(cr);
 							let K = evt.altKey ? 0.05 : 0.01;
 							const delta = evt.deltaY || evt.detail || evt.wheelDelta;
-							K = delta < 0 ? -K : K;
+							K = delta < 0 ? K : -K;
 							c.sat += K;
 							c.sat = c.sat > 0 ? (c.sat < 1 ? c.sat : 1) : 0.01;
 
 							const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
 							this._o.value = c2.valid ? c2.toHexString() : '#000000';
 							stateElem.setAttribute('fill', this._o.value);
-							this._satCtrl.update({target:{value:c.sat * 100, color: this._o.value}});
 							this._s2c.set(this._paletteSelState, this._o.value);
 							this._o.stateColors = this._s2c.get();
+							this._lumCtrl.update({target:{value:c.lightness * 100, color: this._o.value}});
+							this._satCtrl.update({target:{value:c.sat * 100, color: this._o.value}});
+							if (this._setValueCallback) {
+								this._setValueCallback(this._o.stateColors);
+							}
 						}
 					});
-				}
-				if (this._lumCtrl) {
 					this._lumG.addEventListener('wheel', (evt) => {
 						if (this._paletteSelState >= 0) {
 							const stateElem = this._paletteArr[this._paletteSelState];
@@ -469,16 +471,20 @@ ${optStr}  };
 							const c = w3color(cr);
 							let K = evt.altKey ? 0.05 : 0.01;
 							const delta = evt.deltaY || evt.detail || evt.wheelDelta;
-							K = delta < 0 ? -K : K;
+							K = delta < 0 ? K : -K;
 							c.lightness += K;
 							c.lightness = c.lightness > 0 ? (c.lightness < 1 ? c.lightness : 1) : 0;
 
 							const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
 							this._o.value = c2.valid ? c2.toHexString() : '#000000';
 							stateElem.setAttribute('fill', this._o.value);
-							this._lumCtrl.update({target:{value:c.lightness * 100, color: this._o.value}});
 							this._s2c.set(this._paletteSelState, this._o.value);
 							this._o.stateColors = this._s2c.get();
+							this._lumCtrl.update({target:{value:c.lightness * 100, color: this._o.value}});
+							this._satCtrl.update({target:{value:c.sat * 100, color: this._o.value}});
+							if (this._setValueCallback) {
+								this._setValueCallback(this._o.stateColors);
+							}
 						}
 					});
 				}
@@ -539,11 +545,13 @@ ${optStr}  };
 							K = K * 5;
 						}
 						const delta = evt.deltaY || evt.detail || evt.wheelDelta;
-						if (delta > 0) {
-							c[P] = c[P] + K;
-						} else {
-							c[P] = c[P] - K;
-						}
+						K = delta < 0 ? K : -K;
+						c[P] += K;
+						// if (delta > 0) {
+						// 	c[P] = c[P] + K;
+						// } else {
+						// 	c[P] = c[P] - K;
+						// }
 						const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
 						const s = c.sat; // > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
 						const l = c.lightness; // > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
