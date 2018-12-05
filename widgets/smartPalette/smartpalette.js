@@ -276,6 +276,8 @@ ${optStr}  };
 			this._btnGrArr = [];
 			this._buttonArr = [];
 			this._paletteArr = [];
+			this._paletteBtnArr = [];
+			this._paletteSelState = -1;
 			const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
 			const fontSize = '10px';
 			const step = 6, gap = 6;
@@ -365,7 +367,19 @@ ${optStr}  };
 					width: width,
 					height: height,
 					fill: '#ffffff',
-					stroke: '#ffffff'
+					stroke: '#ffffff',
+					tabindex: n,
+					style: 'cursor:pointer;'
+				}, this._bodyG, this._svgdoc));
+				this._paletteBtnArr.push(SmartWidgets.addElement('rect', {
+					id: `statebtn-${n}`,
+					x: offsetX,
+					y: offsetY,
+					width: 10,
+					height: 10,
+					fill: '#0b0b0b',
+					stroke: '#ffffff',
+					style: 'cursor:pointer;'
 				}, this._bodyG, this._svgdoc));
 				SmartWidgets.addElement('text', {
 					text: `State ${n}`,
@@ -384,14 +398,24 @@ ${optStr}  };
 				}, this._bodyG, this._svgdoc);
 
 				this._btnGrArr.push(SmartWidgets.addElement('g', {}, this._bodyG, this._svgdoc));
-				this._buttonArr.push(SmartWidgets.addElement('rect', {
-					id: `btn-${n}`,
+				SmartWidgets.addElement('rect', {
+					// id: `btn-${n}`,
 					x: offsetX,
 					y: offsetY,
 					width: width,
 					height: height,
 					fill: '#8f8f8f',
-					stroke: '#ffffff'
+					stroke: '#ffffff',
+				}, this._btnGrArr[n], this._svgdoc);
+				this._buttonArr.push(SmartWidgets.addElement('rect', {
+					id: `btn-${n}`,
+					x: offsetX,
+					y: offsetY,
+					width: 10,
+					height: 10,
+					fill: '#ffffff',
+					stroke: '#ffffff',
+					style: 'cursor:pointer;'
 				}, this._btnGrArr[n], this._svgdoc));
 				SmartWidgets.addElement('text', {
 					text: `${n} - default`,
@@ -427,9 +451,9 @@ ${optStr}  };
 						}
 					});
 				});
-				this._paletteArr.forEach((sel) => {
+				this._paletteBtnArr.forEach((sel) => {
 					sel.addEventListener('click', (evt) => {
-						const n = Number(sel.id.replace('state-', ''));
+						const n = Number(sel.id.replace('statebtn-', ''));
 						this._s2c.delete(n);
 						this._o.stateColors = this._s2c.get();
 						this._btnGrArr[n].removeAttribute('display');
@@ -439,10 +463,26 @@ ${optStr}  };
 						}
 
 					});
+				});
+				this._paletteArr.forEach((sel) => {
+					sel.addEventListener('click', (evt) => {
+						const n = Number(sel.id.replace('state-', ''));
+						this._paletteSelState = n;
+						const cr = evt.target.getAttribute('fill'); // `${this._colorBox.value}`;
+						const c = w3color(cr);
+						if (this._satCtrl) {
+							this._satCtrl.update({target:{value:c.sat * 100, color: cr}});
+						}
+						if (this._lumCtrl) {
+							this._lumCtrl.update({target:{value:c.lightness * 100, color: cr}});
+						}
+					});
 					sel.addEventListener('wheel', (evt) => {
 						evt.preventDefault();
 						const stateN = Number(evt.target.id.split('-')[1]);
-
+						if (stateN != this._paletteSelState) {
+							return;
+						}
 						const cr = evt.target.getAttribute('fill'); // `${this._colorBox.value}`;
 						const c = w3color(cr);
 
