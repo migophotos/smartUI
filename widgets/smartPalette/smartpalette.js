@@ -307,9 +307,25 @@ ${optStr}  };
 					id: 'sat-ctrl',
 					x: 0,
 					y: 0,
-					width: 134,
+					width: 120,
 					height: 50
 				}, this._satG, this._svgdoc);
+				SmartWidgets.addElement('text', {
+					text: 'S',
+					x: 22,
+					y: 140,
+					fill: '#ffffff',
+					'text-anchor': 'middle',
+					'dominant-baseline': 'middle',
+					'pointer-events': 'none',
+					'font-family': fontFamily,
+					'font-size': 24,
+					// 'paint-order': 'stroke',
+					// stroke: 'black',
+					// 'stroke-width': "1",
+					'stroke-linejoin': 'round'
+				}, this._satG, this._svgdoc);
+
 				this._satCtrl = new SmartBar('sat-g', {
 					context: this._root,
 					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-left-.-.-.-cd-.-.-Saturation, $VALUE$%- -.-.-0-0-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
@@ -325,9 +341,25 @@ ${optStr}  };
 					id: 'lum-ctrl',
 					x: 0,
 					y: 0,
-					width: 134,
+					width: 120,
 					height: 50
 				}, this._lumG, this._svgdoc);
+				SmartWidgets.addElement('text', {
+					text: 'L',
+					x: 12,
+					y: 140,
+					fill: '#ffffff',
+					'text-anchor': 'middle',
+					'dominant-baseline': 'middle',
+					'pointer-events': 'none',
+					'font-family': fontFamily,
+					'font-size': 24,
+					// 'paint-order': 'stroke',
+					// stroke: 'black',
+					// 'stroke-width': "1",
+					'stroke-linejoin': 'round'
+				}, this._lumG, this._svgdoc);
+
 				this._lumCtrl = new SmartBar('lum-g', {
 					context: this._root,
 					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-.-.-.-.-cd-.-.-Luminance, $VALUE$%- -.-.-0-0-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
@@ -497,6 +529,7 @@ ${optStr}  };
 							cr = this._s2c.get(n - 1);
 						}
 						if (cr) {
+							this._paletteSelState = n;
 							this._paletteArr[n].setAttribute('fill', cr);
 						}
 					});
@@ -507,6 +540,7 @@ ${optStr}  };
 						this._s2c.delete(n);
 						this._o.stateColors = this._s2c.get();
 						this._btnGrArr[n].removeAttribute('display');
+						this._paletteSelState = n > 0 ? n - 1 : -1;
 
 						if (this._setValueCallback) {
 							this._setValueCallback(this._o.stateColors);
