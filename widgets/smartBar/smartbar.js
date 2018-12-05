@@ -383,6 +383,8 @@ ${optStr}  };
 		this._onShowTooltip = this._onShowTooltip.bind(this);
 		this._onMoveTooltip = this._onMoveTooltip.bind(this);
 		this._onHideTooltip = this._onHideTooltip.bind(this);
+		this._onWheel		= this._onWheel.bind(this);
+
 		this._onClick       = this._onClick.bind(this);
         const txtStyle = `
             svg {
@@ -752,6 +754,9 @@ ${optStr}  };
 			this._body.removeEventListener('mouseover', this._onShowTooltip);
 			this._body.removeEventListener('mousemove', this._onMoveTooltip);
 			this._body.removeEventListener('mouseout', this._onHideTooltip);
+
+			this._body.removeEventListener('wheel', this._onWheel);
+
 			if (this._bodyActive) {
 				this._bodyActive.removeEventListener('click', this._onClick);
 				this._bodyActive.removeEventListener('mouseover', this._onShowTooltip);
@@ -1009,10 +1014,13 @@ ${optStr}  };
 			this._bodyActive.classList.add('linked');
 			this._body.addEventListener('click', this._onClick);
 			this._bodyActive.addEventListener('click', this._onClick);
+
 		}
 		this._body.addEventListener('mouseover', this._onShowTooltip);
 		this._body.addEventListener('mousemove', this._onMoveTooltip);
 		this._body.addEventListener('mouseout', this._onHideTooltip);
+		this._body.addEventListener('mouseout', this._onWheel);
+
 		this._bodyActive.addEventListener('mouseover', this._onShowTooltip);
 		this._bodyActive.addEventListener('mousemove', this._onMoveTooltip);
 		this._bodyActive.addEventListener('mouseout', this._onHideTooltip);
@@ -1054,6 +1062,13 @@ ${optStr}  };
 		}
 		SmartTooltip.hideTooltip(evt);
 	}
+	_onWheel(evt) {
+		if (this._o.role === 'ctrl') {
+			const delta = evt.deltaY || evt.detail || evt.wheelDelta;
+			console.log(delta);
+		}
+	}
+
 	_onClick(event) {
         event.preventDefault();
         if (this._o.isLink && this._o.role !== 'demoMode') {

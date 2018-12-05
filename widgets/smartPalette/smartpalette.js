@@ -300,7 +300,8 @@ ${optStr}  };
 			if (this._mode !== 'html') {
 				// create container for Saturation control
 				this._satG =  SmartWidgets.addElement('g', {
-					id: 'sat-g'
+					id: 'sat-g',
+					style: 'cursor: pointer;'
 				}, this._svgroot, this._svgdoc);
 				SmartWidgets.addElement('rect', {
 					id: 'sat-ctrl',
@@ -311,13 +312,14 @@ ${optStr}  };
 				}, this._satG, this._svgdoc);
 				this._satCtrl = new SmartBar('sat-g', {
 					context: this._root,
-					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-left-.-.-.-cd-.-.-Saturation, $VALUE$%- -.-.-0-.-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
+					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-left-.-.-.-cd-.-.-Saturation, $VALUE$%- -.-.-0-0-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
 				});
 				this._satCtrl.update({target:{value: 50, color: 'white'}});
 
 				// create container for Luminance control
 				this._lumG =  SmartWidgets.addElement('g', {
-					id: 'lum-g'
+					id: 'lum-g',
+					style: 'cursor: pointer;'
 				}, this._svgroot, this._svgdoc);
 				SmartWidgets.addElement('rect', {
 					id: 'lum-ctrl',
@@ -328,7 +330,7 @@ ${optStr}  };
 				}, this._lumG, this._svgdoc);
 				this._lumCtrl = new SmartBar('lum-g', {
 					context: this._root,
-					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-.-.-.-.-cd-.-.-Luminance, $VALUE$%- -.-.-0-.-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
+					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-.-.-.-.-cd-.-.-Luminance, $VALUE$%- -.-.-0-0-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
 				});
 				this._lumCtrl.update({target:{value: 50, color: 'white'}});
 			}
@@ -438,6 +440,48 @@ ${optStr}  };
 			this._svgroot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
 
 			if (1) {
+				if (this._satCtrl) {
+					this._satG.addEventListener('wheel', (evt) => {
+						if (this._paletteSelState >= 0) {
+							const stateElem = this._paletteArr[this._paletteSelState];
+							const cr = stateElem.getAttribute('fill');
+							const c = w3color(cr);
+							let K = evt.altKey ? 0.05 : 0.01;
+							const delta = evt.deltaY || evt.detail || evt.wheelDelta;
+							K = delta < 0 ? -K : K;
+							c.sat += K;
+							c.sat = c.sat > 0 ? (c.sat < 1 ? c.sat : 1) : 0.01;
+
+							const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
+							this._o.value = c2.valid ? c2.toHexString() : '#000000';
+							stateElem.setAttribute('fill', this._o.value);
+							this._satCtrl.update({target:{value:c.sat * 100, color: this._o.value}});
+							this._s2c.set(this._paletteSelState, this._o.value);
+							this._o.stateColors = this._s2c.get();
+						}
+					});
+				}
+				if (this._lumCtrl) {
+					this._lumG.addEventListener('wheel', (evt) => {
+						if (this._paletteSelState >= 0) {
+							const stateElem = this._paletteArr[this._paletteSelState];
+							const cr = stateElem.getAttribute('fill');
+							const c = w3color(cr);
+							let K = evt.altKey ? 0.05 : 0.01;
+							const delta = evt.deltaY || evt.detail || evt.wheelDelta;
+							K = delta < 0 ? -K : K;
+							c.lightness += K;
+							c.lightness = c.lightness > 0 ? (c.lightness < 1 ? c.lightness : 1) : 0;
+
+							const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
+							this._o.value = c2.valid ? c2.toHexString() : '#000000';
+							stateElem.setAttribute('fill', this._o.value);
+							this._lumCtrl.update({target:{value:c.lightness * 100, color: this._o.value}});
+							this._s2c.set(this._paletteSelState, this._o.value);
+							this._o.stateColors = this._s2c.get();
+						}
+					});
+				}
 				this._buttonArr.forEach((btn) => {
 					btn.addEventListener('click', (evt) => {
 						const n = Number(btn.id.replace('btn-', ''));
