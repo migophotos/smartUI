@@ -523,6 +523,40 @@ ${optStr}  };
 							this._setSelColor(newColor);
 						}	
 					});
+					this._satG.addEventListener('click', (evt) => {
+						evt.preventDefault();
+						if (this._paletteSelState >= 0) {
+							let sat = Number(evt.target.id.replace('sat-', '')) * 5;
+							if (isNaN(sat)) {
+								return;
+							}
+							sat = sat / 100;
+							sat = +(sat.toPrecision(2));
+							const curColor = this._getSelColor();
+							const cr = w3color(curColor);
+							cr.sat = sat;
+							const cr2 = w3color(`hsl(${cr.hue},${cr.sat},${cr.lightness})`);
+							const newColor = cr2.toHexString();
+							this._setSelColor(newColor);
+						}	
+					});
+					this._lumG.addEventListener('click', (evt) => {
+						evt.preventDefault();
+						if (this._paletteSelState >= 0) {
+							let lum = Number(evt.target.id.replace('lum-', '')) * 5;
+							if (isNaN(lum)) {
+								return;
+							}
+							lum = lum / 100;
+							lum = +(lum.toPrecision(2));
+							const curColor = this._getSelColor();
+							const cr = w3color(curColor);
+							cr.lightness = lum;
+							const cr2 = w3color(`hsl(${cr.hue},${cr.sat},${cr.lightness})`);
+							const newColor = cr2.toHexString();
+							this._setSelColor(newColor);
+						}	
+					});
 
 				}
 				if (this._satCtrl && this._satCtrl) {
@@ -694,7 +728,7 @@ ${optStr}  };
 		const c = w3color(color);
 		const lum = +(c.lightness.toPrecision(1));
 		for (let n = 0; n < 21; n++) {
-			c.lightness = n * 0.05;
+			c.lightness = (n * 5) / 100;
 			c.lightness = +(c.lightness.toPrecision(2));
 			const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
 			this._lumCtrlArr[n].setAttribute('fill', c2.toHexString());
@@ -706,7 +740,7 @@ ${optStr}  };
 		const c = w3color(color);
 		const sat = +(c.sat.toPrecision(1));
 		for (let n = 0; n < 21; n++) {
-			c.sat = n * 0.05;
+			c.sat = (n * 5) / 100;
 			c.sat = +(c.sat.toPrecision(2));
 			const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
 			this._satCtrlArr[n].setAttribute('fill', c2.toHexString());
