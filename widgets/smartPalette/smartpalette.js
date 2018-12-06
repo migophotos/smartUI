@@ -247,6 +247,10 @@ ${optStr}  };
 		this._s2c_2		= new StateToColors();
 		this._setValueCallback = options.cb || null;
 
+		this._hueG		= null;
+		this._satG		= null;
+		this._lumG		= null;
+
 		this._satCtrl	= null;	// saturations slider with role = 'ctrl'
 		this._lumCtrl	= null;	// luminance slider with role = 'ctrl'
 
@@ -278,10 +282,17 @@ ${optStr}  };
 			this._paletteArr = [];
 			this._paletteBtnArr = [];
 			this._paletteSelState = -1;
+
+			this._hueCtrlArr = [];
+			this._satCtrlArr = [];
+			this._lumCtrlArr = [];
+
 			const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
 			const fontSize = '10px';
 			const step = 6, gap = 6;
-			let width = 60, height = 40, offsetX = gap, offsetY = gap;
+			let width = 60, height = 50, offsetX = gap, offsetY = gap;
+			const bodyHeight = `${(offsetY * 2) + (height * 3) + (step * 2)}`;
+			const bodyWidth  = `${(offsetX * 2) + (width * 3) + (step * 2)}`;
 			let themsGId = `${this.id}-themes`;
 			this._containerG = SmartWidgets.addElement('g', {
 				id: themsGId
@@ -298,73 +309,96 @@ ${optStr}  };
 				stroke: '#ffffff'
 			}, this._bodyG, this._svgdoc);
 			if (this._mode !== 'html') {
-				// create container for Saturation control
-				this._satG =  SmartWidgets.addElement('g', {
-					id: 'sat-g',
+				// create container for Hue control
+				this._hueG =  SmartWidgets.addElement('g', {
+					id: 'hue-g',
 					style: 'cursor: pointer;'
 				}, this._svgroot, this._svgdoc);
-				SmartWidgets.addElement('rect', {
-					id: 'sat-ctrl',
-					x: 0,
-					y: 0,
-					width: 120,
-					height: 50
-				}, this._satG, this._svgdoc);
+				let cell = +(((bodyHeight - 40) / 24).toFixed(0));
+				for(let nh = 0; nh < 24; nh++) {
+					const h = nh * 15;
+					const cr = w3color(`hsl(${h},1,0.5)`);
+					this._hueCtrlArr.push(SmartWidgets.addElement('rect', {
+						id: `hue-${nh}`,
+						x: 0,
+						y: nh * (cell + 0.6),
+						width: 20,
+						height: cell,
+						fill: cr.toHexString(),
+						// 'paint-order': 'stroke'
+					}, this._hueG, this._svgdoc));
+				}
 				SmartWidgets.addElement('text', {
-					text: 'S',
-					x: 22,
-					y: 140,
+					text: 'H',
+					x: 10,
+					y: bodyHeight - 4,
 					fill: '#ffffff',
 					'text-anchor': 'middle',
 					'dominant-baseline': 'middle',
 					'pointer-events': 'none',
 					'font-family': fontFamily,
-					'font-size': 24,
-					// 'paint-order': 'stroke',
-					// stroke: 'black',
-					// 'stroke-width': "1",
+					'font-size': 16,
+					'stroke-linejoin': 'round'
+				}, this._hueG, this._svgdoc);
+
+				// create container for Saturation control
+				this._satG =  SmartWidgets.addElement('g', {
+					id: 'sat-g',
+					style: 'cursor: pointer;'
+				}, this._svgroot, this._svgdoc);
+				
+				cell = +(((bodyHeight - 38) / 21).toFixed(0));
+				for(let ns = 0; ns < 21; ns++) {
+					this._satCtrlArr.push(SmartWidgets.addElement('rect', {
+						id: `sat-${ns}`,
+						x: 0,
+						y: ns * (cell + 1.6),
+						width: 20,
+						height: cell
+					}, this._satG, this._svgdoc));
+				}
+				SmartWidgets.addElement('text', {
+					text: 'S',
+					x: 10,
+					y: bodyHeight - 4,
+					fill: '#ffffff',
+					'text-anchor': 'middle',
+					'dominant-baseline': 'middle',
+					'pointer-events': 'none',
+					'font-family': fontFamily,
+					'font-size': 16,
 					'stroke-linejoin': 'round'
 				}, this._satG, this._svgdoc);
-
-				this._satCtrl = new SmartBar('sat-g', {
-					context: this._root,
-					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-left-.-.-.-cd-.-.-Saturation, $VALUE$%- -.-.-0-0-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
-				});
-				this._satCtrl.update({target:{value: 50, color: 'white'}});
 
 				// create container for Luminance control
 				this._lumG =  SmartWidgets.addElement('g', {
 					id: 'lum-g',
 					style: 'cursor: pointer;'
 				}, this._svgroot, this._svgdoc);
-				SmartWidgets.addElement('rect', {
-					id: 'lum-ctrl',
-					x: 0,
-					y: 0,
-					width: 120,
-					height: 50
-				}, this._lumG, this._svgdoc);
+				for(let nl = 0; nl < 21; nl++) {
+					this._lumCtrlArr.push(SmartWidgets.addElement('rect', {
+						id: `lum-${nl}`,
+						x: 0,
+						y: nl * (cell + 1.6),
+						width: 20,
+						height: cell
+					}, this._lumG, this._svgdoc));
+				}
 				SmartWidgets.addElement('text', {
 					text: 'L',
 					x: 12,
-					y: 140,
+					y: bodyHeight - 4,
 					fill: '#ffffff',
 					'text-anchor': 'middle',
 					'dominant-baseline': 'middle',
 					'pointer-events': 'none',
 					'font-family': fontFamily,
-					'font-size': 24,
+					'font-size': 16,
 					// 'paint-order': 'stroke',
 					// stroke: 'black',
 					// 'stroke-width': "1",
 					'stroke-linejoin': 'round'
 				}, this._lumG, this._svgdoc);
-
-				this._lumCtrl = new SmartBar('lum-g', {
-					context: this._root,
-					opt: '{"stwidget":"stbar-ctrl-.-.-ver-up-16-120-.-.-.-.-.-cd-.-.-Luminance, $VALUE$%- -.-.-0-0-.-.-.-.-.-.-none-.-0-0-#ffffff-.-0-.-.-.-10-.-.-.-.-.-0"}'
-				});
-				this._lumCtrl.update({target:{value: 50, color: 'white'}});
 			}
 
 			const offset = 50;
@@ -377,8 +411,9 @@ ${optStr}  };
 			if (this._o.role !== 'demoMode') {
 				this._bodyG.setAttribute('transform', `translate(${distance}, 0)`);
 				if (this._mode !== 'html') {
-					this._satG.setAttribute('transform', `translate(${286}, 0)`);
-					this._lumG.setAttribute('transform', `translate(${316}, 0)`);
+					this._hueG.setAttribute('transform', `translate(${274}, 0)`);
+					this._satG.setAttribute('transform', `translate(${300}, 0)`);
+					this._lumG.setAttribute('transform', `translate(${326}, 0)`);
 				}
 				this._themes = new ScrollableContainer(themsGId, {
 					width: offset,
@@ -472,8 +507,27 @@ ${optStr}  };
 			this._svgroot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
 
 			if (1) {
+				if (this._hueG) {
+					this._hueG.addEventListener('click', (evt) => {
+						evt.preventDefault();
+						if (this._paletteSelState >= 0) {
+							const hue = Number(evt.target.id.replace('hue-', '')) * 15;
+							if (isNaN(hue)) {
+								return;
+							}
+							const curColor = this._getSelColor();
+							const cr = w3color(curColor);
+							cr.hue = hue;
+							const cr2 = w3color(`hsl(${cr.hue},${cr.sat},${cr.lightness})`);
+							const newColor = cr2.toHexString();
+							this._setSelColor(newColor);
+						}	
+					});
+
+				}
 				if (this._satCtrl && this._satCtrl) {
 					this._satG.addEventListener('wheel', (evt) => {
+						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
 							const stateElem = this._paletteArr[this._paletteSelState];
 							const cr = stateElem.getAttribute('fill');
@@ -497,6 +551,7 @@ ${optStr}  };
 						}
 					});
 					this._lumG.addEventListener('wheel', (evt) => {
+						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
 							const stateElem = this._paletteArr[this._paletteSelState];
 							const cr = stateElem.getAttribute('fill');
@@ -522,6 +577,7 @@ ${optStr}  };
 				}
 				this._buttonArr.forEach((btn) => {
 					btn.addEventListener('click', (evt) => {
+						evt.preventDefault();
 						const n = Number(btn.id.replace('btn-', ''));
 						this._btnGrArr[n].setAttribute('display', 'none');
 						let cr = this._s2c.get(n);
@@ -536,6 +592,7 @@ ${optStr}  };
 				});
 				this._paletteBtnArr.forEach((sel) => {
 					sel.addEventListener('click', (evt) => {
+						evt.preventDefault();
 						const n = Number(sel.id.replace('statebtn-', ''));
 						this._s2c.delete(n);
 						this._o.stateColors = this._s2c.get();
@@ -550,16 +607,21 @@ ${optStr}  };
 				});
 				this._paletteArr.forEach((sel) => {
 					sel.addEventListener('click', (evt) => {
+						evt.preventDefault();
 						const n = Number(sel.id.replace('state-', ''));
 						this._paletteSelState = n;
-						const cr = evt.target.getAttribute('fill'); // `${this._colorBox.value}`;
-						const c = w3color(cr);
-						if (this._satCtrl) {
-							this._satCtrl.update({target:{value:c.sat * 100, color: cr}});
-						}
-						if (this._lumCtrl) {
-							this._lumCtrl.update({target:{value:c.lightness * 100, color: cr}});
-						}
+						const cr = evt.target.getAttribute('fill');
+						this._setHue(cr);
+						this._setLum(cr);
+						this._setSat(cr);
+
+						// const c = w3color(cr);
+						// if (this._satCtrl) {
+						// 	this._satCtrl.update({target:{value:c.sat * 100, color: cr}});
+						// }
+						// if (this._lumCtrl) {
+						// 	this._lumCtrl.update({target:{value:c.lightness * 100, color: cr}});
+						// }
 					});
 					sel.addEventListener('wheel', (evt) => {
 						evt.preventDefault();
@@ -567,13 +629,13 @@ ${optStr}  };
 						if (stateN != this._paletteSelState) {
 							return;
 						}
-						const cr = evt.target.getAttribute('fill'); // `${this._colorBox.value}`;
+						const cr = evt.target.getAttribute('fill');
 						const c = w3color(cr);
 
 						const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
 						let K = evt.ctrlKey ? 0.01 : evt.shiftKey ? 0.01 : 1;
 						if (K == 1) {
-							K = 11.25;	// HSL
+							K = 5;	// HSL
 						}
 						if (evt.altKey) {
 							K = K * 5;
@@ -581,32 +643,31 @@ ${optStr}  };
 						const delta = evt.deltaY || evt.detail || evt.wheelDelta;
 						K = delta < 0 ? K : -K;
 						c[P] += K;
-						// if (delta > 0) {
-						// 	c[P] = c[P] + K;
-						// } else {
-						// 	c[P] = c[P] - K;
-						// }
 						const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
-						const s = c.sat; // > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
-						const l = c.lightness; // > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
+						const l = c.lightness > 0 ? (c.lightness < 1 ? c.lightness : 1) : 0;
+						const s = c.sat > 0 ? (c.sat < 1 ? c.sat : 1) : 0;
 
 						const c2 = w3color(`hsl(${h},${s},${l})`);
 
 						this._o.value = c2.valid ? c2.toHexString() : '#000000';
 						evt.target.setAttribute('fill', this._o.value);
 
-						this._s2c.set(stateN, this._o.value);
+						this._s2c.set(this._paletteSelState, this._o.value);
 						this._o.stateColors = this._s2c.get();
 
 						if (this._setValueCallback) {
 							this._setValueCallback(this._o.stateColors);
 						}
-						if (this._satCtrl) {
-							this._satCtrl.update({target:{value:s * 100, color: this._o.value}});
-						}
-						if (this._lumCtrl) {
-							this._lumCtrl.update({target:{value:l * 100, color: this._o.value}});
-						}
+						this._setHue(this._o.value);
+						this._setLum(this._o.value);
+						this._setSat(this._o.value);
+
+						// if (this._satCtrl) {
+						// 	this._satCtrl.update({target:{value:s * 100, color: this._o.value}});
+						// }
+						// if (this._lumCtrl) {
+						// 	this._lumCtrl.update({target:{value:l * 100, color: this._o.value}});
+						// }
 					});
 				});
 			}
@@ -628,6 +689,64 @@ ${optStr}  };
 				this._btnGrArr[n].removeAttribute('display');
 			}
 		}
+	}
+	_setLum(color) {
+		const c = w3color(color);
+		const lum = +(c.lightness.toPrecision(1));
+		for (let n = 0; n < 21; n++) {
+			c.lightness = n * 0.05;
+			c.lightness = +(c.lightness.toPrecision(2));
+			const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
+			this._lumCtrlArr[n].setAttribute('fill', c2.toHexString());
+			this._lumCtrlArr[n].setAttribute('stroke', c.lightness == lum ? '#ffffff' : 'none');
+			this._lumCtrlArr[n].setAttribute('stroke-width', c.lightness == lum ? '2' : '0');
+		}
+	}
+	_setSat(color) {
+		const c = w3color(color);
+		const sat = +(c.sat.toPrecision(1));
+		for (let n = 0; n < 21; n++) {
+			c.sat = n * 0.05;
+			c.sat = +(c.sat.toPrecision(2));
+			const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
+			this._satCtrlArr[n].setAttribute('fill', c2.toHexString());
+			this._satCtrlArr[n].setAttribute('stroke', c.sat == sat ? '#ffffff' : 'none');
+			this._satCtrlArr[n].setAttribute('stroke-width', c.sat == sat ? '2' : '0');
+		}
+	}
+	_setHue(color) {
+		const c = w3color(color);
+		const hue = c.hue;
+		for (let n = 0; n < 24; n++) {
+			c.hue = n * 15;
+			// const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
+			this._hueCtrlArr[n].setAttribute('stroke', Math.abs(c.hue - hue) < 15 ? '#ffffff' : 'none');
+			this._hueCtrlArr[n].setAttribute('stroke-width', Math.abs(c.hue - hue) < 15 ? '2' : '0');
+		}
+	}
+	_setSelColor(color) {
+		if (this._paletteSelState > -1) {
+			const stateElem = this._paletteArr[this._paletteSelState];
+			stateElem.setAttribute('fill', color);
+
+			this._s2c.set(this._paletteSelState, color);
+			this._o.stateColors = this._s2c.get();
+			if (this._setValueCallback) {
+				this._setValueCallback(this._o.stateColors);
+			}
+			this._setHue(color);
+			this._setLum(color);
+			this._setSat(color);
+		}
+	}
+	_getSelColor() {
+		if (this._paletteSelState > -1) {
+			const stateElem = this._paletteArr[this._paletteSelState];
+			const cr = stateElem.getAttribute('fill');
+			const c = w3color(cr);
+			return c.toHexString();
+		}
+		return '#000000';
 	}
 	_getTemplates() {
 		for (let n = 0; n < SMART_WIDGETS.length; n++) {
