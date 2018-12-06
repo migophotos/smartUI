@@ -317,7 +317,7 @@ ${optStr}  };
 				let cell = +(((bodyHeight - 40) / 24).toFixed(0));
 				for(let nh = 0; nh < 24; nh++) {
 					const h = nh * 15;
-					const cr = w3color(`hsl(${h},1,0.5)`);
+					const cr = w3color(`hsl(${h}, 100%, 50%)`);
 					this._hueCtrlArr.push(SmartWidgets.addElement('rect', {
 						id: `hue-${nh}`,
 						x: 0,
@@ -511,14 +511,13 @@ ${optStr}  };
 					this._hueG.addEventListener('click', (evt) => {
 						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
-							const hue = Number(evt.target.id.replace('hue-', '')) * 15;
-							if (isNaN(hue)) {
+							const cellHue = Number(evt.target.id.replace('hue-', '')) * 15;
+							if (isNaN(cellHue)) {
 								return;
 							}
 							const curColor = this._getSelColor();
 							const cr = w3color(curColor);
-							cr.hue = hue;
-							const cr2 = w3color(`hsl(${cr.hue},${cr.sat},${cr.lightness})`);
+							const cr2 = w3color(`hsl(${cellHue},${cr.sat},${cr.lightness})`);
 							const newColor = cr2.toHexString();
 							this._setSelColor(newColor);
 						}	
@@ -526,101 +525,43 @@ ${optStr}  };
 					this._satG.addEventListener('click', (evt) => {
 						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
-							let sat = Number(evt.target.id.replace('sat-', '')) * 5;
-							if (isNaN(sat)) {
+							const cellSat = Number(evt.target.id.replace('sat-', '')) * 5;
+							if (isNaN(cellSat)) {
 								return;
 							}
-							sat = sat / 100;
-							sat = +(sat.toPrecision(2));
-							const curColor = this._getSelColor();
-							const cr = w3color(curColor);
-							cr.sat = sat;
-							const cr2 = w3color(`hsl(${cr.hue},${cr.sat},${cr.lightness})`);
-							const newColor = cr2.toHexString();
-							this._setSelColor(newColor);
+							const cr = w3color(this._getSelColor());
+							const cr2 = w3color(`hsl(${cr.hue}, ${cellSat}%, ${cr.lightness})`);
+							this._setSelColor(cr2.toHexString());
 						}	
 					});
 					this._lumG.addEventListener('click', (evt) => {
 						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
-							let lum = Number(evt.target.id.replace('lum-', '')) * 5;
-							if (isNaN(lum)) {
+							const cellLum = Number(evt.target.id.replace('lum-', '')) * 5;
+							if (isNaN(cellLum)) {
 								return;
 							}
-							lum = lum / 100;
-							lum = +(lum.toPrecision(2));
-							const curColor = this._getSelColor();
-							const cr = w3color(curColor);
-							cr.lightness = lum;
-							const cr2 = w3color(`hsl(${cr.hue},${cr.sat},${cr.lightness})`);
-							const newColor = cr2.toHexString();
-							this._setSelColor(newColor);
+							const cr = w3color(this._getSelColor());
+							const cr2 = w3color(`hsl(${cr.hue}, ${cr.sat}, ${cellLum}%)`);
+							this._setSelColor(cr2.toHexString());
 						}	
-					});
-
-				}
-				if (this._satCtrl && this._satCtrl) {
-					this._satG.addEventListener('wheel', (evt) => {
-						evt.preventDefault();
-						if (this._paletteSelState >= 0) {
-							const stateElem = this._paletteArr[this._paletteSelState];
-							const cr = stateElem.getAttribute('fill');
-							const c = w3color(cr);
-							let K = evt.altKey ? 0.05 : 0.01;
-							const delta = evt.deltaY || evt.detail || evt.wheelDelta;
-							K = delta < 0 ? K : -K;
-							c.sat += K;
-							c.sat = c.sat > 0 ? (c.sat < 1 ? c.sat : 1) : 0.01;
-
-							const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
-							this._o.value = c2.valid ? c2.toHexString() : '#000000';
-							stateElem.setAttribute('fill', this._o.value);
-							this._s2c.set(this._paletteSelState, this._o.value);
-							this._o.stateColors = this._s2c.get();
-							this._lumCtrl.update({target:{value:c.lightness * 100, color: this._o.value}});
-							this._satCtrl.update({target:{value:c.sat * 100, color: this._o.value}});
-							if (this._setValueCallback) {
-								this._setValueCallback(this._o.stateColors);
-							}
-						}
-					});
-					this._lumG.addEventListener('wheel', (evt) => {
-						evt.preventDefault();
-						if (this._paletteSelState >= 0) {
-							const stateElem = this._paletteArr[this._paletteSelState];
-							const cr = stateElem.getAttribute('fill');
-							const c = w3color(cr);
-							let K = evt.altKey ? 0.05 : 0.01;
-							const delta = evt.deltaY || evt.detail || evt.wheelDelta;
-							K = delta < 0 ? K : -K;
-							c.lightness += K;
-							c.lightness = c.lightness > 0 ? (c.lightness < 1 ? c.lightness : 1) : 0;
-
-							const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
-							this._o.value = c2.valid ? c2.toHexString() : '#000000';
-							stateElem.setAttribute('fill', this._o.value);
-							this._s2c.set(this._paletteSelState, this._o.value);
-							this._o.stateColors = this._s2c.get();
-							this._lumCtrl.update({target:{value:c.lightness * 100, color: this._o.value}});
-							this._satCtrl.update({target:{value:c.sat * 100, color: this._o.value}});
-							if (this._setValueCallback) {
-								this._setValueCallback(this._o.stateColors);
-							}
-						}
 					});
 				}
 				this._buttonArr.forEach((btn) => {
 					btn.addEventListener('click', (evt) => {
 						evt.preventDefault();
-						const n = Number(btn.id.replace('btn-', ''));
-						this._btnGrArr[n].setAttribute('display', 'none');
-						let cr = this._s2c.get(n);
-						if (n && !cr) {
-							cr = this._s2c.get(n - 1);
+						this._paletteSelState = Number(btn.id.replace('btn-', ''));
+						this._btnGrArr[this._paletteSelState].setAttribute('display', 'none');
+						let cr = this._s2c.get(this._paletteSelState);
+						if (!cr) {
+							const ownColor = this._paletteArr[this._paletteSelState].getAttribute('fill')
+							cr = this._paletteSelState ? this._s2c.get(this._paletteSelState - 1) : ownColor;
+							if (!cr) {
+								cr = ownColor;
+							}
 						}
 						if (cr) {
-							this._paletteSelState = n;
-							this._paletteArr[n].setAttribute('fill', cr);
+							this._setSelColor(cr);
 						}
 					});
 				});
@@ -636,7 +577,6 @@ ${optStr}  };
 						if (this._setValueCallback) {
 							this._setValueCallback(this._o.stateColors);
 						}
-
 					});
 				});
 				this._paletteArr.forEach((sel) => {
@@ -648,14 +588,6 @@ ${optStr}  };
 						this._setHue(cr);
 						this._setLum(cr);
 						this._setSat(cr);
-
-						// const c = w3color(cr);
-						// if (this._satCtrl) {
-						// 	this._satCtrl.update({target:{value:c.sat * 100, color: cr}});
-						// }
-						// if (this._lumCtrl) {
-						// 	this._lumCtrl.update({target:{value:c.lightness * 100, color: cr}});
-						// }
 					});
 					sel.addEventListener('wheel', (evt) => {
 						evt.preventDefault();
@@ -667,41 +599,19 @@ ${optStr}  };
 						const c = w3color(cr);
 
 						const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
-						let K = evt.ctrlKey ? 0.01 : evt.shiftKey ? 0.01 : 1;
-						if (K == 1) {
-							K = 5;	// HSL
-						}
+						let K = evt.ctrlKey || evt.shiftKey ? 0.01 : 1;
 						if (evt.altKey) {
-							K = K * 5;
+							K = K * 3;
 						}
 						const delta = evt.deltaY || evt.detail || evt.wheelDelta;
-						K = delta < 0 ? K : -K;
+						K = delta < 0 ? -K : K;
 						c[P] += K;
 						const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
 						const l = c.lightness > 0 ? (c.lightness < 1 ? c.lightness : 1) : 0;
 						const s = c.sat > 0 ? (c.sat < 1 ? c.sat : 1) : 0;
-
 						const c2 = w3color(`hsl(${h},${s},${l})`);
 
-						this._o.value = c2.valid ? c2.toHexString() : '#000000';
-						evt.target.setAttribute('fill', this._o.value);
-
-						this._s2c.set(this._paletteSelState, this._o.value);
-						this._o.stateColors = this._s2c.get();
-
-						if (this._setValueCallback) {
-							this._setValueCallback(this._o.stateColors);
-						}
-						this._setHue(this._o.value);
-						this._setLum(this._o.value);
-						this._setSat(this._o.value);
-
-						// if (this._satCtrl) {
-						// 	this._satCtrl.update({target:{value:s * 100, color: this._o.value}});
-						// }
-						// if (this._lumCtrl) {
-						// 	this._lumCtrl.update({target:{value:l * 100, color: this._o.value}});
-						// }
+						this._setSelColor(c2.toHexString());
 					});
 				});
 			}
@@ -726,36 +636,33 @@ ${optStr}  };
 	}
 	_setLum(color) {
 		const c = w3color(color);
-		const lum = +(c.lightness.toPrecision(1));
+		let cellLum, Lum = c.lightness * 100;
 		for (let n = 0; n < 21; n++) {
-			c.lightness = (n * 5) / 100;
-			c.lightness = +(c.lightness.toPrecision(2));
-			const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
+			cellLum = n * 5;
+			const c2 = w3color(`hsl(${c.hue}, ${c.sat * 100}%, ${cellLum}%)`);
 			this._lumCtrlArr[n].setAttribute('fill', c2.toHexString());
-			this._lumCtrlArr[n].setAttribute('stroke', c.lightness == lum ? '#ffffff' : 'none');
-			this._lumCtrlArr[n].setAttribute('stroke-width', c.lightness == lum ? '2' : '0');
+			this._lumCtrlArr[n].setAttribute('stroke', Math.abs(cellLum - Lum) < 2.5 ? '#ffffff' : 'none');
+			this._lumCtrlArr[n].setAttribute('stroke-width', Math.abs(cellLum - Lum) < 2.5 ? '2' : '0');
 		}
 	}
 	_setSat(color) {
 		const c = w3color(color);
-		const sat = +(c.sat.toPrecision(1));
+		let cellSat, Sat = c.sat * 100;
 		for (let n = 0; n < 21; n++) {
-			c.sat = (n * 5) / 100;
-			c.sat = +(c.sat.toPrecision(2));
-			const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
+			cellSat = n * 5;
+			const c2 = w3color(`hsl(${c.hue}, ${cellSat}%, ${c.lightness * 100}%)`);
 			this._satCtrlArr[n].setAttribute('fill', c2.toHexString());
-			this._satCtrlArr[n].setAttribute('stroke', c.sat == sat ? '#ffffff' : 'none');
-			this._satCtrlArr[n].setAttribute('stroke-width', c.sat == sat ? '2' : '0');
+			this._satCtrlArr[n].setAttribute('stroke', Math.abs(cellSat - Sat) < 2.5 ? '#ffffff' : 'none');
+			this._satCtrlArr[n].setAttribute('stroke-width', Math.abs(cellSat - Sat) < 2.5 ? '2' : '0');
 		}
 	}
 	_setHue(color) {
 		const c = w3color(color);
-		const hue = c.hue;
+		let cellHue, Hue = c.hue;
 		for (let n = 0; n < 24; n++) {
-			c.hue = n * 15;
-			// const c2 = w3color(`hsl(${c.hue},${c.sat},${c.lightness})`);
-			this._hueCtrlArr[n].setAttribute('stroke', Math.abs(c.hue - hue) < 15 ? '#ffffff' : 'none');
-			this._hueCtrlArr[n].setAttribute('stroke-width', Math.abs(c.hue - hue) < 15 ? '2' : '0');
+			cellHue = n * 15;
+			this._hueCtrlArr[n].setAttribute('stroke', Math.abs(cellHue - Hue) < 7.5 ? '#ffffff' : 'none');
+			this._hueCtrlArr[n].setAttribute('stroke-width', Math.abs(cellHue - Hue) < 7.5 ? '2' : '0');
 		}
 	}
 	_setSelColor(color) {
