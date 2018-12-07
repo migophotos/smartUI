@@ -59,9 +59,9 @@ class StateToColors extends Map {
 				if (!window.StateToColors) {
 					window.StateToColors = new StateToColors();
 				}
+				window.StateToColors.clear();
 				for (let [key, value] of this.entries()) {
 					window.StateToColors.set(key, value);
-
 					// localStorage.setItem('SmartWidgets.stateColors', window.StateToColors.get());
 				}
 			}
