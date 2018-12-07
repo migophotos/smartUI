@@ -169,7 +169,9 @@ class SmartBars extends SmartWidgets {
 			'is-show-thr',
 			'is-show-trends',
 			'is-global-colors', // use global state to color definition instead of 'state-colors'
-			'state-colors'		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
+			'state-colors'		// State to color interpretator string in comma-separated format. There are two versions of formatted strings are supported.
+								// Old format: state:color,state:color,... where state is a number from 0 upto 9 and color is in hex representation whith '#' character
+								// New format: statecolor,statecolor,... where state is a number from 0 upto 9 and color is in hex representation whith '#' character
 								// by default (currently) is empty, what means not in use
         ];
     }
@@ -225,7 +227,10 @@ class SmartBars extends SmartWidgets {
 			isShowThr: 0,
 			isShowTrends: 0,
 			isGlobalColors: 1,
-			stateColors: ''		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
+			stateColors: ''		// State to color interpretator string in comma-separated format. There are two versions of formatted strings are supported.
+								// Old format: state:color,state:color,... where state is a number from 0 upto 9 and color is in hex representation whith '#' character
+								// New format: statecolor,statecolor,... where state is a number from 0 upto 9 and color is in hex representation whith '#' character
+								// by default (currently) is empty, what means not in use
         };
     }
     static convertNumericProps(options = {}, propName) {
@@ -740,8 +745,8 @@ ${optStr}  };
 		}
 	}
     _build() {
-		// Global colors initialization
-		this._s2c.init(this._o.stateColors, this._o.isGlobalColors);
+		// Local colors initialization
+		this._s2c.init(this._o.stateColors, 0);
 
 		if (!this._inited) {
 			console.log('_build() -> Nothing todo, not yet initialized!');

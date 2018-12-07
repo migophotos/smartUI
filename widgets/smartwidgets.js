@@ -841,6 +841,9 @@ class ScrollableContainer {
 				tabindex: this._heap.size
 			}, this._bodyActiveG, this._svgdoc);
 		}
+		if (item) {
+			item.setAttribute('style', 'cursor:pointer;');
+		}
 		this._containerHeight = offset + iHeight + this._gap;
 		this._bodyActiveBkg.setAttribute('height', this._containerHeight);
 		this._heap.set(elem.id, elem);

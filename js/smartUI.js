@@ -1371,11 +1371,11 @@ class SmartUiColorPalette extends HTMLElement {
                     overflow: unset;
                     margin: 6px 12px 0 0;
                 }
-                .smartcontainer input {
+                .smartcontainer input#IC {
                     color: rgba( 255,255,255, 1 );
                     display: block;
                     float: left;
-                    width: 190px;
+                    width: 300px;
                     background: none;
                     border: 1px solid;
                     margin: 2px 4px 2px 0px;

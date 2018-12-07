@@ -80,7 +80,9 @@ class SmartPalettes extends SmartWidgets {
 			'role',				// in demo mode this parameter has value 'demoMode'
 			'alias',			// 'stpal'
 			'is-global-colors', // use global state to color definition instead of 'state-colors'
-			'state-colors'		// State to color interpretator. String in comma-separated format 'state''hex color', for example: 1#00ff00,2#00aabb,3#ff0000,...
+			'state-colors'		// State to color interpretator string in comma-separated format. There are two versions of formatted strings are supported.
+								// Old format: state:color,state:color,... where state is a number from 0 upto 9 and color is in hex representation whith '#' character
+								// New format: statecolor,statecolor,... where state is a number from 0 upto 9 and color is in hex representation whith '#' character
 								// by default (currently) is empty, what means not in use
         ];
     }
@@ -89,7 +91,7 @@ class SmartPalettes extends SmartWidgets {
 			role: '',			// in demo mode this parameter has value 'demoMode'
 			alias: SmartPalettes.getAlias(),
 			isGlobalColors: 1,
-			stateColors: '0:#0080c0,1:#008000,2:#ffff15,3:#ff2f2f,4:#9f0000,5:#f0f0f0'
+			stateColors: '0#0080c0,1#008000,2#ffff15,3#ff2f2f,4#9f0000,5#f0f0f0'
 		};
 	}
 	static convertNumericProps(options = {}, propName) {
@@ -315,7 +317,7 @@ ${optStr}  };
 					style: 'cursor: pointer;'
 				}, this._svgroot, this._svgdoc);
 				let cell = +(((bodyHeight - 40) / 24).toFixed(0));
-				for(let nh = 0; nh < 24; nh++) {
+				for (let nh = 0; nh < 24; nh++) {
 					const h = nh * 15;
 					const cr = w3color(`hsl(${h}, 100%, 50%)`);
 					this._hueCtrlArr.push(SmartWidgets.addElement('rect', {
@@ -346,9 +348,9 @@ ${optStr}  };
 					id: 'sat-g',
 					style: 'cursor: pointer;'
 				}, this._svgroot, this._svgdoc);
-				
+
 				cell = +(((bodyHeight - 38) / 21).toFixed(0));
-				for(let ns = 0; ns < 21; ns++) {
+				for (let ns = 0; ns < 21; ns++) {
 					this._satCtrlArr.push(SmartWidgets.addElement('rect', {
 						id: `sat-${ns}`,
 						x: 0,
@@ -399,6 +401,9 @@ ${optStr}  };
 					// 'stroke-width': "1",
 					'stroke-linejoin': 'round'
 				}, this._lumG, this._svgdoc);
+				this._hueG.setAttribute('visibility', 'hidden');
+				this._satG.setAttribute('visibility', 'hidden');
+				this._lumG.setAttribute('visibility', 'hidden');
 			}
 
 			const offset = 50;
@@ -440,14 +445,16 @@ ${optStr}  };
 					tabindex: n,
 					style: 'cursor:pointer;'
 				}, this._bodyG, this._svgdoc));
-				this._paletteBtnArr.push(SmartWidgets.addElement('rect', {
+				this._paletteBtnArr.push(SmartWidgets.addElement('path', {
 					id: `statebtn-${n}`,
-					x: offsetX,
-					y: offsetY,
-					width: 10,
-					height: 10,
-					fill: '#0b0b0b',
-					stroke: '#ffffff',
+					// x: offsetX,
+					// y: offsetY,
+					// width: 10,
+					// height: 10,
+					d: `M${offsetX},${offsetY} h10 v10 h-10 v-9 L${offsetX + 10},${offsetY + 10} M${offsetX + 10},${offsetY} L${offsetX},${offsetY + 10}`,
+					fill: '#ffffff',
+					stroke: '#0b0b0b',
+					'stroke-width': 1.4,
 					style: 'cursor:pointer;'
 				}, this._bodyG, this._svgdoc));
 				SmartWidgets.addElement('text', {
@@ -517,11 +524,11 @@ ${optStr}  };
 							const cr = w3color(curColor);
 							let cellHue = cr.hue + K;
 							cellHue = cellHue > 359 ? 0 : cellHue < 0 ? 359 : cellHue;
-	
+
 							const cr2 = w3color(`hsl(${cellHue},${cr.sat},${cr.lightness})`);
 							const newColor = cr2.toHexString();
 							this._setSelColor(newColor);
-						}	
+						}
 					});
 					this._satG.addEventListener('wheel', (evt) => {
 						evt.preventDefault();
@@ -536,7 +543,7 @@ ${optStr}  };
 							const cr2 = w3color(`hsl(${cr.hue},${cellSat},${cr.lightness})`);
 							const newColor = cr2.toHexString();
 							this._setSelColor(newColor);
-						}	
+						}
 					});
 					this._lumG.addEventListener('wheel', (evt) => {
 						evt.preventDefault();
@@ -551,7 +558,7 @@ ${optStr}  };
 							const cr2 = w3color(`hsl(${cr.hue},${cr.sat},${cellLum})`);
 							const newColor = cr2.toHexString();
 							this._setSelColor(newColor);
-						}	
+						}
 					});
 
 
@@ -567,7 +574,7 @@ ${optStr}  };
 							const cr2 = w3color(`hsl(${cellHue},${cr.sat},${cr.lightness})`);
 							const newColor = cr2.toHexString();
 							this._setSelColor(newColor);
-						}	
+						}
 					});
 					this._satG.addEventListener('click', (evt) => {
 						evt.preventDefault();
@@ -579,7 +586,7 @@ ${optStr}  };
 							const cr = w3color(this._getSelColor());
 							const cr2 = w3color(`hsl(${cr.hue}, ${cellSat}%, ${cr.lightness})`);
 							this._setSelColor(cr2.toHexString());
-						}	
+						}
 					});
 					this._lumG.addEventListener('click', (evt) => {
 						evt.preventDefault();
@@ -591,13 +598,15 @@ ${optStr}  };
 							const cr = w3color(this._getSelColor());
 							const cr2 = w3color(`hsl(${cr.hue}, ${cr.sat}, ${cellLum}%)`);
 							this._setSelColor(cr2.toHexString());
-						}	
+						}
 					});
 				}
 				this._buttonArr.forEach((btn) => {
 					btn.addEventListener('click', (evt) => {
 						evt.preventDefault();
 						this._paletteSelState = Number(btn.id.replace('btn-', ''));
+						this._setSelectedState();
+
 						this._btnGrArr[this._paletteSelState].setAttribute('display', 'none');
 						let cr = this._s2c.get(this._paletteSelState);
 						if (!cr) {
@@ -620,6 +629,9 @@ ${optStr}  };
 						this._o.stateColors = this._s2c.get();
 						this._btnGrArr[n].removeAttribute('display');
 						this._paletteSelState = n > 0 ? n - 1 : -1;
+						this._setSelectedState();
+
+						this._showSliders(this._paletteSelState >= 0);
 
 						if (this._setValueCallback) {
 							this._setValueCallback(this._o.stateColors);
@@ -631,10 +643,16 @@ ${optStr}  };
 						evt.preventDefault();
 						const n = Number(sel.id.replace('state-', ''));
 						this._paletteSelState = n;
+						this._setSelectedState();
+
+						this._showSliders(this._paletteSelState >= 0);
+
 						const cr = evt.target.getAttribute('fill');
-						this._setHue(cr);
-						this._setLum(cr);
-						this._setSat(cr);
+						if (this._hueG && this._satG && this._lumG) {
+							this._setHue(cr);
+							this._setLum(cr);
+							this._setSat(cr);
+						}
 					});
 					sel.addEventListener('wheel', (evt) => {
 						evt.preventDefault();
@@ -666,6 +684,20 @@ ${optStr}  };
 		this._setStateColors();
 		if (this._o.role !== 'demoMode') {
 			this._getTemplates();
+		}
+	}
+	_showSliders(enable) {
+		this._hueG.setAttribute('visibility', enable ? 'visible' : 'hidden');
+		this._satG.setAttribute('visibility', enable ? 'visible' : 'hidden');
+		this._lumG.setAttribute('visibility', enable ? 'visible' : 'hidden');
+	}
+	_setSelectedState() {
+		for (let n = 0; n < 9; n++) {
+			let strokeColor = '#ffffff';
+			if (n == this._paletteSelState) {
+				strokeColor = '#0b0b0b';
+			}
+			this._paletteArr[n].setAttribute('stroke', strokeColor);
 		}
 	}
 	_setStateColors(s2c = null) {
@@ -748,9 +780,11 @@ ${optStr}  };
 			if (this._setValueCallback) {
 				this._setValueCallback(this._o.stateColors);
 			}
-			this._setHue(color);
-			this._setLum(color);
-			this._setSat(color);
+			if (this._hueG && this._satG && this._lumG) {
+				this._setHue(color);
+				this._setLum(color);
+				this._setSat(color);
+			}
 		}
 	}
 	_getSelColor() {
@@ -847,6 +881,13 @@ ${optStr}  };
 	}
     getCtrl() {
         return this;
+	}
+	getSize() {
+		const size = {
+			width: this._svgroot.getAttribute('width'),
+			height: this._svgroot.getAttribute('height')
+		};
+		return size;
 	}
 	isInited() {
 		return this._inited;
@@ -1066,11 +1107,13 @@ class SmartPaletteElement extends HTMLElement {
 		// all specific work will be done inside
 		this._stctrl.init(this._o);
 
+		const size = this._stctrl.getSize();
 		// resize own svg
-		// this._svgroot.setAttribute('height', size);
-		// this._svgroot.setAttribute('width', size);
-		// this._svgroot.setAttribute('viewBox', `0 0 ${size} ${size}`);
-
+		SmartWidgets.setAttributes([this._svgroot], {
+			width: size.width,
+			height: size.height,
+			viewbox: `0 0 ${size.width} ${size.height}`
+		});
 	}
 	disconnectedCallback() {
 		window.SmartPaletts.unset(this._id);
