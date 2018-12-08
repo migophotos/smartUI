@@ -216,57 +216,78 @@ class SmartColorSelector {
 				transform: `translate(${gap}, ${gap})`
 			}, this._bodyG, this._svgdoc);
 			// group for stroke selector
-			this._selStrokeBtn = SmartWidgets.addElement('g', {
+			this._btnSelStroke = SmartWidgets.addElement('g', {
 				class: 'sel-stroke-btn'
 			}, this._bfG, this._svgdoc);
-			this._selStrokeColor = SmartWidgets.addElement('circle', {
+			this._actStrokeColor = SmartWidgets.addElement('circle', {
 				cx: 20,
 				cy: 20,
 				r: 12,
-				stroke: '#0000ff',
+				stroke: this._strokeColor.color,
 				'stroke-width': 6,
 				fill: 'none',
 				style: 'cursor:pointer;'
-			}, this._selStrokeBtn, this._svgdoc);
-			this._selStrokeNoColor = SmartWidgets.addElement('line', {
-				x1: 5, y1: 20,
-				x2: 35, y2: 20,
+			}, this._btnSelStroke, this._svgdoc);
+			this._actStrokeNoColor = SmartWidgets.addElement('path', {
 				stroke: '#ff0000',
 				'stroke-width': 1,
 				fill: '#ff0000',
+				d: 'M5,20 h6 M35,20 h-6',
 				transform: 'rotate(-45, 20, 20)',
-				'pointer-events': 'none'
-			}, this._selStrokeBtn, this._svgdoc);
+				'pointer-events': 'none',
+				display: 'none'
+			}, this._btnSelStroke, this._svgdoc);
+			SmartWidgets.addElement('circle', {
+				cx: 20,
+				cy: 20,
+				r: 15,
+				stroke: '#000000',
+				'stroke-width': 0.6,
+				fill: 'none',
+				'pointer-events': 'none',
+			}, this._btnSelStroke, this._svgdoc);
 			SmartWidgets.addElement('circle', {
 				cx: 20,
 				cy: 20,
 				r: 9,
-				stroke: 'none',
-				'stroke-width': 0,
-				fill: this._o.bkgColor,
-				'pointer-events': 'none'
-			}, this._selStrokeBtn, this._svgdoc);
+				stroke: '#000000',
+				'stroke-width': 0.6,
+				fill: 'none',
+				'pointer-events': 'none',
+			}, this._btnSelStroke, this._svgdoc);
 
-			this._selFillBtn = SmartWidgets.addElement('circle', {
+			this._btnSelFill = SmartWidgets.addElement('g', {
+				class: 'sel-fill-btn'
+			}, this._bfG, this._svgdoc);
+			this._actFillColor = SmartWidgets.addElement('circle', {
 				cx: 30,
 				cy: 30,
 				r: 15,
-				fill: '#000000',
+				fill: this._fillColor.color,
 				'stroke-width': 0.5,
 				stroke: '#606060',
 				style: 'cursor:pointer;'
-			}, this._bfG, this._svgdoc);
+			}, this._btnSelFill, this._svgdoc);
+			this._actFillNoColor = SmartWidgets.addElement('path', {
+				stroke: '#ff0000',
+				'stroke-width': 1,
+				fill: '#ff0000',
+				d: 'M15,30 h30',
+				transform: 'rotate(-45, 30, 30)',
+				'pointer-events': 'none',
+				display: 'none'
+			}, this._btnSelFill, this._svgdoc);
 
-			this._selNoColor = SmartWidgets.addElement('circle', {
+			this._selNoColorBtn = SmartWidgets.addElement('circle', {
 				cx: 10,
 				cy: 39,
 				r: 5,
-				stroke: 'none',
-				'stroke-width': 0,
+				stroke: '#000000',
+				'stroke-width': 0.6,
 				fill: '#ffffff',
 				style: 'cursor:pointer;'
 			}, this._bfG, this._svgdoc);
-			SmartWidgets.addElement('line', {
+			this._selNoColorLine =SmartWidgets.addElement('line', {
 				x1: 5, y1: 39,
 				x2: 15, y2: 39,
 				stroke: '#ff0000',
@@ -358,13 +379,79 @@ class SmartColorSelector {
 			};
 		}
 		this._inited = true;
+		this._fillColor = {
+			active: 1,
+			isnone:	0,
+			color: '#000000',
+			prev: '#000000',
+			opacity: 1 
+		};
+		this._strokeColor = {
+			active: 0,
+			isnone: 0,
+			color: '#0000ff',
+			prev: '#0000ff',
+			opacity: 1 
+		};
+
 		this._build();
 		// event listeners is here!
-		this._selStrokeBtn.addEventListener('click', (evt) => {
-			this._bfG.insertBefore(this._selFillBtn, this._selStrokeBtn);
+		this._btnSelStroke.addEventListener('click', (evt) => {
+			this._strokeColor.active = 1;
+			this._fillColor.active = 0;
+			this._bfG.insertBefore(this._btnSelFill, this._btnSelStroke);
 		});
-		this._selFillBtn.addEventListener('click', (evt) => {
-			this._bfG.insertBefore(this._selStrokeBtn, this._selFillBtn);
+		this._btnSelFill.addEventListener('click', (evt) => {
+			this._strokeColor.active = 0;
+			this._fillColor.active = 1;
+			this._bfG.insertBefore(this._btnSelStroke, this._btnSelFill);
+		});
+		this._selNoColorBtn.addEventListener('click', (evt) => {
+			if (this._strokeColor.active) {
+				if (!this._strokeColor.isnone) {
+					this._strokeColor.prev = this._strokeColor.color;	// store current color as previous and set current to 'none'
+					this._strokeColor.color = '#ffffff';
+					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
+					this._actStrokeNoColor.setAttribute('display', 'inherit');
+					this._strokeColor.isnone = 1;
+				} else { // restore color from previous
+					this._strokeColor.color = this._strokeColor.prev;
+					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
+					this._actStrokeNoColor.setAttribute('display', 'none');
+					this._strokeColor.isnone = 0;
+				}
+			} else {
+				if (!this._fillColor.isnone) {
+					this._fillColor.prev = this._fillColor.color;	// store current color as previous and set current to 'none'
+					this._fillColor.color = '#ffffff';
+					this._actFillColor.setAttribute('fill', this._fillColor.color);
+					this._actFillNoColor.setAttribute('display', 'inherit');
+					this._fillColor.isnone = 1;
+				} else { // restore color from previous
+					this._fillColor.color = this._fillColor.prev; 
+					this._actFillColor.setAttribute('fill', this._fillColor.color);
+					this._actFillNoColor.setAttribute('display', 'none');
+					this._fillColor.isnone = 0;
+				}
+			}
+		});
+		this._colorSwitch.addEventListener('click', (evt) => {
+			let tmp = this._fillColor.color;
+			this._fillColor.color = this._strokeColor.color;
+			this._strokeColor.color = tmp;
+
+			tmp = this._fillColor.prev;
+			this._fillColor.prev = this._strokeColor.prev;
+			this._strokeColor.prev = tmp;
+
+			tmp = this._fillColor.isnone;
+			this._fillColor.isnone = this._strokeColor.isnone;
+			this._strokeColor.isnone = tmp;
+			
+			this._actFillColor.setAttribute('fill', this._fillColor.color);
+			this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
+			this._actFillNoColor.setAttribute('display', this._fillColor.isnone ? 'inherit' : 'none');
+			this._actStrokeNoColor.setAttribute('display', this._strokeColor.isnone ? 'inherit' : 'none');
 		});
     }
 
