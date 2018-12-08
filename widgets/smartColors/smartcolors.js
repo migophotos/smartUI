@@ -95,7 +95,7 @@ class SmartColorSelectors extends SmartWidgets {
 			borderWidth: 0,
 			borderRadius: 2,
 			bodyOpacity: 1,
-			isShadow: 1
+			isShadow: 0
 		};
 	}
 	static convertNumericProps(options = {}, propName) {
@@ -132,6 +132,23 @@ class SmartColorSelector {
 			console.error('must to be specified!');
 			return;
 		}
+
+		const txtStyle = `
+			svg {
+				overflow: visible;
+				--no-color:	none;
+			}
+			.stcrs.shadowed {
+				filter: url(#drop-shadow);
+			}
+			.stcrs.linked {
+				cursor: pointer;
+			}
+			.stcrs.animated {
+				transition:all 1.5s;
+			}
+		`;
+
 		let gId = id;
 		// check for options in JSON format and convert its to object in this case
 		const smartWidgetAlias = SmartWidgets.getAlias();
@@ -175,6 +192,22 @@ class SmartColorSelector {
 
 		this._body      = null; // the SmartColorSelector body
 
+		let tmpId = `style--${SmartColorSelectors.getAlias()}`;
+		if (!this._root.getElementById(tmpId)) {
+			const style = SmartWidgets.addElement('style', {
+				id: tmpId
+			}, this._root, this._svgdoc);
+			style.textContent = txtStyle;
+		}
+		tmpId = `defs--${SmartColorSelectors.getAlias()}`
+		if (!this._root.getElementById(tmpId)) {
+			this._defs = SmartWidgets.addElement('defs', {
+				id: tmpId
+			}, this._root, this._svgdoc);
+			this._defs.innerHTML = window.SmartColorSelectors.defs;
+		}
+
+
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
 		// in case of creating SmartColorSelector object from Javascript, lets do all needed work in one place...
@@ -196,6 +229,7 @@ class SmartColorSelector {
 			let width = 200, height = 150;
 
 			this._bodyG = SmartWidgets.addElement('g', {
+				class: 'stcrs'
 			}, this._svgroot, this._svgdoc);
 			this._body = SmartWidgets.addElement('rect', {
 				x: 0,
@@ -217,8 +251,10 @@ class SmartColorSelector {
 			}, this._bodyG, this._svgdoc);
 			// group for stroke selector
 			this._btnSelStroke = SmartWidgets.addElement('g', {
-				class: 'sel-stroke-btn'
+				class: 'stcrs sel-stroke-btn'
 			}, this._bfG, this._svgdoc);
+			this._btnSelStroke.classList.add(this._o.isShadow ? 'shadowed' : 'no-shadows');
+
 			this._actStrokeColor = SmartWidgets.addElement('circle', {
 				cx: 20,
 				cy: 20,
@@ -257,15 +293,17 @@ class SmartColorSelector {
 			}, this._btnSelStroke, this._svgdoc);
 
 			this._btnSelFill = SmartWidgets.addElement('g', {
-				class: 'sel-fill-btn'
+				class: 'stcrs sel-fill-btn'
 			}, this._bfG, this._svgdoc);
+			this._btnSelFill.classList.add(this._o.isShadow ? 'shadowed' : 'no-shadows');
+
 			this._actFillColor = SmartWidgets.addElement('circle', {
 				cx: 30,
 				cy: 30,
 				r: 15,
 				fill: this._fillColor.color,
 				'stroke-width': 0.5,
-				stroke: '#606060',
+				stroke: '#ffffff',
 				style: 'cursor:pointer;'
 			}, this._btnSelFill, this._svgdoc);
 			this._actFillNoColor = SmartWidgets.addElement('path', {
@@ -317,8 +355,8 @@ class SmartColorSelector {
 				r: 8,
 				stroke: '#000000',
 				'stroke-width': 1,
-				fill: '#000000',
-				'fill-opacity': 0.3,
+				fill: this._pipette.color,
+				// 'fill-opacity': 0.3,
 				style: 'cursor:pointer;'
 			}, this._bfG, this._svgdoc);
 
@@ -393,6 +431,9 @@ class SmartColorSelector {
 			prev: '#0000ff',
 			opacity: 1 
 		};
+		this._pipette = {
+			color: '#ffff14'	//this._o.bkgColor
+		};
 
 		this._build();
 		// event listeners is here!
@@ -447,11 +488,32 @@ class SmartColorSelector {
 			tmp = this._fillColor.isnone;
 			this._fillColor.isnone = this._strokeColor.isnone;
 			this._strokeColor.isnone = tmp;
-			
+
 			this._actFillColor.setAttribute('fill', this._fillColor.color);
 			this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
 			this._actFillNoColor.setAttribute('display', this._fillColor.isnone ? 'inherit' : 'none');
 			this._actStrokeNoColor.setAttribute('display', this._strokeColor.isnone ? 'inherit' : 'none');
+		});
+		this._setCurColor.addEventListener('click', (evt) => {
+			if (this._strokeColor.active) {
+				if (this._strokeColor.isnone) {
+					this._strokeColor.isnone = 0;
+					this._actStrokeNoColor.setAttribute('display', 'none');
+				} else {
+					this._strokeColor.prev = this._strokeColor.color;
+				}
+				this._strokeColor.color = this._pipette.color;
+				this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
+			} else {
+				if (this._fillColor.isnone) {
+					this._fillColor.isnone = 0;
+					this._actFillNoColor.setAttribute('display', 'none');
+				} else {
+					this._fillColor.prev = this._fillColor.color;
+				}
+				this._fillColor.color = this._pipette.color;
+				this._actFillColor.setAttribute('fill', this._fillColor.color);
+			}
 		});
     }
 
