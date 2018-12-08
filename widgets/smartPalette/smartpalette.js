@@ -310,7 +310,7 @@ ${optStr}  };
 				fill: '#666666',
 				stroke: '#ffffff'
 			}, this._bodyG, this._svgdoc);
-			if (this._mode !== 'html') {
+			if (this._o.role !== 'demoMode') {
 				// create container for Hue control
 				this._hueG =  SmartWidgets.addElement('g', {
 					id: 'hue-g',
@@ -409,17 +409,17 @@ ${optStr}  };
 			const offset = 50;
 			const distance = gap + offset + step;
 			const size = {
-				w: +this._body.getAttribute('width') + distance + (this._mode !== 'html' ? 150 + (gap * 2) : 0),
+				w: +this._body.getAttribute('width') + (this._o.role !== 'demoMode' ? distance + 150 + (gap * 2) : 0),
 				h: +this._body.getAttribute('height')
 			};
 
 			if (this._o.role !== 'demoMode') {
 				this._bodyG.setAttribute('transform', `translate(${distance}, 0)`);
-				if (this._mode !== 'html') {
+				// if (this._mode !== 'html') {
 					this._hueG.setAttribute('transform', `translate(${274}, 0)`);
 					this._satG.setAttribute('transform', `translate(${300}, 0)`);
 					this._lumG.setAttribute('transform', `translate(${326}, 0)`);
-				}
+				// }
 				this._themes = new ScrollableContainer(themsGId, {
 					width: offset,
 					height: size.h,
@@ -687,9 +687,11 @@ ${optStr}  };
 		}
 	}
 	_showSliders(enable) {
-		this._hueG.setAttribute('visibility', enable ? 'visible' : 'hidden');
-		this._satG.setAttribute('visibility', enable ? 'visible' : 'hidden');
-		this._lumG.setAttribute('visibility', enable ? 'visible' : 'hidden');
+		if (this._hueG && this._satG && this._lumG) {
+			this._hueG.setAttribute('visibility', enable ? 'visible' : 'hidden');
+			this._satG.setAttribute('visibility', enable ? 'visible' : 'hidden');
+			this._lumG.setAttribute('visibility', enable ? 'visible' : 'hidden');
+		}
 	}
 	_setSelectedState() {
 		for (let n = 0; n < 9; n++) {
@@ -1116,7 +1118,7 @@ class SmartPaletteElement extends HTMLElement {
 		});
 	}
 	disconnectedCallback() {
-		window.SmartPaletts.unset(this._id);
+		// window.SmartPaletts.unset(this._id);
 		this._stctrl = null;
 		this._root = null;
 		this._o = null;

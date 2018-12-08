@@ -185,3 +185,92 @@ class SmartColorSelector {
 		}
 	}
 }
+
+class SmartColorSelectorElement extends HTMLElement {
+	constructor(id) {
+		super();
+
+		// create SmartColorSelector collection only once!
+		SmartColorSelectors.init();
+
+		const txtStyle = `
+			:host {
+				all: initial;	/* 1st rule so subsequent properties are reset. */
+				contain: content;	/* set containment to layout + style + paint for improving performance (see "css-containment") */
+				opacity: 1;
+				will-change: opacity;
+				transition: opacity 500ms ease-in-out;
+			}
+		`;
+
+		const supportsShadowDOMV1 = !!HTMLElement.prototype.attachShadow;
+		if (!supportsShadowDOMV1) {
+			throw new Error('This browser does not support shadow DOM v1. Think about switching to a Chrome browser that supports all new technologies!');
+		}
+		this._id = this.getAttribute('id') || id;
+		this._o = {};
+
+		this._root = this.attachShadow({mode: 'open'});
+		// make unique ids for 'stpal' container g inside svg
+		const elemId = window.SmartColorSelectors.getId();
+		const svgId = `${this.id}--${SmartColorSelectors.getAlias()}`;
+		this._root.innerHTML = `<style>${txtStyle}</style>${SmartWidgets.getSVGContext(svgId, elemId)}`;
+		this._svgroot = this._root.querySelector('svg');
+		// now create the smart palette control!
+		this._stctrl = new SmartColorSelector(elemId, {
+			context: this._svgroot,
+			mode: 'html',
+			opt: null
+		});
+		// store containerId: ref on SmartPieElement element inside SmartPies collection for JS access
+		window.SmartPalettes.set(this._id, this);
+	}
+	getCtrl() {
+		return this._stctrl;
+	}
+
+	// attributes changing processing
+	static get observedAttributes() {
+		return SmartColorSelectors.getCustomProperties();
+	}
+	attributeChangedCallback(name, oldValue, newValue) {
+		// update own property
+		const paramName = SmartWidgets.customProp2Param(name);
+		this._o[paramName] = newValue;
+		this._stctrl.setParam(paramName, newValue);
+	}
+
+	// connect and disconnect from html
+	connectedCallback() {
+		// getting properties in form 'stpal-XXX' and 'stpal-var-XXX' from styles
+		const compStyle = getComputedStyle(this);
+		const customProp = SmartColorSelectors.getCustomProperties();
+		for (let n = 0; n < customProp.length; n++) {
+			const prop = `--${SmartColorSelectors.getAlias()}-${customProp[n]}`;
+			const propKey = SmartColorSelectors.customProp2Param(`${customProp[n]}`);
+			let propVal = compStyle.getPropertyValue(prop);
+			if (propVal) {
+				propVal = propVal.trimLeft();
+				this._o[propKey] = propVal;
+			}
+		}
+		// all specific work will be done inside
+		this._stctrl.init(this._o);
+
+		const size = this._stctrl.getSize();
+		// resize own svg
+		SmartWidgets.setAttributes([this._svgroot], {
+			width: size.width,
+			height: size.height,
+			viewbox: `0 0 ${size.width} ${size.height}`
+		});
+	}
+	disconnectedCallback() {
+		// window.SmartColorSelectors.unset(this._id);
+		this._stctrl = null;
+		this._root = null;
+		this._o = null;
+	}
+
+}
+window.customElements.define('smart-ui-colorsel', SmartColorSelectorElement);

@@ -13,6 +13,8 @@
 
         <link rel="stylesheet" href="css/themes/prism.css" data-noprefix />
         <script src="js/vocabulary.js"></script>
+        <script src="js/w3color.js"></script>
+
 
 
         <style>
@@ -953,6 +955,7 @@
                                 }
 
                                 .default {
+                                    --stpal-role: demoMode;
                                     --stpal-is-global-colors:0;
                                     --stpal-state-colors:0:#0080c0,1:#008000,2:#ffff15,3:#ff2f2f,4:#9f0000,5:#f0f0f0;
                                 }
@@ -1333,7 +1336,6 @@
         <script src="widgets/smartBar/smartbar.js"></script>
         <script src="widgets/smartPalette/smartpalette.js"></script>
         <script src="widgets/smartGauge/smartgauge.js"></script>
-        <script src="js/w3color.js"></script>
         <script src="js/smartUI.js"></script>
 
         <script>
@@ -1436,7 +1438,7 @@
                             context: null,
                             opt: Object.assign({}, options)
                         };
-                        wdgOpt.opt.role = '';       // clear the flag 'demoRole' for this element!
+                        wdgOpt.opt.role = '';       // clear the flag 'demoMode' for this element!
                         wdgOpt.opt.isRun = 0;       // clear the flag 'isRun' for this element
                         wdgOpt.opt.isEmulate = 0;   // stop emulation for this element
 
