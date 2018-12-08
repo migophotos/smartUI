@@ -972,8 +972,8 @@
                                 <div class="ml-p">
                                     <div class="ml-p_content">
                                         <div class="stpal-ml-p_content-ctrl">
-                                            <p>"Default Palette"</p>
-                                            <smart-ui-palette class="default demoMode" id="pal-02"></smart-ui-palette>
+                                            <p>"Color Selector"</p>
+                                            <smart-ui-colorsel class="demoMode" id="colorsel"></smart-ui-colorsel>
                                         </div>
                                     </div>
                                 </div>
@@ -1006,7 +1006,6 @@
                                     <div class="ml-p_content">
                                         <div class="stpal-ml-p_content-ctrl">
                                             <p>"Default Palette"</p>
-                                            <smart-ui-palette class="default demoMode" id="pal-06"></smart-ui-palette>
                                         </div>
                                     </div>
                                 </div>
@@ -1335,6 +1334,7 @@
         <script src="widgets/smartPolygon/smartpolygon.js"></script>
         <script src="widgets/smartBar/smartbar.js"></script>
         <script src="widgets/smartPalette/smartpalette.js"></script>
+        <script src="widgets/smartColors/smartcolors.js"></script>
         <script src="widgets/smartGauge/smartgauge.js"></script>
         <script src="js/smartUI.js"></script>
 
@@ -1709,35 +1709,35 @@
                         tmp.classList.remove('example-grid--shown');
                     });
                     // click on one palette example
-                    els = document.getElementsByClassName('stpal-ml-p_content-ctrl');
-                    for (let el of els) {
-                        el.addEventListener('click', (evt) => {
-                            evt.preventDefault();
-                            sel = evt.currentTarget.querySelector('smart-ui-palette');
-                            if (sel) {
-                                const dirtyParams = sel.getCtrl().getParams('dirty');
-                                let   allParams = SmartPalettes.defOptions();
-                                allParams = Object.assign({}, allParams, dirtyParams);
-                                allParams.role = 'demoMode';
+                    // els = document.getElementsByClassName('stpal-ml-p_content-ctrl');
+                    // for (let el of els) {
+                    //     el.addEventListener('click', (evt) => {
+                    //         evt.preventDefault();
+                    //         sel = evt.currentTarget.querySelector('smart-ui-palette');
+                    //         if (sel) {
+                    //             const dirtyParams = sel.getCtrl().getParams('dirty');
+                    //             let   allParams = SmartPalettes.defOptions();
+                    //             allParams = Object.assign({}, allParams, dirtyParams);
+                    //             allParams.role = 'demoMode';
 
-                                tmp = document.getElementById('stpal-example');
-                                tmp.getCtrl().setParams(allParams, true);
-                                // now disable responding on future settings changing
-                                //tmp.getCtrl().dontRespond = true;
-                                updateUIPanels('stpal-param', 'stpal-example');
-                                // enable responding ->  try to find how todo this
-                                //tmp.getCtrl().dontRespond = false;
+                    //             tmp = document.getElementById('stpal-example');
+                    //             tmp.getCtrl().setParams(allParams, true);
+                    //             // now disable responding on future settings changing
+                    //             //tmp.getCtrl().dontRespond = true;
+                    //             updateUIPanels('stpal-param', 'stpal-example');
+                    //             // enable responding ->  try to find how todo this
+                    //             //tmp.getCtrl().dontRespond = false;
 
-                                tmp = document.getElementById('stpal-example-descr');
-                                // tmp.textContent = `${allParams.orient == 'ver' ? 'Vertical Bar' : 'Horizontal Bar'}`;
+                    //             tmp = document.getElementById('stpal-example-descr');
+                    //             // tmp.textContent = `${allParams.orient == 'ver' ? 'Vertical Bar' : 'Horizontal Bar'}`;
 
-                                tmp = document.getElementById('stpal-example-grid');
-                                tmp.classList.remove('example-grid--hidden');
-                                tmp.classList.add('example-grid--shown');
-                            }
-                            stpal_over_panel.classList.add('over-shown');
-                        });
-                    }
+                    //             tmp = document.getElementById('stpal-example-grid');
+                    //             tmp.classList.remove('example-grid--hidden');
+                    //             tmp.classList.add('example-grid--shown');
+                    //         }
+                    //         stpal_over_panel.classList.add('over-shown');
+                    //     });
+                    // }
 
 
                     // translate title attributes in-place

@@ -937,6 +937,7 @@ ${optStr}  };
     }
 
     isRun() {
+		console.log('Runtime updates for this widget not applicable');
 		return false;
 	}
 	run(isRun) {

@@ -81,7 +81,8 @@ class SmartColorSelectors extends SmartWidgets {
 			'bkg-color',
 			'border-color',
 			'border-width',
-			'opacity',
+			'border-radius',
+			'body-opacity',
 			'is-shadow'
         ];
     }
@@ -89,17 +90,19 @@ class SmartColorSelectors extends SmartWidgets {
         return {
 			role: '',			// in demo mode this parameter has value 'demoMode'
 			alias: SmartColorSelectors.getAlias(),
-			bkgColor: '#0b0b0b',
+			bkgColor: '#404040',
 			borderColor: 'none',
 			borderWidth: 0,
-			opacity: 1,
+			borderRadius: 2,
+			bodyOpacity: 1,
 			isShadow: 1
 		};
 	}
 	static convertNumericProps(options = {}, propName) {
         const numericProps = [
 			'border-width',
-			'opacity',
+			'border-radius',
+			'body-opacity',
 			'is-shadow'
         ];
         return SmartWidgets.convertToNumbers(options, numericProps, propName);
@@ -184,6 +187,289 @@ class SmartColorSelector {
 			this.init(this._o);
 		}
 	}
+	_build() {
+		SmartColorSelectors.convertNumericProps(this._o);
+		if (!this._body) {
+			const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
+			const fontSize = '10px';
+			const gap = 6;
+			let width = 200, height = 150;
+
+			this._bodyG = SmartWidgets.addElement('g', {
+			}, this._svgroot, this._svgdoc);
+			this._body = SmartWidgets.addElement('rect', {
+				x: 0,
+				y: 0,
+				rx: this._o.borderRadius,
+				width: `${width + (2 * gap)}`,
+				height: `${height + (2 * gap)}`,
+				fill: this._o.bkgColor,
+				stroke: this._o.borderColor,
+				'stroke-width': this._o.borderWidth,
+				'stroke-opacity': this._o.opacity,
+				'fill-opacity':  this._o.opacity
+			}, this._bodyG, this._svgdoc);
+			this._bodyG.classList.add(this._o.isShadow ? 'shadowed' : 'no-shadows');
+			// stroke/fill selector includes 'selStroke' and 'selFill' circle buttons, 'noColor' button, 'color switcher' and 'setCurrentColor' button
+			this._bfG = SmartWidgets.addElement('g', {
+				class: 'bf-selector',
+				transform: `translate(${gap}, ${gap})`
+			}, this._bodyG, this._svgdoc);
+			// group for stroke selector
+			this._selStrokeBtn = SmartWidgets.addElement('g', {
+				class: 'sel-stroke-btn'
+			}, this._bfG, this._svgdoc);
+			this._selStrokeColor = SmartWidgets.addElement('circle', {
+				cx: 20,
+				cy: 20,
+				r: 12,
+				stroke: '#0000ff',
+				'stroke-width': 6,
+				fill: 'none',
+				style: 'cursor:pointer;'
+			}, this._selStrokeBtn, this._svgdoc);
+			this._selStrokeNoColor = SmartWidgets.addElement('line', {
+				x1: 5, y1: 20,
+				x2: 35, y2: 20,
+				stroke: '#ff0000',
+				'stroke-width': 1,
+				fill: '#ff0000',
+				transform: 'rotate(-45, 20, 20)',
+				'pointer-events': 'none'
+			}, this._selStrokeBtn, this._svgdoc);
+			SmartWidgets.addElement('circle', {
+				cx: 20,
+				cy: 20,
+				r: 9,
+				stroke: 'none',
+				'stroke-width': 0,
+				fill: this._o.bkgColor,
+				'pointer-events': 'none'
+			}, this._selStrokeBtn, this._svgdoc);
+
+			this._selFillBtn = SmartWidgets.addElement('circle', {
+				cx: 30,
+				cy: 30,
+				r: 15,
+				fill: '#000000',
+				'stroke-width': 0.5,
+				stroke: '#606060',
+				style: 'cursor:pointer;'
+			}, this._bfG, this._svgdoc);
+
+			this._selNoColor = SmartWidgets.addElement('circle', {
+				cx: 10,
+				cy: 39,
+				r: 5,
+				stroke: 'none',
+				'stroke-width': 0,
+				fill: '#ffffff',
+				style: 'cursor:pointer;'
+			}, this._bfG, this._svgdoc);
+			SmartWidgets.addElement('line', {
+				x1: 5, y1: 39,
+				x2: 15, y2: 39,
+				stroke: '#ff0000',
+				'stroke-width': 1,
+				fill: '#ff0000',
+				transform: 'rotate(-45, 10, 39)',
+				'pointer-events': 'none'
+			}, this._bfG, this._svgdoc);
+			this._colorSwitch = SmartWidgets.addElement('path', {
+				stroke: this._o.bkgColor,
+				'stroke-width': 1,
+				fill: this._o.bkgColor,
+				d: 'M34,8 v-2 h10 v10 h-2 z',
+				style: 'cursor:pointer;'
+			}, this._bfG, this._svgdoc);
+			SmartWidgets.addElement('path', {
+				stroke: '#ffffff',
+				'stroke-width': 1,
+				fill: 'none',
+				d: 'M35,7 l8,8 M37,6 h-3 v3 M44,13 v3 h-3',
+				'pointer-events': 'none'
+			}, this._bfG, this._svgdoc);
+
+			this._setCurColor = SmartWidgets.addElement('circle', {
+				cx: 56,
+				cy: 14,
+				r: 8,
+				stroke: '#000000',
+				'stroke-width': 1,
+				fill: '#000000',
+				'fill-opacity': 0.3,
+				style: 'cursor:pointer;'
+			}, this._bfG, this._svgdoc);
+
+		}
+	}
+
+	// API
+	getAlias() {
+		return this._o.alias;
+	}
+    getCtrl() {
+        return this;
+	}
+	getSize() {
+		const size = {
+			width: this._svgroot.getAttribute('width') || this._rect.width,
+			height: this._svgroot.getAttribute('height') || this._rect.width
+		};
+		return size;
+	}
+	isInited() {
+		return this._inited;
+	}
+    init(options = null) {
+        if (options) {
+			// check for options in JSON format and convert its to object in this case
+			const smartWidgetAlias = SmartWidgets.getAlias();
+			if (typeof options === 'string' && options.length && options.startsWith(smartWidgetAlias)) {
+				options = SmartColorSelectors.JsonToOptions(options);
+			}
+
+            // validate and merge with own _o
+            SmartColorSelectors.convertNumericProps(options);
+            this._o = Object.assign({}, this._o, options);
+        }
+        const rc = this._svgroot.firstElementChild;
+		if (rc) {
+			this._rect = rc.getBBox();
+			rc.setAttribute('display', 'none');
+			if (!this._mode) {
+				if (this._rect.width == 0 || this._rect.height == 0) {
+					this._rect.x = Number(rc.getAttribute('x'));
+					this._rect.y = Number(rc.getAttribute('y'));
+					// get size from attributes!
+					this._rect.width = Number(rc.getAttribute('width'));
+					// will be ignored. thickness will be used instead of height!
+					this._rect.height = Number(rc.getAttribute('height'));
+				}
+			}
+		}
+		if (this._mode) {
+			// calculate svg rectangle and coordinates
+			this._rect = {
+				x: 0,
+				y: 0,
+				width:  200,  // options.length,
+				height: 150   // options.thickness
+			};
+		}
+		this._inited = true;
+		this._build();
+		// event listeners is here!
+		this._selStrokeBtn.addEventListener('click', (evt) => {
+			this._bfG.insertBefore(this._selFillBtn, this._selStrokeBtn);
+		});
+		this._selFillBtn.addEventListener('click', (evt) => {
+			this._bfG.insertBefore(this._selStrokeBtn, this._selFillBtn);
+		});
+    }
+
+	/**
+	 * Get parameters of Smart Widget
+	 * @param {string} filter 'all', 'dirty', 'def', 'vars', 'names', 'css', 'json', 'cjson'
+	 * @returns smart object parameters in form specified by filter
+	 */
+	getParams(filter = 'all') {
+		let opt;
+		const customProp = SmartColorSelectors.getCustomProperties();		// get an array of custom properties
+		const defOptions = SmartColorSelectors.defOptions();
+		switch (filter) {
+			case 'cjson': // compressed json
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty');
+				delete opt.role;
+				return SmartColorSelectors.getCompressedJSON(opt);
+			case 'json':
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty', 'none');
+				return SmartColorSelectors.getJSON(opt);
+			case 'css':
+				opt = SmartWidgets.getCustomParams(customProp, defOptions, this._o, 'dirty', 'none');
+				return SmartColorSelectors.getCSS(opt);
+			case 'names':
+				return SmartWidgets.getCustomParams(customProp, defOptions);
+			case 'vars':
+				return customProp;
+			case 'def':
+				return defOptions;
+			case 'dirty':
+			case 'all':
+			default:
+				return SmartWidgets.getCustomParams(customProp, defOptions, this._o, filter);
+		}
+	}
+	setParam(name, value) {
+		if (this.dontRespond) {	// don't respond on changing parameters when updating user panels in UI Builder (for example)
+			return;
+		}
+		const opt = {};
+		opt[name] = value;
+		// convert to numbers specified by name property
+		SmartColorSelectors.convertNumericProps(opt, name);
+
+		if (this._body) {
+			this.setParams(opt);
+		}
+	}
+	resetParams(options = null) {
+		if (options) {
+			this._o = Object.assign({}, SmartColorSelectors.defOptions(), options);
+			this._build();
+		}
+	}
+	setParams(options = {}, rebuild = true) {
+		let needRebuild = false;
+		if (!options) {
+			return false;
+		}
+		// convert all known properties to numbers
+		SmartColorSelectors.convertNumericProps(options);
+		this._o = Object.assign({}, this._o, options);
+
+		// some properties changing requires rebuilding, lets find its!
+		for (let key in this._o) {
+			switch (key) {
+				case 'stateColors':
+					break;
+				default:
+					needRebuild++;
+					break;
+			}
+		}
+		if (rebuild && needRebuild) {
+            this._build();
+		}
+		return needRebuild;
+	}
+
+    isRun() {
+		console.log('Runtime updates for this widget not applicable');
+		return false;
+	}
+	run(isRun) {
+		console.log('Runtime updates for this widget not applicable');
+	}
+	get intervalCounter() {
+		return Infinity;
+	}
+	set intervalCounter(n) {
+		console.log('Runtime updates for this widget not applicable');
+	}
+	isEmulate() {
+		return false;
+	}
+	emulate(mode) {
+		console.log('Runtime updates for this widget not applicable');
+	}
+	update(data = null) {
+		console.log('Runtime updates for this widget not applicable');
+	}
+	generateExData() {
+		console.log('Runtime updates for this widget not applicable');
+	}
+
 }
 
 class SmartColorSelectorElement extends HTMLElement {
