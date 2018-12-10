@@ -516,6 +516,7 @@ ${optStr}  };
 			if (1) {
 				if (this._hueG) {
 					this._hueG.addEventListener('wheel', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
 							const delta = evt.deltaY || evt.detail || evt.wheelDelta;
@@ -531,6 +532,7 @@ ${optStr}  };
 						}
 					});
 					this._satG.addEventListener('wheel', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
 							const delta = evt.deltaY || evt.detail || evt.wheelDelta;
@@ -546,6 +548,7 @@ ${optStr}  };
 						}
 					});
 					this._lumG.addEventListener('wheel', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
 							const delta = evt.deltaY || evt.detail || evt.wheelDelta;
@@ -563,6 +566,7 @@ ${optStr}  };
 
 
 					this._hueG.addEventListener('click', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
 							const cellHue = Number(evt.target.id.replace('hue-', '')) * 15;
@@ -577,6 +581,7 @@ ${optStr}  };
 						}
 					});
 					this._satG.addEventListener('click', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
 							const cellSat = Number(evt.target.id.replace('sat-', '')) * 5;
@@ -589,6 +594,7 @@ ${optStr}  };
 						}
 					});
 					this._lumG.addEventListener('click', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						if (this._paletteSelState >= 0) {
 							const cellLum = Number(evt.target.id.replace('lum-', '')) * 5;
@@ -603,6 +609,7 @@ ${optStr}  };
 				}
 				this._buttonArr.forEach((btn) => {
 					btn.addEventListener('click', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						this._paletteSelState = Number(btn.id.replace('btn-', ''));
 						this._setSelectedState();
@@ -623,6 +630,7 @@ ${optStr}  };
 				});
 				this._paletteBtnArr.forEach((sel) => {
 					sel.addEventListener('click', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						const n = Number(sel.id.replace('statebtn-', ''));
 						this._s2c.delete(n);
@@ -640,6 +648,7 @@ ${optStr}  };
 				});
 				this._paletteArr.forEach((sel) => {
 					sel.addEventListener('click', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						const n = Number(sel.id.replace('state-', ''));
 						this._paletteSelState = n;
@@ -655,6 +664,7 @@ ${optStr}  };
 						}
 					});
 					sel.addEventListener('wheel', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						const stateN = Number(evt.target.id.split('-')[1]);
 						if (stateN != this._paletteSelState) {
@@ -810,6 +820,7 @@ ${optStr}  };
 				const themeElem = this._themes.add(theme);
 				if (themeElem) {
 					themeElem.addEventListener('click', (evt) => {
+						evt.stopPropagation();
 						evt.preventDefault();
 						const target = evt.target;
 						// const ida = target.id.split('-');

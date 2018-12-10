@@ -750,7 +750,8 @@ ${optStr}  };
 		SmartTooltip.hideTooltip(evt);
 	}
 	_onClick(event) {
-        event.preventDefault();
+		evt.stopPropagation();
+		evt.preventDefault();
         if (this._o.isLink && this._o.role != 'demoMode') {
 			let data = Array.from(this._data);
 			let linkto = data[0].link;

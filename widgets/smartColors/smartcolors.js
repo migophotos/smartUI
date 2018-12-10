@@ -132,7 +132,6 @@ class SmartColorSelector {
 			console.error('must to be specified!');
 			return;
 		}
-
 		const txtStyle = `
 			svg {
 				overflow: visible;
@@ -212,7 +211,30 @@ class SmartColorSelector {
 			this._defs = SmartWidgets.addElement('defs', {
 				id: tmpId
 			}, this._root, this._svgdoc);
-			this._defs.innerHTML = window.SmartColorSelectors.defs;
+			const hueRangeDef =
+			`<linearGradient id="hueRange" x1="0%" y1="50%" x2="100%" y2="50%">
+				<stop offset="0%" stop-color="#ff0000"/>
+				<stop offset="12.5%" stop-color="#ffbf00"/>
+				<stop offset="25%", stop-color="#80ff00"/>
+				<stop offset="37.5%", stop-color="#00ff40"/>
+				<stop offset="50%", stop-color="#00ffff"/>
+				<stop offset="62.5%", stop-color="#0040ff"/>
+				<stop offset="75%", stop-color="#7f00ff"/>
+				<stop offset="87.5%", stop-color="#ff00bf"/>
+				<stop offset="100%", stop-color="#ff0000"/>
+			</linearGradient>`;
+			const lumRangeDef =
+			`<linearGradient id="lumRange" x1="0%" y1="100%" x2="0%" y2="0%">
+				<stop offset="0%" stop-color="#000000"/>
+				<stop offset="100%" stop-color="rgba(204, 154, 129, 0)"/>
+			</linearGradient>`;
+			const satRangeDef =
+			`<linearGradient id="satRange" x1="0%" y1="0%" x2="100%" y2="0%">
+				<stop offset="0%" stop-color="#ffffff"/>
+				<stop offset="100%" stop-color="rgba(204, 154, 129, 0)"/>
+			</linearGradient>`;
+			this._defs.innerHTML = window.SmartColorSelectors.defs + hueRangeDef + lumRangeDef + satRangeDef;
+
 		}
 
 
@@ -367,7 +389,65 @@ class SmartColorSelector {
 				// 'fill-opacity': 0.3,
 				style: 'cursor:pointer;'
 			}, this._bfG, this._svgdoc);
+			this._hslSliders = SmartWidgets.addElement('g', {
+				class: 'hsl-sliders',
+				transform: `translate(${gap}, 60)`
+			}, this._bodyG, this._svgdoc);
+			this._hueImage = SmartWidgets.addElement('rect', {
+				class: 'clickable hue-range',
+				x: 0, y:0, width: 200, height:40,
+				stroke: '#000000',
+				'stroke-width': 0.6,
+				fill: 'url(#hueRange)',
+				style: 'cursor:pointer'
+			}, this._hslSliders, this._svgdoc);
 
+			this._satlumColor = SmartWidgets.addElement('rect', {
+				x: 0, y:45, width: 200, height:40,
+				class: 'clickable sel-satlum',
+				stroke: '#000000',
+				'stroke-width': 0.6,
+				fill: '#ff0000',
+				style: 'cursor:pointer'
+			}, this._hslSliders, this._svgdoc);
+			SmartWidgets.addElement('rect', {
+				class: 'sat-range',
+				x: 0, y:45, width: 200, height:40,
+				stroke: '#000000',
+				'stroke-width': 0.6,
+				fill: 'url(#satRange)',
+				'pointer-events': 'none'
+			}, this._hslSliders, this._svgdoc);
+			SmartWidgets.addElement('rect', {
+				class: 'lum-range',
+				x: 0, y:45, width: 200, height:40,
+				stroke: '#000000',
+				'stroke-width': 0.6,
+				fill: 'url(#lumRange)',
+				'pointer-events': 'none'
+			}, this._hslSliders, this._svgdoc);
+
+			this._hueCtrl = SmartWidgets.addElement('rect', {
+				id: 'hue-slider',
+				class: 'draggable',
+				r: 5,
+				x: 0, y: 1, width: 6, height: 38,
+				stroke: '#ffffff',
+				fill: '#ffffff',
+				// 'fill-opacity': 0.01,
+				style: 'cursor:pointer'
+			}, this._hslSliders, this._svgdoc);
+			this._slCtrl = SmartWidgets.addElement('circle', {
+				id: 'sat-lum-slider',
+				class: 'draggable',
+				r: 5,
+				cx: 0,
+				cy: 0,
+				stroke: '#ffffff',
+				fill: '#ffffff',
+				// 'fill-opacity': 0.01,
+				style: 'cursor:pointer'
+			}, this._hslSliders, this._svgdoc);
 		}
 	}
 
@@ -381,7 +461,7 @@ class SmartColorSelector {
 	getSize() {
 		const size = {
 			width: this._svgroot.getAttribute('width') || this._rect.width,
-			height: this._svgroot.getAttribute('height') || this._rect.width
+			height: this._svgroot.getAttribute('height') || this._rect.height
 		};
 		return size;
 	}
@@ -430,21 +510,45 @@ class SmartColorSelector {
 			isnone:	0,
 			color: '#000000',
 			prev: '#000000',
-			opacity: 1 
+			opacity: 1
 		};
 		this._strokeColor = {
 			active: 0,
 			isnone: 0,
 			color: '#0000ff',
 			prev: '#0000ff',
-			opacity: 1 
+			opacity: 1
 		};
 		this._pipette = {
 			color: '#ffff14'	//this._o.bkgColor
 		};
 
 		this._build();
+
 		// event listeners is here!
+		if (!this.hueDrag) {
+			this.hueDrag = new SmartDragElement(this._hueCtrl, {containment: this._hueImage});
+			this.satDrag = new SmartDragElement(this._slCtrl, {containment: this._satlumColor});
+			this._hueImage.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(this._hueImage, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				this._hueCtrl.setAttribute('transform', `translate(${pt.x}, 0)`);
+				const w = Number(evt.target.getAttribute('width'));
+				const selPCT = (pt.x / w) * 360;
+				console.log(`Click on hew image at x = ${pt.x}, y = ${pt.y}, selected hue = ${selPCT}`);
+			});
+			this._satlumColor.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(this._satlumColor, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				this._slCtrl.setAttribute('transform', `translate(${pt.x}, ${pt.y})`);
+				// const w = Number(evt.target.getAttribute('width'));
+				// const selPCT = (pt.x / w) * 360;
+				console.log(`Click on satlum image at x = ${pt.x}, y = ${pt.y}`);
+			});
+		}
+
 		this._btnSelStroke.addEventListener('click', (evt) => {
 			this._strokeColor.active = 1;
 			this._fillColor.active = 0;
@@ -477,7 +581,7 @@ class SmartColorSelector {
 					this._actFillNoColor.setAttribute('display', 'inherit');
 					this._fillColor.isnone = 1;
 				} else { // restore color from previous
-					this._fillColor.color = this._fillColor.prev; 
+					this._fillColor.color = this._fillColor.prev;
 					this._actFillColor.setAttribute('fill', this._fillColor.color);
 					this._actFillNoColor.setAttribute('display', 'none');
 					this._fillColor.isnone = 0;

@@ -1253,7 +1253,8 @@ class SmartUiColorBox extends HTMLElement {
         this._colorBox  = this._shadowDOM.getElementById('colorbox');
 
         this._colorBox.addEventListener('wheel', (evt) => {
-            evt.preventDefault();
+			evt.stopPropagation();
+			evt.preventDefault();
 
             const cr = this._colorBox.value; // `${this._colorBox.value}`;
             const c = w3color(cr);
@@ -1453,17 +1454,6 @@ class SmartUiColorPalette extends HTMLElement {
                 this._o.value = newValue;
 				this._input.value = `${this._o.value}`;
 				this._ctrl.setParams({stateColors: newValue});
-
-				// this._s2c.set(this._input.value);
-				// for (let n = 0; n < 9; n++) {
-				// 	const crDef = this._s2c.get(n);
-				// 	if (crDef) {
-				// 		this._btnGrArr[n].setAttribute('display', 'none');
-				// 		this._paletteArr[n].setAttribute('fill', crDef);
-				// 	} else {
-				// 		this._btnGrArr[n].removeAttribute('display');
-				// 	}
-				// }
                 break;
             }
         }
@@ -1517,156 +1507,6 @@ class SmartUiColorPalette extends HTMLElement {
 		mysvg.setAttribute('height', sz.height);
 		mysvg.setAttribute('width', sz.width);
 		mysvg.setAttribute('viewBox', `0 0 ${sz.width} ${sz.height}`);
-
-		// if (0) {
-		// 	this._btnGrArr = [];
-		// 	this._buttonArr = [];
-		// 	this._paletteArr = [];
-		// 	const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
-		// 	const fontSize = '10px';
-		// 	const step = 6, gap = 6;
-		// 	let width = 60, height = 40, offsetX = gap, offsetY = gap;
-
-
-		// 	const bRect = SmartWidgets.addElement('rect', {
-		// 		x: 0,
-		// 		y: 0,
-		// 		width: `${(offsetX * 2) + (width * 3) + (step * 2)}`,
-		// 		height: `${(offsetY * 2) + (height * 3) + (step * 2)}`,
-		// 		fill: 'none',
-		// 		stroke: '#ffffff'
-		// 	}, paletteG, paletteG.ownerDocument);
-		// 	for (let n = 0; n < this._o.count; n++) {
-		// 		if (n && n % 3 == 0) {
-		// 			offsetX = gap;
-		// 			offsetY += step + height;
-		// 		}
-		// 		this._paletteArr.push(SmartWidgets.addElement('rect', {
-		// 			id: `state-${n}`,
-		// 			x: offsetX,
-		// 			y: offsetY,
-		// 			width: width,
-		// 			height: height,
-		// 			fill: 'none',
-		// 			stroke: '#000000'
-		// 		}, paletteG, paletteG.ownerDocument));
-		// 		SmartWidgets.addElement('text', {
-		// 			text: `State ${n}`,
-		// 			x: offsetX + (width / 2),
-		// 			y: offsetY + (height / 2),
-		// 			fill: '#000000',
-		// 			'text-anchor': 'middle',
-		// 			'dominant-baseline': 'middle',
-		// 			'pointer-events': 'none',
-		// 			'font-family': fontFamily,
-		// 			'font-size': fontSize,
-		// 			// 'paint-order': 'stroke',
-		// 			// stroke: 'black',
-		// 			// 'stroke-width': "1",
-		// 			'stroke-linejoin': 'round'
-		// 		}, paletteG, paletteG.ownerDocument);
-
-		// 		this._btnGrArr.push(SmartWidgets.addElement('g', {}, paletteG, paletteG.ownerDocument));
-		// 		this._buttonArr.push(SmartWidgets.addElement('rect', {
-		// 			id: `btn-${n}`,
-		// 			x: offsetX,
-		// 			y: offsetY,
-		// 			width: width,
-		// 			height: height,
-		// 			fill: '#8f8f8f',
-		// 			stroke: '#ffffff'
-		// 		}, this._btnGrArr[n], paletteG.ownerDocument));
-		// 		SmartWidgets.addElement('text', {
-		// 			text: `${n} - default`,
-		// 			x: offsetX + (width / 2),
-		// 			y: offsetY + (height / 2),
-		// 			fill: '#ffffff',
-		// 			'text-anchor': 'middle',
-		// 			'dominant-baseline': 'middle',
-		// 			'alignment-baseline': 'middle',
-		// 			'pointer-events': 'none',
-		// 			'font-family': fontFamily,
-		// 			'font-size': fontSize
-		// 		}, this._btnGrArr[n], paletteG.ownerDocument);
-
-		// 		offsetX += step + width;
-		// 	}
-		// 	const size = {
-		// 		w: +bRect.getAttribute('width'),
-		// 		h: +bRect.getAttribute('height')
-		// 	};
-
-		// 	// resize svg
-		// 	const svgRoot = this._shadowDOM.getElementById('sel-palette');
-		// 	svgRoot.setAttribute('height', size.h);
-		// 	svgRoot.setAttribute('width', size.w);
-		// 	svgRoot.setAttribute('viewBox', `0 0 ${size.w} ${size.h}`);
-
-		// 	this._buttonArr.forEach((btn) => {
-		// 		btn.addEventListener('click', (evt) => {
-		// 			const n = Number(btn.id.replace('btn-', ''));
-		// 			this._btnGrArr[n].setAttribute('display', 'none');
-		// 			let cr = this._s2c.get(n);
-		// 			if (!cr) { // lets try to find the color in 'anoter' place
-		// 				cr = this._paletteArr[n].getAttribute('fill');
-		// 				if (!cr || cr == 'none') {
-		// 					cr = n ? this._s2c.get(n - 1) || '#888888' : '#888888';
-		// 				}
-		// 			}
-		// 			if (cr) {
-		// 				this._s2c.set(n, cr);
-		// 				this._o.value = this._s2c.get();
-		// 				this._paletteArr[n].setAttribute('fill', cr);
-
-		// 				this.setAttribute('value', this._o.value);
-		// 			}
-		// 		});
-		// 	});
-		// 	this._paletteArr.forEach((sel) => {
-		// 		sel.addEventListener('click', (evt) => {
-		// 			const n = Number(sel.id.replace('state-', ''));
-		// 			this._s2c.delete(n);
-		// 			this.setAttribute('value', this._s2c.get());
-		// 			this._btnGrArr[n].removeAttribute('display');
-		// 		});
-		// 	});
-
-
-		// 	this._paletteArr.forEach((sel) => {
-		// 		sel.addEventListener('wheel', (evt) => {
-		// 			evt.preventDefault();
-		// 			const stateN = Number(evt.target.id.split('-')[1]);
-
-		// 			const cr = evt.target.getAttribute('fill'); // `${this._colorBox.value}`;
-		// 			const c = w3color(cr);
-
-		// 			const P = evt.ctrlKey ? 'sat' : evt.shiftKey ? 'lightness' : 'hue';
-		// 			let K = evt.ctrlKey ? 0.01 : evt.shiftKey ? 0.01 : 1;
-		// 			if (evt.altKey) {
-		// 				K = K * 5;
-		// 			}
-		// 			const delta = evt.deltaY || evt.detail || evt.wheelDelta;
-		// 			if (delta > 0) {
-		// 				c[P] = c[P] + K;
-		// 			} else {
-		// 				c[P] = c[P] - K;
-		// 			}
-		// 			const h = c.hue > 359 ? 0 : c.hue < 0 ? 359 : c.hue;
-		// 			const s = c.sat; // > 100 ? 100 : c.sat < 0 ? 0 : c.sat;
-		// 			const l = c.lightness; // > 100 ? 100 : c.lightness < 0 ? 0 : c.lightness;
-
-		// 			const c2 = w3color(`hsl(${h},${s},${l})`);
-		// 			console.log(`hue = ${h}, sat = ${s}, lightness = ${l}, color = ${c2.toHexString()} is ${c2.valid ? 'valid' : 'invalid'}`);
-
-		// 			const newCr = c2.valid ? c2.toHexString() : '#000000';
-		// 			this._s2c.set(stateN, newCr);
-		// 			this._o.value = this._s2c.get();
-		// 			evt.target.setAttribute('fill', this._o.value);
-
-		// 			this.setAttribute('value', this._o.value);
-		// 		});
-		// 	});
-		// }
 	}
 	disconnectedCallback() {
         this.className = this.className;

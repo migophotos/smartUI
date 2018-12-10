@@ -282,6 +282,16 @@ class SmartWidgets {
 		pt.y = +y;
 		return pt.matrixTransform(element.getScreenCTM().inverse());
 	}
+	// all browser compatible function that returns an object with curren scroll amount.
+	// many thans for w3cub project! http://docs.w3cub.com/dom/window/scrolly/
+	static getScroll() {
+		const supportPageOffset = window.pageXOffset !== undefined;
+		const isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
+		const x = supportPageOffset ? window.pageXOffset : isCSS1Compat ? document.documentElement.scrollLeft : document.body.scrollLeft;
+		const y = supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+		return {X: x, Y: y};
+	}
+
 
 
 	// http get returns promis
@@ -707,6 +717,56 @@ text-rendering="optimizeLegibility" shape-rendering="geometricPrecision">
         }
 	}
 }
+
+class SmartDragElement {
+	constructor(element, options) {
+		this._el = element;
+		this._svg = element.nearestViewportElement;
+		this._opt = Object.assign({}, options);
+
+		this._startDrag = this._startDrag.bind(this);
+		this._continueDrag = this._continueDrag.bind(this);
+		this._endDrag = this._endDrag.bind(this);
+
+		this._svg.addEventListener('mousedown', this._startDrag);
+	}
+	// private api
+	_startDrag(evt) {
+		let isDragged = Number(evt.target.dataset['isDragged']) || null;
+		if (evt.target.classList.contains('draggable') && !isDragged) {
+			evt.preventDefault();
+			const scroll = SmartTooltip.getScroll();
+
+			const pt = SmartWidgets.svgPoint(evt.target, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+			evt.target.dataset['isDragged'] = 1;
+			this._svg.addEventListener('mousemove', this._continueDrag);
+			this._svg.addEventListener('mouseup', this._endDrag);
+
+			console.log(`Start dragging x = ${pt.x}, y = ${pt.y}`);
+		}
+	}
+	_continueDrag(evt) {
+		let isDragged = Number(evt.target.dataset['isDragged']) || null;
+		if (isDragged) {
+			evt.preventDefault();
+			const scroll = SmartTooltip.getScroll();
+			const pt = SmartWidgets.svgPoint(evt.target, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+
+			console.log(`Continue dragging x = ${pt.x}, y = ${pt.y}`);
+		}
+	}
+	_endDrag(evt) {
+		let isDragged = Number(evt.target.dataset['isDragged']) || null;
+		if (isDragged) {
+			evt.preventDefault();
+			evt.target.dataset['isDragged'] = 0;
+			this._svg.removeEventListener('mousemove', this._continueDrag);
+			this._svg.removeEventListener('mouseup', this._endDrag);
+
+			console.log('End dragging');
+		}
+	}
+}
 /**
  * Scrollable Container is an analog of html options list
  * The class constructor gots an ID of parent's <g> element as 'ud' and
@@ -780,6 +840,7 @@ class ScrollableContainer {
 
 		// scroll
 		this._bodyActiveG.addEventListener('wheel', (evt) => {
+			evt.stopPropagation();
 			evt.preventDefault();
 			let scroll = Number(this._bodyActiveG.dataset['offset']) || 0;
 			const delta = evt.deltaY || evt.detail || evt.wheelDelta;
