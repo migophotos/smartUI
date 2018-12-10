@@ -737,7 +737,7 @@ class SmartDragElement {
 			evt.preventDefault();
 			const scroll = SmartTooltip.getScroll();
 
-			const pt = SmartWidgets.svgPoint(evt.target, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+			const pt = SmartWidgets.svgPoint(this._opt.containment, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 			evt.target.dataset['isDragged'] = 1;
 			this._svg.addEventListener('mousemove', this._continueDrag);
 			this._svg.addEventListener('mouseup', this._endDrag);
@@ -750,8 +750,8 @@ class SmartDragElement {
 		if (isDragged) {
 			evt.preventDefault();
 			const scroll = SmartTooltip.getScroll();
-			const pt = SmartWidgets.svgPoint(evt.target, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-
+			const pt = SmartWidgets.svgPoint(this._opt.containment, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+			this._el.setAttribute('transform', `translate(${pt.x}, 0)`);
 			console.log(`Continue dragging x = ${pt.x}, y = ${pt.y}`);
 		}
 	}
