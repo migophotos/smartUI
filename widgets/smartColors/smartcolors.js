@@ -224,7 +224,7 @@ class SmartColorSelector {
 				<stop offset="100%", stop-color="#ff0000"/>
 			</linearGradient>`;
 			const lumRangeDef =
-			`<linearGradient id="lumRange" x1="0%" y1="100%" x2="0%" y2="0%">
+			`<linearGradient id="lumRange" x1="0%" y1="0%" x2="0%" y2="100%">
 				<stop offset="0%" stop-color="#000000"/>
 				<stop offset="100%" stop-color="rgba(204, 154, 129, 0)"/>
 			</linearGradient>`;
@@ -394,7 +394,7 @@ class SmartColorSelector {
 				transform: `translate(${gap}, 60)`
 			}, this._bodyG, this._svgdoc);
 			this._hueImage = SmartWidgets.addElement('rect', {
-				class: 'clickable hue-range',
+				class: 'draggable clickable hue-range',
 				x: 0, y:0, width: 200, height:40,
 				stroke: '#000000',
 				'stroke-width': 0.6,
@@ -404,7 +404,7 @@ class SmartColorSelector {
 
 			this._satlumColor = SmartWidgets.addElement('rect', {
 				x: 0, y:45, width: 200, height:40,
-				class: 'clickable sel-satlum',
+				class: 'draggable clickable sel-satlum',
 				stroke: '#000000',
 				'stroke-width': 0.6,
 				fill: '#ff0000',
@@ -429,24 +429,22 @@ class SmartColorSelector {
 
 			this._hueCtrl = SmartWidgets.addElement('rect', {
 				id: 'hue-slider',
-				class: 'draggable',
+				class: '',
 				r: 5,
 				x: 0, y: 1, width: 6, height: 38,
 				stroke: '#ffffff',
-				fill: '#ffffff',
-				// 'fill-opacity': 0.01,
-				style: 'cursor:pointer'
+				fill: 'none',
+				'pointer-events': 'none'
 			}, this._hslSliders, this._svgdoc);
 			this._slCtrl = SmartWidgets.addElement('circle', {
 				id: 'sat-lum-slider',
-				class: 'draggable',
+				class: '',
 				r: 5,
 				cx: 0,
 				cy: 0,
 				stroke: '#ffffff',
-				fill: '#ffffff',
-				// 'fill-opacity': 0.01,
-				style: 'cursor:pointer'
+				fill: 'none',
+				'pointer-events': 'none'
 			}, this._hslSliders, this._svgdoc);
 		}
 	}
@@ -527,24 +525,111 @@ class SmartColorSelector {
 
 		// event listeners is here!
 		if (!this.hueDrag) {
-			this.hueDrag = new SmartDragElement(this._hueCtrl, {containment: this._hueImage});
-			this.satDrag = new SmartDragElement(this._slCtrl, {containment: this._satlumColor});
+			this.hueDrag = new SmartDragElement(this._hueImage, {containment: this._hueImage});
+			this.satDrag = new SmartDragElement(this._satlumColor, {containment: this._satlumColor});
+			this._hueImage.addEventListener('onStartDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				// console.log(`Start dragging x = ${evt.detail.x}, y = ${evt.detail.y}`);
+			});
+			this._hueImage.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+
+				this._hueCtrl.setAttribute('transform', `translate(${evt.detail.x - 3}, 0)`);
+				const w = Number(this._hueImage.getAttribute('width'));
+				this.selHue = (evt.detail.x / w) * 360;
+
+				let cr = w3color(`hsl(${this.selHue},${1},${0.5})`);
+				this._satlumColor.setAttribute('fill', cr.toHexString());
+				cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
+				if (this._strokeColor.active) {
+					this._strokeColor.color = cr.toHexString();
+					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
+					this._actStrokeNoColor.setAttribute('display', 'none');
+					this._strokeColor.isnone = 0;
+				} else {
+					this._fillColor.color = cr.toHexString();
+					this._actFillColor.setAttribute('fill', this._fillColor.color);
+					this._actFillNoColor.setAttribute('display', 'none');
+					this._fillColor.isnone = 0;
+				}
+
+			});
+			this._hueImage.addEventListener('onEndDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				// console.log('End dragging');
+			});
 			this._hueImage.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(this._hueImage, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				this._hueCtrl.setAttribute('transform', `translate(${pt.x}, 0)`);
+				this._hueCtrl.setAttribute('transform', `translate(${pt.x - 3}, 0)`);
 				const w = Number(evt.target.getAttribute('width'));
-				const selPCT = (pt.x / w) * 360;
-				console.log(`Click on hew image at x = ${pt.x}, y = ${pt.y}, selected hue = ${selPCT}`);
+				this.selHue = (pt.x / w) * 360;
+				let cr = w3color(`hsl(${this.selHue},${1},${0.5})`);
+				this._satlumColor.setAttribute('fill', cr.toHexString());
+				cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
+				if (this._strokeColor.active) {
+					this._strokeColor.color = cr.toHexString();
+					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
+					this._actStrokeNoColor.setAttribute('display', 'none');
+					this._strokeColor.isnone = 0;
+				} else {
+					this._fillColor.color = cr.toHexString();
+					this._actFillColor.setAttribute('fill', this._fillColor.color);
+					this._actFillNoColor.setAttribute('display', 'none');
+					this._fillColor.isnone = 0;
+				}
+				// console.log(`Click on hew image at x = ${pt.x}, y = ${pt.y}, selected hue = ${this.selHue}`);
+			});
+
+			this._satlumColor.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				this._slCtrl.setAttribute('transform', `translate(${evt.detail.x}, ${evt.detail.y})`);
+				const w = Number(evt.target.getAttribute('width'));
+				const h = Number(evt.target.getAttribute('height'));
+				const y = evt.detail.y - 45;
+				this.selLum = (y / h); // * 100;
+				this.selSat = (evt.detail.x / w); // * 100;
+				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
+				if (this._strokeColor.active) {
+					this._strokeColor.color = cr.toHexString();
+					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
+					this._actStrokeNoColor.setAttribute('display', 'none');
+					this._strokeColor.isnone = 0;
+				} else {
+					this._fillColor.color = cr.toHexString();
+					this._actFillColor.setAttribute('fill', this._fillColor.color);
+					this._actFillNoColor.setAttribute('display', 'none');
+					this._fillColor.isnone = 0;
+				}
 			});
 			this._satlumColor.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(this._satlumColor, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				this._slCtrl.setAttribute('transform', `translate(${pt.x}, ${pt.y})`);
-				// const w = Number(evt.target.getAttribute('width'));
-				// const selPCT = (pt.x / w) * 360;
+				const w = Number(evt.target.getAttribute('width'));
+				const h = Number(evt.target.getAttribute('height'));
+
+				const y = pt.y - 45;
+				this.selLum = (y / h); // * 100;
+				this.selSat = (pt.x / w); // * 100;
+				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
+				if (this._strokeColor.active) {
+					this._strokeColor.color = cr.toHexString();
+					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
+					this._actStrokeNoColor.setAttribute('display', 'none');
+					this._strokeColor.isnone = 0;
+				} else {
+					this._fillColor.color = cr.toHexString();
+					this._actFillColor.setAttribute('fill', this._fillColor.color);
+					this._actFillNoColor.setAttribute('display', 'none');
+					this._fillColor.isnone = 0;
+				}
 				console.log(`Click on satlum image at x = ${pt.x}, y = ${pt.y}`);
 			});
 		}
@@ -553,11 +638,25 @@ class SmartColorSelector {
 			this._strokeColor.active = 1;
 			this._fillColor.active = 0;
 			this._bfG.insertBefore(this._btnSelFill, this._btnSelStroke);
+			if (!this._strokeColor.isnone) {
+				const cr = w3color(this._strokeColor.color);
+				this.selHue = cr.hue;
+				this.selSat = cr.sat;
+				this.selLum = cr.lightness;
+				// update _hueImage and _satlumColor here!
+			}
 		});
 		this._btnSelFill.addEventListener('click', (evt) => {
 			this._strokeColor.active = 0;
 			this._fillColor.active = 1;
 			this._bfG.insertBefore(this._btnSelStroke, this._btnSelFill);
+			if (!this._fillColor.isnone) {
+				const cr = w3color(this._fillColor.color);
+				this.selHue = cr.hue;
+				this.selSat = cr.sat;
+				this.selLum = cr.lightness;
+				// update _hueImage and _satlumColor here!
+			}
 		});
 		this._selNoColorBtn.addEventListener('click', (evt) => {
 			if (this._strokeColor.active) {

@@ -728,7 +728,7 @@ class SmartDragElement {
 		this._continueDrag = this._continueDrag.bind(this);
 		this._endDrag = this._endDrag.bind(this);
 
-		this._svg.addEventListener('mousedown', this._startDrag);
+		this._el.addEventListener('mousedown', this._startDrag);
 	}
 	// private api
 	_startDrag(evt) {
@@ -739,10 +739,17 @@ class SmartDragElement {
 
 			const pt = SmartWidgets.svgPoint(this._opt.containment, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 			evt.target.dataset['isDragged'] = 1;
-			this._svg.addEventListener('mousemove', this._continueDrag);
-			this._svg.addEventListener('mouseup', this._endDrag);
-
-			console.log(`Start dragging x = ${pt.x}, y = ${pt.y}`);
+			this._el.addEventListener('mousemove', this._continueDrag);
+			this._el.addEventListener('mouseup', this._endDrag);
+			const custEvent = new CustomEvent('onStartDrag', {
+				detail: {
+					x: pt.x,
+					y: pt.y
+				},
+				bubbles: true,
+				cancelable: false
+			});
+			this._el.dispatchEvent(custEvent);
 		}
 	}
 	_continueDrag(evt) {
@@ -751,8 +758,15 @@ class SmartDragElement {
 			evt.preventDefault();
 			const scroll = SmartTooltip.getScroll();
 			const pt = SmartWidgets.svgPoint(this._opt.containment, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-			this._el.setAttribute('transform', `translate(${pt.x}, 0)`);
-			console.log(`Continue dragging x = ${pt.x}, y = ${pt.y}`);
+			const custEvent = new CustomEvent('onContinueDrag', {
+				detail: {
+					x: pt.x,
+					y: pt.y
+				},
+				bubbles: true,
+				cancelable: false
+			});
+			this._el.dispatchEvent(custEvent);
 		}
 	}
 	_endDrag(evt) {
@@ -760,10 +774,13 @@ class SmartDragElement {
 		if (isDragged) {
 			evt.preventDefault();
 			evt.target.dataset['isDragged'] = 0;
-			this._svg.removeEventListener('mousemove', this._continueDrag);
-			this._svg.removeEventListener('mouseup', this._endDrag);
-
-			console.log('End dragging');
+			this._el.removeEventListener('mousemove', this._continueDrag);
+			this._el.removeEventListener('mouseup', this._endDrag);
+			const custEvent = new CustomEvent('onEndDrag', {
+				bubbles: true,
+				cancelable: false
+			});
+			this._el.dispatchEvent(custEvent);
 		}
 	}
 }
