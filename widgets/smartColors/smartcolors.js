@@ -226,7 +226,8 @@ class SmartColorSelector {
 			const lumRangeDef =
 			`<linearGradient id="lumRange" x1="0%" y1="0%" x2="0%" y2="100%">
 				<stop offset="0%" stop-color="#000000"/>
-				<stop offset="100%" stop-color="rgba(204, 154, 129, 0)"/>
+				<stop offset="50%" stop-color="rgba(204, 154, 129, 0)"/>
+				<stop offset="100%" stop-color="#FFFFFF"/>
 			</linearGradient>`;
 			const satRangeDef =
 			`<linearGradient id="satRange" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -591,9 +592,9 @@ class SmartColorSelector {
 				this._slCtrl.setAttribute('transform', `translate(${evt.detail.x}, ${evt.detail.y})`);
 				const w = Number(evt.target.getAttribute('width'));
 				const h = Number(evt.target.getAttribute('height'));
-				const y = evt.detail.y - 45;
-				this.selLum = (y / h); // * 100;
-				this.selSat = (evt.detail.x / w); // * 100;
+
+				this.selLum = (evt.detail.y - 45) / h; // * 100;
+				this.selSat = evt.detail.x / w; // * 100;
 				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
 				if (this._strokeColor.active) {
 					this._strokeColor.color = cr.toHexString();
@@ -615,9 +616,8 @@ class SmartColorSelector {
 				const w = Number(evt.target.getAttribute('width'));
 				const h = Number(evt.target.getAttribute('height'));
 
-				const y = pt.y - 45;
-				this.selLum = (y / h); // * 100;
-				this.selSat = (pt.x / w); // * 100;
+				this.selLum = (pt.y - 45) / h; // * 100;
+				this.selSat = pt.x / w; // * 100;
 				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
 				if (this._strokeColor.active) {
 					this._strokeColor.color = cr.toHexString();
@@ -630,7 +630,7 @@ class SmartColorSelector {
 					this._actFillNoColor.setAttribute('display', 'none');
 					this._fillColor.isnone = 0;
 				}
-				console.log(`Click on satlum image at x = ${pt.x}, y = ${pt.y}`);
+				// console.log(`Click on satlum image at x = ${pt.x}, y = ${pt.y}`);
 			});
 		}
 
