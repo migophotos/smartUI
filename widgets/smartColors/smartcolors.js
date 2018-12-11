@@ -449,8 +449,32 @@ class SmartColorSelector {
 			}, this._hslSliders, this._svgdoc);
 		}
 	}
+	_set
 
 	// API
+
+	/**
+	 *
+	 * @param {object} colorData stroke and fill colors definition object in from:
+	 * 	{
+	 * 		fillColor = {
+	 *			active: 1,			// set selector as active
+	 *			isnone:	0,			// set to 1 for 'none' color
+	 *			color: '#000000',	// rgb color
+	 *			opacity: 1			// opacity, from 0 upto 1
+	 *		},
+	 *		strokeColor = {
+	 *			active: 0,			// set selector as active
+	 *			isnone: 0,			// set to 1 for 'none' color
+	 *			color: '#0000ff',	// rgb color
+	 *			opacity: 1			// opacity, from 0 upto 1
+	 *		}
+	 *	}
+	 *
+	 */
+	setColorData(colorData) {
+
+	}
 	getAlias() {
 		return this._o.alias;
 	}
@@ -504,6 +528,7 @@ class SmartColorSelector {
 			};
 		}
 		this._inited = true;
+
 		this._fillColor = {
 			active: 1,
 			isnone:	0,
