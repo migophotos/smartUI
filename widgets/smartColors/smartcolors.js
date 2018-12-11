@@ -197,8 +197,8 @@ class SmartColorSelector {
 
 		this._body      = null; // the SmartColorSelector body
 		this._hslSliders = null;	// HSL Sliders reference group
-		this._rgbSliders = null;	// HSL Sliders reference group
-		this._hslWheel   = null;	// HSL Sliders reference group
+		this._rgbSliders = null;	// RGB Sliders reference group
+		this._hslWheel   = null;	// HSL Wheel reference group
 
 		let tmpId = `style--${SmartColorSelectors.getAlias()}`;
 		if (!this._root.getElementById(tmpId)) {
@@ -509,19 +509,20 @@ class SmartColorSelector {
 			}, this._sfG, this._svgdoc);
 
 			/**
-			 * HSL Sliders group
+			 * Hue Boxes group
 			 */
-			this._hslSliders = SmartWidgets.addElement('g', {
+			this._slidersTypes[0].ref = SmartWidgets.addElement('g', {
 				id: 'hsl-sliders',
 				class: 'hsl-sliders',
 				transform: `translate(${gap}, 60)`
 			}, this._bodyG, this._svgdoc);
-			this._slidersTypes[0].ref = this._hslSliders;
+			const hb = this._slidersTypes[0].ref;	// alias
+			// this._slidersTypes[0].ref.ctrls = {};
 
 			/**
 			 * HUE slider
 			 */
-			this._hueImage = SmartWidgets.addElement('rect', {
+			this._hueSlider = SmartWidgets.addElement('rect', {
 				id: 'hue-slider',
 				class: 'draggable clickable hue-slider',
 				x: 0,
@@ -532,7 +533,8 @@ class SmartColorSelector {
 				'stroke-width': 0.6,
 				fill: 'url(#hueRange)',
 				style: 'cursor:pointer'
-			}, this._hslSliders, this._svgdoc);
+			}, hb, this._svgdoc);
+			// hb.ctrls.hueSlider = this._hueSlider;
 
 			/**
 			 * 'sat + lightness' slider
@@ -548,7 +550,7 @@ class SmartColorSelector {
 				'stroke-width': 0.6,
 				fill: '#ff0000',
 				style: 'cursor:pointer'
-			}, this._hslSliders, this._svgdoc);
+			}, hb, this._svgdoc);
 			SmartWidgets.addElement('rect', {
 				class: 'sat-range',
 				x: 0,
@@ -558,7 +560,7 @@ class SmartColorSelector {
 				stroke: 'none',
 				fill: 'url(#satRange)',
 				'pointer-events': 'none'
-			}, this._hslSliders, this._svgdoc);
+			}, hb, this._svgdoc);
 			SmartWidgets.addElement('rect', {
 				class: 'lum-range',
 				x: 0,
@@ -568,7 +570,7 @@ class SmartColorSelector {
 				stroke: 'none',
 				fill: 'url(#lumRange)',
 				'pointer-events': 'none'
-			}, this._hslSliders, this._svgdoc);
+			}, hb, this._svgdoc);
 
 			/**
 			 * 'selected hue' indicator
@@ -585,7 +587,7 @@ class SmartColorSelector {
 				'stroke-width': 1.5,
 				fill: 'none',
 				'pointer-events': 'none'
-			}, this._hslSliders, this._svgdoc);
+			}, hb, this._svgdoc);
 
 			/**
 			 * 'selected sat + lightness' indicator
@@ -600,11 +602,265 @@ class SmartColorSelector {
 				'stroke-width': 1.5,
 				fill: 'none',
 				'pointer-events': 'none'
-			}, this._hslSliders, this._svgdoc);
+			}, hb, this._svgdoc);
 
-			// add othe sliders groups here!
+			// add others sliders groups here!
+			/**
+			 * RGB Sliders group
+			 */
+			this._slidersTypes[1].ref = SmartWidgets.addElement('g', {
+				id: 'rgb-sliders',
+				class: 'rgb-sliders',
+				transform: `translate(${gap}, 60)`
+			}, this._bodyG, this._svgdoc);
+			const rgbSl = this._slidersTypes[1].ref;	// alias
+			rgbSl.ctrls = {
+				rSlider: null,
+				rSliderDrag: null,
+				rSliderInd: null,
+				rSliderVal: null,
+				gSlider: null,
+				gSliderDrag: null,
+				gSliderInd: null,
+				gSliderVal: null,
+				bSlider: null,
+				bSliderDrag: null,
+				bSliderInd: null,
+				bSliderVal: null,
+				rgbBox:  null,
+				rgbBoxDrag: null,
+				rgbVal: null
+			};
+			// let grOffset = 16;
+			// let tOffset = grOffset + 1;
+			/**
+			 * R Slider
+			 */
+			SmartWidgets.addElement('text', {
+				text: 'R',
+				x: 2,
+				y: 5,
+				fill: '#ffffff',
+				'text-anchor': 'middle',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': 12,
+				'stroke-linejoin': 'round',
+				'pointer-events': 'none'
+			}, rgbSl, this._svgdoc);
+			rgbSl.ctrls.rSliderVal = SmartWidgets.addElement('text', {
+				text: '#00',
+				x: 175,
+				y: 5,
+				fill: '#ffffff',
+				'text-anchor': 'start',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': 12,
+				'stroke-linejoin': 'round',
+				'pointer-events': 'none'
+			}, rgbSl, this._svgdoc);
 
-			// Sliders selector pop-up menu must be the last!
+			let gr = SmartWidgets.addElement('g', {
+				id: 'r-sliders-g',
+				class: 'r-sliders-g',
+				transform: `translate(14, 4)`
+			}, rgbSl, this._svgdoc);
+			rgbSl.ctrls.rSlider = SmartWidgets.addElement('path', {
+				id: 'r-slider',
+				class: 'r-slider draggable clickable',
+				'stroke-width': 8,
+				'stroke-linecap': 'round',
+				stroke: '#000000',
+				d: 'M0,0 h150',
+				style: 'cursor:pointer'
+			}, gr, this._svgdoc);
+			rgbSl.ctrls.rSliderInd = SmartWidgets.addElement('circle', {
+				id: 'rSliderInd',
+				class: 'r-slider-ind',
+				cx: 0,
+				cy: 0,
+				r: 4.8,
+				stroke: '#ffffff',
+				'stroke-width': 1.6,
+				fill: 'none',
+				'pointer-events': 'none'
+			}, gr, this._svgdoc);
+			/**
+			 * G Slider
+			 */
+			SmartWidgets.addElement('text', {
+				text: 'G',
+				x: 2,
+				y: 21,
+				fill: '#ffffff',
+				'text-anchor': 'middle',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': 12,
+				'stroke-linejoin': 'round',
+				'pointer-events': 'none'
+			}, rgbSl, this._svgdoc);
+			rgbSl.ctrls.gSliderVal = SmartWidgets.addElement('text', {
+				text: '#00',
+				x: 175,
+				y: 21,
+				fill: '#ffffff',
+				'text-anchor': 'start',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': 12,
+				'stroke-linejoin': 'round',
+				'pointer-events': 'none'
+			}, rgbSl, this._svgdoc);
+
+			gr = SmartWidgets.addElement('g', {
+				id: 'g-sliders-g',
+				class: 'g-sliders-g',
+				transform: `translate(14, 20)`
+			}, rgbSl, this._svgdoc);
+			rgbSl.ctrls.gSlider = SmartWidgets.addElement('path', {
+				id: 'g-slider',
+				class: 'g-slider draggable clickable',
+				'stroke-width': 8,
+				'stroke-linecap': 'round',
+				stroke: '#000000',
+				d: 'M0,0 h150',
+				style: 'cursor:pointer'
+			}, gr, this._svgdoc);
+			rgbSl.ctrls.gSliderInd = SmartWidgets.addElement('circle', {
+				id: 'g-slider-ind',
+				class: 'g-slider-ind',
+				cx: 0,
+				cy: 0,
+				r: 4.8,
+				stroke: '#ffffff',
+				'stroke-width': 1.6,
+				fill: 'none',
+				'pointer-events': 'none'
+			}, gr, this._svgdoc);
+			/**
+			 * B Slider
+			 */
+			SmartWidgets.addElement('text', {
+				text: 'B',
+				x: 2,
+				y: 37,
+				fill: '#ffffff',
+				'text-anchor': 'middle',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': 12,
+				'stroke-linejoin': 'round',
+				'pointer-events': 'none'
+			}, rgbSl, this._svgdoc);
+			rgbSl.ctrls.bSliderVal = SmartWidgets.addElement('text', {
+				text: '#00',
+				x: 175,
+				y: 37,
+				fill: '#ffffff',
+				'text-anchor': 'start',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': 12,
+				'stroke-linejoin': 'round',
+				'pointer-events': 'none'
+			}, rgbSl, this._svgdoc);
+
+			gr = SmartWidgets.addElement('g', {
+				id: 'b-sliders-g',
+				class: 'b-sliders-g',
+				transform: `translate(14, 36)`
+			}, rgbSl, this._svgdoc);
+			rgbSl.ctrls.bSlider = SmartWidgets.addElement('path', {
+				id: 'b-slider',
+				class: 'b-slider draggable clickable',
+				'stroke-width': 8,
+				'stroke-linecap': 'round',
+				stroke: '#000000',
+				d: 'M0,0 h150',
+				style: 'cursor:pointer'
+			}, gr, this._svgdoc);
+			rgbSl.ctrls.bSliderInd = SmartWidgets.addElement('circle', {
+				id: 'b-slider-ind',
+				class: 'b-slider-ind',
+				cx: 0,
+				cy: 0,
+				r: 4.8,
+				stroke: '#ffffff',
+				'stroke-width': 1.6,
+				fill: 'none',
+				'pointer-events': 'none'
+			}, gr, this._svgdoc);
+			/**
+			 * RGB Box
+			 */
+			SmartWidgets.addElement('text', {
+				text: 'RGB',
+				x: -2,
+				y: 53,
+				fill: '#ffffff',
+				'text-anchor': 'start',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': 12,
+				'stroke-linejoin': 'round',
+				'pointer-events': 'none'
+			}, rgbSl, this._svgdoc);
+			rgbSl.ctrls.rgbVal = SmartWidgets.addElement('text', {
+				text: '#000000',
+				x: 148,
+				y: 53,
+				fill: '#ffffff',
+				'text-anchor': 'start',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': 12,
+				'stroke-linejoin': 'round',
+				'pointer-events': 'none'
+			}, rgbSl, this._svgdoc);
+
+			gr = SmartWidgets.addElement('g', {
+				id: 'rgb-box-g',
+				class: 'rgb-box-g',
+				transform: `translate(0, 60)`
+			}, rgbSl, this._svgdoc);
+			rgbSl.ctrls.rgbBox = SmartWidgets.addElement('rect', {
+				id: 'rgb-box',
+				class: 'rgb-box draggable clickable',
+				x: 0,
+				y: 0,
+				width: 200,
+				height: 25,
+				'stroke-width': 0.6,
+				stroke: '#000000',
+				fill: 'url(#hueRange)',
+				style: 'cursor:pointer'
+			}, gr, this._svgdoc);
+			SmartWidgets.addElement('rect', {
+				class: 'rgb-box-lum',
+				x: 0,
+				y: 0,
+				width: 200,
+				height: 25,
+				'stroke-width': 0.6,
+				stroke: '#000000',
+				fill: 'url(#lumRange)',
+				'pointer-events': 'none'
+			}, gr, this._svgdoc);
+			rgbSl.setAttribute('display', 'none');
+
+
+			// endof groups insertion line
+
 			/**
 			 * Sliders selector pop-up menu
 			 */
@@ -623,7 +879,7 @@ class SmartColorSelector {
 				transform: `translate(${80}, ${gap})`
 			}, this._bodyG, this._svgdoc);
 			this._currentSliderTitle = SmartWidgets.addElement('text', {
-				text: 'HSL Sliders',
+				text: this._slidersTypes[this._currentSliderIndex].name,
 				x: gap,
 				y: 8,
 				fill: '#ffffff',
@@ -683,9 +939,9 @@ class SmartColorSelector {
 		}
 	}
 	_updateSliders(what) {
-		this._updateHSLComponents(what);
+		this._updateHueBoxes(what);
 	}
-	_updateHSLComponents(what) {
+	_updateHueBoxes(what) {
 		this.selHue = 0;
 		this.selSat = 0;
 		this.selLum = 0;
@@ -708,10 +964,10 @@ class SmartColorSelector {
 				this.selLum = cr.lightness;
 			}
 		}
-		// update _hueImage and _satlumColor here!
+		// update _hueSlider and _satlumColor here!
 		let crImage = w3color(`hsl(${this.selHue},${1},${0.5})`);
 		this._satlumColor.setAttribute('fill', crImage.toHexString());
-		let w = Number(this._hueImage.getAttribute('width'));
+		let w = Number(this._hueSlider.getAttribute('width'));
 		let x = (w * this.selHue) / 360;
 		this._hueCtrl.setAttribute('transform', `translate(${x - 3}, 0)`);
 
@@ -871,31 +1127,80 @@ class SmartColorSelector {
 		};
 		// sliders array. references on sliders groups are filled inside _build() function!
 		this._slidersTypes = [
-			{ name:	'HSL Sliders', ref: null },
+			{ name:	'Hue Boxes', ref: null },
 			{ name:	'RGB Sliders', ref: null },
 			{ name:	'Complementary', ref: null },
 			{ name:	'Analogous', ref: null },
 			{ name:	'Triadic', ref: null },
 			{ name:	'HSL Wheel', ref: null }
 		];
-		// set default slider to HSL Sliders
+		// set default slider to Hue Boxes
 		this._currentSliderIndex = 0;
 
 		this._build();
 		this._updateUI();
 
 		// event listeners is here!
-		if (!this.hueDrag) {
-			this.hueDrag = new SmartDragElement(this._hueImage, {containment: this._hueImage});
-			this.satDrag = new SmartDragElement(this._satlumColor, {containment: this._satlumColor});
+		if (this._slidersTypes[1].ref) { 	// RGB Box exists
+			const rgbSl = this._slidersTypes[1].ref;
+			// r-slider
+			rgbSl.ctrls.rSliderDrag = new SmartDragElement(rgbSl.ctrls.rSlider, {containment: rgbSl.ctrls.rSlider});
+			rgbSl.ctrls.rSlider.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				rgbSl.ctrls.rSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
+			});
+			rgbSl.ctrls.rSlider.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(rgbSl.ctrls.rSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				rgbSl.ctrls.rSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
+			});
+			// g-slider
+			rgbSl.ctrls.gSliderDrag = new SmartDragElement(rgbSl.ctrls.gSlider, {containment: rgbSl.ctrls.gSlider});
+			rgbSl.ctrls.gSlider.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				rgbSl.ctrls.gSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
+
+			});
+			rgbSl.ctrls.gSlider.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(rgbSl.ctrls.gSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				rgbSl.ctrls.gSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
+			});
+			// b-slider
+			rgbSl.ctrls.bSliderDrag = new SmartDragElement(rgbSl.ctrls.bSlider, {containment: rgbSl.ctrls.bSlider});
+			rgbSl.ctrls.bSlider.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				rgbSl.ctrls.bSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
+
+			});
+			rgbSl.ctrls.bSlider.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(rgbSl.ctrls.bSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				rgbSl.ctrls.bSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
+			});
+
+		}
+
+		if (!this.hueDrag) {
+			this.hueDrag = new SmartDragElement(this._hueSlider, {containment: this._hueSlider});
+			this.satDrag = new SmartDragElement(this._satlumColor, {containment: this._satlumColor});
 			// HSL slider hue is changed
-			this._hueImage.addEventListener('onContinueDrag', (evt) => {
+			this._hueSlider.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
 
 				this._hueCtrl.setAttribute('transform', `translate(${evt.detail.x - 3}, 0)`);
-				const w = Number(this._hueImage.getAttribute('width'));
+				const w = Number(this._hueSlider.getAttribute('width'));
 				this.selHue = (evt.detail.x / w) * 360;
 
 				let cr = w3color(`hsl(${this.selHue},${1},${0.5})`);
@@ -915,10 +1220,10 @@ class SmartColorSelector {
 			});
 
 			// HSL slider hue was clicked
-			this._hueImage.addEventListener('click', (evt) => {
+			this._hueSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				const scroll = SmartWidgets.getScroll();
-				const pt = SmartWidgets.svgPoint(this._hueImage, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				const pt = SmartWidgets.svgPoint(this._hueSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				this._hueCtrl.setAttribute('transform', `translate(${pt.x - 3}, 0)`);
 				const w = Number(evt.target.getAttribute('width'));
 				this.selHue = (pt.x / w) * 360;
