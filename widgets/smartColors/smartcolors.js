@@ -135,6 +135,9 @@ class SmartColorSelector {
 			console.error('must to be specified!');
 			return;
 		}
+		this._drawSliderMenuItem = this._drawSliderMenuItem.bind(this);
+		this._onSelectSliderType = this._onSelectSliderType.bind(this);
+
 		const txtStyle = `
 			svg {
 				overflow: visible;
@@ -193,6 +196,9 @@ class SmartColorSelector {
 		this._inited	= false;	// call to init() set this flag to true. after that we can build, rebuild and activate....
 
 		this._body      = null; // the SmartColorSelector body
+		this._hslSliders = null;	// HSL Sliders reference group
+		this._rgbSliders = null;	// HSL Sliders reference group
+		this._hslWheel   = null;	// HSL Sliders reference group
 
 		let tmpId = `style--${SmartColorSelectors.getAlias()}`;
 		if (!this._root.getElementById(tmpId)) {
@@ -246,6 +252,69 @@ class SmartColorSelector {
 			this.init(this._o);
 		}
 	}
+	/**
+	 * Callback function for creating item inside scrollable container (see ScrollableContainer.add(...))
+	 * @param {object} root container <g> element into wich new item will be appended
+	 * @param {object} data id, coordinates, color and other data of item that will be appended
+	 * @returns reference on created item
+	 */
+	_drawSliderMenuItem(root, data) {
+		const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
+		const fontSize = '10px';
+
+		const item = SmartWidgets.addElement('g', {}, root, this._svgdoc);
+		SmartWidgets.addElement('rect', {
+			id: data.id,
+			x: data.x,
+			y: data.y,
+			width: data.width,
+			height: data.height,
+			stroke: 'none',
+			'stroke-width': 0,
+			fill: '#666666'
+		}, item, this._svgdoc);
+		SmartWidgets.addElement('text', {
+			text: data.data,
+			x: data.x,
+			y: data.y + data.height / 2,
+			fill: '#ffffff',
+			'text-anchor': 'start',
+			'dominant-baseline': 'middle',
+			'pointer-events': 'none',
+			'font-family': fontFamily,
+			'font-size': fontSize,
+			'stroke-linejoin': 'round'
+		}, item, this._svgdoc);
+		return item;
+	}
+	/**
+	 *
+	 */
+	_onSelectSliderType(evt) {
+		evt.stopPropagation();
+		evt.preventDefault();
+		// hide menu
+		this._ssMenuG.setAttribute('display', 'none');
+		// get selected index
+		const index = Number(evt.target.id.replace('slider-', ''));
+		// get reference on selected slider definition
+		const slider = this._slidersTypes[index];
+		// set it's name in title
+		this._currentSliderTitle.textContent = slider.name;
+		// get reference on current slider group
+		const curSliderRef = this._slidersTypes[this._currentSliderIndex].ref;
+		// if not null - hide it
+		if (curSliderRef) {
+			curSliderRef.setAttribute('display', 'none');
+		}
+		// show selected slider group in case of it is exists
+		if (slider.ref) {
+			slider.ref.setAttribute('display', 'inherit');
+		}
+		// store selected index
+		this._currentSliderIndex = index;
+	}
+
 	_build() {
 		SmartColorSelectors.convertNumericProps(this._o);
 		if (!this._body) {
@@ -447,6 +516,7 @@ class SmartColorSelector {
 				class: 'hsl-sliders',
 				transform: `translate(${gap}, 60)`
 			}, this._bodyG, this._svgdoc);
+			this._slidersTypes[0].ref = this._hslSliders;
 
 			/**
 			 * HUE slider
@@ -531,6 +601,85 @@ class SmartColorSelector {
 				fill: 'none',
 				'pointer-events': 'none'
 			}, this._hslSliders, this._svgdoc);
+
+			// add othe sliders groups here!
+
+			// Sliders selector pop-up menu must be the last!
+			/**
+			 * Sliders selector pop-up menu
+			 */
+			const ssmId = `${this.id}-ssmenu`;
+			this._ssMenuG = SmartWidgets.addElement('g', {
+				id: ssmId,
+				class: 'slider-selector-menu',
+				transform: `translate(${100}, ${gap + 17})`
+			}, this._bodyG, this._svgdoc);
+
+			/**
+			 * Currently Selected Slider Title
+			 */
+			this._currentSliderG = SmartWidgets.addElement('g', {
+				class: 'current-slider',
+				transform: `translate(${80}, ${gap})`
+			}, this._bodyG, this._svgdoc);
+			this._currentSliderTitle = SmartWidgets.addElement('text', {
+				text: 'HSL Sliders',
+				x: gap,
+				y: 8,
+				fill: '#ffffff',
+				'text-anchor': 'start',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': fontSize,
+				'stroke-linejoin': 'round'
+			}, this._currentSliderG, this._svgdoc);
+
+			/**
+			 * show pop-up menu button
+			 */
+			this._selectSliders = SmartWidgets.addElement('g', {
+				id: 'select-slider-btn',
+				class: 'select-slider-btn',
+				style: 'cursor:pointer;',
+				transform: `translate(${190}, ${gap})`
+			}, this._bodyG, this._svgdoc);
+			SmartWidgets.addElement('rect', {
+				x: 0,
+				y: 0,
+				width: 15,
+				height: 14,
+				rx: 2,
+				fill: '#666666'
+			}, this._selectSliders, this._svgdoc);
+			SmartWidgets.addElement('path', {
+				d: 'M2,4 h11 m-11,3 h11, m-11,3 h11',
+				stroke: '#ffffff',
+				'stroke-width': 1.6,
+				fill: 'none',
+				'pointer-events': 'none'
+			}, this._selectSliders, this._svgdoc);
+
+			this._sliders = new ScrollableContainer(ssmId, {
+				width: 90,
+				height: 110,
+				gap: 2,
+				row: 16,
+				context: this._root
+			});
+			for (let i = 0; i < this._slidersTypes.length; i++) {
+				const menuItem = {
+					id: `slider-${i}`,
+					data: this._slidersTypes[i].name,
+					cb: this._drawSliderMenuItem,
+					owner: this.id
+				};
+				let sliderItem = this._sliders.add(menuItem);
+				if (sliderItem) {
+					sliderItem.addEventListener('click', this._onSelectSliderType);
+				}
+			}
+			this._ssMenuG.setAttribute('display', 'none');
 		}
 	}
 	_updateSliders(what) {
@@ -718,8 +867,19 @@ class SmartColorSelector {
 			opacity: 1
 		};
 		this._drop = {
-			color: '#ffff14'	//this._o.bkgColor
+			color: '#ffff14'	// this._o.bkgColor
 		};
+		// sliders array. references on sliders groups are filled inside _build() function!
+		this._slidersTypes = [
+			{ name:	'HSL Sliders', ref: null },
+			{ name:	'RGB Sliders', ref: null },
+			{ name:	'Complementary', ref: null },
+			{ name:	'Analogous', ref: null },
+			{ name:	'Triadic', ref: null },
+			{ name:	'HSL Wheel', ref: null }
+		];
+		// set default slider to HSL Sliders
+		this._currentSliderIndex = 0;
 
 		this._build();
 		this._updateUI();
@@ -828,6 +988,10 @@ class SmartColorSelector {
 				}
 			});
 		}
+
+		this._selectSliders.addEventListener('click', (evt) => {
+			this._ssMenuG.setAttribute('display', this._ssMenuG.getAttribute('display') === 'none' ? 'inherit' : 'none');
+		});
 
 		// set 'stroke as active' was pressed
 		this._btnSelStroke.addEventListener('click', (evt) => {
