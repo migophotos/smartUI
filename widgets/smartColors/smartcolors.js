@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable linebreak-style */
 /* eslint-disable indent */
 /* eslint-disable class-methods-use-this */
@@ -5,6 +6,8 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-multi-spaces */
+/* eslint-disable key-spacing */
+
 /**
  * SmartColorSelectors
  * @copyright Copyright © 2018 ... All rights reserved.
@@ -146,14 +149,6 @@ class SmartColorSelector {
 			.stcrs.animated {
 				transition:all 1.5s;
 			}
-			.hue-range {
-				background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmMDAwMCIvPjxzdG9wIG9mZnNldD0iMTIuNSUiIHN0b3AtY29sb3I9IiNmZmJmMDAiLz48c3RvcCBvZmZzZXQ9IjI1JSIgc3RvcC1jb2xvcj0iIzgwZmYwMCIvPjxzdG9wIG9mZnNldD0iMzcuNSUiIHN0b3AtY29sb3I9IiMwMGZmNDAiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzAwZmZmZiIvPjxzdG9wIG9mZnNldD0iNjIuNSUiIHN0b3AtY29sb3I9IiMwMDQwZmYiLz48c3RvcCBvZmZzZXQ9Ijc1JSIgc3RvcC1jb2xvcj0iIzdmMDBmZiIvPjxzdG9wIG9mZnNldD0iODcuNSUiIHN0b3AtY29sb3I9IiNmZjAwYmYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZjAwMDAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
-				background-size: 100%;
-				background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #ff0000), color-stop(12.5%, #ffbf00), color-stop(25%, #80ff00), color-stop(37.5%, #00ff40), color-stop(50%, #00ffff), color-stop(62.5%, #0040ff), color-stop(75%, #7f00ff), color-stop(87.5%, #ff00bf), color-stop(100%, #ff0000));
-				background-image: -moz-linear-gradient(left, #ff0000 0%, #ffbf00 12.5%, #80ff00 25%, #00ff40 37.5%, #00ffff 50%, #0040ff 62.5%, #7f00ff 75%, #ff00bf 87.5%, #ff0000 100%);
-				/* background-image: -webkit-linear-gradient(left, #ff0000 0%, #ffbf00 12.5%, #80ff00 25%, #00ff40 37.5%, #00ffff 50%, #0040ff 62.5%, #7f00ff 75%, #ff00bf 87.5%, #ff0000 100%); */
-				/* background-image: linear-gradient(to right, #ff0000 0%, #ffbf00 12.5%, #80ff00 25%, #00ff40 37.5%, #00ffff 50%, #0040ff 62.5%, #7f00ff 75%, #ff00bf 87.5%, #ff0000 100%); */
-			}
 		`;
 
 		let gId = id;
@@ -257,36 +252,57 @@ class SmartColorSelector {
 			const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
 			const fontSize = '10px';
 			const gap = 6;
-			let width = 200, height = 150;
+			const bodyWidth = 200, bodyHeight = 160;
 
 			this._bodyG = SmartWidgets.addElement('g', {
 				class: 'stcrs'
 			}, this._svgroot, this._svgdoc);
 			this._body = SmartWidgets.addElement('rect', {
+				class: 'stcrs body',
 				x: 0,
 				y: 0,
 				rx: this._o.borderRadius,
-				width: `${width + (2 * gap)}`,
-				height: `${height + (2 * gap)}`,
+				width: `${bodyWidth + (2 * gap)}`,
+				height: `${bodyHeight + (2 * gap)}`,
 				fill: this._o.bkgColor,
 				stroke: this._o.borderColor,
 				'stroke-width': this._o.borderWidth,
-				'stroke-opacity': this._o.opacity,
-				'fill-opacity':  this._o.opacity
+				'stroke-opacity': this._o.bodyOpacity,
+				'fill-opacity':  this._o.bodyOpacity
 			}, this._bodyG, this._svgdoc);
 			this._bodyG.classList.add(this._o.isShadow ? 'shadowed' : 'no-shadows');
-			// stroke/fill selector includes 'selStroke' and 'selFill' circle buttons, 'noColor' button, 'color switcher' and 'setCurrentColor' button
-			this._bfG = SmartWidgets.addElement('g', {
-				class: 'bf-selector',
+			this._svgroot.setAttribute('width', this._body.getAttribute('width'));
+			this._svgroot.setAttribute('height', this._body.getAttribute('height'));
+
+			//
+			/**
+			 * Stroke/Fill parameter selector includes:
+			 * - '_btnSelStroke' button
+			 * - '_btnSelFill' buttons
+			 * - '_selNoColorBtn' button
+			 * - '_colorSwitch' button
+			 * - '_setCurColor' button
+			 */
+			this._sfG = SmartWidgets.addElement('g', {
+				class: 'stroke-fill-selector',
 				transform: `translate(${gap}, ${gap})`
 			}, this._bodyG, this._svgdoc);
-			// group for stroke selector
+
+			/**
+			 * button 'set stroke as active parameter' structure
+			 * <g>		 - reference on button (this._btnSelStroke)
+			 * 	<circle> - 'active stroke color' element (this._actStrokeColor)
+			 *  <path>	 - 'no color' indicator (this._actStrokeNoColor)
+			 *  <circle> - external circle (black border)
+			 *  <circle> - internal circle (black border)
+			 * </g>
+			 */
 			this._btnSelStroke = SmartWidgets.addElement('g', {
 				class: 'stcrs sel-stroke-btn'
-			}, this._bfG, this._svgdoc);
+			}, this._sfG, this._svgdoc);
 			this._btnSelStroke.classList.add(this._o.isShadow ? 'shadowed' : 'no-shadows');
-
 			this._actStrokeColor = SmartWidgets.addElement('circle', {
+				class: 'act-stroke-color',
 				cx: 20,
 				cy: 20,
 				r: 12,
@@ -296,6 +312,7 @@ class SmartColorSelector {
 				style: 'cursor:pointer;'
 			}, this._btnSelStroke, this._svgdoc);
 			this._actStrokeNoColor = SmartWidgets.addElement('path', {
+				class: 'stroke-no-color',
 				stroke: '#ff0000',
 				'stroke-width': 1,
 				fill: '#ff0000',
@@ -305,6 +322,7 @@ class SmartColorSelector {
 				display: 'none'
 			}, this._btnSelStroke, this._svgdoc);
 			SmartWidgets.addElement('circle', {
+				class: 'ext-border',
 				cx: 20,
 				cy: 20,
 				r: 15,
@@ -314,6 +332,7 @@ class SmartColorSelector {
 				'pointer-events': 'none',
 			}, this._btnSelStroke, this._svgdoc);
 			SmartWidgets.addElement('circle', {
+				class: 'int-border',
 				cx: 20,
 				cy: 20,
 				r: 9,
@@ -323,12 +342,19 @@ class SmartColorSelector {
 				'pointer-events': 'none',
 			}, this._btnSelStroke, this._svgdoc);
 
+			/**
+			 * button 'set fill as active parameter' structure
+			 * <g>		 - reference on button (this._btnSelFill)
+			 * 	<circle> - 'active fill color' element (this._actFillColor)
+			 *  <path>	 - 'no color' indicator (this._actFillNoColor)
+			 * </g>
+			 */
 			this._btnSelFill = SmartWidgets.addElement('g', {
 				class: 'stcrs sel-fill-btn'
-			}, this._bfG, this._svgdoc);
+			}, this._sfG, this._svgdoc);
 			this._btnSelFill.classList.add(this._o.isShadow ? 'shadowed' : 'no-shadows');
-
 			this._actFillColor = SmartWidgets.addElement('circle', {
+				class: 'act-fill-color',
 				cx: 30,
 				cy: 30,
 				r: 15,
@@ -338,6 +364,7 @@ class SmartColorSelector {
 				style: 'cursor:pointer;'
 			}, this._btnSelFill, this._svgdoc);
 			this._actFillNoColor = SmartWidgets.addElement('path', {
+				class: 'fill-no-color',
 				stroke: '#ff0000',
 				'stroke-width': 1,
 				fill: '#ff0000',
@@ -347,7 +374,13 @@ class SmartColorSelector {
 				display: 'none'
 			}, this._btnSelFill, this._svgdoc);
 
+			/**
+			 * button 'set no color to active parameter'
+			 * <circle> - button (this._selNoColorBtn)
+			 * <line>	- 'no color' indicator (this._selNoColorLine)
+			 */
 			this._selNoColorBtn = SmartWidgets.addElement('circle', {
+				class: 'sel-no-color-btn',
 				cx: 10,
 				cy: 39,
 				r: 5,
@@ -355,57 +388,92 @@ class SmartColorSelector {
 				'stroke-width': 0.6,
 				fill: '#ffffff',
 				style: 'cursor:pointer;'
-			}, this._bfG, this._svgdoc);
-			this._selNoColorLine =SmartWidgets.addElement('line', {
-				x1: 5, y1: 39,
-				x2: 15, y2: 39,
+			}, this._sfG, this._svgdoc);
+			this._selNoColorLine = SmartWidgets.addElement('line', {
+				class: 'sel-no-color-line',
+				x1: 5,
+				y1: 39,
+				x2: 15,
+				y2: 39,
 				stroke: '#ff0000',
 				'stroke-width': 1,
 				fill: '#ff0000',
 				transform: 'rotate(-45, 10, 39)',
 				'pointer-events': 'none'
-			}, this._bfG, this._svgdoc);
+			}, this._sfG, this._svgdoc);
+
+			/**
+			 * button 'switch colors between parameters'
+			 * <path> - button (this._colorSwitch)
+			 * <path> - bi-directional arrow icon
+			 */
 			this._colorSwitch = SmartWidgets.addElement('path', {
+				class: 'color-switch',
 				stroke: this._o.bkgColor,
 				'stroke-width': 1,
 				fill: this._o.bkgColor,
 				d: 'M34,8 v-2 h10 v10 h-2 z',
 				style: 'cursor:pointer;'
-			}, this._bfG, this._svgdoc);
+			}, this._sfG, this._svgdoc);
 			SmartWidgets.addElement('path', {
+				class: 'switch-icon',
 				stroke: '#ffffff',
 				'stroke-width': 1,
 				fill: 'none',
 				d: 'M35,7 l8,8 M37,6 h-3 v3 M44,13 v3 h-3',
 				'pointer-events': 'none'
-			}, this._bfG, this._svgdoc);
+			}, this._sfG, this._svgdoc);
 
+			/**
+			 *	button 'set current color to active parameter'
+			 *	<circle> - button (this._setCurColor)
+			 */
 			this._setCurColor = SmartWidgets.addElement('circle', {
+				class: 'set-cur-color',
 				cx: 56,
 				cy: 14,
 				r: 8,
 				stroke: '#000000',
 				'stroke-width': 1,
-				fill: this._pipette.color,
-				// 'fill-opacity': 0.3,
+				fill: this._drop.color,
 				style: 'cursor:pointer;'
-			}, this._bfG, this._svgdoc);
+			}, this._sfG, this._svgdoc);
+
+			/**
+			 * HSL Sliders group
+			 */
 			this._hslSliders = SmartWidgets.addElement('g', {
+				id: 'hsl-sliders',
 				class: 'hsl-sliders',
 				transform: `translate(${gap}, 60)`
 			}, this._bodyG, this._svgdoc);
+
+			/**
+			 * HUE slider
+			 */
 			this._hueImage = SmartWidgets.addElement('rect', {
-				class: 'draggable clickable hue-range',
-				x: 0, y:0, width: 200, height:40,
+				id: 'hue-slider',
+				class: 'draggable clickable hue-slider',
+				x: 0,
+				y:0,
+				width: bodyWidth,
+				height:40,
 				stroke: '#000000',
 				'stroke-width': 0.6,
 				fill: 'url(#hueRange)',
 				style: 'cursor:pointer'
 			}, this._hslSliders, this._svgdoc);
 
+			/**
+			 * 'sat + lightness' slider
+			 */
 			this._satlumColor = SmartWidgets.addElement('rect', {
-				x: 0, y:45, width: 200, height:40,
-				class: 'draggable clickable sel-satlum',
+				id: 'sat-lum-slider',
+				class: 'draggable clickable sat-lum-slider',
+				x: 0,
+				y:45,
+				width: bodyWidth,
+				height:40,
 				stroke: '#000000',
 				'stroke-width': 0.6,
 				fill: '#ff0000',
@@ -413,43 +481,110 @@ class SmartColorSelector {
 			}, this._hslSliders, this._svgdoc);
 			SmartWidgets.addElement('rect', {
 				class: 'sat-range',
-				x: 0, y:45, width: 200, height:40,
-				stroke: '#000000',
-				'stroke-width': 0.6,
+				x: 0,
+				y:45,
+				width: bodyWidth,
+				height:40,
+				stroke: 'none',
 				fill: 'url(#satRange)',
 				'pointer-events': 'none'
 			}, this._hslSliders, this._svgdoc);
 			SmartWidgets.addElement('rect', {
 				class: 'lum-range',
-				x: 0, y:45, width: 200, height:40,
-				stroke: '#000000',
-				'stroke-width': 0.6,
+				x: 0,
+				y:45,
+				width: bodyWidth,
+				height:40,
+				stroke: 'none',
 				fill: 'url(#lumRange)',
 				'pointer-events': 'none'
 			}, this._hslSliders, this._svgdoc);
 
+			/**
+			 * 'selected hue' indicator
+			 */
 			this._hueCtrl = SmartWidgets.addElement('rect', {
-				id: 'hue-slider',
-				class: '',
+				id: 'hue-ind',
+				class: 'hue-ind',
 				r: 5,
-				x: 0, y: 1, width: 6, height: 38,
+				x: 0,
+				y: 1,
+				width: 6,
+				height: 38,
 				stroke: '#ffffff',
+				'stroke-width': 1.5,
 				fill: 'none',
 				'pointer-events': 'none'
 			}, this._hslSliders, this._svgdoc);
+
+			/**
+			 * 'selected sat + lightness' indicator
+			 */
 			this._slCtrl = SmartWidgets.addElement('circle', {
-				id: 'sat-lum-slider',
-				class: '',
+				id: 'sat-lum-ind',
+				class: 'sat-lum-ind',
 				r: 5,
 				cx: 0,
 				cy: 0,
 				stroke: '#ffffff',
+				'stroke-width': 1.5,
 				fill: 'none',
 				'pointer-events': 'none'
 			}, this._hslSliders, this._svgdoc);
 		}
 	}
-	_set
+	_updateSliders(what) {
+		this._updateHSLComponents(what);
+	}
+	_updateHSLComponents(what) {
+		this.selHue = 0;
+		this.selSat = 0;
+		this.selLum = 0;
+
+		what = what || (this._strokeColor.active ? 'stroke' : 'fill');
+
+		if (what === 'stroke') {
+			if (!this._strokeColor.isnone) {
+				const cr = w3color(this._strokeColor.color);
+				this.selHue = cr.hue;
+				this.selSat = cr.sat;
+				this.selLum = cr.lightness;
+			}
+		}
+		if (what === 'fill') {
+			if (!this._fillColor.isnone) {
+				const cr = w3color(this._fillColor.color);
+				this.selHue = cr.hue;
+				this.selSat = cr.sat;
+				this.selLum = cr.lightness;
+			}
+		}
+		// update _hueImage and _satlumColor here!
+		let crImage = w3color(`hsl(${this.selHue},${1},${0.5})`);
+		this._satlumColor.setAttribute('fill', crImage.toHexString());
+		let w = Number(this._hueImage.getAttribute('width'));
+		let x = (w * this.selHue) / 360;
+		this._hueCtrl.setAttribute('transform', `translate(${x - 3}, 0)`);
+
+		w = Number(this._satlumColor.getAttribute('width'));
+		const h = Number(this._satlumColor.getAttribute('height'));
+		x = (w * this.selSat);	// / 100;
+		const y = (h * this.selLum);
+		this._slCtrl.setAttribute('transform', `translate(${x}, ${y + 45})`);
+	}
+
+	/**
+	 * update user interface with fillColor and strokeColor data
+	 *
+	 */
+	_updateUI() {
+		if (this._strokeColor.active) {
+			this._sfG.insertBefore(this._btnSelFill, this._btnSelStroke);
+		} else {
+			this._sfG.insertBefore(this._btnSelStroke, this._btnSelFill);
+		}
+		this._updateSliders();
+	}
 
 	// API
 
@@ -470,10 +605,47 @@ class SmartColorSelector {
 	 *			opacity: 1			// opacity, from 0 upto 1
 	 *		}
 	 *	}
-	 *
+	 *	In case of fillColor or strokeColor objects are not defined appropriated control will be disabled
 	 */
-	setColorData(colorData) {
-
+	setData(colorData) {
+		if (typeof colorData === 'object') {
+			if (typeof colorData.fillColor === 'object') {
+				this._fillColor.active = colorData.fillColor.active || 1;
+				this._fillColor.isnone = colorData.fillColor.isnone || 0;
+				this._fillColor.color  = colorData.fillColor.color || '#000000';
+				this._fillColor.opacity = colorData.fillColor.opacity || 1;
+				this._fillColor.prev = this._fillColor.color;
+			} else {
+				this._fillColor.disabled = 1;
+			}
+			if (typeof colorData.strokeColor === 'object') {
+				this._strokeColor.active = colorData.strokeColor.active || 1;
+				this._strokeColor.isnone = colorData.strokeColor.isnone || 0;
+				this._strokeColor.color  = colorData.strokeColor.color || '#000000';
+				this._strokeColor.opacity = colorData.strokeColor.opacity || 1;
+				this._strokeColor.prev = this._strokeColor.color;
+			} else {
+				this._strokeColor.disabled = 1;
+			}
+		}
+		this._updateUI();
+	}
+	getData() {
+		const colorData = {
+			fillColor: {
+				active: this._fillColor.active,
+				isnon:  this._fillColor.isnone,
+				color:	this._fillColor.color,
+				opacity:this._fillColor.opacity
+			},
+			strokeColor: {
+				active: this._strokeColor.active,
+				isnon:  this._strokeColor.isnone,
+				color:	this._strokeColor.color,
+				opacity:this._strokeColor.opacity
+			}
+		};
+		return colorData;
 	}
 	getAlias() {
 		return this._o.alias;
@@ -530,6 +702,7 @@ class SmartColorSelector {
 		this._inited = true;
 
 		this._fillColor = {
+			disabled: 0,
 			active: 1,
 			isnone:	0,
 			color: '#000000',
@@ -537,27 +710,26 @@ class SmartColorSelector {
 			opacity: 1
 		};
 		this._strokeColor = {
+			disabled: 0,
 			active: 0,
 			isnone: 0,
 			color: '#0000ff',
 			prev: '#0000ff',
 			opacity: 1
 		};
-		this._pipette = {
+		this._drop = {
 			color: '#ffff14'	//this._o.bkgColor
 		};
 
 		this._build();
+		this._updateUI();
 
 		// event listeners is here!
 		if (!this.hueDrag) {
 			this.hueDrag = new SmartDragElement(this._hueImage, {containment: this._hueImage});
 			this.satDrag = new SmartDragElement(this._satlumColor, {containment: this._satlumColor});
-			this._hueImage.addEventListener('onStartDrag', (evt) => {
-				evt.preventDefault();
-				evt.stopPropagation();
-				// console.log(`Start dragging x = ${evt.detail.x}, y = ${evt.detail.y}`);
-			});
+
+			// HSL slider hue is changed
 			this._hueImage.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
@@ -580,13 +752,9 @@ class SmartColorSelector {
 					this._actFillNoColor.setAttribute('display', 'none');
 					this._fillColor.isnone = 0;
 				}
+			});
 
-			});
-			this._hueImage.addEventListener('onEndDrag', (evt) => {
-				evt.preventDefault();
-				evt.stopPropagation();
-				// console.log('End dragging');
-			});
+			// HSL slider hue was clicked
 			this._hueImage.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				const scroll = SmartWidgets.getScroll();
@@ -611,6 +779,7 @@ class SmartColorSelector {
 				// console.log(`Click on hew image at x = ${pt.x}, y = ${pt.y}, selected hue = ${this.selHue}`);
 			});
 
+			// HSL slider saturation + lightness is changed
 			this._satlumColor.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
@@ -633,6 +802,8 @@ class SmartColorSelector {
 					this._fillColor.isnone = 0;
 				}
 			});
+
+			// HSL slider saturation + lightness was clicked
 			this._satlumColor.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				const scroll = SmartWidgets.getScroll();
@@ -641,8 +812,8 @@ class SmartColorSelector {
 				const w = Number(evt.target.getAttribute('width'));
 				const h = Number(evt.target.getAttribute('height'));
 
-				this.selLum = (pt.y - 45) / h; // * 100;
-				this.selSat = pt.x / w; // * 100;
+				this.selLum = (pt.y - 45) / h;
+				this.selSat = pt.x / w;
 				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
 				if (this._strokeColor.active) {
 					this._strokeColor.color = cr.toHexString();
@@ -655,34 +826,25 @@ class SmartColorSelector {
 					this._actFillNoColor.setAttribute('display', 'none');
 					this._fillColor.isnone = 0;
 				}
-				// console.log(`Click on satlum image at x = ${pt.x}, y = ${pt.y}`);
 			});
 		}
 
+		// set 'stroke as active' was pressed
 		this._btnSelStroke.addEventListener('click', (evt) => {
 			this._strokeColor.active = 1;
 			this._fillColor.active = 0;
-			this._bfG.insertBefore(this._btnSelFill, this._btnSelStroke);
-			if (!this._strokeColor.isnone) {
-				const cr = w3color(this._strokeColor.color);
-				this.selHue = cr.hue;
-				this.selSat = cr.sat;
-				this.selLum = cr.lightness;
-				// update _hueImage and _satlumColor here!
-			}
+			this._sfG.insertBefore(this._btnSelFill, this._btnSelStroke);
+			this._updateSliders('stroke');
 		});
+		// set 'fill as active' was pressed
 		this._btnSelFill.addEventListener('click', (evt) => {
 			this._strokeColor.active = 0;
 			this._fillColor.active = 1;
-			this._bfG.insertBefore(this._btnSelStroke, this._btnSelFill);
-			if (!this._fillColor.isnone) {
-				const cr = w3color(this._fillColor.color);
-				this.selHue = cr.hue;
-				this.selSat = cr.sat;
-				this.selLum = cr.lightness;
-				// update _hueImage and _satlumColor here!
-			}
+			this._sfG.insertBefore(this._btnSelStroke, this._btnSelFill);
+			this._updateSliders('fill');
 		});
+
+		// set active to 'none' color was pressed
 		this._selNoColorBtn.addEventListener('click', (evt) => {
 			if (this._strokeColor.active) {
 				if (!this._strokeColor.isnone) {
@@ -711,7 +873,10 @@ class SmartColorSelector {
 					this._fillColor.isnone = 0;
 				}
 			}
+			this._updateSliders();
 		});
+
+		// Switch color wetween stroke and fill was pressed
 		this._colorSwitch.addEventListener('click', (evt) => {
 			let tmp = this._fillColor.color;
 			this._fillColor.color = this._strokeColor.color;
@@ -729,7 +894,10 @@ class SmartColorSelector {
 			this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
 			this._actFillNoColor.setAttribute('display', this._fillColor.isnone ? 'inherit' : 'none');
 			this._actStrokeNoColor.setAttribute('display', this._strokeColor.isnone ? 'inherit' : 'none');
+			this._updateSliders();
 		});
+
+		// Drop color button was precced
 		this._setCurColor.addEventListener('click', (evt) => {
 			if (this._strokeColor.active) {
 				if (this._strokeColor.isnone) {
@@ -738,7 +906,7 @@ class SmartColorSelector {
 				} else {
 					this._strokeColor.prev = this._strokeColor.color;
 				}
-				this._strokeColor.color = this._pipette.color;
+				this._strokeColor.color = this._drop.color;
 				this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
 			} else {
 				if (this._fillColor.isnone) {
@@ -747,9 +915,10 @@ class SmartColorSelector {
 				} else {
 					this._fillColor.prev = this._fillColor.color;
 				}
-				this._fillColor.color = this._pipette.color;
+				this._fillColor.color = this._drop.color;
 				this._actFillColor.setAttribute('fill', this._fillColor.color);
 			}
+			this._updateSliders();
 		});
     }
 
