@@ -1032,7 +1032,12 @@ class SmartColorSelector {
 	 *
 	 */
 	_updateUI(cr = null) {
-		if (cr) {
+		let sendEvent = true;
+		if (typeof cr === 'string' && cr === 'internal') {
+			sendEvent = false;
+		}
+
+		if (cr && typeof cr === 'object') {
 			if (this._strokeColor.active) {
 				this._strokeColor.color = cr.toHexString();
 				this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
@@ -1052,6 +1057,26 @@ class SmartColorSelector {
 			this._sfG.insertBefore(this._btnSelStroke, this._btnSelFill);
 		}
 		this._updateSliders();
+
+		if (sendEvent) {
+			// send changed data to control (SmartColorSelectr or custom element 'smart-ui-colorsel)
+			// by firing event 'dataChanged' with data object inside detail
+			const data = this.getData();
+			const custEvent = new CustomEvent('dataChanged', {
+				detail: Object.assign({}, data),
+				bubbles: true,
+				cancelable: false
+			});
+			let el = this.getCtrl();
+			if (this._mode === 'html') {
+				const root = this._root.getRootNode();
+				el  = root ? root.host : null;
+			}
+			if (el) {
+				el.dispatchEvent(custEvent);
+				console.log(`sent event ${custEvent.type}: ${Object.getOwnPropertyNames(custEvent.detail).join(' and ')}`);
+			}
+		}
 	}
 
 	// API
@@ -1096,7 +1121,7 @@ class SmartColorSelector {
 				this._strokeColor.disabled = 1;
 			}
 		}
-		this._updateUI();
+		this._updateUI('internal');
 	}
 	getData() {
 		const colorData = {
@@ -1201,7 +1226,7 @@ class SmartColorSelector {
 		this._currentSliderIndex = 0;
 
 		this._build();
-		this._updateUI();
+		this._updateUI('internal');
 
 		// event listeners is here!
 		if (this._slidersTypes[1].ref) { 	// RGB Slider exists
@@ -1346,17 +1371,7 @@ class SmartColorSelector {
 				hueBoxUI.satlumColor.setAttribute('fill', cr.toHexString());
 
 				cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
-				if (this._strokeColor.active) {
-					this._strokeColor.color = cr.toHexString();
-					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
-					this._actStrokeNoColor.setAttribute('display', 'none');
-					this._strokeColor.isnone = 0;
-				} else {
-					this._fillColor.color = cr.toHexString();
-					this._actFillColor.setAttribute('fill', this._fillColor.color);
-					this._actFillNoColor.setAttribute('display', 'none');
-					this._fillColor.isnone = 0;
-				}
+				this._updateUI(cr);
 			});
 
 			// HSL slider hue was clicked
@@ -1372,17 +1387,7 @@ class SmartColorSelector {
 				hueBoxUI.satlumColor.setAttribute('fill', cr.toHexString());
 
 				cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
-				if (this._strokeColor.active) {
-					this._strokeColor.color = cr.toHexString();
-					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
-					this._actStrokeNoColor.setAttribute('display', 'none');
-					this._strokeColor.isnone = 0;
-				} else {
-					this._fillColor.color = cr.toHexString();
-					this._actFillColor.setAttribute('fill', this._fillColor.color);
-					this._actFillNoColor.setAttribute('display', 'none');
-					this._fillColor.isnone = 0;
-				}
+				this._updateUI(cr);
 				// console.log(`Click on hew image at x = ${pt.x}, y = ${pt.y}, selected hue = ${this.selHue}`);
 			});
 
@@ -1397,17 +1402,7 @@ class SmartColorSelector {
 				this.selLum = (evt.detail.y - 45) / h; // * 100;
 				this.selSat = evt.detail.x / w; // * 100;
 				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
-				if (this._strokeColor.active) {
-					this._strokeColor.color = cr.toHexString();
-					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
-					this._actStrokeNoColor.setAttribute('display', 'none');
-					this._strokeColor.isnone = 0;
-				} else {
-					this._fillColor.color = cr.toHexString();
-					this._actFillColor.setAttribute('fill', this._fillColor.color);
-					this._actFillNoColor.setAttribute('display', 'none');
-					this._fillColor.isnone = 0;
-				}
+				this._updateUI(cr);
 			});
 
 			// HSL slider saturation + lightness was clicked
@@ -1422,17 +1417,7 @@ class SmartColorSelector {
 				this.selLum = (pt.y - 45) / h;
 				this.selSat = pt.x / w;
 				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
-				if (this._strokeColor.active) {
-					this._strokeColor.color = cr.toHexString();
-					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
-					this._actStrokeNoColor.setAttribute('display', 'none');
-					this._strokeColor.isnone = 0;
-				} else {
-					this._fillColor.color = cr.toHexString();
-					this._actFillColor.setAttribute('fill', this._fillColor.color);
-					this._actFillNoColor.setAttribute('display', 'none');
-					this._fillColor.isnone = 0;
-				}
+				this._updateUI(cr);
 			});
 		}
 
@@ -1446,14 +1431,16 @@ class SmartColorSelector {
 			this._strokeColor.active = 1;
 			this._fillColor.active = 0;
 			this._sfG.insertBefore(this._btnSelFill, this._btnSelStroke);
-			this._updateSliders('stroke');
+			// this._updateSliders('stroke');
+			this._updateUI();
 		});
 		// set 'fill as active' was pressed
 		this._btnSelFill.addEventListener('click', (evt) => {
 			this._strokeColor.active = 0;
 			this._fillColor.active = 1;
 			this._sfG.insertBefore(this._btnSelStroke, this._btnSelFill);
-			this._updateSliders('fill');
+			// this._updateSliders('fill');
+			this._updateUI();
 		});
 
 		// set active to 'none' color was pressed
@@ -1485,7 +1472,8 @@ class SmartColorSelector {
 					this._fillColor.isnone = 0;
 				}
 			}
-			this._updateSliders();
+			// this._updateSliders();
+			this._updateUI();
 		});
 
 		// Switch color between stroke and fill was pressed
@@ -1506,7 +1494,8 @@ class SmartColorSelector {
 			this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
 			this._actFillNoColor.setAttribute('display', this._fillColor.isnone ? 'inherit' : 'none');
 			this._actStrokeNoColor.setAttribute('display', this._strokeColor.isnone ? 'inherit' : 'none');
-			this._updateSliders();
+			// this._updateSliders();
+			this._updateUI();
 		});
 
 		// Drop color button was precced
@@ -1530,7 +1519,8 @@ class SmartColorSelector {
 				this._fillColor.color = this._drop.color;
 				this._actFillColor.setAttribute('fill', this._fillColor.color);
 			}
-			this._updateSliders();
+			// this._updateSliders();
+			this._updateUI();
 		});
     }
 
