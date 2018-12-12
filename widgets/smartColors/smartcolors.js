@@ -316,6 +316,8 @@ class SmartColorSelector {
 	}
 
 	_build() {
+		let ctrls = null; // alias
+
 		SmartColorSelectors.convertNumericProps(this._o);
 		if (!this._body) {
 			const fontFamily = 'Arial, DIN Condensed, Noteworthy, sans-serif';
@@ -517,12 +519,20 @@ class SmartColorSelector {
 				transform: `translate(${gap}, 60)`
 			}, this._bodyG, this._svgdoc);
 			const hb = this._slidersTypes[0].ref;	// alias
-			// this._slidersTypes[0].ref.ctrls = {};
+			this._slidersTypes[0].ctrls = {
+				hueSlider: null,
+				hueDrag: null,
+				satlumColor: null
+				satDrag: null,
+				hueCtrl: null,
+				slCtrl: null
+			};
+			ctrls = this._slidersTypes[0].ctrls; // alias on Hue Box UI controls
 
 			/**
 			 * HUE slider
 			 */
-			this._hueSlider = SmartWidgets.addElement('rect', {
+			ctrls.hueSlider = SmartWidgets.addElement('rect', {
 				id: 'hue-slider',
 				class: 'draggable clickable hue-slider',
 				x: 0,
@@ -534,12 +544,11 @@ class SmartColorSelector {
 				fill: 'url(#hueRange)',
 				style: 'cursor:pointer'
 			}, hb, this._svgdoc);
-			// hb.ctrls.hueSlider = this._hueSlider;
 
 			/**
 			 * 'sat + lightness' slider
 			 */
-			this._satlumColor = SmartWidgets.addElement('rect', {
+			ctrls.satlumColor = SmartWidgets.addElement('rect', {
 				id: 'sat-lum-slider',
 				class: 'draggable clickable sat-lum-slider',
 				x: 0,
@@ -575,7 +584,7 @@ class SmartColorSelector {
 			/**
 			 * 'selected hue' indicator
 			 */
-			this._hueCtrl = SmartWidgets.addElement('rect', {
+			ctrls.hueCtrl = SmartWidgets.addElement('rect', {
 				id: 'hue-ind',
 				class: 'hue-ind',
 				r: 5,
@@ -592,7 +601,7 @@ class SmartColorSelector {
 			/**
 			 * 'selected sat + lightness' indicator
 			 */
-			this._slCtrl = SmartWidgets.addElement('circle', {
+			ctrls.slCtrl = SmartWidgets.addElement('circle', {
 				id: 'sat-lum-ind',
 				class: 'sat-lum-ind',
 				r: 5,
@@ -614,7 +623,7 @@ class SmartColorSelector {
 				transform: `translate(${gap}, 60)`
 			}, this._bodyG, this._svgdoc);
 			const rgbSl = this._slidersTypes[1].ref;	// alias
-			rgbSl.ctrls = {
+			this._slidersTypes[1].ctrls = {
 				rSlider: null,
 				rSliderDrag: null,
 				rSliderInd: null,
@@ -631,6 +640,7 @@ class SmartColorSelector {
 				rgbBoxDrag: null,
 				rgbVal: null
 			};
+			ctrls = this._slidersTypes[1].ctrls;
 			// let grOffset = 16;
 			// let tOffset = grOffset + 1;
 			/**
@@ -643,20 +653,18 @@ class SmartColorSelector {
 				fill: '#ffffff',
 				'text-anchor': 'middle',
 				'dominant-baseline': 'middle',
-				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': 12,
 				'stroke-linejoin': 'round',
 				'pointer-events': 'none'
 			}, rgbSl, this._svgdoc);
-			rgbSl.ctrls.rSliderVal = SmartWidgets.addElement('text', {
+			ctrls.rSliderVal = SmartWidgets.addElement('text', {
 				text: '#00',
 				x: 175,
 				y: 5,
 				fill: '#ffffff',
 				'text-anchor': 'start',
 				'dominant-baseline': 'middle',
-				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': 12,
 				'stroke-linejoin': 'round',
@@ -666,9 +674,9 @@ class SmartColorSelector {
 			let gr = SmartWidgets.addElement('g', {
 				id: 'r-sliders-g',
 				class: 'r-sliders-g',
-				transform: `translate(14, 4)`
+				transform: 'translate(14, 4)'
 			}, rgbSl, this._svgdoc);
-			rgbSl.ctrls.rSlider = SmartWidgets.addElement('path', {
+			ctrls.rSlider = SmartWidgets.addElement('path', {
 				id: 'r-slider',
 				class: 'r-slider draggable clickable',
 				'stroke-width': 8,
@@ -677,7 +685,7 @@ class SmartColorSelector {
 				d: 'M0,0 h150',
 				style: 'cursor:pointer'
 			}, gr, this._svgdoc);
-			rgbSl.ctrls.rSliderInd = SmartWidgets.addElement('circle', {
+			ctrls.rSliderInd = SmartWidgets.addElement('circle', {
 				id: 'rSliderInd',
 				class: 'r-slider-ind',
 				cx: 0,
@@ -698,20 +706,18 @@ class SmartColorSelector {
 				fill: '#ffffff',
 				'text-anchor': 'middle',
 				'dominant-baseline': 'middle',
-				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': 12,
 				'stroke-linejoin': 'round',
 				'pointer-events': 'none'
 			}, rgbSl, this._svgdoc);
-			rgbSl.ctrls.gSliderVal = SmartWidgets.addElement('text', {
+			ctrls.gSliderVal = SmartWidgets.addElement('text', {
 				text: '#00',
 				x: 175,
 				y: 21,
 				fill: '#ffffff',
 				'text-anchor': 'start',
 				'dominant-baseline': 'middle',
-				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': 12,
 				'stroke-linejoin': 'round',
@@ -721,9 +727,9 @@ class SmartColorSelector {
 			gr = SmartWidgets.addElement('g', {
 				id: 'g-sliders-g',
 				class: 'g-sliders-g',
-				transform: `translate(14, 20)`
+				transform: 'translate(14, 20)'
 			}, rgbSl, this._svgdoc);
-			rgbSl.ctrls.gSlider = SmartWidgets.addElement('path', {
+			ctrls.gSlider = SmartWidgets.addElement('path', {
 				id: 'g-slider',
 				class: 'g-slider draggable clickable',
 				'stroke-width': 8,
@@ -732,7 +738,7 @@ class SmartColorSelector {
 				d: 'M0,0 h150',
 				style: 'cursor:pointer'
 			}, gr, this._svgdoc);
-			rgbSl.ctrls.gSliderInd = SmartWidgets.addElement('circle', {
+			ctrls.gSliderInd = SmartWidgets.addElement('circle', {
 				id: 'g-slider-ind',
 				class: 'g-slider-ind',
 				cx: 0,
@@ -753,20 +759,18 @@ class SmartColorSelector {
 				fill: '#ffffff',
 				'text-anchor': 'middle',
 				'dominant-baseline': 'middle',
-				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': 12,
 				'stroke-linejoin': 'round',
 				'pointer-events': 'none'
 			}, rgbSl, this._svgdoc);
-			rgbSl.ctrls.bSliderVal = SmartWidgets.addElement('text', {
+			ctrls.bSliderVal = SmartWidgets.addElement('text', {
 				text: '#00',
 				x: 175,
 				y: 37,
 				fill: '#ffffff',
 				'text-anchor': 'start',
 				'dominant-baseline': 'middle',
-				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': 12,
 				'stroke-linejoin': 'round',
@@ -776,9 +780,9 @@ class SmartColorSelector {
 			gr = SmartWidgets.addElement('g', {
 				id: 'b-sliders-g',
 				class: 'b-sliders-g',
-				transform: `translate(14, 36)`
+				transform: 'translate(14, 36)'
 			}, rgbSl, this._svgdoc);
-			rgbSl.ctrls.bSlider = SmartWidgets.addElement('path', {
+			ctrls.bSlider = SmartWidgets.addElement('path', {
 				id: 'b-slider',
 				class: 'b-slider draggable clickable',
 				'stroke-width': 8,
@@ -787,7 +791,7 @@ class SmartColorSelector {
 				d: 'M0,0 h150',
 				style: 'cursor:pointer'
 			}, gr, this._svgdoc);
-			rgbSl.ctrls.bSliderInd = SmartWidgets.addElement('circle', {
+			ctrls.bSliderInd = SmartWidgets.addElement('circle', {
 				id: 'b-slider-ind',
 				class: 'b-slider-ind',
 				cx: 0,
@@ -808,20 +812,18 @@ class SmartColorSelector {
 				fill: '#ffffff',
 				'text-anchor': 'start',
 				'dominant-baseline': 'middle',
-				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': 12,
 				'stroke-linejoin': 'round',
 				'pointer-events': 'none'
 			}, rgbSl, this._svgdoc);
-			rgbSl.ctrls.rgbVal = SmartWidgets.addElement('text', {
+			ctrls.rgbVal = SmartWidgets.addElement('text', {
 				text: '#000000',
 				x: 148,
 				y: 53,
 				fill: '#ffffff',
 				'text-anchor': 'start',
 				'dominant-baseline': 'middle',
-				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': 12,
 				'stroke-linejoin': 'round',
@@ -831,9 +833,9 @@ class SmartColorSelector {
 			gr = SmartWidgets.addElement('g', {
 				id: 'rgb-box-g',
 				class: 'rgb-box-g',
-				transform: `translate(0, 60)`
+				transform: 'translate(0, 60)'
 			}, rgbSl, this._svgdoc);
-			rgbSl.ctrls.rgbBox = SmartWidgets.addElement('rect', {
+			ctrls.rgbBox = SmartWidgets.addElement('rect', {
 				id: 'rgb-box',
 				class: 'rgb-box draggable clickable',
 				x: 0,
@@ -942,6 +944,7 @@ class SmartColorSelector {
 		this._updateHueBoxes(what);
 	}
 	_updateHueBoxes(what) {
+		const ctrls = this._slidersTypes[0].ctrls;
 		this.selHue = 0;
 		this.selSat = 0;
 		this.selLum = 0;
@@ -966,16 +969,18 @@ class SmartColorSelector {
 		}
 		// update _hueSlider and _satlumColor here!
 		let crImage = w3color(`hsl(${this.selHue},${1},${0.5})`);
-		this._satlumColor.setAttribute('fill', crImage.toHexString());
-		let w = Number(this._hueSlider.getAttribute('width'));
-		let x = (w * this.selHue) / 360;
-		this._hueCtrl.setAttribute('transform', `translate(${x - 3}, 0)`);
+		ctrls.satlumColor.setAttribute('fill', crImage.toHexString());
 
-		w = Number(this._satlumColor.getAttribute('width'));
-		const h = Number(this._satlumColor.getAttribute('height'));
+		let w = Number(ctrls.hueSlider.getAttribute('width'));
+		let x = (w * this.selHue) / 360;
+
+		ctrls.hueCtrl.setAttribute('transform', `translate(${x - 3}, 0)`);
+
+		w = Number(ctrls.satlumColor.getAttribute('width'));
+		const h = Number(ctrls.satlumColor.getAttribute('height'));
 		x = (w * this.selSat);	// / 100;
 		const y = (h * this.selLum);
-		this._slCtrl.setAttribute('transform', `translate(${x}, ${y + 45})`);
+		ctrls.slCtrl.setAttribute('transform', `translate(${x}, ${y + 45})`);
 	}
 
 	/**
@@ -1127,12 +1132,12 @@ class SmartColorSelector {
 		};
 		// sliders array. references on sliders groups are filled inside _build() function!
 		this._slidersTypes = [
-			{ name:	'Hue Boxes', ref: null },
-			{ name:	'RGB Sliders', ref: null },
-			{ name:	'Complementary', ref: null },
-			{ name:	'Analogous', ref: null },
-			{ name:	'Triadic', ref: null },
-			{ name:	'HSL Wheel', ref: null }
+			{ name:	'Hue Boxes', ref: null, ctrls: {} },
+			{ name:	'RGB Sliders', ref: null, ctrls: {} },
+			{ name:	'HSL Wheel', ref: null, ctrls: {} },
+			{ name:	'Complementary', ref: null, ctrls: {} },
+			{ name:	'Analogous', ref: null, ctrls: {} },
+			{ name:	'Triadic', ref: null, ctrls: {} }
 		];
 		// set default slider to Hue Boxes
 		this._currentSliderIndex = 0;
@@ -1141,70 +1146,72 @@ class SmartColorSelector {
 		this._updateUI();
 
 		// event listeners is here!
-		if (this._slidersTypes[1].ref) { 	// RGB Box exists
-			const rgbSl = this._slidersTypes[1].ref;
+		if (this._slidersTypes[1].ref) { 	// RGB Slider exists
+			const rgbUI = this._slidersTypes[1].ctrls;
 			// r-slider
-			rgbSl.ctrls.rSliderDrag = new SmartDragElement(rgbSl.ctrls.rSlider, {containment: rgbSl.ctrls.rSlider});
-			rgbSl.ctrls.rSlider.addEventListener('onContinueDrag', (evt) => {
+			rgbUI.rSliderDrag = new SmartDragElement(rgbUI.rSlider, {containment: rgbUI.rSlider});
+			rgbUI.rSlider.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
-				rgbSl.ctrls.rSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
+				rgbUI.rSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
 			});
-			rgbSl.ctrls.rSlider.addEventListener('click', (evt) => {
+			rgbUI.rSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
 				const scroll = SmartWidgets.getScroll();
-				const pt = SmartWidgets.svgPoint(rgbSl.ctrls.rSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				rgbSl.ctrls.rSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
+				const pt = SmartWidgets.svgPoint(rgbUI.rSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				rgbUI.rSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
 			});
 			// g-slider
-			rgbSl.ctrls.gSliderDrag = new SmartDragElement(rgbSl.ctrls.gSlider, {containment: rgbSl.ctrls.gSlider});
-			rgbSl.ctrls.gSlider.addEventListener('onContinueDrag', (evt) => {
+			rgbUI.gSliderDrag = new SmartDragElement(rgbUI.gSlider, {containment: rgbUI.gSlider});
+			rgbUI.gSlider.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
-				rgbSl.ctrls.gSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
+				rgbUI.gSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
 			});
-			rgbSl.ctrls.gSlider.addEventListener('click', (evt) => {
+			rgbUI.gSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
 				const scroll = SmartWidgets.getScroll();
-				const pt = SmartWidgets.svgPoint(rgbSl.ctrls.gSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				rgbSl.ctrls.gSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
+				const pt = SmartWidgets.svgPoint(rgbUI.gSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				rgbUI.gSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
 			});
 			// b-slider
-			rgbSl.ctrls.bSliderDrag = new SmartDragElement(rgbSl.ctrls.bSlider, {containment: rgbSl.ctrls.bSlider});
-			rgbSl.ctrls.bSlider.addEventListener('onContinueDrag', (evt) => {
+			rgbUI.bSliderDrag = new SmartDragElement(rgbUI.bSlider, {containment: rgbUI.bSlider});
+			rgbUI.bSlider.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
-				rgbSl.ctrls.bSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
+				rgbUI.bSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
 			});
-			rgbSl.ctrls.bSlider.addEventListener('click', (evt) => {
+			rgbUI.bSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
 				const scroll = SmartWidgets.getScroll();
-				const pt = SmartWidgets.svgPoint(rgbSl.ctrls.bSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				rgbSl.ctrls.bSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
+				const pt = SmartWidgets.svgPoint(rgbUI.bSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				rgbUI.bSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
 			});
 
 		}
+		if (this._slidersTypes[0].ref) { 	// Hue Box exists
+			const hueBoxUI = this._slidersTypes[0].ctrls;
 
-		if (!this.hueDrag) {
-			this.hueDrag = new SmartDragElement(this._hueSlider, {containment: this._hueSlider});
-			this.satDrag = new SmartDragElement(this._satlumColor, {containment: this._satlumColor});
+			hueBoxUI.hueDrag = new SmartDragElement(hueBoxUI.hueSlider, {containment: hueBoxUI.hueSlider});
+			hueBoxUI.satDrag = new SmartDragElement(hueBoxUI.satlumColor, {containment: hueBoxUI.satlumColor});
 			// HSL slider hue is changed
-			this._hueSlider.addEventListener('onContinueDrag', (evt) => {
+			hueBoxUI.hueSlider.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
 
-				this._hueCtrl.setAttribute('transform', `translate(${evt.detail.x - 3}, 0)`);
-				const w = Number(this._hueSlider.getAttribute('width'));
+				hueBoxUI.hueCtrl.setAttribute('transform', `translate(${evt.detail.x - 3}, 0)`);
+				const w = Number(hueBoxUI.hueSlider.getAttribute('width'));
 				this.selHue = (evt.detail.x / w) * 360;
 
 				let cr = w3color(`hsl(${this.selHue},${1},${0.5})`);
-				this._satlumColor.setAttribute('fill', cr.toHexString());
+				hueBoxUI.satlumColor.setAttribute('fill', cr.toHexString());
+
 				cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
 				if (this._strokeColor.active) {
 					this._strokeColor.color = cr.toHexString();
@@ -1220,15 +1227,17 @@ class SmartColorSelector {
 			});
 
 			// HSL slider hue was clicked
-			this._hueSlider.addEventListener('click', (evt) => {
+			hueBoxUI.hueSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				const scroll = SmartWidgets.getScroll();
-				const pt = SmartWidgets.svgPoint(this._hueSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				this._hueCtrl.setAttribute('transform', `translate(${pt.x - 3}, 0)`);
+				const pt = SmartWidgets.svgPoint(hueBoxUI.hueSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				hueBoxUI.hueCtrl.setAttribute('transform', `translate(${pt.x - 3}, 0)`);
+
 				const w = Number(evt.target.getAttribute('width'));
 				this.selHue = (pt.x / w) * 360;
 				let cr = w3color(`hsl(${this.selHue},${1},${0.5})`);
-				this._satlumColor.setAttribute('fill', cr.toHexString());
+				hueBoxUI.satlumColor.setAttribute('fill', cr.toHexString());
+
 				cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
 				if (this._strokeColor.active) {
 					this._strokeColor.color = cr.toHexString();
@@ -1245,13 +1254,13 @@ class SmartColorSelector {
 			});
 
 			// HSL slider saturation + lightness is changed
-			this._satlumColor.addEventListener('onContinueDrag', (evt) => {
+			hueBoxUI.satlumColor.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
-				this._slCtrl.setAttribute('transform', `translate(${evt.detail.x}, ${evt.detail.y})`);
+				hueBoxUI.slCtrl.setAttribute('transform', `translate(${evt.detail.x}, ${evt.detail.y})`);
+
 				const w = Number(evt.target.getAttribute('width'));
 				const h = Number(evt.target.getAttribute('height'));
-
 				this.selLum = (evt.detail.y - 45) / h; // * 100;
 				this.selSat = evt.detail.x / w; // * 100;
 				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
@@ -1269,11 +1278,11 @@ class SmartColorSelector {
 			});
 
 			// HSL slider saturation + lightness was clicked
-			this._satlumColor.addEventListener('click', (evt) => {
+			hueBoxUI.satlumColor.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				const scroll = SmartWidgets.getScroll();
-				const pt = SmartWidgets.svgPoint(this._satlumColor, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				this._slCtrl.setAttribute('transform', `translate(${pt.x}, ${pt.y})`);
+				const pt = SmartWidgets.svgPoint(hueBoxUI.satlumColor, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				hueBoxUI.slCtrl.setAttribute('transform', `translate(${pt.x}, ${pt.y})`);
 				const w = Number(evt.target.getAttribute('width'));
 				const h = Number(evt.target.getAttribute('height'));
 
@@ -1294,6 +1303,7 @@ class SmartColorSelector {
 			});
 		}
 
+		// show popup menu was pressed
 		this._selectSliders.addEventListener('click', (evt) => {
 			this._ssMenuG.setAttribute('display', this._ssMenuG.getAttribute('display') === 'none' ? 'inherit' : 'none');
 		});
@@ -1345,7 +1355,7 @@ class SmartColorSelector {
 			this._updateSliders();
 		});
 
-		// Switch color wetween stroke and fill was pressed
+		// Switch color between stroke and fill was pressed
 		this._colorSwitch.addEventListener('click', (evt) => {
 			let tmp = this._fillColor.color;
 			this._fillColor.color = this._strokeColor.color;
