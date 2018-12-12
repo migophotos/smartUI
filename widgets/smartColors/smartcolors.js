@@ -926,6 +926,19 @@ class SmartColorSelector {
 				fill: '#ffffff',
 				'text-anchor': 'start',
 				'dominant-baseline': 'middle',
+				// 'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': fontSize,
+				'stroke-linejoin': 'round',
+				tabindex: 1
+			}, this._currentSliderG, this._svgdoc);
+			this._enterColorBuffer = SmartWidgets.addElement('text', {
+				text: '',
+				x: gap,
+				y: 28,
+				fill: '#ffffff',
+				'text-anchor': 'start',
+				'dominant-baseline': 'middle',
 				'pointer-events': 'none',
 				'font-family': fontFamily,
 				'font-size': fontSize,
@@ -1420,6 +1433,130 @@ class SmartColorSelector {
 				this._updateUI(cr);
 			});
 		}
+
+		this._enterColorBuffer.textContent = '';
+		this._currentSliderTitle.addEventListener('keypress', (evt) => {
+			switch (evt.key) {
+				case '#': // start hexadecimal color entering
+					if (this._enterColorBuffer.textContent.startsWith('r') ||
+						this._enterColorBuffer.textContent.startsWith('g') ||
+						this._enterColorBuffer.textContent.startsWith('b')) {
+							this._enterColorBuffer.textContent += '#'
+					} else {
+						this._enterColorBuffer.textContent = '#';
+						this._enterColorBuffer.setAttribute('fill', '#ffffff');
+					}
+					break;
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+				case '0':
+				case 'a':
+				case 'b':
+					if (evt.key == 'b' && this._enterColorBuffer.textContent === '') {
+						this._enterColorBuffer.textContent = 'b';
+						this._enterColorBuffer.setAttribute('fill', '#ffffff');
+						break;
+					}
+				case 'c':
+				case 'd':
+				case 'e':
+				case 'f':
+					if (this._enterColorBuffer.textContent.startsWith('#')) {
+						if (this._enterColorBuffer.textContent.length < 7) {
+							this._enterColorBuffer.textContent += evt.key;
+						}
+					} else if (this._enterColorBuffer.textContent.startsWith('r')) {
+						if (this._enterColorBuffer.textContent.length < 4) {
+							this._enterColorBuffer.textContent += evt.key;
+						}
+					} else if (this._enterColorBuffer.textContent.startsWith('g')) {
+						if (this._enterColorBuffer.textContent.length < 4) {
+							this._enterColorBuffer.textContent += evt.key;
+						}
+					} else if (this._enterColorBuffer.textContent.startsWith('b')) {
+						if (this._enterColorBuffer.textContent.length < 4) {
+							this._enterColorBuffer.textContent += evt.key;
+						}
+					} 
+					break;
+				case 'r':
+				case 'g':
+				case 'b':
+					this._enterColorBuffer.textContent = evt.key;
+					this._enterColorBuffer.setAttribute('fill', '#ffffff');					
+					break;
+				case 'Enter':
+					const rgbUI = this._slidersTypes[1].ctrls;
+					const rV = Number(rgbUI.rSliderVal.textContent);
+					const gV = Number(rgbUI.gSliderVal.textContent);
+					const bV = Number(rgbUI.bSliderVal.textContent);
+
+					if (this._enterColorBuffer.textContent.startsWith('#')) {
+						// try to convert it to color...
+						const cr = w3color(this._enterColorBuffer.textContent);
+						if (cr.valid) {
+							this._updateUI(cr);
+							this._enterColorBuffer.textContent = '';
+							this._enterColorBuffer.setAttribute('fill', '#ffffff');
+						} else {
+							this._enterColorBuffer.setAttribute('fill', '#ff0000');
+						}
+					} else if (this._enterColorBuffer.textContent.startsWith('r')) {
+						let value = this._enterColorBuffer.textContent.replace('r', '');
+						if (value.startsWith('#')) {
+							value = value.replace('#', '');
+							value = parseInt(value, 16);
+						}
+						let cr = w3color(`rgb(${value},${gV},${bV})`);
+						if (cr.valid) {
+							this._updateUI(cr);
+							this._enterColorBuffer.textContent = '';
+							this._enterColorBuffer.setAttribute('fill', '#ffffff');
+						} else {
+							this._enterColorBuffer.setAttribute('fill', '#ff0000');
+						}
+					} else if (this._enterColorBuffer.textContent.startsWith('g')) {
+						let value = this._enterColorBuffer.textContent.replace('g', '');
+						if (value.startsWith('#')) {
+							value = value.replace('#', '');
+							value = parseInt(value, 16);
+						}
+						let cr = w3color(`rgb(${rV},${value},${bV})`);
+						if (cr.valid) {
+							this._updateUI(cr);
+							this._enterColorBuffer.textContent = '';
+							this._enterColorBuffer.setAttribute('fill', '#ffffff');
+						} else {
+							this._enterColorBuffer.setAttribute('fill', '#ff0000');
+						}
+					} else if (this._enterColorBuffer.textContent.startsWith('b')) {
+						let value = this._enterColorBuffer.textContent.replace('b', '');
+						if (value.startsWith('#')) {
+							value = value.replace('#', '');
+							value = parseInt(value, 16);
+						}
+						let cr = w3color(`rgb(${rV},${gV}),${value}`);
+						if (cr.valid) {
+							this._updateUI(cr);
+							this._enterColorBuffer.textContent = '';
+							this._enterColorBuffer.setAttribute('fill', '#ffffff');
+						} else {
+							this._enterColorBuffer.setAttribute('fill', '#ff0000');
+						}
+					} else {
+						this._enterColorBuffer.textContent = '-error-';
+					}
+					break;
+			}
+			evt.preventDefault();
+		});
 
 		// show popup menu was pressed
 		this._selectSliders.addEventListener('click', (evt) => {
