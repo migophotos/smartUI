@@ -882,7 +882,7 @@ class SmartColorSelector {
 				y: 0,
 				width: 200,
 				height: 25,
-				'stroke-width': 0.6,
+				'stroke-width': 0,
 				stroke: '#000000',
 				fill: 'url(#hueRange)',
 				style: 'cursor:pointer'
@@ -893,8 +893,7 @@ class SmartColorSelector {
 				y: 0,
 				width: 200,
 				height: 25,
-				'stroke-width': 0.6,
-				stroke: '#000000',
+				// 'stroke-width': 0,
 				fill: 'url(#lumRange)',
 				'pointer-events': 'none'
 			}, gr, this._svgdoc);
@@ -1297,7 +1296,37 @@ class SmartColorSelector {
 				rgbUI.rgbVal.textContent = cr.toHexString();
 				this._updateUI(cr);
 			});
+			rgbUI.rgbBoxDrag = new SmartDragElement(rgbUI.rgbBox, {containment: rgbUI.rgbBox});
+			rgbUI.rgbBox.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
 
+				const w = Number(rgbUI.rgbBox.getAttribute('width'));
+				const hV = +(((evt.detail.x / w) * 360).toFixed());
+				const h = Number(rgbUI.rgbBox.getAttribute('height'));
+				const lV = +((evt.detail.y / h).toFixed(2));
+				// console.log(`move y: ${evt.detail.y} = ${lV}`);
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				rgbUI.rgbVal.textContent = cr.toHexString();
+				this._updateUI(cr);
+			});
+			rgbUI.rgbBox.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(rgbUI.rgbBox, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+
+				const w = Number(rgbUI.rgbBox.getAttribute('width'));
+				const hV = +(((pt.x / w) * 360).toFixed());
+				const h = Number(rgbUI.rgbBox.getAttribute('height'));
+				const lV = +((pt.y / h).toFixed(2));
+				// console.log(`click y: ${pt.y} = ${lV}`);
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				rgbUI.rgbVal.textContent = cr.toHexString();
+				this._updateUI(cr);
+			});
 		}
 		if (this._slidersTypes[0].ref) { 	// Hue Box exists
 			const hueBoxUI = this._slidersTypes[0].ctrls;
