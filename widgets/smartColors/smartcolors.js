@@ -1435,64 +1435,97 @@ class SmartColorSelector {
 		}
 
 		this._enterColorBuffer.textContent = '';
-		this._currentSliderTitle.addEventListener('keypress', (evt) => {
-			switch (evt.key) {
-				case '#': // start hexadecimal color entering
-					if (this._enterColorBuffer.textContent.startsWith('r') ||
-						this._enterColorBuffer.textContent.startsWith('g') ||
-						this._enterColorBuffer.textContent.startsWith('b')) {
-							this._enterColorBuffer.textContent += '#'
-					} else {
-						this._enterColorBuffer.textContent = '#';
+		// this._currentSliderTitle.addEventListener('keydown', (evt) => {
+		// 	switch (evt.keyCode) {
+		// 		case 27:	// 'Escape'
+		// 			this._enterColorBuffer.textContent = '#';
+		// 			this._enterColorBuffer.setAttribute('fill', '#ffffff');
+		// 			break;
+		// 		case 8:		// 'Backspace'
+		// 			if (this._enterColorBuffer.textContent.length) {
+		// 				const str = this._enterColorBuffer.textContent.slice(0, str.length - 1);
+		// 				this._enterColorBuffer.textContent = str;
+		// 				this._enterColorBuffer.setAttribute('fill', '#ffffff');
+		// 			}
+		// 			break;
+		// 		default:
+		// 			console.log(`Key: ${evt.key}, KeyCode: ${evt.keyCode}`);
+		// 			break;
+		// 	}
+		// });
+		this._currentSliderTitle.addEventListener('keydown', (evt) => {
+			// console.log(`Key: ${evt.key}, KeyCode: ${evt.keyCode}`);
+			switch (evt.keyCode) {
+				case 27:	// 'Escape'
+					this._enterColorBuffer.textContent = '';
+					this._enterColorBuffer.setAttribute('fill', '#ffffff');
+					break;
+				case 8:		// 'Backspace'
+					if (this._enterColorBuffer.textContent.length) {
+						const len = this._enterColorBuffer.textContent.length;
+						const str = this._enterColorBuffer.textContent.slice(0, len - 1);
+						this._enterColorBuffer.textContent = str;
 						this._enterColorBuffer.setAttribute('fill', '#ffffff');
 					}
 					break;
-				case '1':
-				case '2':
-				case '3':
-				case '4':
-				case '5':
-				case '6':
-				case '7':
-				case '8':
-				case '9':
-				case '0':
-				case 'a':
-				case 'b':
-					if (evt.key == 'b' && this._enterColorBuffer.textContent === '') {
+
+				case 49:	// '1':
+				case 50:	// '2':
+				case 51:	// '3':
+					if (evt.shiftKey && evt.keyCode == 51) {	// key == '#'
+						if (this._enterColorBuffer.textContent.startsWith('r') ||
+							this._enterColorBuffer.textContent.startsWith('g') ||
+							this._enterColorBuffer.textContent.startsWith('b')) {
+								this._enterColorBuffer.textContent += '#'
+						} else {
+							this._enterColorBuffer.textContent = '#';
+							this._enterColorBuffer.setAttribute('fill', '#ffffff');
+						}
+						break;
+					}
+				case 52:	// '4':
+				case 53:	// '5':
+				case 54:	// '6':
+				case 55:	// '7':
+				case 56:	// '8':
+				case 57:	// '9':
+				case 48:	// '0':
+				case 65:	// 'a':
+				case 66:	// 'b':
+					if (evt.keyCode == 66 && this._enterColorBuffer.textContent === '') {
 						this._enterColorBuffer.textContent = 'b';
 						this._enterColorBuffer.setAttribute('fill', '#ffffff');
 						break;
 					}
-				case 'c':
-				case 'd':
-				case 'e':
-				case 'f':
+				case 67:	// 'c':
+				case 68:	// 'd':
+				case 69:	// 'e':
+				case 70:	// 'f':
 					if (this._enterColorBuffer.textContent.startsWith('#')) {
 						if (this._enterColorBuffer.textContent.length < 7) {
-							this._enterColorBuffer.textContent += evt.key;
+							this._enterColorBuffer.textContent += String.fromCharCode(evt.keyCode).toLowerCase();
 						}
 					} else if (this._enterColorBuffer.textContent.startsWith('r')) {
 						if (this._enterColorBuffer.textContent.length < 4) {
-							this._enterColorBuffer.textContent += evt.key;
+							this._enterColorBuffer.textContent += String.fromCharCode(evt.keyCode).toLowerCase();
 						}
 					} else if (this._enterColorBuffer.textContent.startsWith('g')) {
 						if (this._enterColorBuffer.textContent.length < 4) {
-							this._enterColorBuffer.textContent += evt.key;
+							this._enterColorBuffer.textContent += String.fromCharCode(evt.keyCode).toLowerCase();
 						}
 					} else if (this._enterColorBuffer.textContent.startsWith('b')) {
 						if (this._enterColorBuffer.textContent.length < 4) {
-							this._enterColorBuffer.textContent += evt.key;
+							this._enterColorBuffer.textContent += String.fromCharCode(evt.keyCode).toLowerCase();
 						}
 					} 
 					break;
-				case 'r':
-				case 'g':
-				case 'b':
-					this._enterColorBuffer.textContent = evt.key;
+				case 82:	// 'r':
+				case 71:	// 'g':
+				case 66:	// 'b':
+					this._enterColorBuffer.textContent = String.fromCharCode(evt.keyCode).toLowerCase();
 					this._enterColorBuffer.setAttribute('fill', '#ffffff');					
 					break;
-				case 'Enter':
+				case 13:	// 'Enter':
 					const rgbUI = this._slidersTypes[1].ctrls;
 					const rV = Number(rgbUI.rSliderVal.textContent);
 					const gV = Number(rgbUI.gSliderVal.textContent);
@@ -1553,6 +1586,8 @@ class SmartColorSelector {
 					} else {
 						this._enterColorBuffer.textContent = '-error-';
 					}
+					break;
+				default:
 					break;
 			}
 			evt.preventDefault();
