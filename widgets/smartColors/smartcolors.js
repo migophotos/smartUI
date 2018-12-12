@@ -235,7 +235,13 @@ class SmartColorSelector {
 				<stop offset="0%" stop-color="#ffffff"/>
 				<stop offset="100%" stop-color="rgba(204, 154, 129, 0)"/>
 			</linearGradient>`;
-			this._defs.innerHTML = window.SmartColorSelectors.defs + hueRangeDef + lumRangeDef + satRangeDef;
+			const rgbRangeDef =
+			`<linearGradient id="rgbRange" x1="0%" y1="0%" x2="100%" y2="0%">
+				<stop offset="0%" stop-color="#000000"/>
+				<stop offset="100%" stop-color="rgba(204, 154, 129, 0)"/>
+			</linearGradient>`;
+
+			this._defs.innerHTML = window.SmartColorSelectors.defs + hueRangeDef + lumRangeDef + satRangeDef + rgbRangeDef;
 
 		}
 
@@ -522,7 +528,7 @@ class SmartColorSelector {
 			this._slidersTypes[0].ctrls = {
 				hueSlider: null,
 				hueDrag: null,
-				satlumColor: null
+				satlumColor: null,
 				satDrag: null,
 				hueCtrl: null,
 				slCtrl: null
@@ -681,9 +687,20 @@ class SmartColorSelector {
 				class: 'r-slider draggable clickable',
 				'stroke-width': 8,
 				'stroke-linecap': 'round',
-				stroke: '#000000',
+				stroke: '#ff0000',
 				d: 'M0,0 h150',
 				style: 'cursor:pointer'
+			}, gr, this._svgdoc);
+			SmartWidgets.addElement('rect', {
+				class: 'r-slider',
+				x: -4,
+				y: -4,
+				width: 154,
+				height: 8,
+				'stroke-width': 0,
+				stroke: 'none',
+				fill: 'url(#rgbRange)',
+				'pointer-events': 'none'
 			}, gr, this._svgdoc);
 			ctrls.rSliderInd = SmartWidgets.addElement('circle', {
 				id: 'rSliderInd',
@@ -734,10 +751,22 @@ class SmartColorSelector {
 				class: 'g-slider draggable clickable',
 				'stroke-width': 8,
 				'stroke-linecap': 'round',
-				stroke: '#000000',
+				stroke: '#00ff00',
 				d: 'M0,0 h150',
 				style: 'cursor:pointer'
 			}, gr, this._svgdoc);
+			SmartWidgets.addElement('rect', {
+				class: 'g-slider',
+				x: -4,
+				y: -4,
+				width: 154,
+				height: 8,
+				'stroke-width': 0,
+				stroke: 'none',
+				fill: 'url(#rgbRange)',
+				'pointer-events': 'none'
+			}, gr, this._svgdoc);
+
 			ctrls.gSliderInd = SmartWidgets.addElement('circle', {
 				id: 'g-slider-ind',
 				class: 'g-slider-ind',
@@ -787,9 +816,20 @@ class SmartColorSelector {
 				class: 'b-slider draggable clickable',
 				'stroke-width': 8,
 				'stroke-linecap': 'round',
-				stroke: '#000000',
+				stroke: '#0000ff',
 				d: 'M0,0 h150',
 				style: 'cursor:pointer'
+			}, gr, this._svgdoc);
+			SmartWidgets.addElement('rect', {
+				class: 'b-slider',
+				x: -4,
+				y: -4,
+				width: 154,
+				height: 8,
+				'stroke-width': 0,
+				stroke: 'none',
+				fill: 'url(#rgbRange)',
+				'pointer-events': 'none'
 			}, gr, this._svgdoc);
 			ctrls.bSliderInd = SmartWidgets.addElement('circle', {
 				id: 'b-slider-ind',
@@ -941,32 +981,37 @@ class SmartColorSelector {
 		}
 	}
 	_updateSliders(what) {
-		this._updateHueBoxes(what);
-	}
-	_updateHueBoxes(what) {
-		const ctrls = this._slidersTypes[0].ctrls;
-		this.selHue = 0;
-		this.selSat = 0;
-		this.selLum = 0;
-
+		let cr = w3color('#000000');
 		what = what || (this._strokeColor.active ? 'stroke' : 'fill');
-
 		if (what === 'stroke') {
-			if (!this._strokeColor.isnone) {
-				const cr = w3color(this._strokeColor.color);
-				this.selHue = cr.hue;
-				this.selSat = cr.sat;
-				this.selLum = cr.lightness;
-			}
+			cr = w3color(this._strokeColor.isnone ? '#000000' : this._strokeColor.color);
 		}
 		if (what === 'fill') {
-			if (!this._fillColor.isnone) {
-				const cr = w3color(this._fillColor.color);
-				this.selHue = cr.hue;
-				this.selSat = cr.sat;
-				this.selLum = cr.lightness;
-			}
+			cr = w3color(this._strokeColor.isnone ? '#000000' : this._fillColor.color);
 		}
+		this.selHue = cr.hue;
+		this.selSat = cr.sat;
+		this.selLum = cr.lightness;
+
+		this._updateHueBoxes(cr);
+		this._updateRGBSliders(cr);
+	}
+	_updateRGBSliders(cr) {
+		const ctrls = this._slidersTypes[1].ctrls;
+		ctrls.rgbVal.textContent = cr.toHexString();
+		ctrls.rSliderVal.textContent = cr.red.toFixed();
+		ctrls.gSliderVal.textContent = cr.green.toFixed();
+		ctrls.bSliderVal.textContent = cr.blue.toFixed();
+		let w = Number(ctrls.rSlider.getTotalLength());
+		let x = (w * cr.red) / 255;
+		ctrls.rSliderInd.setAttribute('transform', `translate(${x}, 0)`);
+		x = (w * cr.green) / 255;
+		ctrls.gSliderInd.setAttribute('transform', `translate(${x}, 0)`);
+		x = (w * cr.blue) / 255;
+		ctrls.bSliderInd.setAttribute('transform', `translate(${x}, 0)`);
+	}
+	_updateHueBoxes(cr) {
+		const ctrls = this._slidersTypes[0].ctrls;
 		// update _hueSlider and _satlumColor here!
 		let crImage = w3color(`hsl(${this.selHue},${1},${0.5})`);
 		ctrls.satlumColor.setAttribute('fill', crImage.toHexString());
@@ -987,7 +1032,21 @@ class SmartColorSelector {
 	 * update user interface with fillColor and strokeColor data
 	 *
 	 */
-	_updateUI() {
+	_updateUI(cr = null) {
+		if (cr) {
+			if (this._strokeColor.active) {
+				this._strokeColor.color = cr.toHexString();
+				this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
+				this._actStrokeNoColor.setAttribute('display', 'none');
+				this._strokeColor.isnone = 0;
+			} else {
+				this._fillColor.color = cr.toHexString();
+				this._actFillColor.setAttribute('fill', this._fillColor.color);
+				this._actFillNoColor.setAttribute('display', 'none');
+				this._fillColor.isnone = 0;
+			}
+		}
+
 		if (this._strokeColor.active) {
 			this._sfG.insertBefore(this._btnSelFill, this._btnSelStroke);
 		} else {
@@ -1154,7 +1213,13 @@ class SmartColorSelector {
 				evt.preventDefault();
 				evt.stopPropagation();
 				rgbUI.rSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
-
+				const w = Number(rgbUI.rSlider.getTotalLength());
+				const rV = +(((evt.detail.x / w) * 255).toFixed());
+				const gV = Number(rgbUI.gSliderVal.textContent);
+				const bV = Number(rgbUI.bSliderVal.textContent);
+				let cr = w3color(`rgb(${(rV < 0 ? 0 : rV)},${gV},${bV})`);
+				rgbUI.rgbVal.textContent = cr.toHexString();
+				this._updateUI(cr);
 			});
 			rgbUI.rSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -1162,6 +1227,14 @@ class SmartColorSelector {
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(rgbUI.rSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				rgbUI.rSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
+
+				const w = Number(rgbUI.rSlider.getTotalLength());
+				const rV = +(((pt.x / w) * 255).toFixed());
+				const gV = Number(rgbUI.gSliderVal.textContent);
+				const bV = Number(rgbUI.bSliderVal.textContent);
+				let cr = w3color(`rgb(${(rV < 0 ? 0 : rV)},${gV},${bV})`);
+				rgbUI.rgbVal.textContent = cr.toHexString();
+				this._updateUI(cr);
 			});
 			// g-slider
 			rgbUI.gSliderDrag = new SmartDragElement(rgbUI.gSlider, {containment: rgbUI.gSlider});
@@ -1170,6 +1243,13 @@ class SmartColorSelector {
 				evt.stopPropagation();
 				rgbUI.gSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
+				const w = Number(rgbUI.rSlider.getTotalLength());
+				const gV = +(((evt.detail.x / w) * 255).toFixed());
+				const rV = Number(rgbUI.rSliderVal.textContent);
+				const bV = Number(rgbUI.bSliderVal.textContent);
+				let cr = w3color(`rgb(${rV},${(gV < 0 ? 0 : gV)},${bV})`);
+				rgbUI.rgbVal.textContent = cr.toHexString();
+				this._updateUI(cr);
 			});
 			rgbUI.gSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -1177,6 +1257,15 @@ class SmartColorSelector {
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(rgbUI.gSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				rgbUI.gSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
+
+				const w = Number(rgbUI.gSlider.getTotalLength());
+				const gV = +(((pt.x / w) * 255).toFixed());
+				const rV = Number(rgbUI.rSliderVal.textContent);
+				const bV = Number(rgbUI.bSliderVal.textContent);
+				let cr = w3color(`rgb(${rV},${(gV < 0 ? 0 : gV)},${bV})`);
+				rgbUI.rgbVal.textContent = cr.toHexString();
+				this._updateUI(cr);
+
 			});
 			// b-slider
 			rgbUI.bSliderDrag = new SmartDragElement(rgbUI.bSlider, {containment: rgbUI.bSlider});
@@ -1185,6 +1274,13 @@ class SmartColorSelector {
 				evt.stopPropagation();
 				rgbUI.bSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
+				const w = Number(rgbUI.bSlider.getTotalLength());
+				const bV = +(((evt.detail.x / w) * 255).toFixed());
+				const rV = Number(rgbUI.rSliderVal.textContent);
+				const gV = Number(rgbUI.gSliderVal.textContent);
+				let cr = w3color(`rgb(${rV},${gV},${(bV < 0 ? 0 : bV)})`);
+				rgbUI.rgbVal.textContent = cr.toHexString();
+				this._updateUI(cr);
 			});
 			rgbUI.bSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -1192,6 +1288,14 @@ class SmartColorSelector {
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(rgbUI.bSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				rgbUI.bSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
+
+				const w = Number(rgbUI.bSlider.getTotalLength());
+				const bV = +(((pt.x / w) * 255).toFixed());
+				const rV = Number(rgbUI.rSliderVal.textContent);
+				const gV = Number(rgbUI.gSliderVal.textContent);
+				let cr = w3color(`rgb(${rV},${gV},${(bV < 0 ? 0 : bV)})`);
+				rgbUI.rgbVal.textContent = cr.toHexString();
+				this._updateUI(cr);
 			});
 
 		}
