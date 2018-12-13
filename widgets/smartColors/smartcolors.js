@@ -1473,16 +1473,19 @@ class SmartColorSelector {
 				case 50:	// '2':
 				case 51:	// '3':
 					if (evt.shiftKey && evt.keyCode == 51) {	// key == '#'
-						if (this._enterColorBuffer.textContent.startsWith('r') ||
+						if ((this._enterColorBuffer.textContent.startsWith('r') ||
 							this._enterColorBuffer.textContent.startsWith('g') ||
-							this._enterColorBuffer.textContent.startsWith('b')) {
-								this._enterColorBuffer.textContent += '#'
+							this._enterColorBuffer.textContent.startsWith('b')) &&
+							this._enterColorBuffer.textContent.charAt(1) != '#' &&
+							!this._enterColorBuffer.textContent.includes('#')) {
+								this._enterColorBuffer.textContent += '#';
 						} else {
 							this._enterColorBuffer.textContent = '#';
 							this._enterColorBuffer.setAttribute('fill', '#ffffff');
 						}
 						break;
 					}
+				// eslint-disable-next-line no-fallthrough
 				case 52:	// '4':
 				case 53:	// '5':
 				case 54:	// '6':
@@ -1497,6 +1500,7 @@ class SmartColorSelector {
 						this._enterColorBuffer.setAttribute('fill', '#ffffff');
 						break;
 					}
+				// eslint-disable-next-line no-fallthrough
 				case 67:	// 'c':
 				case 68:	// 'd':
 				case 69:	// 'e':
@@ -1517,15 +1521,16 @@ class SmartColorSelector {
 						if (this._enterColorBuffer.textContent.length < 4) {
 							this._enterColorBuffer.textContent += String.fromCharCode(evt.keyCode).toLowerCase();
 						}
-					} 
+					}
 					break;
 				case 82:	// 'r':
 				case 71:	// 'g':
-				case 66:	// 'b':
-					this._enterColorBuffer.textContent = String.fromCharCode(evt.keyCode).toLowerCase();
-					this._enterColorBuffer.setAttribute('fill', '#ffffff');					
+					if (this._enterColorBuffer.textContent === '') {
+						this._enterColorBuffer.textContent = String.fromCharCode(evt.keyCode).toLowerCase();
+						this._enterColorBuffer.setAttribute('fill', '#ffffff');
+					}
 					break;
-				case 13:	// 'Enter':
+				case 13: {	// 'Enter':
 					const rgbUI = this._slidersTypes[1].ctrls;
 					const rV = Number(rgbUI.rSliderVal.textContent);
 					const gV = Number(rgbUI.gSliderVal.textContent);
@@ -1587,6 +1592,7 @@ class SmartColorSelector {
 						this._enterColorBuffer.textContent = '-error-';
 					}
 					break;
+				}
 				default:
 					break;
 			}
