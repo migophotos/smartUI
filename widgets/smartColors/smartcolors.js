@@ -913,7 +913,11 @@ class SmartColorSelector {
 			 */
 			this._slTypes.set('mono-scheme', {
 				name: 'Monochromatic',
-				ctrls: {},
+				ctrls: {
+					schemeG: null,
+					rgbVal: null,
+					rgbBox: null
+				},
 				ref: SmartWidgets.addElement('g', {
 					id: 'mono-scheme',
 					class: 'mono-scheme',
@@ -924,7 +928,77 @@ class SmartColorSelector {
 			const monoG = monoUI.ref;
 			ctrls = monoUI.ctrls;
 			if (monoG) {
-				//
+				ctrls.schemeG = SmartWidgets.addElement('g', {
+					class: 'mono-scheme-g',
+					style: 'cursor:pointer;',
+					transform: 'translate(0, 0)'
+				}, monoG, this._svgdoc);
+				for (let i = 0; i < 5; i++) {
+					SmartWidgets.addElement('rect', {
+						id: `mono-scheme-${i}`,
+						class: 'mono-scheme',
+						x: i * 40,
+						y: 0,
+						width: 40,
+						height: 30,
+						stroke: 'none',
+						fill: `#${i * 4}${i * 4}${i * 4}`	// will be updated later
+					}, ctrls.schemeG, this._svgdoc);
+				}
+				/**
+				 * RGB Box
+				 */
+				SmartWidgets.addElement('text', {
+					text: 'RGB',
+					x: -2,
+					y: 43,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, monoG, this._svgdoc);
+				ctrls.rgbVal = SmartWidgets.addElement('text', {
+					text: '#000000',
+					x: 148,
+					y: 43,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, monoG, this._svgdoc);
+
+				const gr = SmartWidgets.addElement('g', {
+					class: 'rgb-box-g',
+					transform: 'translate(0, 50)'
+				}, monoG, this._svgdoc);
+				ctrls.rgbBox = SmartWidgets.addElement('rect', {
+					class: 'rgb-box draggable clickable',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 35,
+					'stroke-width': 0,
+					stroke: '#000000',
+					fill: 'url(#hueRange)',
+					style: 'cursor:pointer'
+				}, gr, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'rgb-box-lum',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 35,
+					// 'stroke-width': 0,
+					fill: 'url(#lumRange)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				monoG.setAttribute('display', 'none');
 			}
 
 			/**
@@ -932,7 +1006,11 @@ class SmartColorSelector {
 			 */
 			this._slTypes.set('comp-scheme', {
 				name: 'Complementary',
-				ctrls: {},
+				ctrls: {
+					schemeG: null,
+					rgbVal: null,
+					rgbBox: null
+				},
 				ref: SmartWidgets.addElement('g', {
 					id: 'comp-scheme',
 					class: 'comp-scheme',
@@ -943,7 +1021,78 @@ class SmartColorSelector {
 			const compG = compUI.ref;
 			ctrls = compUI.ctrls;
 			if (compG) {
-				//
+				ctrls.schemeG = SmartWidgets.addElement('g', {
+					class: 'comp-scheme-g',
+					style: 'cursor:pointer;',
+					transform: 'translate(0, 0)'
+				}, compG, this._svgdoc);
+				for (let i = 0; i < 5; i++) {
+					SmartWidgets.addElement('rect', {
+						id: `comp-scheme-${i}`,
+						class: 'comp-scheme',
+						x: i * 40,
+						y: 0,
+						width: 40,
+						height: 30,
+						stroke: 'none',
+						fill: `#${i * 4}${i * 4}${i * 4}`	// will be updated later
+					}, ctrls.schemeG, this._svgdoc);
+				}
+
+				/**
+				 * RGB Box
+				 */
+				SmartWidgets.addElement('text', {
+					text: 'RGB',
+					x: -2,
+					y: 43,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, compG, this._svgdoc);
+				ctrls.rgbVal = SmartWidgets.addElement('text', {
+					text: '#000000',
+					x: 148,
+					y: 43,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, compG, this._svgdoc);
+
+				const gr = SmartWidgets.addElement('g', {
+					class: 'rgb-box-g',
+					transform: 'translate(0, 50)'
+				}, compG, this._svgdoc);
+				ctrls.rgbBox = SmartWidgets.addElement('rect', {
+					class: 'rgb-box draggable clickable',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 35,
+					'stroke-width': 0,
+					stroke: '#000000',
+					fill: 'url(#hueRange)',
+					style: 'cursor:pointer'
+				}, gr, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'rgb-box-lum',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 35,
+					// 'stroke-width': 0,
+					fill: 'url(#lumRange)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				compG.setAttribute('display', 'none');
 			}
 
 
@@ -952,7 +1101,11 @@ class SmartColorSelector {
 			 */
 			this._slTypes.set('analog-scheme', {
 				name: 'Analogous Scheme',
-				ctrls: {},
+				ctrls: {
+					schemeG: null,
+					rgbVal: null,
+					rgbBox: null
+				},
 				ref: SmartWidgets.addElement('g', {
 					id: 'analog-scheme',
 					class: 'analog-scheme',
@@ -963,7 +1116,77 @@ class SmartColorSelector {
 			const analogG = analogUI.ref;
 			ctrls = analogUI.ctrls;
 			if (analogG) {
-				//
+				ctrls.schemeG = SmartWidgets.addElement('g', {
+					class: 'analog-scheme-g',
+					style: 'cursor:pointer;',
+					transform: 'translate(0, 0)'
+				}, analogG, this._svgdoc);
+				for (let i = 0; i < 5; i++) {
+					SmartWidgets.addElement('rect', {
+						id: `analog-scheme-${i}`,
+						class: 'analog-scheme',
+						x: i * 40,
+						y: 0,
+						width: 40,
+						height: 30,
+						stroke: 'none',
+						fill: `#${i * 4}${i * 4}${i * 4}`	// will be updated later
+					}, ctrls.schemeG, this._svgdoc);
+				}
+				/**
+				 * RGB Box
+				 */
+				SmartWidgets.addElement('text', {
+					text: 'RGB',
+					x: -2,
+					y: 43,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, analogG, this._svgdoc);
+				ctrls.rgbVal = SmartWidgets.addElement('text', {
+					text: '#000000',
+					x: 148,
+					y: 43,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, analogG, this._svgdoc);
+
+				const gr = SmartWidgets.addElement('g', {
+					class: 'rgb-box-g',
+					transform: 'translate(0, 50)'
+				}, analogG, this._svgdoc);
+				ctrls.rgbBox = SmartWidgets.addElement('rect', {
+					class: 'rgb-box draggable clickable',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 35,
+					'stroke-width': 0,
+					stroke: '#000000',
+					fill: 'url(#hueRange)',
+					style: 'cursor:pointer'
+				}, gr, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'rgb-box-lum',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 35,
+					// 'stroke-width': 0,
+					fill: 'url(#lumRange)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				analogG.setAttribute('display', 'none');
 			}
 
 			/**
@@ -971,7 +1194,11 @@ class SmartColorSelector {
 			 */
 			this._slTypes.set('triadic-scheme', {
 				name: 'Triadic Scheme',
-				ctrls: {},
+				ctrls: {
+					schemeG: null,
+					rgbVal: null,
+					rgbBox: null
+				},
 				ref: SmartWidgets.addElement('g', {
 					id: 'triadic-scheme',
 					class: 'triadic-scheme',
@@ -982,7 +1209,77 @@ class SmartColorSelector {
 			const triadicG = triadicUI.ref;
 			ctrls = triadicUI.ctrls;
 			if (triadicG) {
-				//
+				ctrls.schemeG = SmartWidgets.addElement('g', {
+					class: 'triadic-scheme-g',
+					style: 'cursor:pointer;',
+					transform: 'translate(0, 0)'
+				}, triadicG, this._svgdoc);
+				for (let i = 0; i < 5; i++) {
+					SmartWidgets.addElement('rect', {
+						id: `triadic-scheme-${i}`,
+						class: 'triadic-scheme',
+						x: i * 40,
+						y: 0,
+						width: 40,
+						height: 30,
+						stroke: 'none',
+						fill: `#${i * 4}${i * 4}${i * 4}`,	// will be updated later
+					}, ctrls.schemeG, this._svgdoc);
+				}
+				/**
+				 * RGB Box
+				 */
+				SmartWidgets.addElement('text', {
+					text: 'RGB',
+					x: -2,
+					y: 43,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, triadicG, this._svgdoc);
+				ctrls.rgbVal = SmartWidgets.addElement('text', {
+					text: '#000000',
+					x: 148,
+					y: 43,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, triadicG, this._svgdoc);
+
+				const gr = SmartWidgets.addElement('g', {
+					class: 'rgb-box-g',
+					transform: 'translate(0, 50)'
+				}, triadicG, this._svgdoc);
+				ctrls.rgbBox = SmartWidgets.addElement('rect', {
+					class: 'rgb-box draggable clickable',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 35,
+					'stroke-width': 0,
+					stroke: '#000000',
+					fill: 'url(#hueRange)',
+					style: 'cursor:pointer'
+				}, gr, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'rgb-box-lum',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 35,
+					// 'stroke-width': 0,
+					fill: 'url(#lumRange)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				triadicG.setAttribute('display', 'none');
 			}
 
 			// /**
@@ -1118,7 +1415,41 @@ class SmartColorSelector {
 
 		this._updateHueBoxes(cr);
 		this._updateRGBSliders(cr);
+		this._updateAnalogScheme(cr);
+		this._updateCompScheme(cr);
+		this._updateMonoScheme(cr);
+		this._updateTriadicScheme(cr);
+
 		this._updateHSLWheel(cr);
+	}
+
+	_updateTriadicScheme(cr) {
+		const ctrls = this._slTypes.get(this._slidersTypes[5]).ctrls;
+		ctrls.rgbVal.textContent = cr.toHexString();
+		for (let i = 0; i < 5; i++) {
+			let el = this._root.getElementById(`triadic-scheme-${i}`);
+		}
+	}
+	_updateMonoScheme(cr) {
+		const ctrls = this._slTypes.get(this._slidersTypes[4]).ctrls;
+		ctrls.rgbVal.textContent = cr.toHexString();
+		for (let i = 0; i < 5; i++) {
+			let el = this._root.getElementById(`mono-scheme-${i}`);
+		}
+	}
+	_updateCompScheme(cr) {
+		const ctrls = this._slTypes.get(this._slidersTypes[3]).ctrls;
+		ctrls.rgbVal.textContent = cr.toHexString();
+		for (let i = 0; i < 5; i++) {
+			let el = this._root.getElementById(`comp-scheme-${i}`);
+		}
+	}
+	_updateAnalogScheme(cr) {
+		const ctrls = this._slTypes.get(this._slidersTypes[2]).ctrls;
+		ctrls.rgbVal.textContent = cr.toHexString();
+		for (let i = 0; i < 5; i++) {
+			let el = this._root.getElementById(`analog-scheme-${i}`);
+		}
 	}
 	_updateRGBSliders(cr) {	// 'rgb-sliders' - index 1 inside _slidersTypes
 		const ctrls = this._slTypes.get(this._slidersTypes[1]).ctrls;
@@ -1373,6 +1704,162 @@ class SmartColorSelector {
 		this._enterColorBuffer.textContent = '';
 
 		// event listeners is here!
+		const triadicUI = this._slTypes.get('triadic-scheme').ctrls;
+		if (triadicUI) {
+			// rgb box
+			triadicUI.rgbBoxDrag = new SmartDragElement(triadicUI.rgbBox, {containment: triadicUI.rgbBox});
+			triadicUI.rgbBox.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+
+				const w = Number(triadicUI.rgbBox.getAttribute('width'));
+				const hV = +(((evt.detail.x / w) * 360).toFixed());
+				const h = Number(triadicUI.rgbBox.getAttribute('height'));
+				const lV = +((evt.detail.y / h).toFixed(2));
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				this._updateUI(cr);
+			});
+			triadicUI.rgbBox.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(triadicUI.rgbBox, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+
+				const w = Number(triadicUI.rgbBox.getAttribute('width'));
+				const hV = +(((pt.x / w) * 360).toFixed());
+				const h = Number(triadicUI.rgbBox.getAttribute('height'));
+				const lV = +((pt.y / h).toFixed(2));
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				this._updateUI(cr);
+			});
+			triadicUI.schemeG.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const cr = w3color(evt.target.getAttribute('fill'));
+				this._updateUI(cr);
+			});
+		}
+
+		const monoUI = this._slTypes.get('mono-scheme').ctrls;
+		if (monoUI) {
+			// rgb box
+			monoUI.rgbBoxDrag = new SmartDragElement(monoUI.rgbBox, {containment: monoUI.rgbBox});
+			monoUI.rgbBox.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+
+				const w = Number(monoUI.rgbBox.getAttribute('width'));
+				const hV = +(((evt.detail.x / w) * 360).toFixed());
+				const h = Number(monoUI.rgbBox.getAttribute('height'));
+				const lV = +((evt.detail.y / h).toFixed(2));
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				this._updateUI(cr);
+			});
+			monoUI.rgbBox.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(monoUI.rgbBox, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+
+				const w = Number(monoUI.rgbBox.getAttribute('width'));
+				const hV = +(((pt.x / w) * 360).toFixed());
+				const h = Number(monoUI.rgbBox.getAttribute('height'));
+				const lV = +((pt.y / h).toFixed(2));
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				this._updateUI(cr);
+			});
+			monoUI.schemeG.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const cr = w3color(evt.target.getAttribute('fill'));
+				this._updateUI(cr);
+			});
+		}
+
+		const compUI = this._slTypes.get('comp-scheme').ctrls;
+		if (compUI) {
+			// rgb box
+			compUI.rgbBoxDrag = new SmartDragElement(compUI.rgbBox, {containment: compUI.rgbBox});
+			compUI.rgbBox.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+
+				const w = Number(compUI.rgbBox.getAttribute('width'));
+				const hV = +(((evt.detail.x / w) * 360).toFixed());
+				const h = Number(compUI.rgbBox.getAttribute('height'));
+				const lV = +((evt.detail.y / h).toFixed(2));
+				// console.log(`move y: ${evt.detail.y} = ${lV}`);
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				this._updateUI(cr);
+			});
+			compUI.rgbBox.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(compUI.rgbBox, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+
+				const w = Number(compUI.rgbBox.getAttribute('width'));
+				const hV = +(((pt.x / w) * 360).toFixed());
+				const h = Number(compUI.rgbBox.getAttribute('height'));
+				const lV = +((pt.y / h).toFixed(2));
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				this._updateUI(cr);
+			});
+			compUI.schemeG.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const cr = w3color(evt.target.getAttribute('fill'));
+				this._updateUI(cr);
+			});
+		}
+
+		const analogUI = this._slTypes.get('analog-scheme').ctrls;
+		if (analogUI) {
+			// rgb box
+			analogUI.rgbBoxDrag = new SmartDragElement(analogUI.rgbBox, {containment: analogUI.rgbBox});
+			analogUI.rgbBox.addEventListener('onContinueDrag', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+
+				const w = Number(analogUI.rgbBox.getAttribute('width'));
+				const hV = +(((evt.detail.x / w) * 360).toFixed());
+				const h = Number(analogUI.rgbBox.getAttribute('height'));
+				const lV = +((evt.detail.y / h).toFixed(2));
+				// console.log(`move y: ${evt.detail.y} = ${lV}`);
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				this._updateUI(cr);
+			});
+			analogUI.rgbBox.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(analogUI.rgbBox, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+
+				const w = Number(analogUI.rgbBox.getAttribute('width'));
+				const hV = +(((pt.x / w) * 360).toFixed());
+				const h = Number(analogUI.rgbBox.getAttribute('height'));
+				const lV = +((pt.y / h).toFixed(2));
+
+				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
+				this._updateUI(cr);
+			});
+			analogUI.schemeG.addEventListener('click', (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+				// const index = evt.target.id.replace('analog-scheme-', '');
+				// console.log(`selected color from ${index}`);
+				const cr = w3color(evt.target.getAttribute('fill'));
+				this._updateUI(cr);
+			});
+		}
+
 		const rgbUI = this._slTypes.get('rgb-sliders').ctrls;
 		if (rgbUI) {
 			// r-slider
@@ -1386,7 +1873,6 @@ class SmartColorSelector {
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
 				let cr = w3color(`rgb(${(rV < 0 ? 0 : rV)},${gV},${bV})`);
-				rgbUI.rgbVal.textContent = cr.toHexString();
 				this._updateUI(cr);
 			});
 			rgbUI.rSlider.addEventListener('click', (evt) => {
@@ -1401,7 +1887,6 @@ class SmartColorSelector {
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
 				let cr = w3color(`rgb(${(rV < 0 ? 0 : rV)},${gV},${bV})`);
-				rgbUI.rgbVal.textContent = cr.toHexString();
 				this._updateUI(cr);
 			});
 			// g-slider
@@ -1416,7 +1901,6 @@ class SmartColorSelector {
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
 				let cr = w3color(`rgb(${rV},${(gV < 0 ? 0 : gV)},${bV})`);
-				rgbUI.rgbVal.textContent = cr.toHexString();
 				this._updateUI(cr);
 			});
 			rgbUI.gSlider.addEventListener('click', (evt) => {
@@ -1431,9 +1915,7 @@ class SmartColorSelector {
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
 				let cr = w3color(`rgb(${rV},${(gV < 0 ? 0 : gV)},${bV})`);
-				rgbUI.rgbVal.textContent = cr.toHexString();
 				this._updateUI(cr);
-
 			});
 			// b-slider
 			rgbUI.bSliderDrag = new SmartDragElement(rgbUI.bSlider, {containment: rgbUI.bSlider});
@@ -1447,7 +1929,6 @@ class SmartColorSelector {
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				let cr = w3color(`rgb(${rV},${gV},${(bV < 0 ? 0 : bV)})`);
-				rgbUI.rgbVal.textContent = cr.toHexString();
 				this._updateUI(cr);
 			});
 			rgbUI.bSlider.addEventListener('click', (evt) => {
@@ -1462,9 +1943,9 @@ class SmartColorSelector {
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				let cr = w3color(`rgb(${rV},${gV},${(bV < 0 ? 0 : bV)})`);
-				rgbUI.rgbVal.textContent = cr.toHexString();
 				this._updateUI(cr);
 			});
+			// rgb box
 			rgbUI.rgbBoxDrag = new SmartDragElement(rgbUI.rgbBox, {containment: rgbUI.rgbBox});
 			rgbUI.rgbBox.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
@@ -1474,10 +1955,8 @@ class SmartColorSelector {
 				const hV = +(((evt.detail.x / w) * 360).toFixed());
 				const h = Number(rgbUI.rgbBox.getAttribute('height'));
 				const lV = +((evt.detail.y / h).toFixed(2));
-				// console.log(`move y: ${evt.detail.y} = ${lV}`);
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				rgbUI.rgbVal.textContent = cr.toHexString();
 				this._updateUI(cr);
 			});
 			rgbUI.rgbBox.addEventListener('click', (evt) => {
@@ -1490,10 +1969,8 @@ class SmartColorSelector {
 				const hV = +(((pt.x / w) * 360).toFixed());
 				const h = Number(rgbUI.rgbBox.getAttribute('height'));
 				const lV = +((pt.y / h).toFixed(2));
-				// console.log(`click y: ${pt.y} = ${lV}`);
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				rgbUI.rgbVal.textContent = cr.toHexString();
 				this._updateUI(cr);
 			});
 		}
@@ -1531,7 +2008,6 @@ class SmartColorSelector {
 
 				cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
 				this._updateUI(cr);
-				// console.log(`Click on hew image at x = ${pt.x}, y = ${pt.y}, selected hue = ${this.selHue}`);
 			});
 
 			// HSL slider saturation + lightness is changed
