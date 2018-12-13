@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-assign */
 /* eslint-disable no-lonely-if */
 /* eslint-disable linebreak-style */
 /* eslint-disable indent */
@@ -281,10 +282,10 @@ class SmartColorSelector {
 		}, item, this._svgdoc);
 		SmartWidgets.addElement('text', {
 			text: data.data,
-			x: data.x,
-			y: data.y + data.height / 2,
+			x: data.x + (data.width / 2),
+			y: data.y + (data.height / 2),
 			fill: '#ffffff',
-			'text-anchor': 'start',
+			'text-anchor': 'middle',
 			'dominant-baseline': 'middle',
 			'pointer-events': 'none',
 			'font-family': fontFamily,
@@ -304,11 +305,11 @@ class SmartColorSelector {
 		// get selected index
 		const index = Number(evt.target.id.replace('slider-', ''));
 		// get reference on selected slider definition
-		const slider = this._slidersTypes[index];
+		const slider = this._slTypes.get(this._slidersTypes[index]);
 		// set it's name in title
 		this._currentSliderTitle.textContent = slider.name;
 		// get reference on current slider group
-		const curSliderRef = this._slidersTypes[this._currentSliderIndex].ref;
+		const curSliderRef = this._slTypes.get(this._slidersTypes[this._currentSliderIndex]).ref;
 		// if not null - hide it
 		if (curSliderRef) {
 			curSliderRef.setAttribute('display', 'none');
@@ -519,386 +520,491 @@ class SmartColorSelector {
 			/**
 			 * Hue Boxes group
 			 */
-			this._slidersTypes[0].ref = SmartWidgets.addElement('g', {
-				id: 'hsl-sliders',
-				class: 'hsl-sliders',
-				transform: `translate(${gap}, 60)`
-			}, this._bodyG, this._svgdoc);
-			const hb = this._slidersTypes[0].ref;	// alias
-			this._slidersTypes[0].ctrls = {
-				hueSlider: null,
-				hueDrag: null,
-				satlumColor: null,
-				satDrag: null,
-				hueCtrl: null,
-				slCtrl: null
-			};
-			ctrls = this._slidersTypes[0].ctrls; // alias on Hue Box UI controls
+			this._slTypes.set('hue-boxes', {
+				name: 'Hue Boxes',
+				ctrls: {
+					hueSlider: null,
+					hueDrag: null,
+					satlumColor: null,
+					satDrag: null,
+					hueCtrl: null,
+					slCtrl: null
+				},
+				ref: SmartWidgets.addElement('g', {
+					id: 'hue-boxes',
+					class: 'hue-boxes',
+					transform: `translate(${gap}, 60)`
+				}, this._bodyG, this._svgdoc)
+			});
+			const hbUI = this._slTypes.get('hue-boxes');
+			const hbG = hbUI.ref;	// reference on group
+			ctrls = hbUI.ctrls;		// alias on Hue Box UI controls
+			if (hbG) {
+				/**
+				 * HUE slider
+				 */
+				ctrls.hueSlider = SmartWidgets.addElement('rect', {
+					id: 'hue-slider',
+					class: 'draggable clickable hue-slider',
+					x: 0,
+					y:0,
+					width: bodyWidth,
+					height:40,
+					stroke: '#000000',
+					'stroke-width': 0.6,
+					fill: 'url(#hueRange)',
+					style: 'cursor:pointer'
+				}, hbG, this._svgdoc);
 
-			/**
-			 * HUE slider
-			 */
-			ctrls.hueSlider = SmartWidgets.addElement('rect', {
-				id: 'hue-slider',
-				class: 'draggable clickable hue-slider',
-				x: 0,
-				y:0,
-				width: bodyWidth,
-				height:40,
-				stroke: '#000000',
-				'stroke-width': 0.6,
-				fill: 'url(#hueRange)',
-				style: 'cursor:pointer'
-			}, hb, this._svgdoc);
+				/**
+				 * 'sat + lightness' slider
+				 */
+				ctrls.satlumColor = SmartWidgets.addElement('rect', {
+					id: 'sat-lum-slider',
+					class: 'draggable clickable sat-lum-slider',
+					x: 0,
+					y:45,
+					width: bodyWidth,
+					height:40,
+					stroke: '#000000',
+					'stroke-width': 0.6,
+					fill: '#ff0000',
+					style: 'cursor:pointer'
+				}, hbG, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'sat-range',
+					x: 0,
+					y:45,
+					width: bodyWidth,
+					height:40,
+					stroke: 'none',
+					fill: 'url(#satRange)',
+					'pointer-events': 'none'
+				}, hbG, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'lum-range',
+					x: 0,
+					y:45,
+					width: bodyWidth,
+					height:40,
+					stroke: 'none',
+					fill: 'url(#lumRange)',
+					'pointer-events': 'none'
+				}, hbG, this._svgdoc);
 
-			/**
-			 * 'sat + lightness' slider
-			 */
-			ctrls.satlumColor = SmartWidgets.addElement('rect', {
-				id: 'sat-lum-slider',
-				class: 'draggable clickable sat-lum-slider',
-				x: 0,
-				y:45,
-				width: bodyWidth,
-				height:40,
-				stroke: '#000000',
-				'stroke-width': 0.6,
-				fill: '#ff0000',
-				style: 'cursor:pointer'
-			}, hb, this._svgdoc);
-			SmartWidgets.addElement('rect', {
-				class: 'sat-range',
-				x: 0,
-				y:45,
-				width: bodyWidth,
-				height:40,
-				stroke: 'none',
-				fill: 'url(#satRange)',
-				'pointer-events': 'none'
-			}, hb, this._svgdoc);
-			SmartWidgets.addElement('rect', {
-				class: 'lum-range',
-				x: 0,
-				y:45,
-				width: bodyWidth,
-				height:40,
-				stroke: 'none',
-				fill: 'url(#lumRange)',
-				'pointer-events': 'none'
-			}, hb, this._svgdoc);
+				/**
+				 * 'selected hue' indicator
+				 */
+				ctrls.hueCtrl = SmartWidgets.addElement('rect', {
+					id: 'hue-ind',
+					class: 'hue-ind',
+					r: 5,
+					x: 0,
+					y: 1,
+					width: 6,
+					height: 38,
+					stroke: '#ffffff',
+					'stroke-width': 1.5,
+					fill: 'none',
+					'pointer-events': 'none'
+				}, hbG, this._svgdoc);
 
-			/**
-			 * 'selected hue' indicator
-			 */
-			ctrls.hueCtrl = SmartWidgets.addElement('rect', {
-				id: 'hue-ind',
-				class: 'hue-ind',
-				r: 5,
-				x: 0,
-				y: 1,
-				width: 6,
-				height: 38,
-				stroke: '#ffffff',
-				'stroke-width': 1.5,
-				fill: 'none',
-				'pointer-events': 'none'
-			}, hb, this._svgdoc);
+				/**
+				 * 'selected sat + lightness' indicator
+				 */
+				ctrls.slCtrl = SmartWidgets.addElement('circle', {
+					id: 'sat-lum-ind',
+					class: 'sat-lum-ind',
+					r: 5,
+					cx: 0,
+					cy: 0,
+					stroke: '#ffffff',
+					'stroke-width': 1.5,
+					fill: 'none',
+					'pointer-events': 'none'
+				}, hbG, this._svgdoc);
+			}
 
-			/**
-			 * 'selected sat + lightness' indicator
-			 */
-			ctrls.slCtrl = SmartWidgets.addElement('circle', {
-				id: 'sat-lum-ind',
-				class: 'sat-lum-ind',
-				r: 5,
-				cx: 0,
-				cy: 0,
-				stroke: '#ffffff',
-				'stroke-width': 1.5,
-				fill: 'none',
-				'pointer-events': 'none'
-			}, hb, this._svgdoc);
-
-			// add others sliders groups here!
 			/**
 			 * RGB Sliders group
 			 */
-			this._slidersTypes[1].ref = SmartWidgets.addElement('g', {
-				id: 'rgb-sliders',
-				class: 'rgb-sliders',
-				transform: `translate(${gap}, 60)`
-			}, this._bodyG, this._svgdoc);
-			const rgbSl = this._slidersTypes[1].ref;	// alias
-			this._slidersTypes[1].ctrls = {
-				rSlider: null,
-				rSliderDrag: null,
-				rSliderInd: null,
-				rSliderVal: null,
-				gSlider: null,
-				gSliderDrag: null,
-				gSliderInd: null,
-				gSliderVal: null,
-				bSlider: null,
-				bSliderDrag: null,
-				bSliderInd: null,
-				bSliderVal: null,
-				rgbBox:  null,
-				rgbBoxDrag: null,
-				rgbVal: null
-			};
-			ctrls = this._slidersTypes[1].ctrls;
-			// let grOffset = 16;
-			// let tOffset = grOffset + 1;
+			this._slTypes.set('rgb-sliders', {
+				name: 'RGB Sliders',
+				ctrls: {
+					rSlider: null,
+					rSliderDrag: null,
+					rSliderInd: null,
+					rSliderVal: null,
+					gSlider: null,
+					gSliderDrag: null,
+					gSliderInd: null,
+					gSliderVal: null,
+					bSlider: null,
+					bSliderDrag: null,
+					bSliderInd: null,
+					bSliderVal: null,
+					rgbBox:  null,
+					rgbBoxDrag: null,
+					rgbVal: null
+				},
+				ref: SmartWidgets.addElement('g', {
+					id: 'rgb-sliders',
+					class: 'rgb-sliders',
+					transform: `translate(${gap}, 60)`
+				}, this._bodyG, this._svgdoc)
+			});
+			const rgbUI = this._slTypes.get('rgb-sliders');
+			const rgbG = rgbUI.ref;
+			ctrls = rgbUI.ctrls;
+			if (rgbG) {
+				/**
+				 * R Slider
+				 */
+				SmartWidgets.addElement('text', {
+					text: 'R',
+					x: 2,
+					y: 5,
+					fill: '#ffffff',
+					'text-anchor': 'middle',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, rgbG, this._svgdoc);
+				ctrls.rSliderVal = SmartWidgets.addElement('text', {
+					text: '#00',
+					x: 175,
+					y: 5,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, rgbG, this._svgdoc);
+
+				let gr = SmartWidgets.addElement('g', {
+					id: 'r-sliders-g',
+					class: 'r-sliders-g',
+					transform: 'translate(14, 4)'
+				}, rgbG, this._svgdoc);
+				ctrls.rSlider = SmartWidgets.addElement('path', {
+					id: 'r-slider',
+					class: 'r-slider draggable clickable',
+					'stroke-width': 8,
+					'stroke-linecap': 'round',
+					stroke: '#ff0000',
+					d: 'M0,0 h150',
+					style: 'cursor:pointer'
+				}, gr, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'r-slider',
+					x: -4,
+					y: -4,
+					width: 154,
+					height: 8,
+					'stroke-width': 0,
+					stroke: 'none',
+					fill: 'url(#rgbRange)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				ctrls.rSliderInd = SmartWidgets.addElement('circle', {
+					id: 'rSliderInd',
+					class: 'r-slider-ind',
+					cx: 0,
+					cy: 0,
+					r: 4.8,
+					stroke: '#ffffff',
+					'stroke-width': 1.6,
+					fill: 'none',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				/**
+				 * G Slider
+				 */
+				SmartWidgets.addElement('text', {
+					text: 'G',
+					x: 2,
+					y: 21,
+					fill: '#ffffff',
+					'text-anchor': 'middle',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, rgbG, this._svgdoc);
+				ctrls.gSliderVal = SmartWidgets.addElement('text', {
+					text: '#00',
+					x: 175,
+					y: 21,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, rgbG, this._svgdoc);
+
+				gr = SmartWidgets.addElement('g', {
+					id: 'g-sliders-g',
+					class: 'g-sliders-g',
+					transform: 'translate(14, 20)'
+				}, rgbG, this._svgdoc);
+				ctrls.gSlider = SmartWidgets.addElement('path', {
+					id: 'g-slider',
+					class: 'g-slider draggable clickable',
+					'stroke-width': 8,
+					'stroke-linecap': 'round',
+					stroke: '#00ff00',
+					d: 'M0,0 h150',
+					style: 'cursor:pointer'
+				}, gr, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'g-slider',
+					x: -4,
+					y: -4,
+					width: 154,
+					height: 8,
+					'stroke-width': 0,
+					stroke: 'none',
+					fill: 'url(#rgbRange)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+
+				ctrls.gSliderInd = SmartWidgets.addElement('circle', {
+					id: 'g-slider-ind',
+					class: 'g-slider-ind',
+					cx: 0,
+					cy: 0,
+					r: 4.8,
+					stroke: '#ffffff',
+					'stroke-width': 1.6,
+					fill: 'none',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				/**
+				 * B Slider
+				 */
+				SmartWidgets.addElement('text', {
+					text: 'B',
+					x: 2,
+					y: 37,
+					fill: '#ffffff',
+					'text-anchor': 'middle',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, rgbG, this._svgdoc);
+				ctrls.bSliderVal = SmartWidgets.addElement('text', {
+					text: '#00',
+					x: 175,
+					y: 37,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, rgbG, this._svgdoc);
+
+				gr = SmartWidgets.addElement('g', {
+					id: 'b-sliders-g',
+					class: 'b-sliders-g',
+					transform: 'translate(14, 36)'
+				}, rgbG, this._svgdoc);
+				ctrls.bSlider = SmartWidgets.addElement('path', {
+					id: 'b-slider',
+					class: 'b-slider draggable clickable',
+					'stroke-width': 8,
+					'stroke-linecap': 'round',
+					stroke: '#0000ff',
+					d: 'M0,0 h150',
+					style: 'cursor:pointer'
+				}, gr, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'b-slider',
+					x: -4,
+					y: -4,
+					width: 154,
+					height: 8,
+					'stroke-width': 0,
+					stroke: 'none',
+					fill: 'url(#rgbRange)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				ctrls.bSliderInd = SmartWidgets.addElement('circle', {
+					id: 'b-slider-ind',
+					class: 'b-slider-ind',
+					cx: 0,
+					cy: 0,
+					r: 4.8,
+					stroke: '#ffffff',
+					'stroke-width': 1.6,
+					fill: 'none',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				/**
+				 * RGB Box
+				 */
+				SmartWidgets.addElement('text', {
+					text: 'RGB',
+					x: -2,
+					y: 53,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, rgbG, this._svgdoc);
+				ctrls.rgbVal = SmartWidgets.addElement('text', {
+					text: '#000000',
+					x: 148,
+					y: 53,
+					fill: '#ffffff',
+					'text-anchor': 'start',
+					'dominant-baseline': 'middle',
+					'font-family': fontFamily,
+					'font-size': 12,
+					'stroke-linejoin': 'round',
+					'pointer-events': 'none'
+				}, rgbG, this._svgdoc);
+
+				gr = SmartWidgets.addElement('g', {
+					id: 'rgb-box-g',
+					class: 'rgb-box-g',
+					transform: 'translate(0, 60)'
+				}, rgbG, this._svgdoc);
+				ctrls.rgbBox = SmartWidgets.addElement('rect', {
+					id: 'rgb-box',
+					class: 'rgb-box draggable clickable',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 25,
+					'stroke-width': 0,
+					stroke: '#000000',
+					fill: 'url(#hueRange)',
+					style: 'cursor:pointer'
+				}, gr, this._svgdoc);
+				SmartWidgets.addElement('rect', {
+					class: 'rgb-box-lum',
+					x: 0,
+					y: 0,
+					width: 200,
+					height: 25,
+					// 'stroke-width': 0,
+					fill: 'url(#lumRange)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				rgbG.setAttribute('display', 'none');
+			}
+
 			/**
-			 * R Slider
+			 * Monochromatic Color Schemes group
 			 */
-			SmartWidgets.addElement('text', {
-				text: 'R',
-				x: 2,
-				y: 5,
-				fill: '#ffffff',
-				'text-anchor': 'middle',
-				'dominant-baseline': 'middle',
-				'font-family': fontFamily,
-				'font-size': 12,
-				'stroke-linejoin': 'round',
-				'pointer-events': 'none'
-			}, rgbSl, this._svgdoc);
-			ctrls.rSliderVal = SmartWidgets.addElement('text', {
-				text: '#00',
-				x: 175,
-				y: 5,
-				fill: '#ffffff',
-				'text-anchor': 'start',
-				'dominant-baseline': 'middle',
-				'font-family': fontFamily,
-				'font-size': 12,
-				'stroke-linejoin': 'round',
-				'pointer-events': 'none'
-			}, rgbSl, this._svgdoc);
+			this._slTypes.set('mono-scheme', {
+				name: 'Monochromatic',
+				ctrls: {},
+				ref: SmartWidgets.addElement('g', {
+					id: 'mono-scheme',
+					class: 'mono-scheme',
+					transform: `translate(${gap}, 60)`
+				}, this._bodyG, this._svgdoc)
+			});
+			const monoUI = this._slTypes.get('mono-scheme');
+			const monoG = monoUI.ref;
+			ctrls = monoUI.ctrls;
+			if (monoG) {
+				//
+			}
 
-			let gr = SmartWidgets.addElement('g', {
-				id: 'r-sliders-g',
-				class: 'r-sliders-g',
-				transform: 'translate(14, 4)'
-			}, rgbSl, this._svgdoc);
-			ctrls.rSlider = SmartWidgets.addElement('path', {
-				id: 'r-slider',
-				class: 'r-slider draggable clickable',
-				'stroke-width': 8,
-				'stroke-linecap': 'round',
-				stroke: '#ff0000',
-				d: 'M0,0 h150',
-				style: 'cursor:pointer'
-			}, gr, this._svgdoc);
-			SmartWidgets.addElement('rect', {
-				class: 'r-slider',
-				x: -4,
-				y: -4,
-				width: 154,
-				height: 8,
-				'stroke-width': 0,
-				stroke: 'none',
-				fill: 'url(#rgbRange)',
-				'pointer-events': 'none'
-			}, gr, this._svgdoc);
-			ctrls.rSliderInd = SmartWidgets.addElement('circle', {
-				id: 'rSliderInd',
-				class: 'r-slider-ind',
-				cx: 0,
-				cy: 0,
-				r: 4.8,
-				stroke: '#ffffff',
-				'stroke-width': 1.6,
-				fill: 'none',
-				'pointer-events': 'none'
-			}, gr, this._svgdoc);
 			/**
-			 * G Slider
+			 * Complementary Color Schemes group
 			 */
-			SmartWidgets.addElement('text', {
-				text: 'G',
-				x: 2,
-				y: 21,
-				fill: '#ffffff',
-				'text-anchor': 'middle',
-				'dominant-baseline': 'middle',
-				'font-family': fontFamily,
-				'font-size': 12,
-				'stroke-linejoin': 'round',
-				'pointer-events': 'none'
-			}, rgbSl, this._svgdoc);
-			ctrls.gSliderVal = SmartWidgets.addElement('text', {
-				text: '#00',
-				x: 175,
-				y: 21,
-				fill: '#ffffff',
-				'text-anchor': 'start',
-				'dominant-baseline': 'middle',
-				'font-family': fontFamily,
-				'font-size': 12,
-				'stroke-linejoin': 'round',
-				'pointer-events': 'none'
-			}, rgbSl, this._svgdoc);
+			this._slTypes.set('comp-scheme', {
+				name: 'Complementary',
+				ctrls: {},
+				ref: SmartWidgets.addElement('g', {
+					id: 'comp-scheme',
+					class: 'comp-scheme',
+					transform: `translate(${gap}, 60)`
+				}, this._bodyG, this._svgdoc)
+			});
+			const compUI = this._slTypes.get('comp-scheme');
+			const compG = compUI.ref;
+			ctrls = compUI.ctrls;
+			if (compG) {
+				//
+			}
 
-			gr = SmartWidgets.addElement('g', {
-				id: 'g-sliders-g',
-				class: 'g-sliders-g',
-				transform: 'translate(14, 20)'
-			}, rgbSl, this._svgdoc);
-			ctrls.gSlider = SmartWidgets.addElement('path', {
-				id: 'g-slider',
-				class: 'g-slider draggable clickable',
-				'stroke-width': 8,
-				'stroke-linecap': 'round',
-				stroke: '#00ff00',
-				d: 'M0,0 h150',
-				style: 'cursor:pointer'
-			}, gr, this._svgdoc);
-			SmartWidgets.addElement('rect', {
-				class: 'g-slider',
-				x: -4,
-				y: -4,
-				width: 154,
-				height: 8,
-				'stroke-width': 0,
-				stroke: 'none',
-				fill: 'url(#rgbRange)',
-				'pointer-events': 'none'
-			}, gr, this._svgdoc);
 
-			ctrls.gSliderInd = SmartWidgets.addElement('circle', {
-				id: 'g-slider-ind',
-				class: 'g-slider-ind',
-				cx: 0,
-				cy: 0,
-				r: 4.8,
-				stroke: '#ffffff',
-				'stroke-width': 1.6,
-				fill: 'none',
-				'pointer-events': 'none'
-			}, gr, this._svgdoc);
 			/**
-			 * B Slider
+			 * Analogous Color Schemes group
 			 */
-			SmartWidgets.addElement('text', {
-				text: 'B',
-				x: 2,
-				y: 37,
-				fill: '#ffffff',
-				'text-anchor': 'middle',
-				'dominant-baseline': 'middle',
-				'font-family': fontFamily,
-				'font-size': 12,
-				'stroke-linejoin': 'round',
-				'pointer-events': 'none'
-			}, rgbSl, this._svgdoc);
-			ctrls.bSliderVal = SmartWidgets.addElement('text', {
-				text: '#00',
-				x: 175,
-				y: 37,
-				fill: '#ffffff',
-				'text-anchor': 'start',
-				'dominant-baseline': 'middle',
-				'font-family': fontFamily,
-				'font-size': 12,
-				'stroke-linejoin': 'round',
-				'pointer-events': 'none'
-			}, rgbSl, this._svgdoc);
+			this._slTypes.set('analog-scheme', {
+				name: 'Analogous Scheme',
+				ctrls: {},
+				ref: SmartWidgets.addElement('g', {
+					id: 'analog-scheme',
+					class: 'analog-scheme',
+					transform: `translate(${gap}, 60)`
+				}, this._bodyG, this._svgdoc)
+			});
+			const analogUI = this._slTypes.get('analog-scheme');
+			const analogG = analogUI.ref;
+			ctrls = analogUI.ctrls;
+			if (analogG) {
+				//
+			}
 
-			gr = SmartWidgets.addElement('g', {
-				id: 'b-sliders-g',
-				class: 'b-sliders-g',
-				transform: 'translate(14, 36)'
-			}, rgbSl, this._svgdoc);
-			ctrls.bSlider = SmartWidgets.addElement('path', {
-				id: 'b-slider',
-				class: 'b-slider draggable clickable',
-				'stroke-width': 8,
-				'stroke-linecap': 'round',
-				stroke: '#0000ff',
-				d: 'M0,0 h150',
-				style: 'cursor:pointer'
-			}, gr, this._svgdoc);
-			SmartWidgets.addElement('rect', {
-				class: 'b-slider',
-				x: -4,
-				y: -4,
-				width: 154,
-				height: 8,
-				'stroke-width': 0,
-				stroke: 'none',
-				fill: 'url(#rgbRange)',
-				'pointer-events': 'none'
-			}, gr, this._svgdoc);
-			ctrls.bSliderInd = SmartWidgets.addElement('circle', {
-				id: 'b-slider-ind',
-				class: 'b-slider-ind',
-				cx: 0,
-				cy: 0,
-				r: 4.8,
-				stroke: '#ffffff',
-				'stroke-width': 1.6,
-				fill: 'none',
-				'pointer-events': 'none'
-			}, gr, this._svgdoc);
 			/**
-			 * RGB Box
+			 * Triadic Color Schemes group
 			 */
-			SmartWidgets.addElement('text', {
-				text: 'RGB',
-				x: -2,
-				y: 53,
-				fill: '#ffffff',
-				'text-anchor': 'start',
-				'dominant-baseline': 'middle',
-				'font-family': fontFamily,
-				'font-size': 12,
-				'stroke-linejoin': 'round',
-				'pointer-events': 'none'
-			}, rgbSl, this._svgdoc);
-			ctrls.rgbVal = SmartWidgets.addElement('text', {
-				text: '#000000',
-				x: 148,
-				y: 53,
-				fill: '#ffffff',
-				'text-anchor': 'start',
-				'dominant-baseline': 'middle',
-				'font-family': fontFamily,
-				'font-size': 12,
-				'stroke-linejoin': 'round',
-				'pointer-events': 'none'
-			}, rgbSl, this._svgdoc);
+			this._slTypes.set('triadic-scheme', {
+				name: 'Triadic Scheme',
+				ctrls: {},
+				ref: SmartWidgets.addElement('g', {
+					id: 'triadic-scheme',
+					class: 'triadic-scheme',
+					transform: `translate(${gap}, 60)`
+				}, this._bodyG, this._svgdoc)
+			});
+			const triadicUI = this._slTypes.get('triadic-scheme');
+			const triadicG = triadicUI.ref;
+			ctrls = triadicUI.ctrls;
+			if (triadicG) {
+				//
+			}
 
-			gr = SmartWidgets.addElement('g', {
-				id: 'rgb-box-g',
-				class: 'rgb-box-g',
-				transform: 'translate(0, 60)'
-			}, rgbSl, this._svgdoc);
-			ctrls.rgbBox = SmartWidgets.addElement('rect', {
-				id: 'rgb-box',
-				class: 'rgb-box draggable clickable',
-				x: 0,
-				y: 0,
-				width: 200,
-				height: 25,
-				'stroke-width': 0,
-				stroke: '#000000',
-				fill: 'url(#hueRange)',
-				style: 'cursor:pointer'
-			}, gr, this._svgdoc);
-			SmartWidgets.addElement('rect', {
-				class: 'rgb-box-lum',
-				x: 0,
-				y: 0,
-				width: 200,
-				height: 25,
-				// 'stroke-width': 0,
-				fill: 'url(#lumRange)',
-				'pointer-events': 'none'
-			}, gr, this._svgdoc);
-			rgbSl.setAttribute('display', 'none');
+			// /**
+			//  * HSL Wheel group
+			//  */
+			// this._slTypes.set('hsl-wheel', {
+			// 	name: 'HSL Wheel',
+			// 	ctrls: {},
+			// 	ref: SmartWidgets.addElement('g', {
+			// 		id: 'hsl-wheel',
+			// 		class: 'hsl-wheel',
+			// 		transform: `translate(${gap}, 60)`
+			// 	}, this._bodyG, this._svgdoc)
+			// });
+			// const hslwUI = this._slTypes.get('hsl-wheel');
+			// const hslwG = hslwUI.ref;
+			// ctrls = hslwUI.ctrls;
+			// if (hslwG) {
+			// 	//
+			// }
 
+			// add others sliders groups here!
 
 			// endof groups insertion line
 
@@ -909,7 +1015,7 @@ class SmartColorSelector {
 			this._ssMenuG = SmartWidgets.addElement('g', {
 				id: ssmId,
 				class: 'slider-selector-menu',
-				transform: `translate(${100}, ${gap + 17})`
+				transform: `translate(${80}, ${gap + 17})`
 			}, this._bodyG, this._svgdoc);
 
 			/**
@@ -919,8 +1025,11 @@ class SmartColorSelector {
 				class: 'current-slider',
 				transform: `translate(${80}, ${gap})`
 			}, this._bodyG, this._svgdoc);
+			const sliderUiId = this._slidersTypes[this._currentSliderIndex];
+			const sliderUI = this._slTypes.get(sliderUiId);
+
 			this._currentSliderTitle = SmartWidgets.addElement('text', {
-				text: this._slidersTypes[this._currentSliderIndex].name,
+				text: sliderUI.name,
 				x: gap,
 				y: 8,
 				fill: '#ffffff',
@@ -971,16 +1080,18 @@ class SmartColorSelector {
 			}, this._selectSliders, this._svgdoc);
 
 			this._sliders = new ScrollableContainer(ssmId, {
-				width: 90,
+				width: 110,
 				height: 110,
 				gap: 2,
 				row: 16,
 				context: this._root
 			});
 			for (let i = 0; i < this._slidersTypes.length; i++) {
+				const slUI = this._slTypes.get(this._slidersTypes[i]);
+
 				const menuItem = {
 					id: `slider-${i}`,
-					data: this._slidersTypes[i].name,
+					data: slUI.name,
 					cb: this._drawSliderMenuItem,
 					owner: this.id
 				};
@@ -1007,9 +1118,10 @@ class SmartColorSelector {
 
 		this._updateHueBoxes(cr);
 		this._updateRGBSliders(cr);
+		this._updateHSLWheel(cr);
 	}
-	_updateRGBSliders(cr) {
-		const ctrls = this._slidersTypes[1].ctrls;
+	_updateRGBSliders(cr) {	// 'rgb-sliders' - index 1 inside _slidersTypes
+		const ctrls = this._slTypes.get(this._slidersTypes[1]).ctrls;
 		ctrls.rgbVal.textContent = cr.toHexString();
 		ctrls.rSliderVal.textContent = cr.red.toFixed();
 		ctrls.gSliderVal.textContent = cr.green.toFixed();
@@ -1022,8 +1134,8 @@ class SmartColorSelector {
 		x = (w * cr.blue) / 255;
 		ctrls.bSliderInd.setAttribute('transform', `translate(${x}, 0)`);
 	}
-	_updateHueBoxes(cr) {
-		const ctrls = this._slidersTypes[0].ctrls;
+	_updateHueBoxes(cr) { // 'hue-boxes' - index 0 inside _slidersTypes
+		const ctrls = this._slTypes.get(this._slidersTypes[0]).ctrls;
 		// update _hueSlider and _satlumColor here!
 		let crImage = w3color(`hsl(${this.selHue},${1},${0.5})`);
 		ctrls.satlumColor.setAttribute('fill', crImage.toHexString());
@@ -1038,6 +1150,9 @@ class SmartColorSelector {
 		x = (w * this.selSat);	// / 100;
 		const y = (h * this.selLum);
 		ctrls.slCtrl.setAttribute('transform', `translate(${x}, ${y + 45})`);
+	}
+	_updateHSLWheel(cr) {
+
 	}
 
 	/**
@@ -1226,17 +1341,16 @@ class SmartColorSelector {
 		this._drop = {
 			color: '#ffff14'	// this._o.bkgColor
 		};
-		// sliders array. references on sliders groups are filled inside _build() function!
-		this._slidersTypes = [
-			{ name:	'Hue Boxes', ref: null, ctrls: {} },
-			{ name:	'RGB Sliders', ref: null, ctrls: {} },
-			{ name:	'HSL Wheel', ref: null, ctrls: {} },
-			{ name:	'Complementary', ref: null, ctrls: {} },
-			{ name:	'Analogous', ref: null, ctrls: {} },
-			{ name:	'Triadic', ref: null, ctrls: {} }
-		];
+		// sliders array. names, references and controls are filled inside _build() function!
+		this._slidersTypes = ['hue-boxes', 'rgb-sliders', 'analog-scheme', 'comp-scheme', 'mono-scheme', 'triadic-scheme'];
+		this._slTypes = new Map();
+
 		// set default slider to Hue Boxes
 		this._currentSliderIndex = 0;
+
+		this._build();
+		this._updateUI('internal');
+
 		/**
 		 * How to enter color code from keyboard.
 		 * Set focus on 'slider type' title by pressing 'TAB' button, or by clicking on it
@@ -1258,12 +1372,9 @@ class SmartColorSelector {
 		// color code from keyboard will be shown in this line
 		this._enterColorBuffer.textContent = '';
 
-		this._build();
-		this._updateUI('internal');
-
 		// event listeners is here!
-		if (this._slidersTypes[1].ref) { 	// RGB Slider exists
-			const rgbUI = this._slidersTypes[1].ctrls;
+		const rgbUI = this._slTypes.get('rgb-sliders').ctrls;
+		if (rgbUI) {
 			// r-slider
 			rgbUI.rSliderDrag = new SmartDragElement(rgbUI.rSlider, {containment: rgbUI.rSlider});
 			rgbUI.rSlider.addEventListener('onContinueDrag', (evt) => {
@@ -1386,9 +1497,8 @@ class SmartColorSelector {
 				this._updateUI(cr);
 			});
 		}
-		if (this._slidersTypes[0].ref) { 	// Hue Box exists
-			const hueBoxUI = this._slidersTypes[0].ctrls;
-
+		const hueBoxUI = this._slTypes.get('hue-boxes').ctrls;
+		if (hueBoxUI) {
 			hueBoxUI.hueDrag = new SmartDragElement(hueBoxUI.hueSlider, {containment: hueBoxUI.hueSlider});
 			hueBoxUI.satDrag = new SmartDragElement(hueBoxUI.satlumColor, {containment: hueBoxUI.satlumColor});
 			// HSL slider hue is changed
@@ -1532,7 +1642,6 @@ class SmartColorSelector {
 					}
 					break;
 				case 13: {	// 'Enter':
-					const rgbUI = this._slidersTypes[1].ctrls;
 					const rV = Number(rgbUI.rSliderVal.textContent);
 					const gV = Number(rgbUI.gSliderVal.textContent);
 					const bV = Number(rgbUI.bSliderVal.textContent);
