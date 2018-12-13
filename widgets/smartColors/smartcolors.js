@@ -1400,7 +1400,7 @@ class SmartColorSelector {
 			this._ssMenuG.setAttribute('display', 'none');
 		}
 	}
-	_updateSliders(what) {
+	_updateSliders(what = null, exclude = '') {
 		let cr = w3color('#000000');
 		what = what || (this._strokeColor.active ? 'stroke' : 'fill');
 		if (what === 'stroke') {
@@ -1415,40 +1415,123 @@ class SmartColorSelector {
 
 		this._updateHueBoxes(cr);
 		this._updateRGBSliders(cr);
-		this._updateAnalogScheme(cr);
-		this._updateCompScheme(cr);
-		this._updateMonoScheme(cr);
-		this._updateTriadicScheme(cr);
+		
+		this._updateAnalogScheme(cr, exclude);
+		this._updateCompScheme(cr, exclude);
+		this._updateMonoScheme(cr, exclude);
+		this._updateTriadicScheme(cr, exclude);
 
 		this._updateHSLWheel(cr);
 	}
 
-	_updateTriadicScheme(cr) {
+	_updateTriadicScheme(cr, excludeScheme) {
+		if (excludeScheme != 'nothing') {
+			if ((excludeScheme == 'exclude-schemes') || 
+				(this._currentSliderIndex > 1 && this._currentSliderIndex < 6)) {
+					return;
+			}
+		}
+
 		const ctrls = this._slTypes.get(this._slidersTypes[5]).ctrls;
 		ctrls.rgbVal.textContent = cr.toHexString();
+
+		let newColor = w3color(cr.toHexString());
+		const colors = [];
+		colors[2] = newColor.toHexString();	// selected color
+		let hue = newColor.hue + 120;
+		hue = hue > 360 ? hue - 360 : hue;
+		colors[3] = w3color(`hsl(${hue}, ${newColor.sat}, ${newColor.lightness})`).toHexString();
+		hue = newColor.hue + 240;
+		hue = hue > 360 ? hue - 360 : hue;
+		colors[1] = w3color(`hsl(${hue}, ${newColor.sat}, ${newColor.lightness})`).toHexString();
+		colors[4] = w3color(`hsl(${newColor.hue}, ${newColor.sat * 0.7}, ${0.2 * newColor.lightness})`).toHexString();	// very dark from selected
+		colors[0] = w3color(`hsl(${hue}, ${newColor.sat * 0.7}, ${0.8 * 1})`).toHexString();	// 10% lighter from selected + 240
+
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`triadic-scheme-${i}`);
+			el.setAttribute('fill', colors[i]);
 		}
 	}
-	_updateMonoScheme(cr) {
+	_updateMonoScheme(cr, excludeScheme) {
+		if (excludeScheme != 'nothing') {
+			if ((excludeScheme == 'exclude-schemes') || 
+				(this._currentSliderIndex > 1 && this._currentSliderIndex < 6)) {
+					return;
+			}
+		}
 		const ctrls = this._slTypes.get(this._slidersTypes[4]).ctrls;
 		ctrls.rgbVal.textContent = cr.toHexString();
+
+		let newColor = w3color(cr.toHexString());
+		const colors = [];
+		colors[0] = w3color(`hsl(${newColor.hue}, ${newColor.sat * 0.7}, ${0.93})`).toHexString();	// lighter, but near to selected
+		colors[2] = newColor.toHexString();	// selected color
+		newColor.lighter(20);
+		colors[1] = newColor.toHexString();	// 20% lighter then selected
+
+		newColor = w3color(cr.toHexString());
+		colors[4] = w3color(`hsl(${newColor.hue}, ${newColor.sat * 0.7}, ${0.2})`).toHexString();	// very dark
+		newColor.darker(20);
+		colors[3] = newColor.toHexString();	// 20% darker from selected
+
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`mono-scheme-${i}`);
+			el.setAttribute('fill', colors[i]);
 		}
 	}
-	_updateCompScheme(cr) {
+	_updateCompScheme(cr, excludeScheme) {
+		if (excludeScheme != 'nothing') {
+			if ((excludeScheme == 'exclude-schemes') || 
+				(this._currentSliderIndex > 1 && this._currentSliderIndex < 6)) {
+					return;
+			}
+		}
 		const ctrls = this._slTypes.get(this._slidersTypes[3]).ctrls;
 		ctrls.rgbVal.textContent = cr.toHexString();
+
+		let newColor = w3color(cr.toHexString());
+		const colors = [];
+		colors[2] = newColor.toHexString();	// selected color
+		// find opposite (+180) color hue + 180
+		let hue = newColor.hue + 180;
+		hue = hue > 360 ? hue - 360 : hue;
+		colors[1] = w3color(`hsl(${hue}, ${newColor.sat}, ${newColor.lightness})`).toHexString();	// opposite
+		colors[0] = w3color(`hsl(${hue}, ${newColor.sat * 0.7}, ${0.9 * 1})`).toHexString();	// 10% lighter from opposite
+		colors[3] = w3color(`hsl(${newColor.hue}, ${newColor.sat * 0.8}, ${0.4 * newColor.lightness})`).toHexString();	// 40% lighter from selected
+		colors[4] = w3color(`hsl(${newColor.hue}, ${newColor.sat * 0.7}, ${0.2 * newColor.lightness})`).toHexString();	// very dark
+
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`comp-scheme-${i}`);
+			el.setAttribute('fill', colors[i]);
 		}
 	}
-	_updateAnalogScheme(cr) {
+	_updateAnalogScheme(cr, excludeScheme) {
+		if (excludeScheme != 'nothing') {
+			if ((excludeScheme == 'exclude-schemes') || 
+				(this._currentSliderIndex > 1 && this._currentSliderIndex < 6)) {
+					return;
+			}
+		}
+
 		const ctrls = this._slTypes.get(this._slidersTypes[2]).ctrls;
 		ctrls.rgbVal.textContent = cr.toHexString();
+
+		let newColor = w3color(cr.toHexString());
+		const colors = [];
+		colors[2] = newColor.toHexString();	// selected color
+		let hue = newColor.hue - 30;
+		hue = hue < 0 ? hue + 360 : hue;
+		colors[1] = w3color(`hsl(${hue}, ${newColor.sat}, ${newColor.lightness})`).toHexString();	// -30 from selected
+		colors[0] = w3color(`hsl(${hue}, ${newColor.sat * 0.7}, ${0.9 * 1})`).toHexString();	// 10% lighter
+
+		hue = newColor.hue + 30;
+		hue = hue > 360 ? hue - 360 : hue;
+		colors[3] = w3color(`hsl(${hue}, ${newColor.sat}, ${newColor.lightness})`).toHexString();	// +30 after selected
+		colors[4] = w3color(`hsl(${hue}, ${newColor.sat * 0.7}, ${0.24 * newColor.lightness})`).toHexString();	// very dark
+
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`analog-scheme-${i}`);
+			el.setAttribute('fill', colors[i]);
 		}
 	}
 	_updateRGBSliders(cr) {	// 'rgb-sliders' - index 1 inside _slidersTypes
@@ -1490,7 +1573,7 @@ class SmartColorSelector {
 	 * update user interface with fillColor and strokeColor data
 	 *
 	 */
-	_updateUI(cr = null) {
+	_updateUI(cr = null, exclude) {
 		let sendEvent = true;
 		if (typeof cr === 'string' && cr === 'internal') {
 			sendEvent = false;
@@ -1515,7 +1598,7 @@ class SmartColorSelector {
 		} else {
 			this._sfG.insertBefore(this._btnSelStroke, this._btnSelFill);
 		}
-		this._updateSliders();
+		this._updateSliders('', exclude);
 
 		if (sendEvent) {
 			// send changed data to control (SmartColorSelectr or custom element 'smart-ui-colorsel)
@@ -1718,7 +1801,7 @@ class SmartColorSelector {
 				const lV = +((evt.detail.y / h).toFixed(2));
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				this._updateUI(cr, 'nothing');
 			});
 			triadicUI.rgbBox.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -1732,13 +1815,13 @@ class SmartColorSelector {
 				const lV = +((pt.y / h).toFixed(2));
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				this._updateUI(cr, 'nothing');
 			});
 			triadicUI.schemeG.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
 				const cr = w3color(evt.target.getAttribute('fill'));
-				this._updateUI(cr);
+				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
 
@@ -1756,7 +1839,7 @@ class SmartColorSelector {
 				const lV = +((evt.detail.y / h).toFixed(2));
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				this._updateUI(cr, 'nothing');
 			});
 			monoUI.rgbBox.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -1770,13 +1853,13 @@ class SmartColorSelector {
 				const lV = +((pt.y / h).toFixed(2));
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				this._updateUI(cr, 'nothing');
 			});
 			monoUI.schemeG.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
 				const cr = w3color(evt.target.getAttribute('fill'));
-				this._updateUI(cr);
+				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
 
@@ -1795,7 +1878,7 @@ class SmartColorSelector {
 				// console.log(`move y: ${evt.detail.y} = ${lV}`);
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				this._updateUI(cr, 'nothing');
 			});
 			compUI.rgbBox.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -1809,13 +1892,13 @@ class SmartColorSelector {
 				const lV = +((pt.y / h).toFixed(2));
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				this._updateUI(cr, 'nothing');
 			});
 			compUI.schemeG.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
 				const cr = w3color(evt.target.getAttribute('fill'));
-				this._updateUI(cr);
+				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
 
@@ -1834,7 +1917,7 @@ class SmartColorSelector {
 				// console.log(`move y: ${evt.detail.y} = ${lV}`);
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				this._updateUI(cr, 'nothing');
 			});
 			analogUI.rgbBox.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -1848,7 +1931,7 @@ class SmartColorSelector {
 				const lV = +((pt.y / h).toFixed(2));
 
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				this._updateUI(cr, 'nothing');
 			});
 			analogUI.schemeG.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -1856,7 +1939,7 @@ class SmartColorSelector {
 				// const index = evt.target.id.replace('analog-scheme-', '');
 				// console.log(`selected color from ${index}`);
 				const cr = w3color(evt.target.getAttribute('fill'));
-				this._updateUI(cr);
+				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
 
@@ -2126,7 +2209,7 @@ class SmartColorSelector {
 						// try to convert it to color...
 						const cr = w3color(this._enterColorBuffer.textContent);
 						if (cr.valid) {
-							this._updateUI(cr);
+							this._updateUI(cr, 'nothing');
 							this._enterColorBuffer.textContent = '';
 							this._enterColorBuffer.setAttribute('fill', '#ffffff');
 						} else {
@@ -2140,7 +2223,7 @@ class SmartColorSelector {
 						}
 						let cr = w3color(`rgb(${value},${gV},${bV})`);
 						if (cr.valid) {
-							this._updateUI(cr);
+							this._updateUI(cr, 'nothing');
 							this._enterColorBuffer.textContent = '';
 							this._enterColorBuffer.setAttribute('fill', '#ffffff');
 						} else {
@@ -2154,7 +2237,7 @@ class SmartColorSelector {
 						}
 						let cr = w3color(`rgb(${rV},${value},${bV})`);
 						if (cr.valid) {
-							this._updateUI(cr);
+							this._updateUI(cr, 'nothing');
 							this._enterColorBuffer.textContent = '';
 							this._enterColorBuffer.setAttribute('fill', '#ffffff');
 						} else {
@@ -2168,7 +2251,7 @@ class SmartColorSelector {
 						}
 						let cr = w3color(`rgb(${rV},${gV}),${value}`);
 						if (cr.valid) {
-							this._updateUI(cr);
+							this._updateUI(cr, 'nothing');
 							this._enterColorBuffer.textContent = '';
 							this._enterColorBuffer.setAttribute('fill', '#ffffff');
 						} else {
