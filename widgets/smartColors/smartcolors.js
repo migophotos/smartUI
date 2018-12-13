@@ -1237,6 +1237,26 @@ class SmartColorSelector {
 		];
 		// set default slider to Hue Boxes
 		this._currentSliderIndex = 0;
+		/**
+		 * How to enter color code from keyboard.
+		 * Set focus on 'slider type' title by pressing 'TAB' button, or by clicking on it
+		 * and start to enter the code. Full hexadecimal color code starts from '#' character
+		 * while R/G/B component code starts from 'r','g' or 'b' character. This partial code may
+		 * be in hexadecimal form ('#' after r/g/b), or in decimal form (code without '#').
+		 * Use 'Backspace' for deleting last enetered symbol, or 'Esc' for canceling procedure.
+		 * Hit 'Enter' at the end of entering color code for it's analizing and applying.
+		 * Correctly entered and applyed code will be erased from displaing. In case of 'error'
+		 * the color of the entered code will be  changed form 'white' to 'red'. Use 'Backspace' or 'Esc'
+		 * in this case for starting new color code entering.
+		 * Note: The procedure works regardless of the current localization language.
+		 * Examples:
+		 * #123456 - hex color code
+		 * r#25    - hex color code for R-component
+		 * g255	   - decimal color code for G-component
+		 * bff#    - error. '#' character cannot be after digit, use 'backspace' or 'esc'
+		 */
+		// color code from keyboard will be shown in this line
+		this._enterColorBuffer.textContent = '';
 
 		this._build();
 		this._updateUI('internal');
@@ -1434,25 +1454,6 @@ class SmartColorSelector {
 			});
 		}
 
-		this._enterColorBuffer.textContent = '';
-		// this._currentSliderTitle.addEventListener('keydown', (evt) => {
-		// 	switch (evt.keyCode) {
-		// 		case 27:	// 'Escape'
-		// 			this._enterColorBuffer.textContent = '#';
-		// 			this._enterColorBuffer.setAttribute('fill', '#ffffff');
-		// 			break;
-		// 		case 8:		// 'Backspace'
-		// 			if (this._enterColorBuffer.textContent.length) {
-		// 				const str = this._enterColorBuffer.textContent.slice(0, str.length - 1);
-		// 				this._enterColorBuffer.textContent = str;
-		// 				this._enterColorBuffer.setAttribute('fill', '#ffffff');
-		// 			}
-		// 			break;
-		// 		default:
-		// 			console.log(`Key: ${evt.key}, KeyCode: ${evt.keyCode}`);
-		// 			break;
-		// 	}
-		// });
 		this._currentSliderTitle.addEventListener('keydown', (evt) => {
 			// console.log(`Key: ${evt.key}, KeyCode: ${evt.keyCode}`);
 			switch (evt.keyCode) {
