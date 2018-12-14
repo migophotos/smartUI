@@ -147,12 +147,58 @@ class SmartColorSelector {
 			.stcrs.shadowed {
 				filter: url(#drop-shadow);
 			}
-			.stcrs.linked {
-				cursor: pointer;
-			}
-			.stcrs.animated {
-				transition:all 1.5s;
-			}
+		`;
+		this._helpLayerDef = `
+			<g id="show-help-layer" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:7.678px;">
+			<rect x="0" y="0" width="188" height="191" fill="none" stroke="none"></rect>
+			<g>
+				<rect x="53.054" y="75" width="75.891" height="14.173" fill="#5a6348"/>
+				<path d="M40.908,76.071L54.985,87.071L124.985,87.071" fill="none" stroke="#fff" stroke-width="1"/>
+				<text x="55.77" y="83.571" fill="#fff">Click to set &apos;ﬁll&apos; color</text>
+			</g>
+			<g>
+				<rect x="24.054" y="90" width="75.891" height="14.173" fill="#5a6348"/>
+				<path d="M15.811,86.638L27.985,102.071L97.985,102.071" fill="none" stroke="#fff" stroke-width="1"/>
+				<text x="29.77" y="98.571" fill="#fff">Click to unset color</text>
+			</g>
+			<g>
+				<rect x="58.054" y="167" width="75.891" height="14.173" fill="#5a6348"/>
+				<path d="M51.547,189.937L59.985,178.638L129.985,178.638" fill="none" stroke="#fff" stroke-width="1"/>
+				<text x="63.77" y="175.571" fill="#fff">Click to set opacity</text>
+			</g>
+			<g>
+				<rect x="65" y="132" width="86.945" height="14.173" fill="#5a6348"/>
+				<text x="73.77" y="141.571" fill="#fff">Click to select color</text>
+			</g>
+			<g>
+				<rect x="0" y="0" width="87.498" height="39.394" fill="#5a6348"/>
+				<path d="M13.449,54.912L1.985,12.071L85.985,12.071" fill="none" stroke="#fff" stroke-width="1"/>
+				<text x="2.77" y="8.571" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:7.678px;fill:#fff;">Click to set &apos;stroke&apos; color</text>
+			</g>
+			<g>
+				<rect x="73.054" y="60" width="75.891" height="14.173" fill="#5a6348"/>
+				<path d="M58.908,60.071L72.985,71.071L142.985,71.071" fill="none" stroke="#fff" stroke-width="1"/>
+				<text x="73.77px" y="67.571px" fill="#fff">Click to use this color</text>
+			</g>
+			<g>
+				<path d="M39.433,45.299L13.985,28.071L83.985,28.071" fill="none" stroke="#fff" stroke-width="1"/>
+				<text x="13.77" y="24.571" fill="#fff">Click to switch colors</text>
+			</g>
+			<g>
+				<rect x="105.054" y="45" width="74.061" height="14.173" fill="#5a6348"/>
+				<path d="M184.709,51.205L177.908,57.071L107.908,57.071" fill="none" stroke="#fff" stroke-width="1"/>
+				<text x="109.77" y="53.571" fill="#fff">Click to open menu</text>
+			</g>
+			<g>
+				<rect x="87" y="0" width="100.363" height="39.394" fill="#5a6348"/>
+				<path d="M87.306,40.575L98.528,12.26L183.528,12.26" fill="none" stroke="#fff" stroke-width="1"/>
+				<text x="100.312" y="8.76" fill="#fff">Click to enter color code</text>
+				<text x="100.312" y="20.76" fill="#fff">#XXXXXX&lt;enter&gt;</text>
+				<text x="100.312" y="27.76" fill="#fff">r/g/b#XX&lt;enter&gt;</text>
+				<text x="99.312" y="35.76" fill="#fff">r/g/bNNN&lt;enter&gt;</text>
+			</g>
+		</g>
+
 		`;
 
 		let gId = id;
@@ -217,13 +263,13 @@ class SmartColorSelector {
 			`<linearGradient id="hueRange" x1="0%" y1="50%" x2="100%" y2="50%">
 				<stop offset="0%" stop-color="#ff0000"/>
 				<stop offset="12.5%" stop-color="#ffbf00"/>
-				<stop offset="25%", stop-color="#80ff00"/>
-				<stop offset="37.5%", stop-color="#00ff40"/>
-				<stop offset="50%", stop-color="#00ffff"/>
-				<stop offset="62.5%", stop-color="#0040ff"/>
-				<stop offset="75%", stop-color="#7f00ff"/>
-				<stop offset="87.5%", stop-color="#ff00bf"/>
-				<stop offset="100%", stop-color="#ff0000"/>
+				<stop offset="25%" stop-color="#80ff00"/>
+				<stop offset="37.5%" stop-color="#00ff40"/>
+				<stop offset="50%" stop-color="#00ffff"/>
+				<stop offset="62.5%" stop-color="#0040ff"/>
+				<stop offset="75%" stop-color="#7f00ff"/>
+				<stop offset="87.5%" stop-color="#ff00bf"/>
+				<stop offset="100%" stop-color="#ff0000"/>
 			</linearGradient>`;
 			const lumRangeDef =
 			`<linearGradient id="lumRange" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -295,13 +341,37 @@ class SmartColorSelector {
 		return item;
 	}
 	/**
+	 * Show or hide sliders menu. Changes button apperiance also
+	 * @param {boolean*} state 
+	 */
+	_displaySliderTypeMenu(state) {
+		let status = 'none';
+		let btnCr = '#666';
+		let textCr = '#fff';
+		if (state) {
+			status = 'inherit';
+			btnCr = '#fff';
+			textCr = '#666';
+		}
+		this._ssMenuG.setAttribute('display', status);
+		SmartWidgets.setAttributes([this._root.getElementById('select-slider-btn')], {
+			fill: btnCr,
+			stroke: textCr
+		});
+		SmartWidgets.setAttributes([this._root.getElementById('select-slider-text')], {
+			stroke: textCr
+		});
+
+		
+	}
+	/**
 	 *
 	 */
 	_onSelectSliderType(evt) {
 		evt.stopPropagation();
 		evt.preventDefault();
 		// hide menu
-		this._ssMenuG.setAttribute('display', 'none');
+		this._displaySliderTypeMenu(false);
 		// get selected index
 		const index = Number(evt.target.id.replace('slider-', ''));
 		// get reference on selected slider definition
@@ -1414,26 +1484,63 @@ class SmartColorSelector {
 			 * show pop-up menu button
 			 */
 			this._selectSliders = SmartWidgets.addElement('g', {
-				id: 'select-slider-btn',
 				class: 'select-slider-btn',
 				style: 'cursor:pointer;',
 				transform: `translate(${190}, ${gap})`
 			}, this._bodyG, this._svgdoc);
 			SmartWidgets.addElement('rect', {
+				id: 'select-slider-btn',
 				x: 0,
 				y: 0,
 				width: 15,
 				height: 14,
 				rx: 2,
-				fill: '#666666'
+				fill: '#666666',
+				stroke: '#ffffff',
+				'stroke-width': 0.6
 			}, this._selectSliders, this._svgdoc);
 			SmartWidgets.addElement('path', {
+				id: 'select-slider-text',
 				d: 'M2,4 h11 m-11,3 h11, m-11,3 h11',
 				stroke: '#ffffff',
 				'stroke-width': 1.6,
 				fill: 'none',
 				'pointer-events': 'none'
 			}, this._selectSliders, this._svgdoc);
+
+			/**
+			 * Show 'Help' button under 'show popup menu' button
+			 */
+			this._showHelp = SmartWidgets.addElement('g', {
+				class: 'show-help-btn',
+				style: 'cursor:pointer;',
+				transform: `translate(${190}, ${gap + 18})`
+			}, this._bodyG, this._svgdoc);
+			SmartWidgets.addElement('rect', {
+				id: 'show-help-btn',
+				x: 0,
+				y: 0,
+				width: 15,
+				height: 14,
+				rx: 2,
+				fill: '#666666',
+				stroke: '#ffffff',
+				'stroke-width': 0.6
+			}, this._showHelp, this._svgdoc);
+			SmartWidgets.addElement('text', {
+				id: 'show-help-text',
+				text: '?',
+				x: 7.5,
+				y: 8,
+				fill: '#ffffff',
+				'text-anchor': 'middle',
+				'dominant-baseline': 'middle',
+				'pointer-events': 'none',
+				'font-family': fontFamily,
+				'font-size': 10,
+				'stroke-linejoin': 'round'
+			}, this._showHelp, this._svgdoc);
+
 
 			this._sliders = new ScrollableContainer(ssmId, {
 				width: 110,
@@ -1456,7 +1563,13 @@ class SmartColorSelector {
 					sliderItem.addEventListener('click', this._onSelectSliderType);
 				}
 			}
-			this._ssMenuG.setAttribute('display', 'none');
+			this._displaySliderTypeMenu(false);
+
+			this._helpLayer = SmartWidgets.addElement('g', {
+				transform: 'translate(4, -36)'
+			}, this._bodyG, this._svgdoc);
+			this._helpLayer.innerHTML = this._helpLayerDef;
+			this._helpLayer.setAttribute('display', 'none');
 		}
 	}
 	_updateSliders(what = null, exclude = '') {
@@ -1866,6 +1979,24 @@ class SmartColorSelector {
 		this._enterColorBuffer.textContent = '';
 
 		// event listeners is here!
+		this._showHelp.addEventListener('click', (evt) => {
+			let status = 'none';
+			let btnCr = '#666';
+			let textCr = '#fff';
+			if (this._helpLayer.getAttribute('display') === 'none') {
+				status = 'inherit';
+				btnCr = '#fff';
+				textCr = '#666';
+			}
+			this._helpLayer.setAttribute('display',  status);
+			SmartWidgets.setAttributes([this._root.getElementById('show-help-btn')], {
+				fill: btnCr,
+				stroke: textCr
+			});
+			SmartWidgets.setAttributes([this._root.getElementById('show-help-text')], {
+				fill: textCr
+			});
+		});
 		const triadicUI = this._slTypes.get('triadic-scheme').ctrls;
 		if (triadicUI) {
 			// rgb box
@@ -1904,7 +2035,6 @@ class SmartColorSelector {
 				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
-
 		const monoUI = this._slTypes.get('mono-scheme').ctrls;
 		if (monoUI) {
 			// rgb box
@@ -1943,7 +2073,6 @@ class SmartColorSelector {
 				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
-
 		const compUI = this._slTypes.get('comp-scheme').ctrls;
 		if (compUI) {
 			// rgb box
@@ -1983,7 +2112,6 @@ class SmartColorSelector {
 				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
-
 		const analogUI = this._slTypes.get('analog-scheme').ctrls;
 		if (analogUI) {
 			// rgb box
@@ -2023,7 +2151,6 @@ class SmartColorSelector {
 				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
-
 		const rgbUI = this._slTypes.get('rgb-sliders').ctrls;
 		if (rgbUI) {
 			// r-slider
@@ -2203,7 +2330,7 @@ class SmartColorSelector {
 				this._updateUI(cr);
 			});
 		}
-
+		// capture keyboard input
 		this._currentSliderTitle.addEventListener('keydown', (evt) => {
 			// console.log(`Key: ${evt.key}, KeyCode: ${evt.keyCode}`);
 			switch (evt.keyCode) {
@@ -2349,9 +2476,9 @@ class SmartColorSelector {
 			evt.preventDefault();
 		});
 
-		// show popup menu was pressed
+		// 'show popup menu' was pressed
 		this._selectSliders.addEventListener('click', (evt) => {
-			this._ssMenuG.setAttribute('display', this._ssMenuG.getAttribute('display') === 'none' ? 'inherit' : 'none');
+			this._displaySliderTypeMenu(this._ssMenuG.getAttribute('display') === 'none' ? true : false);
 		});
 
 		// set 'stroke as active' was pressed
