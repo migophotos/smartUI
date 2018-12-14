@@ -287,8 +287,22 @@ class SmartColorSelector {
 				<stop offset="0%" stop-color="#000000"/>
 				<stop offset="100%" stop-color="rgba(204, 154, 129, 0)"/>
 			</linearGradient>`;
+			const opSliderDef = 
+			`<pattern id="pats" x="0" y="0" width="0.04" height="1">
+            <rect x="0" y="0" width="4" height="4" fill="#aaaaaa"/>
+            <rect x="4" y="0" width="4" height="4" fill="#ffffff"/>
+            <rect x="0" y="4" width="4" height="4" fill="#ffffff"/>
+            <rect x="4" y="4" width="4" height="4" fill="#aaaaaa"/>
+        	</pattern>
+			<linearGradient id="maskGradient">
+				<stop offset="0" stop-color="white" stop-opacity="0" />
+				<stop offset="1" stop-color="white" stop-opacity="1" />
+		    </linearGradient>
+			<mask id="opacityMask">
+				<rect x="0" y="0" width="192" height="8" fill="url(#maskGradient)"  />
+			</mask>`;			
 
-			this._defs.innerHTML = window.SmartColorSelectors.defs + hueRangeDef + lumRangeDef + satRangeDef + rgbRangeDef;
+			this._defs.innerHTML = window.SmartColorSelectors.defs + hueRangeDef + lumRangeDef + satRangeDef + rgbRangeDef + opSliderDef;
 
 		}
 
@@ -586,6 +600,51 @@ class SmartColorSelector {
 				fill: this._drop.color,
 				style: 'cursor:pointer;'
 			}, this._sfG, this._svgdoc);
+
+			/**
+			 * Opacity slider at the bottom of the window
+			 */
+			this._opacityG = SmartWidgets.addElement('g', {
+				class: 'opacity-group',
+				transform: `translate(${gap + 4}, ${155})`
+			}, this._bodyG, this._svgdoc);
+			SmartWidgets.addElement('rect', {	// for pattern
+				class: 'op-slider patern',
+				x: 0,
+				y: 0,
+				width: 192,
+				height: 8,
+				rx: 4,
+				stroke: '#0000',
+				'stroke-width': 0.6,
+				fill: 'url(#pats)',
+				'pointer-events': 'none'
+			}, this._opacityG, this._svgdoc);
+			this._opSlider = SmartWidgets.addElement('rect', {
+				id: 'opacity-slider',
+				class: 'op-slider draggable clickable',
+				x: 0,
+				y: 0,
+				width: 192,
+				height: 8,
+				rx: 4,
+				stroke: '#0000',
+				'stroke-width': 0.6,
+				fill: '#cc0000',	// temporary
+				mask: 'url(#opacityMask)',
+				style: 'cursor:pointer'
+			}, this._opacityG, this._svgdoc);
+			this._opInd = SmartWidgets.addElement('circle', {
+				id: 'opacity-indicator',
+				cx: 0,
+				cy: 4,
+				r: 8,
+				stroke: '#ffffff',
+				'stroke-width': 1.6,
+				fill: '#cc0000',	// will be updated by active color
+				'fill-opacity': 1,	// will be updated from 1 to 0, by draggin opacity slider
+				'pointer-events': 'none'
+			}, this._opacityG, this._svgdoc);
 
 			/**
 			 * Hue Boxes group
@@ -1760,10 +1819,32 @@ class SmartColorSelector {
 	_updateHSLWheel(cr) {
 
 	}
+	/**
+	 * update opacity for active color and move opacity indicator
+	 */
+	_updateOpacity(opacity = null) {
+		if (opacity) {
+			// specified opacity says that opacity value was changed by user
+			this._strokeColor.active ? (this._strokeColor.opacity = opacity) : (this._fillColor.opacity = opacity);
+		} else {
+			// not specified opacity occures, so set the 'active color inside opacity slider also!
+			const color = this._strokeColor.active ? this._strokeColor.color : this._fillColor.color;
+			this._opInd.setAttribute('fill', color);
+			this._opSlider.setAttribute('fill', color);
+			opacity = this._strokeColor.active ? this._strokeColor.opacity : this._fillColor.opacity;
+		}
+		if (this._opInd) {
+			const w = Number(this._opSlider.getAttribute('width'));
+			this._opInd.setAttribute('transform', `translate(${(w * opacity) - 4}, 0)`);
+			this._opInd.setAttribute('fill-opacity', opacity);
+		}
+	}
 
 	/**
 	 * update user interface with fillColor and strokeColor data
-	 *
+	 * @param {*} cr - w3color object in case of color was changed, 
+	 * 					number in case of opacity was changed, 
+	 * 					string 'internal - ui was changed
 	 */
 	_updateUI(cr = null, exclude) {
 		let sendEvent = true;
@@ -1791,6 +1872,8 @@ class SmartColorSelector {
 			this._sfG.insertBefore(this._btnSelStroke, this._btnSelFill);
 		}
 		this._updateSliders('', exclude);
+		const opacity = ((cr && typeof cr === 'number') ? cr : null);
+		this._updateOpacity(opacity);
 
 		if (sendEvent) {
 			// send changed data to control (SmartColorSelectr or custom element 'smart-ui-colorsel)
@@ -1855,7 +1938,7 @@ class SmartColorSelector {
 				this._strokeColor.disabled = 1;
 			}
 		}
-		this._updateUI('internal');
+		this._updateUI('internal', 'nothing');
 	}
 	getData() {
 		const colorData = {
@@ -1955,7 +2038,7 @@ class SmartColorSelector {
 		this._currentSliderIndex = 0;
 
 		this._build();
-		this._updateUI('internal');
+		this._updateUI('internal', 'nothing');
 
 		/**
 		 * How to enter color code from keyboard.
@@ -1997,6 +2080,25 @@ class SmartColorSelector {
 				fill: textCr
 			});
 		});
+		this._opSliderDrag = new SmartDragElement(this._opSlider, {containment: this._opSlider});
+		this._opSlider.addEventListener('onContinueDrag', (evt) => {
+			evt.preventDefault();
+			evt.stopPropagation();
+			const w = Number(this._opSlider.getAttribute('width'));
+			const opacity = +((evt.detail.x / w).toFixed(2));
+			this._updateUI(opacity);
+		});
+		this._opSlider.addEventListener('click', (evt) => {
+			evt.preventDefault();
+			evt.stopPropagation();
+			const scroll = SmartWidgets.getScroll();
+			const pt = SmartWidgets.svgPoint(triadicUI.rgbBox, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+
+			const w = Number(this._opSlider.getAttribute('width'));
+			const opacity = +((pt.x / w).toFixed(2));
+			this._updateUI(opacity);
+		});
+
 		const triadicUI = this._slTypes.get('triadic-scheme').ctrls;
 		if (triadicUI) {
 			// rgb box
@@ -2486,7 +2588,6 @@ class SmartColorSelector {
 			this._strokeColor.active = 1;
 			this._fillColor.active = 0;
 			this._sfG.insertBefore(this._btnSelFill, this._btnSelStroke);
-			// this._updateSliders('stroke');
 			this._updateUI();
 		});
 		// set 'fill as active' was pressed
