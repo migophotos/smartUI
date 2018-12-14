@@ -875,7 +875,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
-					'pointer-events': 'none'
+					// 'pointer-events': 'none'
 				}, rgbG, this._svgdoc);
 
 				gr = SmartWidgets.addElement('g', {
@@ -944,6 +944,21 @@ class SmartColorSelector {
 						stroke: 'none',
 						fill: `#${i * 4}${i * 4}${i * 4}`	// will be updated later
 					}, ctrls.schemeG, this._svgdoc);
+					SmartWidgets.addElement('text', {
+						id: `mono-color-${i}`,
+						class: 'mono-color',
+						text: '#ffffff',
+						x: (i * 40) + 20,
+						y: 16,
+						fill: '#ffffff',
+						'text-anchor': 'middle',
+						'dominant-baseline': 'middle',
+						'font-family': fontFamily,
+						'font-size': 8,
+						'stroke-linejoin': 'round',
+						// 'pointer-events': 'none'
+					}, ctrls.schemeG, this._svgdoc);					
+
 				}
 				/**
 				 * RGB Box
@@ -970,7 +985,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
-					'pointer-events': 'none'
+					// 'pointer-events': 'none'
 				}, monoG, this._svgdoc);
 
 				const gr = SmartWidgets.addElement('g', {
@@ -1037,6 +1052,20 @@ class SmartColorSelector {
 						stroke: 'none',
 						fill: `#${i * 4}${i * 4}${i * 4}`	// will be updated later
 					}, ctrls.schemeG, this._svgdoc);
+					SmartWidgets.addElement('text', {
+						id: `comp-color-${i}`,
+						class: 'comp-color',
+						text: '#ffffff',
+						x: (i * 40) + 20,
+						y: 16,
+						fill: '#ffffff',
+						'text-anchor': 'middle',
+						'dominant-baseline': 'middle',
+						'font-family': fontFamily,
+						'font-size': 10,
+						'stroke-linejoin': 'round',
+						// 'pointer-events': 'none'
+					}, ctrls.schemeG, this._svgdoc);					
 				}
 
 				/**
@@ -1064,7 +1093,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
-					'pointer-events': 'none'
+					// 'pointer-events': 'none'
 				}, compG, this._svgdoc);
 
 				const gr = SmartWidgets.addElement('g', {
@@ -1132,6 +1161,21 @@ class SmartColorSelector {
 						stroke: 'none',
 						fill: `#${i * 4}${i * 4}${i * 4}`	// will be updated later
 					}, ctrls.schemeG, this._svgdoc);
+					SmartWidgets.addElement('text', {
+						id: `analog-color-${i}`,
+						class: 'analog-color',
+						text: '#ffffff',
+						x: (i * 40) + 20,
+						y: 16,
+						fill: '#ffffff',
+						'text-anchor': 'middle',
+						'dominant-baseline': 'middle',
+						'font-family': fontFamily,
+						'font-size': 10,
+						'stroke-linejoin': 'round',
+						// 'pointer-events': 'none'
+					}, ctrls.schemeG, this._svgdoc);					
+
 				}
 				/**
 				 * RGB Box
@@ -1158,7 +1202,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
-					'pointer-events': 'none'
+					// 'pointer-events': 'none'
 				}, analogG, this._svgdoc);
 
 				const gr = SmartWidgets.addElement('g', {
@@ -1225,6 +1269,21 @@ class SmartColorSelector {
 						stroke: 'none',
 						fill: `#${i * 4}${i * 4}${i * 4}`,	// will be updated later
 					}, ctrls.schemeG, this._svgdoc);
+					SmartWidgets.addElement('text', {
+						id: `triadic-color-${i}`,
+						class: 'triadic-color',
+						text: '#ffffff',
+						x: (i	 * 40) + 20,
+						y: 16,
+						fill: '#ffffff',
+						'text-anchor': 'middle',
+						'dominant-baseline': 'middle',
+						'font-family': fontFamily,
+						'font-size': 10,
+						'stroke-linejoin': 'round',
+						// 'pointer-events': 'none'
+					}, ctrls.schemeG, this._svgdoc);					
+
 				}
 				/**
 				 * RGB Box
@@ -1251,7 +1310,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
-					'pointer-events': 'none'
+					// 'pointer-events': 'none'
 				}, triadicG, this._svgdoc);
 
 				const gr = SmartWidgets.addElement('g', {
@@ -1450,6 +1509,10 @@ class SmartColorSelector {
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`triadic-scheme-${i}`);
 			el.setAttribute('fill', colors[i]);
+			el = this._root.getElementById(`triadic-color-${i}`);
+			newColor = w3color(colors[i]);
+			el.setAttribute('fill', newColor.isDark() ? '#ffffff' : '#1f2d3d');
+			el.textContent = newColor.toHexString();
 		}
 	}
 	_updateMonoScheme(cr, excludeScheme) {
@@ -1477,6 +1540,10 @@ class SmartColorSelector {
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`mono-scheme-${i}`);
 			el.setAttribute('fill', colors[i]);
+			el = this._root.getElementById(`mono-color-${i}`);
+			newColor = w3color(colors[i]);
+			el.setAttribute('fill', newColor.isDark() ? '#ffffff' : '#1f2d3d');
+			el.textContent = newColor.toHexString();
 		}
 	}
 	_updateCompScheme(cr, excludeScheme) {
@@ -1503,6 +1570,10 @@ class SmartColorSelector {
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`comp-scheme-${i}`);
 			el.setAttribute('fill', colors[i]);
+			el = this._root.getElementById(`comp-color-${i}`);
+			newColor = w3color(colors[i]);
+			el.setAttribute('fill', newColor.isDark() ? '#ffffff' : '#1f2d3d');
+			el.textContent = newColor.toHexString();
 		}
 	}
 	_updateAnalogScheme(cr, excludeScheme) {
@@ -1532,6 +1603,10 @@ class SmartColorSelector {
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`analog-scheme-${i}`);
 			el.setAttribute('fill', colors[i]);
+			el = this._root.getElementById(`analog-color-${i}`);
+			newColor = w3color(colors[i]);
+			el.setAttribute('fill', newColor.isDark() ? '#ffffff' : '#1f2d3d');
+			el.textContent = newColor.toHexString();
 		}
 	}
 	_updateRGBSliders(cr) {	// 'rgb-sliders' - index 1 inside _slidersTypes
@@ -1818,9 +1893,10 @@ class SmartColorSelector {
 				this._updateUI(cr, 'nothing');
 			});
 			triadicUI.schemeG.addEventListener('click', (evt) => {
-				evt.preventDefault();
-				evt.stopPropagation();
-				const cr = w3color(evt.target.getAttribute('fill'));
+				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling : 
+							   evt.target.nodeName == 'g' ? evt.target.firstElementChild : 
+							   evt.target;
+				const cr = w3color(target.getAttribute('fill'));
 				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
@@ -1856,9 +1932,10 @@ class SmartColorSelector {
 				this._updateUI(cr, 'nothing');
 			});
 			monoUI.schemeG.addEventListener('click', (evt) => {
-				evt.preventDefault();
-				evt.stopPropagation();
-				const cr = w3color(evt.target.getAttribute('fill'));
+				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling : 
+							   evt.target.nodeName == 'g' ? evt.target.firstElementChild : 
+							   evt.target;
+				const cr = w3color(target.getAttribute('fill'));
 				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
@@ -1895,9 +1972,10 @@ class SmartColorSelector {
 				this._updateUI(cr, 'nothing');
 			});
 			compUI.schemeG.addEventListener('click', (evt) => {
-				evt.preventDefault();
-				evt.stopPropagation();
-				const cr = w3color(evt.target.getAttribute('fill'));
+				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling : 
+							   evt.target.nodeName == 'g' ? evt.target.firstElementChild : 
+							   evt.target;
+				const cr = w3color(target.getAttribute('fill'));
 				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
@@ -1934,11 +2012,10 @@ class SmartColorSelector {
 				this._updateUI(cr, 'nothing');
 			});
 			analogUI.schemeG.addEventListener('click', (evt) => {
-				evt.preventDefault();
-				evt.stopPropagation();
-				// const index = evt.target.id.replace('analog-scheme-', '');
-				// console.log(`selected color from ${index}`);
-				const cr = w3color(evt.target.getAttribute('fill'));
+				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling : 
+							   evt.target.nodeName == 'g' ? evt.target.firstElementChild : 
+							   evt.target;
+				const cr = w3color(target.getAttribute('fill'));
 				this._updateUI(cr, 'exclude-schemes');
 			});
 		}
