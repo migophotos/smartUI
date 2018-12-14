@@ -1511,7 +1511,8 @@ class SmartColorSelector {
 			el.setAttribute('fill', colors[i]);
 			el = this._root.getElementById(`triadic-color-${i}`);
 			newColor = w3color(colors[i]);
-			el.setAttribute('fill', newColor.isDark() ? '#ffffff' : '#1f2d3d');
+			newColor.isDark() ? newColor.lighter(90) : newColor.darker(90);
+			el.setAttribute('fill', newColor.toHexString());
 			el.textContent = newColor.toHexString();
 		}
 	}
@@ -1542,7 +1543,8 @@ class SmartColorSelector {
 			el.setAttribute('fill', colors[i]);
 			el = this._root.getElementById(`mono-color-${i}`);
 			newColor = w3color(colors[i]);
-			el.setAttribute('fill', newColor.isDark() ? '#ffffff' : '#1f2d3d');
+			newColor.isDark() ? newColor.lighter(90) : newColor.darker(90);
+			el.setAttribute('fill', newColor.toHexString());
 			el.textContent = newColor.toHexString();
 		}
 	}
@@ -1572,7 +1574,8 @@ class SmartColorSelector {
 			el.setAttribute('fill', colors[i]);
 			el = this._root.getElementById(`comp-color-${i}`);
 			newColor = w3color(colors[i]);
-			el.setAttribute('fill', newColor.isDark() ? '#ffffff' : '#1f2d3d');
+			newColor.isDark() ? newColor.lighter(90) : newColor.darker(90);
+			el.setAttribute('fill', newColor.toHexString());
 			el.textContent = newColor.toHexString();
 		}
 	}
@@ -1599,13 +1602,14 @@ class SmartColorSelector {
 		hue = hue > 360 ? hue - 360 : hue;
 		colors[3] = w3color(`hsl(${hue}, ${newColor.sat}, ${newColor.lightness})`).toHexString();	// +30 after selected
 		colors[4] = w3color(`hsl(${hue}, ${newColor.sat * 0.7}, ${0.24 * newColor.lightness})`).toHexString();	// very dark
-
+		
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`analog-scheme-${i}`);
 			el.setAttribute('fill', colors[i]);
 			el = this._root.getElementById(`analog-color-${i}`);
 			newColor = w3color(colors[i]);
-			el.setAttribute('fill', newColor.isDark() ? '#ffffff' : '#1f2d3d');
+			newColor.isDark() ? newColor.lighter(90) : newColor.darker(90);
+			el.setAttribute('fill', newColor.toHexString());
 			el.textContent = newColor.toHexString();
 		}
 	}
