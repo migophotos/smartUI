@@ -1513,7 +1513,7 @@ class SmartColorSelector {
 			newColor = w3color(colors[i]);
 			newColor.isDark() ? newColor.lighter(90) : newColor.darker(90);
 			el.setAttribute('fill', newColor.toHexString());
-			el.textContent = newColor.toHexString();
+			el.textContent = colors[i];
 		}
 	}
 	_updateMonoScheme(cr, excludeScheme) {
@@ -1545,7 +1545,7 @@ class SmartColorSelector {
 			newColor = w3color(colors[i]);
 			newColor.isDark() ? newColor.lighter(90) : newColor.darker(90);
 			el.setAttribute('fill', newColor.toHexString());
-			el.textContent = newColor.toHexString();
+			el.textContent = colors[i];
 		}
 	}
 	_updateCompScheme(cr, excludeScheme) {
@@ -1576,7 +1576,7 @@ class SmartColorSelector {
 			newColor = w3color(colors[i]);
 			newColor.isDark() ? newColor.lighter(90) : newColor.darker(90);
 			el.setAttribute('fill', newColor.toHexString());
-			el.textContent = newColor.toHexString();
+			el.textContent = colors[i];
 		}
 	}
 	_updateAnalogScheme(cr, excludeScheme) {
@@ -1610,7 +1610,7 @@ class SmartColorSelector {
 			newColor = w3color(colors[i]);
 			newColor.isDark() ? newColor.lighter(90) : newColor.darker(90);
 			el.setAttribute('fill', newColor.toHexString());
-			el.textContent = newColor.toHexString();
+			el.textContent = colors[i];
 		}
 	}
 	_updateRGBSliders(cr) {	// 'rgb-sliders' - index 1 inside _slidersTypes
