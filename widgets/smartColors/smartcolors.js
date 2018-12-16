@@ -2754,7 +2754,7 @@ class SmartColorSelector {
 							value = value.replace('#', '');
 							value = parseInt(value, 16);
 						}
-						let cr = w3color(`rgba(${rV},${gV}),${value},${op})`);
+						let cr = w3color(`rgba(${rV},${gV},${value},${op})`);
 						if (cr.valid) {
 							this._updateUI(cr, 'nothing');
 							this._enterColorBuffer.textContent = '';
