@@ -300,6 +300,9 @@ class SmartColorSelector {
 		    </linearGradient>
 			<mask id="opacityMask">
 				<rect x="0" y="0" width="192" height="8" fill="url(#maskGradient)"  />
+			</mask>			
+			<mask id="componentMask">
+				<rect x="0" y="0" width="154" height="8" fill="url(#maskGradient)"  />
 			</mask>`;			
 
 			this._defs.innerHTML = window.SmartColorSelectors.defs + hueRangeDef + lumRangeDef + satRangeDef + rgbRangeDef + opSliderDef;
@@ -803,7 +806,7 @@ class SmartColorSelector {
 				}, rgbG, this._svgdoc);
 				ctrls.rSliderVal = SmartWidgets.addElement('text', {
 					text: '#00',
-					x: 175,
+					x: 180,
 					y: 5,
 					fill: '#ffffff',
 					'text-anchor': 'start',
@@ -817,37 +820,59 @@ class SmartColorSelector {
 				let gr = SmartWidgets.addElement('g', {
 					id: 'r-sliders-g',
 					class: 'r-sliders-g',
-					transform: 'translate(14, 4)'
+					transform: 'translate(16, 0)'
 				}, rgbG, this._svgdoc);
-				ctrls.rSlider = SmartWidgets.addElement('path', {
+
+				// draw slider as two rectangles with mask.
+				ctrls.rSlider = SmartWidgets.addElement('rect', {
 					id: 'r-slider',
-					class: 'r-slider draggable clickable',
-					'stroke-width': 8,
-					'stroke-linecap': 'round',
-					stroke: '#ff0000',
-					d: 'M0,0 h150',
+					class: 'r-slider-to draggable clickable',
+					x: -2,
+					y: -2,
+					rx: 6,
+					width: 158,
+					height: 12,
+					'stroke-width': 1,
+					stroke: this._o.bkgColor,
+					fill: this._o.bkgColor,
 					style: 'cursor:pointer'
 				}, gr, this._svgdoc);
-				SmartWidgets.addElement('rect', {
-					class: 'r-slider',
-					x: -4,
-					y: -4,
+				ctrls.rSlider.dataset['bisy'] = 'none';
+				// bottom rectangle shows color 'from' and upper one - 'upto' color
+				ctrls.rSliderFrom = SmartWidgets.addElement('rect', {
+					class: 'r-slider-from',
+					x: 0,
+					y: 0,
+					rx: 4,
 					width: 154,
 					height: 8,
 					'stroke-width': 0,
-					stroke: 'none',
-					fill: 'url(#rgbRange)',
+					fill: '#000000',	// color 'from'
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
+				// upper rectangle
+				ctrls.rSliderTo = SmartWidgets.addElement('rect', {
+					class: 'r-slider-to',
+					x: 0,
+					y: 0,
+					rx: 4,
+					width: 154,
+					height: 8,
+					'stroke-width': 0,
+					fill: '#ff0000',	// color 'upto'
+					mask: 'url(#componentMask)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+
 				ctrls.rSliderInd = SmartWidgets.addElement('circle', {
 					id: 'rSliderInd',
 					class: 'r-slider-ind',
 					cx: 0,
-					cy: 0,
-					r: 4.8,
+					cy: 4,
+					r: 6,
 					stroke: '#ffffff',
 					'stroke-width': 1.6,
-					fill: 'none',
+					fill: '#ff0000',
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
 				/**
@@ -867,7 +892,7 @@ class SmartColorSelector {
 				}, rgbG, this._svgdoc);
 				ctrls.gSliderVal = SmartWidgets.addElement('text', {
 					text: '#00',
-					x: 175,
+					x: 180,
 					y: 21,
 					fill: '#ffffff',
 					'text-anchor': 'start',
@@ -881,26 +906,47 @@ class SmartColorSelector {
 				gr = SmartWidgets.addElement('g', {
 					id: 'g-sliders-g',
 					class: 'g-sliders-g',
-					transform: 'translate(14, 20)'
+					transform: 'translate(16, 16)'
 				}, rgbG, this._svgdoc);
-				ctrls.gSlider = SmartWidgets.addElement('path', {
+
+				// draw slider as two rectangles with mask.
+				ctrls.gSlider = SmartWidgets.addElement('rect', {
 					id: 'g-slider',
-					class: 'g-slider draggable clickable',
-					'stroke-width': 8,
-					'stroke-linecap': 'round',
-					stroke: '#00ff00',
-					d: 'M0,0 h150',
+					class: 'g-slider-to draggable clickable',
+					x: -2,
+					y: -2,
+					rx: 6,
+					width: 158,
+					height: 12,
+					'stroke-width': 1,
+					stroke: this._o.bkgColor,
+					fill: this._o.bkgColor,
 					style: 'cursor:pointer'
 				}, gr, this._svgdoc);
-				SmartWidgets.addElement('rect', {
-					class: 'g-slider',
-					x: -4,
-					y: -4,
+				ctrls.gSlider.dataset['bisy'] = 'none';
+				// bottom rectangle shows color 'from' and upper one - 'upto' color
+				ctrls.gSliderFrom = SmartWidgets.addElement('rect', {
+					class: 'g-slider-from',
+					x: 0,
+					y: 0,
+					rx: 4,
 					width: 154,
 					height: 8,
 					'stroke-width': 0,
-					stroke: 'none',
-					fill: 'url(#rgbRange)',
+					fill: '#000000',	// color 'from'
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+				// upper rectangle
+				ctrls.gSliderTo = SmartWidgets.addElement('rect', {
+					class: 'g-slider-to',
+					x: 0,
+					y: 0,
+					rx: 4,
+					width: 154,
+					height: 8,
+					'stroke-width': 0,
+					fill: '#00ff00',	// color 'upto'
+					mask: 'url(#componentMask)',
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
 
@@ -908,11 +954,11 @@ class SmartColorSelector {
 					id: 'g-slider-ind',
 					class: 'g-slider-ind',
 					cx: 0,
-					cy: 0,
-					r: 4.8,
+					cy: 4,
+					r: 6,
 					stroke: '#ffffff',
 					'stroke-width': 1.6,
-					fill: 'none',
+					fill: '#00ff00',
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
 				/**
@@ -932,7 +978,7 @@ class SmartColorSelector {
 				}, rgbG, this._svgdoc);
 				ctrls.bSliderVal = SmartWidgets.addElement('text', {
 					text: '#00',
-					x: 175,
+					x: 180,
 					y: 37,
 					fill: '#ffffff',
 					'text-anchor': 'start',
@@ -946,37 +992,59 @@ class SmartColorSelector {
 				gr = SmartWidgets.addElement('g', {
 					id: 'b-sliders-g',
 					class: 'b-sliders-g',
-					transform: 'translate(14, 36)'
+					transform: 'translate(16, 32)'
 				}, rgbG, this._svgdoc);
-				ctrls.bSlider = SmartWidgets.addElement('path', {
+
+				// draw slider as two rectangles with mask.
+				ctrls.bSlider = SmartWidgets.addElement('rect', {
 					id: 'b-slider',
-					class: 'b-slider draggable clickable',
-					'stroke-width': 8,
-					'stroke-linecap': 'round',
-					stroke: '#0000ff',
-					d: 'M0,0 h150',
+					class: 'b-slider-to draggable clickable',
+					x: -2,
+					y: -2,
+					rx: 6,
+					width: 158,
+					height: 12,
+					'stroke-width': 1,
+					stroke: this._o.bkgColor,
+					fill: this._o.bkgColor,
 					style: 'cursor:pointer'
 				}, gr, this._svgdoc);
-				SmartWidgets.addElement('rect', {
-					class: 'b-slider',
-					x: -4,
-					y: -4,
+				ctrls.bSlider.dataset['bisy'] = 'none';
+				// bottom rectangle shows color 'from' and upper one - 'upto' color
+				ctrls.bSliderFrom = SmartWidgets.addElement('rect', {
+					class: 'b-slider-from',
+					x: 0,
+					y: 0,
+					rx: 4,
 					width: 154,
 					height: 8,
 					'stroke-width': 0,
-					stroke: 'none',
-					fill: 'url(#rgbRange)',
+					fill: '#000000',	// color 'from'
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
+				// upper rectangle
+				ctrls.bSliderTo = SmartWidgets.addElement('rect', {
+					class: 'b-slider-to',
+					x: 0,
+					y: 0,
+					rx: 4,
+					width: 154,
+					height: 8,
+					'stroke-width': 0,
+					fill: '#0000ff',	// color 'upto'
+					mask: 'url(#componentMask)',
+					'pointer-events': 'none'
+				}, gr, this._svgdoc);
+
 				ctrls.bSliderInd = SmartWidgets.addElement('circle', {
 					id: 'b-slider-ind',
 					class: 'b-slider-ind',
 					cx: 0,
-					cy: 0,
-					r: 4.8,
+					cy: 4,
+					r: 6,
 					stroke: '#ffffff',
 					'stroke-width': 1.6,
-					fill: 'none',
+					fill: '#0000ff',
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
 				/**
@@ -996,7 +1064,7 @@ class SmartColorSelector {
 				}, rgbG, this._svgdoc);
 				ctrls.rgbVal = SmartWidgets.addElement('text', {
 					text: '#000000',
-					x: 148,
+					x: 153,
 					y: 53,
 					fill: '#ffffff',
 					'text-anchor': 'start',
@@ -1791,13 +1859,40 @@ class SmartColorSelector {
 		ctrls.rSliderVal.textContent = cr.red.toFixed();
 		ctrls.gSliderVal.textContent = cr.green.toFixed();
 		ctrls.bSliderVal.textContent = cr.blue.toFixed();
-		let w = Number(ctrls.rSlider.getTotalLength());
+		let w = Number(ctrls.rSliderTo.getAttribute('width'));
 		let x = (w * cr.red) / 255;
+		x = Math.ceil(x);
+		x = x < 1 ? 0 : x > w ? w : x;
 		ctrls.rSliderInd.setAttribute('transform', `translate(${x}, 0)`);
 		x = (w * cr.green) / 255;
+		x = Math.ceil(x);
+		x = x < 1 ? 0 : x > w ? w : x;
 		ctrls.gSliderInd.setAttribute('transform', `translate(${x}, 0)`);
 		x = (w * cr.blue) / 255;
+		x = Math.ceil(x);
+		x = x < 1 ? 0 : x > w ? w : x;
 		ctrls.bSliderInd.setAttribute('transform', `translate(${x}, 0)`);
+		// set predictable colors for each component
+		let crFrom, crTo;
+		if (ctrls.rSlider.dataset['bisy'] == 'none') {
+			crFrom = w3color(`rgb(0, ${cr.green.toFixed()}, ${cr.blue.toFixed()})`);
+			ctrls.rSliderFrom.setAttribute('fill', crFrom.toHexString());
+			crTo = w3color(`rgb(255, ${cr.green.toFixed()}, ${cr.blue.toFixed()})`);
+			ctrls.rSliderTo.setAttribute('fill', crTo.toHexString());
+		}
+		if (ctrls.gSlider.dataset['bisy'] == 'none') {
+			crFrom = w3color(`rgb(${cr.red.toFixed()}, 0, ${cr.blue.toFixed()})`);
+			ctrls.gSliderFrom.setAttribute('fill', crFrom.toHexString());
+			crTo = w3color(`rgb(${cr.red.toFixed()}, 255, ${cr.blue.toFixed()})`);
+			ctrls.gSliderTo.setAttribute('fill', crTo.toHexString());
+		}
+		if (ctrls.bSlider.dataset['bisy'] == 'none') {
+			crFrom = w3color(`rgb(${cr.red.toFixed()}, ${cr.green.toFixed()}, 0)`);
+			ctrls.bSliderFrom.setAttribute('fill', crFrom.toHexString());
+			crTo = w3color(`rgb(${cr.red.toFixed()}, ${cr.green.toFixed()}, 255)`);
+			ctrls.bSliderTo.setAttribute('fill', crTo.toHexString());
+		}
+
 	}
 	_updateHueBoxes(cr) { // 'hue-boxes' - index 0 inside _slidersTypes
 		const ctrls = this._slTypes.get(this._slidersTypes[0]).ctrls;
@@ -2261,12 +2356,16 @@ class SmartColorSelector {
 				evt.preventDefault();
 				evt.stopPropagation();
 				rgbUI.rSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
-				const w = Number(rgbUI.rSlider.getTotalLength());
-				const rV = +(((evt.detail.x / w) * 255).toFixed());
+				// const w = Number(rgbUI.rSlider.getTotalLength());
+				const w = Number(rgbUI.rSliderTo.getAttribute('width'));
+				let rV = +((evt.detail.x / w) * 255); // .toFixed());
+				rV = Math.ceil(rV);
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
 				let cr = w3color(`rgb(${(rV < 0 ? 0 : rV)},${gV},${bV})`);
+				rgbUI.rSlider.dataset['bisy'] = 'bisy';
 				this._updateUI(cr);
+				rgbUI.rSlider.dataset['bisy'] = 'none';
 			});
 			rgbUI.rSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -2275,12 +2374,16 @@ class SmartColorSelector {
 				const pt = SmartWidgets.svgPoint(rgbUI.rSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				rgbUI.rSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
 
-				const w = Number(rgbUI.rSlider.getTotalLength());
-				const rV = +(((pt.x / w) * 255).toFixed());
+				const w = Number(rgbUI.rSliderTo.getAttribute('width'));
+				let rV = +((pt.x / w) * 255); // .toFixed());
+				rV = Math.ceil(rV);
+
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
 				let cr = w3color(`rgb(${(rV < 0 ? 0 : rV)},${gV},${bV})`);
+				rgbUI.rSlider.dataset['bisy'] = 'bisy';
 				this._updateUI(cr);
+				rgbUI.rSlider.dataset['bisy'] = 'none';
 			});
 			// g-slider
 			rgbUI.gSliderDrag = new SmartDragElement(rgbUI.gSlider, {containment: rgbUI.gSlider});
@@ -2289,12 +2392,15 @@ class SmartColorSelector {
 				evt.stopPropagation();
 				rgbUI.gSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
-				const w = Number(rgbUI.rSlider.getTotalLength());
-				const gV = +(((evt.detail.x / w) * 255).toFixed());
+				const w = Number(rgbUI.gSliderTo.getAttribute('width'));
+				let gV = +((evt.detail.x / w) * 255);
+				gV = Math.ceil(gV);
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
 				let cr = w3color(`rgb(${rV},${(gV < 0 ? 0 : gV)},${bV})`);
+				rgbUI.gSlider.dataset['bisy'] = 'bisy';
 				this._updateUI(cr);
+				rgbUI.gSlider.dataset['bisy'] = 'none';
 			});
 			rgbUI.gSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -2303,12 +2409,15 @@ class SmartColorSelector {
 				const pt = SmartWidgets.svgPoint(rgbUI.gSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				rgbUI.gSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
 
-				const w = Number(rgbUI.gSlider.getTotalLength());
-				const gV = +(((pt.x / w) * 255).toFixed());
+				const w = Number(rgbUI.gSliderTo.getAttribute('width'));
+				let gV = +((pt.x / w) * 255);
+				gV = Math.ceil(gV);
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
 				let cr = w3color(`rgb(${rV},${(gV < 0 ? 0 : gV)},${bV})`);
+				rgbUI.gSlider.dataset['bisy'] = 'bisy';
 				this._updateUI(cr);
+				rgbUI.gSlider.dataset['bisy'] = 'none';
 			});
 			// b-slider
 			rgbUI.bSliderDrag = new SmartDragElement(rgbUI.bSlider, {containment: rgbUI.bSlider});
@@ -2317,12 +2426,15 @@ class SmartColorSelector {
 				evt.stopPropagation();
 				rgbUI.bSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
-				const w = Number(rgbUI.bSlider.getTotalLength());
-				const bV = +(((evt.detail.x / w) * 255).toFixed());
+				const w = Number(rgbUI.bSliderTo.getAttribute('width'));
+				let bV = +((evt.detail.x / w) * 255);
+				bV = Math.ceil(bV);
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				let cr = w3color(`rgb(${rV},${gV},${(bV < 0 ? 0 : bV)})`);
+				rgbUI.bSlider.dataset['bisy'] = 'bisy';
 				this._updateUI(cr);
+				rgbUI.bSlider.dataset['bisy'] = 'none';
 			});
 			rgbUI.bSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -2331,12 +2443,15 @@ class SmartColorSelector {
 				const pt = SmartWidgets.svgPoint(rgbUI.bSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				rgbUI.bSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
 
-				const w = Number(rgbUI.bSlider.getTotalLength());
-				const bV = +(((pt.x / w) * 255).toFixed());
+				const w = Number(rgbUI.bSliderTo.getAttribute('width'));
+				let bV = +((pt.x / w) * 255);
+				bV = Math.ceil(bV);
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				let cr = w3color(`rgb(${rV},${gV},${(bV < 0 ? 0 : bV)})`);
+				rgbUI.bSlider.dataset['bisy'] = 'bisy';
 				this._updateUI(cr);
+				rgbUI.bSlider.dataset['bisy'] = 'none';
 			});
 			// rgb box
 			rgbUI.rgbBoxDrag = new SmartDragElement(rgbUI.rgbBox, {containment: rgbUI.rgbBox});
