@@ -11,10 +11,19 @@
 
 /**
  * SmartColorSelectors
+ * Allows you to set the exact color of the lines and background. 
+ * It supports 4 color schemes, the choice of color parameters with 
+ * the help of HSL and RGB sliders. It is possible to set the color 
+ * transparency. Supports entering parameters from the keyboard.
+ * Pure SVG and Javascript.
+ * Dependency on external w3color library only
+ * w3color.js ver.1.18 by w3schools.com (Do not remove this line)
+ * 
  * @copyright Copyright © 2018 ... All rights reserved.
  * @author Michael Goyberg
  * @license
- * @version   1.0
+ * @version   2.0
+ * 
 
  */
 class SmartColorSelectors extends SmartWidgets {
@@ -81,7 +90,7 @@ class SmartColorSelectors extends SmartWidgets {
 	static getCustomProperties() {
 		return [
 			'role',				// in demo mode this parameter has value 'demoMode'
-			'alias',			// 'stpal'
+			'alias',			// 'stcrs'
 			'bkg-color',
 			'border-color',
 			'border-width',
@@ -313,10 +322,7 @@ class SmartColorSelector {
 			</mask>`;			
 
 			this._defs.innerHTML = window.SmartColorSelectors.defs + hueRangeDef + lumRangeDef + satRangeDef + rgbRangeDef + opSliderDef;
-
 		}
-
-
 		// in case of html insertion, the options.mode == 'html' is defined and
 		// the buiding process is divided on two parts:  constructor() and init() from connectedCallback.
 		// in case of creating SmartColorSelector object from Javascript, lets do all needed work in one place...
@@ -385,8 +391,6 @@ class SmartColorSelector {
 		SmartWidgets.setAttributes([this._root.getElementById('select-slider-text')], {
 			stroke: textCr
 		});
-
-		
 	}
 	/**
 	 *
@@ -478,7 +482,7 @@ class SmartColorSelector {
 				cx: 20,
 				cy: 20,
 				r: 12,
-				stroke: this._strokeColor.color,
+				stroke: '#000000',
 				'stroke-width': 6,
 				fill: 'none',
 				style: 'cursor:pointer;'
@@ -530,7 +534,7 @@ class SmartColorSelector {
 				cx: 30,
 				cy: 30,
 				r: 15,
-				fill: this._fillColor.color,
+				fill: '#ffffff',
 				'stroke-width': 0.5,
 				stroke: '#ffffff',
 				style: 'cursor:pointer;'
@@ -638,9 +642,9 @@ class SmartColorSelector {
 				width: 192,
 				height: 8,
 				rx: 4,
-				stroke: '#0000',
+				stroke: '#000000',
 				'stroke-width': 0.6,
-				fill: '#cc0000',	// temporary
+				fill: '#cc0000',	// temporary, will be updated on init, as all others...
 				mask: 'url(#opacityMask)',
 				style: 'cursor:pointer',
 				tabindex: 15
@@ -826,7 +830,6 @@ class SmartColorSelector {
 					'font-size': 12,
 					'stroke-linejoin': 'round',
 					tabindex: 2
-					// 'pointer-events': 'none'
 				}, rgbG, this._svgdoc);
 
 				let gr = SmartWidgets.addElement('g', {
@@ -1093,7 +1096,6 @@ class SmartColorSelector {
 					'font-size': 12,
 					'stroke-linejoin': 'round',
 					tabindex: 5
-					// 'pointer-events': 'none'
 				}, rgbG, this._svgdoc);
 
 				gr = SmartWidgets.addElement('g', {
@@ -1119,7 +1121,6 @@ class SmartColorSelector {
 					y: 0,
 					width: 200,
 					height: 25,
-					// 'stroke-width': 0,
 					fill: 'url(#lumRange)',
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
@@ -1175,7 +1176,6 @@ class SmartColorSelector {
 						'font-size': 8,
 						'stroke-linejoin': 'round',
 						tabindex: 6
-						// 'pointer-events': 'none'
 					}, ctrls.schemeG, this._svgdoc);					
 
 				}
@@ -1205,7 +1205,6 @@ class SmartColorSelector {
 					'font-size': 12,
 					'stroke-linejoin': 'round',
 					tabindex: 7
-					// 'pointer-events': 'none'
 				}, monoG, this._svgdoc);
 
 				const gr = SmartWidgets.addElement('g', {
@@ -1229,7 +1228,6 @@ class SmartColorSelector {
 					y: 0,
 					width: 200,
 					height: 35,
-					// 'stroke-width': 0,
 					fill: 'url(#lumRange)',
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
@@ -1285,7 +1283,6 @@ class SmartColorSelector {
 						'font-size': 10,
 						'stroke-linejoin': 'round',
 						tabindex: 8
-						// 'pointer-events': 'none'
 					}, ctrls.schemeG, this._svgdoc);					
 				}
 
@@ -1315,7 +1312,6 @@ class SmartColorSelector {
 					'font-size': 12,
 					'stroke-linejoin': 'round',
 					tabindex: 9
-					// 'pointer-events': 'none'
 				}, compG, this._svgdoc);
 
 				const gr = SmartWidgets.addElement('g', {
@@ -1339,7 +1335,6 @@ class SmartColorSelector {
 					y: 0,
 					width: 200,
 					height: 35,
-					// 'stroke-width': 0,
 					fill: 'url(#lumRange)',
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
@@ -1396,7 +1391,6 @@ class SmartColorSelector {
 						'font-size': 10,
 						'stroke-linejoin': 'round',
 						tabindex: 10
-						// 'pointer-events': 'none'
 					}, ctrls.schemeG, this._svgdoc);					
 
 				}
@@ -1426,7 +1420,6 @@ class SmartColorSelector {
 					'font-size': 12,
 					'stroke-linejoin': 'round',
 					tabindex: 11
-					// 'pointer-events': 'none'
 				}, analogG, this._svgdoc);
 
 				const gr = SmartWidgets.addElement('g', {
@@ -1450,7 +1443,6 @@ class SmartColorSelector {
 					y: 0,
 					width: 200,
 					height: 35,
-					// 'stroke-width': 0,
 					fill: 'url(#lumRange)',
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
@@ -1506,7 +1498,6 @@ class SmartColorSelector {
 						'font-size': 10,
 						'stroke-linejoin': 'round',
 						tabindex: 12
-						// 'pointer-events': 'none'
 					}, ctrls.schemeG, this._svgdoc);					
 
 				}
@@ -1536,7 +1527,6 @@ class SmartColorSelector {
 					'font-size': 12,
 					'stroke-linejoin': 'round',
 					tabindex: 13
-					// 'pointer-events': 'none'
 				}, triadicG, this._svgdoc);
 
 				const gr = SmartWidgets.addElement('g', {
@@ -1560,7 +1550,6 @@ class SmartColorSelector {
 					y: 0,
 					width: 200,
 					height: 35,
-					// 'stroke-width': 0,
 					fill: 'url(#lumRange)',
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
@@ -1730,13 +1719,7 @@ class SmartColorSelector {
 	}
 	_updateSliders(what = null, exclude = '') {
 		let cr = w3color('#000000');
-		what = what || (this._strokeColor.active ? 'stroke' : 'fill');
-		if (what === 'stroke') {
-			cr = w3color(this._strokeColor.isnone ? '#000000' : this._strokeColor.color);
-		}
-		if (what === 'fill') {
-			cr = w3color(this._strokeColor.isnone ? '#000000' : this._fillColor.color);
-		}
+		cr = what || cr;
 		this.selHue = cr.hue;
 		this.selSat = cr.sat;
 		this.selLum = cr.lightness;
@@ -1855,7 +1838,6 @@ class SmartColorSelector {
 					return;
 			}
 		}
-
 		const ctrls = this._slTypes.get(this._slidersTypes[2]).ctrls;
 		ctrls.rgbVal.textContent = cr.toHexString();
 
@@ -1926,18 +1908,19 @@ class SmartColorSelector {
 	_updateHueBoxes(cr) { // 'hue-boxes' - index 0 inside _slidersTypes
 		const ctrls = this._slTypes.get(this._slidersTypes[0]).ctrls;
 		// update _hueSlider and _satlumColor here!
-		let crImage = w3color(`hsl(${this.selHue},${1},${0.5})`);
+		let crImage = w3color(`hsl(${cr.hue},${1},${0.5})`);
 		ctrls.satlumColor.setAttribute('fill', crImage.toHexString());
 
 		let w = Number(ctrls.hueSlider.getAttribute('width'));
-		let x = (w * this.selHue) / 360;
+		let x = (w * cr.hue) / 360;
+		x = x < 0 ? 0 : x > 359 ? 359 : x;
 
 		ctrls.hueCtrl.setAttribute('transform', `translate(${x - 3}, 0)`);
 
 		w = Number(ctrls.satlumColor.getAttribute('width'));
 		const h = Number(ctrls.satlumColor.getAttribute('height'));
-		x = (w * this.selSat);	// / 100;
-		const y = (h * this.selLum);
+		x = (w * cr.sat);
+		const y = (h * cr.lightness);
 		ctrls.slCtrl.setAttribute('transform', `translate(${x}, ${y + 45})`);
 	}
 	_updateHSLWheel(cr) {
@@ -1947,21 +1930,13 @@ class SmartColorSelector {
 	 * update opacity for active color and move opacity indicator
 	 */
 	_updateOpacity(opacity = null) {
-		if (opacity) {
-			// specified opacity says that opacity value was changed by user
-			this._strokeColor.active ? (this._strokeColor.opacity = opacity) : (this._fillColor.opacity = opacity);
-		} else {
-			// not specified opacity occures, so set the 'active color inside opacity slider also!
-			const color = this._strokeColor.active ? this._strokeColor.color : this._fillColor.color;
-			this._opInd.setAttribute('fill', color);
-			this._opSlider.setAttribute('fill', color);
-			opacity = this._strokeColor.active ? this._strokeColor.opacity : this._fillColor.opacity;
-		}
-		if (this._opInd) {
-			const w = Number(this._opSlider.getAttribute('width'));
-			this._opInd.setAttribute('transform', `translate(${(w * opacity) - 4}, 0)`);
-			this._opInd.setAttribute('fill-opacity', opacity);
-		}
+		const color = this._strokeColor.active ? this._strokeColor.color : this._fillColor.color;
+		this._opInd.setAttribute('fill', color);
+		this._opSlider.setAttribute('fill', color);
+		opacity = this._strokeColor.active ? this._strokeColor.opacity : this._fillColor.opacity;
+		const w = Number(this._opSlider.getAttribute('width'));
+		this._opInd.setAttribute('transform', `translate(${(w * opacity) - 4}, 0)`);
+		this._opInd.setAttribute('fill-opacity', opacity);
 	}
 
 	/**
@@ -1974,30 +1949,53 @@ class SmartColorSelector {
 		let sendEvent = true;
 		if (typeof cr === 'string' && cr === 'internal') {
 			sendEvent = false;
-		}
-
-		if (cr && typeof cr === 'object') {
+			// in case of color is 'internal', update colors of two main elements and 
+			// set 'cr' to reference on w3x of active parameter
+			cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+			this._actStrokeColor.setAttribute('stroke', this._strokeColor.w3c.toHexString());
+			this._actFillColor.setAttribute('fill', this._fillColor.w3c.toHexString());
+		} else if (cr && typeof cr === 'number') {
+			// in this case 'cr' is opacity
+			this._strokeColor.active? (this._strokeColor.w3c.opacity = cr) : (this._fillColor.w3c.opacity = cr);
+			this._strokeColor.active? (this._strokeColor.opacity = cr) : (this._fillColor.opacity = cr);
+			cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+		} else if (cr && typeof cr === 'object') {
+			// in this case cr is a w3color opbject
 			if (this._strokeColor.active) {
 				this._strokeColor.color = cr.toHexString();
 				this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
 				this._actStrokeNoColor.setAttribute('display', 'none');
 				this._strokeColor.isnone = 0;
+				this._strokeColor.w3c = w3color(`hsla(${cr.hue}, ${cr.sat}, ${cr.lightness}, ${cr.opacity})`);
+				this._strokeColor.opacity = this._strokeColor.w3c.opacity;
 			} else {
 				this._fillColor.color = cr.toHexString();
 				this._actFillColor.setAttribute('fill', this._fillColor.color);
 				this._actFillNoColor.setAttribute('display', 'none');
 				this._fillColor.isnone = 0;
+				this._fillColor.w3c = w3color(`hsla(${cr.hue}, ${cr.sat}, ${cr.lightness}, ${cr.opacity})`);
+				this._fillColor.opacity = this._fillColor.w3c.opacity;
 			}
-		}
+		} else if (!cr) {
+			// in case of color is not specified, update w3c parameters and set 'cr' to the reference on w3c of active parameter
+			this._strokeColor.w3c = w3color(this._strokeColor.color);
+			this._strokeColor.w3c.opacity = this._strokeColor.opacity;
 
+			this._fillColor.w3c = w3color(this._fillColor.color);
+			this._fillColor.w3c.opacity = this._fillColor.opacity;
+
+			cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+		}
+		// show wich parameter is active now
 		if (this._strokeColor.active) {
 			this._sfG.insertBefore(this._btnSelFill, this._btnSelStroke);
 		} else {
 			this._sfG.insertBefore(this._btnSelStroke, this._btnSelFill);
 		}
-		this._updateSliders('', exclude);
-		const opacity = ((cr && typeof cr === 'number') ? cr : null);
-		this._updateOpacity(opacity);
+		// update all sliders
+		this._updateSliders(cr, exclude);
+		// update opacity slider;
+		this._updateOpacity(this._strokeColor.active? this._strokeColor.w3c.opacity : this._fillColor.w3c.opacity);
 
 		if (sendEvent) {
 			// send changed data to control (SmartColorSelectr or custom element 'smart-ui-colorsel)
@@ -2045,19 +2043,25 @@ class SmartColorSelector {
 		if (typeof colorData === 'object') {
 			if (typeof colorData.fillColor === 'object') {
 				this._fillColor.active = colorData.fillColor.active || 1;
+				this._strokeColor.active = this._fillColor.active ? 0 : 1;
 				this._fillColor.isnone = colorData.fillColor.isnone || 0;
 				this._fillColor.color  = colorData.fillColor.color || '#000000';
 				this._fillColor.opacity = colorData.fillColor.opacity || 1;
 				this._fillColor.prev = this._fillColor.color;
+				this._fillColor.w3c = w3color(this._fillColor.color);
+				this._fillColor.w3c.opacity = this._fillColor.opacity;
 			} else {
 				this._fillColor.disabled = 1;
 			}
 			if (typeof colorData.strokeColor === 'object') {
-				this._strokeColor.active = colorData.strokeColor.active || 1;
+				this._strokeColor.active = colorData.strokeColor.active || 0;
+				this._fillColor.active = this._strokeColor.active ? 0 : 1;
 				this._strokeColor.isnone = colorData.strokeColor.isnone || 0;
 				this._strokeColor.color  = colorData.strokeColor.color || '#000000';
 				this._strokeColor.opacity = colorData.strokeColor.opacity || 1;
 				this._strokeColor.prev = this._strokeColor.color;
+				this._strokeColor.w3c = w3color(this._strokeColor.color);
+				this._strokeColor.w3c.opacity = this._strokeColor.opacity;
 			} else {
 				this._strokeColor.disabled = 1;
 			}
@@ -2069,14 +2073,14 @@ class SmartColorSelector {
 			fillColor: {
 				active: this._fillColor.active,
 				isnon:  this._fillColor.isnone,
-				color:	this._fillColor.color,
-				opacity:this._fillColor.opacity
+				color:	this._fillColor.w3c.toHexString(),
+				opacity:this._fillColor.w3c.opacity
 			},
 			strokeColor: {
 				active: this._strokeColor.active,
 				isnon:  this._strokeColor.isnone,
-				color:	this._strokeColor.color,
-				opacity:this._strokeColor.opacity
+				color:	this._strokeColor.w3c.toHexString(),
+				opacity:this._strokeColor.w3c.opacity
 			}
 		};
 		return colorData;
@@ -2135,24 +2139,10 @@ class SmartColorSelector {
 		}
 		this._inited = true;
 
-		this._fillColor = {
-			disabled: 0,
-			active: 1,
-			isnone:	0,
-			color: '#000000',
-			prev: '#000000',
-			opacity: 1
-		};
-		this._strokeColor = {
-			disabled: 0,
-			active: 0,
-			isnone: 0,
-			color: '#0000ff',
-			prev: '#0000ff',
-			opacity: 1
-		};
+		this._fillColor = {};
+		this._strokeColor = {};
 		this._drop = {
-			color: '#ffff14'	// this._o.bkgColor
+			color: '#ffff14'
 		};
 		// sliders array. names, references and controls are filled inside _build() function!
 		this._slidersTypes = ['hue-boxes', 'rgb-sliders', 'analog-scheme', 'comp-scheme', 'mono-scheme', 'triadic-scheme'];
@@ -2162,7 +2152,24 @@ class SmartColorSelector {
 		this._currentSliderIndex = 0;
 
 		this._build();
-		this._updateUI('internal', 'nothing');
+		this.setData({
+			fillColor: {
+				disabled: 0,
+				active: 1,
+				isnone:	0,
+				color: '#ff0000',
+				prev: '#000000',
+				opacity: 0.5
+			},
+			strokeColor: {
+				disabled: 0,
+				active: 0,
+				isnone: 0,
+				color: '#0000ff',
+				prev: '#0000ff',
+				opacity: 1
+			}
+		}, 'nothing');
 
 		/**
 		 * How to enter color code from keyboard.
@@ -2240,6 +2247,7 @@ class SmartColorSelector {
 				const h = Number(triadicUI.rgbBox.getAttribute('height'));
 				const lV = +((evt.detail.y / h).toFixed(2));
 
+				// set opaciti to 1 when working with schemes
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
 				this._updateUI(cr, 'nothing');
 			});
@@ -2254,6 +2262,7 @@ class SmartColorSelector {
 				const h = Number(triadicUI.rgbBox.getAttribute('height'));
 				const lV = +((pt.y / h).toFixed(2));
 
+				// set opaciti to 1 when working with schemes
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
 				this._updateUI(cr, 'nothing');
 			});
@@ -2278,6 +2287,7 @@ class SmartColorSelector {
 				const h = Number(monoUI.rgbBox.getAttribute('height'));
 				const lV = +((evt.detail.y / h).toFixed(2));
 
+				// set opaciti to 1 when working with schemes
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
 				this._updateUI(cr, 'nothing');
 			});
@@ -2292,6 +2302,7 @@ class SmartColorSelector {
 				const h = Number(monoUI.rgbBox.getAttribute('height'));
 				const lV = +((pt.y / h).toFixed(2));
 
+				// set opaciti to 1 when working with schemes
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
 				this._updateUI(cr, 'nothing');
 			});
@@ -2315,8 +2326,7 @@ class SmartColorSelector {
 				const hV = +(((evt.detail.x / w) * 360).toFixed());
 				const h = Number(compUI.rgbBox.getAttribute('height'));
 				const lV = +((evt.detail.y / h).toFixed(2));
-				// console.log(`move y: ${evt.detail.y} = ${lV}`);
-
+				// set opaciti to 1 when working with schemes
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
 				this._updateUI(cr, 'nothing');
 			});
@@ -2331,6 +2341,7 @@ class SmartColorSelector {
 				const h = Number(compUI.rgbBox.getAttribute('height'));
 				const lV = +((pt.y / h).toFixed(2));
 
+				// set opaciti to 1 when working with schemes
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
 				this._updateUI(cr, 'nothing');
 			});
@@ -2354,8 +2365,8 @@ class SmartColorSelector {
 				const hV = +(((evt.detail.x / w) * 360).toFixed());
 				const h = Number(analogUI.rgbBox.getAttribute('height'));
 				const lV = +((evt.detail.y / h).toFixed(2));
-				// console.log(`move y: ${evt.detail.y} = ${lV}`);
 
+				// set opaciti to 1 when working with schemes
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
 				this._updateUI(cr, 'nothing');
 			});
@@ -2369,7 +2380,7 @@ class SmartColorSelector {
 				const hV = +(((pt.x / w) * 360).toFixed());
 				const h = Number(analogUI.rgbBox.getAttribute('height'));
 				const lV = +((pt.y / h).toFixed(2));
-
+				// set opaciti to 1 when working with schemes
 				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
 				this._updateUI(cr, 'nothing');
 			});
@@ -2391,16 +2402,16 @@ class SmartColorSelector {
 				// set focus to the correspondent input element
 				rgbUI.rSliderVal.focus();
 
-				rgbUI.rSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
-				// const w = Number(rgbUI.rSlider.getTotalLength());
 				const w = Number(rgbUI.rSliderTo.getAttribute('width'));
 				let rV = +((evt.detail.x / w) * 255); // .toFixed());
 				rV = Math.ceil(rV);
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
-				let cr = w3color(`rgb(${(rV < 0 ? 0 : rV)},${gV},${bV})`);
+				const cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+				
+				const newColor = w3color(`rgba(${(rV < 0 ? 0 : rV)},${gV},${bV},${cr.opacity})`);
 				rgbUI.rSlider.dataset['bisy'] = 'bisy';
-				this._updateUI(cr);
+				this._updateUI(newColor);
 				rgbUI.rSlider.dataset['bisy'] = 'none';
 			});
 			rgbUI.rSlider.addEventListener('click', (evt) => {
@@ -2411,7 +2422,6 @@ class SmartColorSelector {
 
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(rgbUI.rSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				rgbUI.rSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
 
 				const w = Number(rgbUI.rSliderTo.getAttribute('width'));
 				let rV = +((pt.x / w) * 255); // .toFixed());
@@ -2419,9 +2429,11 @@ class SmartColorSelector {
 
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
-				let cr = w3color(`rgb(${(rV < 0 ? 0 : rV)},${gV},${bV})`);
+				const cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+
+				const newColor = w3color(`rgba(${(rV < 0 ? 0 : rV)},${gV},${bV},${cr.opacity})`);
 				rgbUI.rSlider.dataset['bisy'] = 'bisy';
-				this._updateUI(cr);
+				this._updateUI(newColor);
 				rgbUI.rSlider.dataset['bisy'] = 'none';
 			});
 			// g-slider
@@ -2432,16 +2444,16 @@ class SmartColorSelector {
 				// set focus to the correspondent input element
 				rgbUI.gSliderVal.focus();
 
-				rgbUI.gSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
-
 				const w = Number(rgbUI.gSliderTo.getAttribute('width'));
 				let gV = +((evt.detail.x / w) * 255);
 				gV = Math.ceil(gV);
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
-				let cr = w3color(`rgb(${rV},${(gV < 0 ? 0 : gV)},${bV})`);
+				const cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+
+				const newColor = w3color(`rgba(${rV},${(gV < 0 ? 0 : gV)},${bV},${cr.opacity})`);
 				rgbUI.gSlider.dataset['bisy'] = 'bisy';
-				this._updateUI(cr);
+				this._updateUI(newColor);
 				rgbUI.gSlider.dataset['bisy'] = 'none';
 			});
 			rgbUI.gSlider.addEventListener('click', (evt) => {
@@ -2452,16 +2464,17 @@ class SmartColorSelector {
 
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(rgbUI.gSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				rgbUI.gSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
 
 				const w = Number(rgbUI.gSliderTo.getAttribute('width'));
 				let gV = +((pt.x / w) * 255);
 				gV = Math.ceil(gV);
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
-				let cr = w3color(`rgb(${rV},${(gV < 0 ? 0 : gV)},${bV})`);
+				const cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+
+				const newColor = w3color(`rgba(${rV},${(gV < 0 ? 0 : gV)},${bV},${cr.opacity})`);
 				rgbUI.gSlider.dataset['bisy'] = 'bisy';
-				this._updateUI(cr);
+				this._updateUI(newColor);
 				rgbUI.gSlider.dataset['bisy'] = 'none';
 			});
 			// b-slider
@@ -2472,16 +2485,17 @@ class SmartColorSelector {
 				// set focus to the correspondent input element
 				rgbUI.bSliderVal.focus();
 
-				rgbUI.bSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
-
 				const w = Number(rgbUI.bSliderTo.getAttribute('width'));
 				let bV = +((evt.detail.x / w) * 255);
 				bV = Math.ceil(bV);
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const gV = Number(rgbUI.gSliderVal.textContent);
-				let cr = w3color(`rgb(${rV},${gV},${(bV < 0 ? 0 : bV)})`);
+
+				const cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+
+				const newColor = w3color(`rgba(${rV},${gV},${(bV < 0 ? 0 : bV)},${cr.opacity})`);
 				rgbUI.bSlider.dataset['bisy'] = 'bisy';
-				this._updateUI(cr);
+				this._updateUI(newColor);
 				rgbUI.bSlider.dataset['bisy'] = 'none';
 			});
 			rgbUI.bSlider.addEventListener('click', (evt) => {
@@ -2492,16 +2506,16 @@ class SmartColorSelector {
 
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(rgbUI.bSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				rgbUI.bSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
-
 				const w = Number(rgbUI.bSliderTo.getAttribute('width'));
 				let bV = +((pt.x / w) * 255);
 				bV = Math.ceil(bV);
 				const rV = Number(rgbUI.rSliderVal.textContent);
 				const gV = Number(rgbUI.gSliderVal.textContent);
-				let cr = w3color(`rgb(${rV},${gV},${(bV < 0 ? 0 : bV)})`);
+				const cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+
+				const newColor = w3color(`rgba(${rV},${gV},${(bV < 0 ? 0 : bV)},${cr.opacity})`);
 				rgbUI.bSlider.dataset['bisy'] = 'bisy';
-				this._updateUI(cr);
+				this._updateUI(newColor);
 				rgbUI.bSlider.dataset['bisy'] = 'none';
 			});
 			rgbUI.rSliderVal.addEventListener('focus', this._onSetFocus);
@@ -2518,9 +2532,10 @@ class SmartColorSelector {
 				const hV = +(((evt.detail.x / w) * 360).toFixed());
 				const h = Number(rgbUI.rgbBox.getAttribute('height'));
 				const lV = +((evt.detail.y / h).toFixed(2));
+				const cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
 
-				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				const newColor = w3color(`hsla(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)},${cr.opacity})`);
+				this._updateUI(newColor);
 			});
 			rgbUI.rgbBox.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -2532,9 +2547,10 @@ class SmartColorSelector {
 				const hV = +(((pt.x / w) * 360).toFixed());
 				const h = Number(rgbUI.rgbBox.getAttribute('height'));
 				const lV = +((pt.y / h).toFixed(2));
+				const cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
 
-				let cr = w3color(`hsl(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)})`);
-				this._updateUI(cr);
+				const newColor = w3color(`hsla(${(hV < 0 ? 0 : hV)},1,${(lV < 0 ? 0 : lV)},${cr.opacity})`);
+				this._updateUI(newColor);
 			});
 		}
 		const hueBoxUI = this._slTypes.get('hue-boxes').ctrls;
@@ -2549,15 +2565,12 @@ class SmartColorSelector {
 				evt.stopPropagation();
 				hueBoxUI.hueSlider.focus();
 
-				hueBoxUI.hueCtrl.setAttribute('transform', `translate(${evt.detail.x - 3}, 0)`);
+				const cr = this._strokeColor.active ? this._strokeColor.w3c : this._fillColor.w3c;
 				const w = Number(hueBoxUI.hueSlider.getAttribute('width'));
-				this.selHue = (evt.detail.x / w) * 360;
+				let hue = (evt.detail.x / w) * 360;
 
-				let cr = w3color(`hsl(${this.selHue},${1},${0.5})`);
-				hueBoxUI.satlumColor.setAttribute('fill', cr.toHexString());
-
-				cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
-				this._updateUI(cr);
+				const newColor = w3color(`hsla(${hue},${cr.sat},${cr.lightness},${cr.opacity})`);
+				this._updateUI(newColor);
 			});
 
 			// HSL slider hue was clicked
@@ -2565,17 +2578,15 @@ class SmartColorSelector {
 				evt.preventDefault();
 				hueBoxUI.hueSlider.focus();
 
+				const cr = this._strokeColor.active ? this._strokeColor.w3c : this._fillColor.w3c;
+
+				const w = Number(hueBoxUI.hueSlider.getAttribute('width'));
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(hueBoxUI.hueSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				hueBoxUI.hueCtrl.setAttribute('transform', `translate(${pt.x - 3}, 0)`);
+				let hue = (pt.x / w) * 360;
 
-				const w = Number(evt.target.getAttribute('width'));
-				this.selHue = (pt.x / w) * 360;
-				let cr = w3color(`hsl(${this.selHue},${1},${0.5})`);
-				hueBoxUI.satlumColor.setAttribute('fill', cr.toHexString());
-
-				cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
-				this._updateUI(cr);
+				const newColor = w3color(`hsla(${hue},${cr.sat},${cr.lightness},${cr.opacity})`);
+				this._updateUI(newColor);
 			});
 
 			// HSL slider saturation + lightness is changed
@@ -2586,14 +2597,14 @@ class SmartColorSelector {
 				evt.stopPropagation();
 				hueBoxUI.satlumColor.focus();
 
-				hueBoxUI.slCtrl.setAttribute('transform', `translate(${evt.detail.x}, ${evt.detail.y})`);
+				const cr = this._strokeColor.active ? this._strokeColor.w3c : this._fillColor.w3c;
 
 				const w = Number(evt.target.getAttribute('width'));
 				const h = Number(evt.target.getAttribute('height'));
-				this.selLum = (evt.detail.y - 45) / h; // * 100;
-				this.selSat = evt.detail.x / w; // * 100;
-				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
-				this._updateUI(cr);
+				const lum = (evt.detail.y - 45) / h;
+				const sat = evt.detail.x / w;
+				const newColor = w3color(`hsla(${cr.hue},${sat},${lum},${cr.opacity})`);
+				this._updateUI(newColor);
 			});
 
 			// HSL slider saturation + lightness was clicked
@@ -2601,23 +2612,23 @@ class SmartColorSelector {
 				evt.preventDefault();
 				hueBoxUI.satlumColor.focus();
 
-				const scroll = SmartWidgets.getScroll();
-				const pt = SmartWidgets.svgPoint(hueBoxUI.satlumColor, evt.clientX + scroll.X, evt.clientY + scroll.Y);
-				hueBoxUI.slCtrl.setAttribute('transform', `translate(${pt.x}, ${pt.y})`);
+				const cr = this._strokeColor.active ? this._strokeColor.w3c : this._fillColor.w3c;
+
 				const w = Number(evt.target.getAttribute('width'));
 				const h = Number(evt.target.getAttribute('height'));
 
-				this.selLum = (pt.y - 45) / h;
-				this.selSat = pt.x / w;
-				const cr = w3color(`hsl(${this.selHue},${this.selSat},${this.selLum})`);
-				this._updateUI(cr);
+				const scroll = SmartWidgets.getScroll();
+				const pt = SmartWidgets.svgPoint(hueBoxUI.satlumColor, evt.clientX + scroll.X, evt.clientY + scroll.Y);
+				const lum = (pt.y - 45) / h;
+				const sat = pt.x / w;
+				const newColor = w3color(`hsla(${cr.hue},${sat},${lum},${cr.opacity})`);
+				this._updateUI(newColor);
 			});
 		}
 		// capture keyboard input
 		this._elInFocus = null;
 
 		this._currentSliderTitle.addEventListener('keydown', (evt) => {
-			// console.log(`Key: ${evt.key}, KeyCode: ${evt.keyCode}`);
 			switch (evt.keyCode) {
 				case 27:	// 'Escape'
 					this._enterColorBuffer.textContent = '';
@@ -2697,15 +2708,16 @@ class SmartColorSelector {
 					const rV = Number(rgbUI.rSliderVal.textContent);
 					const gV = Number(rgbUI.gSliderVal.textContent);
 					const bV = Number(rgbUI.bSliderVal.textContent);
+					const op = this._strokeColor.active? this._strokeColor.w3c.opacity : this._fillColor.w3c.opacity;
 
 					if (this._enterColorBuffer.textContent.startsWith('#')) {
-						// try to convert it to color...
+						// try to convert it to color... may be tomorrow i uppend parser for opacity also, so dont change it here!
 						const cr = w3color(this._enterColorBuffer.textContent);
 						if (cr.valid) {
 							this._updateUI(cr, 'nothing');
 							this._enterColorBuffer.textContent = '';
 							this._enterColorBuffer.setAttribute('fill', '#ffffff');
-						} else {
+						} else { //error
 							this._enterColorBuffer.setAttribute('fill', '#ff0000');
 						}
 					} else if (this._enterColorBuffer.textContent.startsWith('r')) {
@@ -2714,12 +2726,12 @@ class SmartColorSelector {
 							value = value.replace('#', '');
 							value = parseInt(value, 16);
 						}
-						let cr = w3color(`rgb(${value},${gV},${bV})`);
+						let cr = w3color(`rgba(${value},${gV},${bV},${op})`);
 						if (cr.valid) {
 							this._updateUI(cr, 'nothing');
 							this._enterColorBuffer.textContent = '';
 							this._enterColorBuffer.setAttribute('fill', '#ffffff');
-						} else {
+						} else { // error
 							this._enterColorBuffer.setAttribute('fill', '#ff0000');
 						}
 					} else if (this._enterColorBuffer.textContent.startsWith('g')) {
@@ -2728,12 +2740,12 @@ class SmartColorSelector {
 							value = value.replace('#', '');
 							value = parseInt(value, 16);
 						}
-						let cr = w3color(`rgb(${rV},${value},${bV})`);
+						let cr = w3color(`rgba(${rV},${value},${bV},${op})`);
 						if (cr.valid) {
 							this._updateUI(cr, 'nothing');
 							this._enterColorBuffer.textContent = '';
 							this._enterColorBuffer.setAttribute('fill', '#ffffff');
-						} else {
+						} else { // error
 							this._enterColorBuffer.setAttribute('fill', '#ff0000');
 						}
 					} else if (this._enterColorBuffer.textContent.startsWith('b')) {
@@ -2742,12 +2754,12 @@ class SmartColorSelector {
 							value = value.replace('#', '');
 							value = parseInt(value, 16);
 						}
-						let cr = w3color(`rgb(${rV},${gV}),${value}`);
+						let cr = w3color(`rgba(${rV},${gV}),${value},${op})`);
 						if (cr.valid) {
 							this._updateUI(cr, 'nothing');
 							this._enterColorBuffer.textContent = '';
 							this._enterColorBuffer.setAttribute('fill', '#ffffff');
-						} else {
+						} else { // error
 							this._enterColorBuffer.setAttribute('fill', '#ff0000');
 						}
 					} else {
@@ -2778,7 +2790,6 @@ class SmartColorSelector {
 			this._strokeColor.active = 0;
 			this._fillColor.active = 1;
 			this._sfG.insertBefore(this._btnSelStroke, this._btnSelFill);
-			// this._updateSliders('fill');
 			this._updateUI();
 		});
 
@@ -2786,12 +2797,15 @@ class SmartColorSelector {
 		this._selNoColorBtn.addEventListener('click', (evt) => {
 			if (this._strokeColor.active) {
 				if (!this._strokeColor.isnone) {
+					this._strokeColor.prevOp = this._strokeColor.opacity;
+					this._strokeColor.opacity = 0;
 					this._strokeColor.prev = this._strokeColor.color;	// store current color as previous and set current to 'none'
 					this._strokeColor.color = '#ffffff';
 					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
 					this._actStrokeNoColor.setAttribute('display', 'inherit');
 					this._strokeColor.isnone = 1;
 				} else { // restore color from previous
+					this._strokeColor.opacity = this._strokeColor.prevOp;
 					this._strokeColor.color = this._strokeColor.prev;
 					this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
 					this._actStrokeNoColor.setAttribute('display', 'none');
@@ -2799,19 +2813,21 @@ class SmartColorSelector {
 				}
 			} else {
 				if (!this._fillColor.isnone) {
+					this._fillColor.prevOp = this._fillColor.opacity;	// store prev opacity and set current to 0
+					this._fillColor.opacity = 0;
 					this._fillColor.prev = this._fillColor.color;	// store current color as previous and set current to 'none'
 					this._fillColor.color = '#ffffff';
 					this._actFillColor.setAttribute('fill', this._fillColor.color);
 					this._actFillNoColor.setAttribute('display', 'inherit');
 					this._fillColor.isnone = 1;
 				} else { // restore color from previous
+					this._fillColor.opacity = this._fillColor.prevOp;
 					this._fillColor.color = this._fillColor.prev;
 					this._actFillColor.setAttribute('fill', this._fillColor.color);
 					this._actFillNoColor.setAttribute('display', 'none');
 					this._fillColor.isnone = 0;
 				}
 			}
-			// this._updateSliders();
 			this._updateUI();
 		});
 
@@ -2833,7 +2849,6 @@ class SmartColorSelector {
 			this._actStrokeColor.setAttribute('stroke', this._strokeColor.color);
 			this._actFillNoColor.setAttribute('display', this._fillColor.isnone ? 'inherit' : 'none');
 			this._actStrokeNoColor.setAttribute('display', this._strokeColor.isnone ? 'inherit' : 'none');
-			// this._updateSliders();
 			this._updateUI();
 		});
 
@@ -2858,21 +2873,17 @@ class SmartColorSelector {
 				this._fillColor.color = this._drop.color;
 				this._actFillColor.setAttribute('fill', this._fillColor.color);
 			}
-			// this._updateSliders();
 			this._updateUI();
 		});
 	}
 	_onBlur(evt) {
 		evt.target.removeEventListener('blur', this._onBlur);
 		evt.target.removeEventListener('keydown', this._onKeydown);
-		console.log(`blur on tab index = ${evt.target.tabIndex}`);
 	}
 	_onSetFocus(evt) {
 		this._elInFocus = evt.target;
 		evt.target.addEventListener('blur', this._onBlur);
 		evt.target.addEventListener('keydown', this._onKeydown);
-
-		console.log(`tab index = ${evt.target.tabIndex}`);
 	}
 	_interpretKeyCode(code) {
 		let incr = 0;
@@ -2895,6 +2906,8 @@ class SmartColorSelector {
 		return incr;
 	}
 	_onKeydown(evt) {
+		evt.preventDefault();
+
 		const rgbUI = this._slTypes.get('rgb-sliders').ctrls;
 		let rV = Number(rgbUI.rSliderVal.textContent);
 		let gV = Number(rgbUI.gSliderVal.textContent);
@@ -2907,39 +2920,37 @@ class SmartColorSelector {
 			case 'rgb-rgb-val':
 				break;
 			case 'hue-slider': {
-				// hueBoxUI.hueSlider
-				let color = this._strokeColor.active ? this._strokeColor.color : this._fillColor.color;
-				cr = w3color(color);
+				cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
 				incrValue = this._interpretKeyCode(evt.keyCode);
 				if (Math.abs(incrValue) == 1) {
+					incrValue *= -1;	// change up/dowun arrows 
 					lumVal = cr.lightness + (incrValue / 100);
 					lumVal = lumVal < 0 ? 0 : lumVal > 1 ? 1 : lumVal;
-					cr = w3color(`hsl(${cr.hue},${cr.sat},${lumVal})`);
+					cr = w3color(`hsla(${cr.hue},${cr.sat},${lumVal},${cr.opacity})`);
 					this._updateUI(cr);
 				}
 				if (Math.abs(incrValue) == 5) {
 					hueVal = cr.hue + (incrValue / 5);
 					hueVal = hueVal < 0 ? 0 : hueVal > 359 ? 359 : hueVal;
-					cr = w3color(`hsl(${hueVal},${cr.sat},${cr.lightness})`);
+					cr = w3color(`hsla(${hueVal},${cr.sat},${cr.lightness},${cr.opacity})`);
 					this._updateUI(cr);
 				}
 				break;
 			}
 			case 'sat-lum-slider':
-				// hueBoxUI.satlumColor
-				let color = this._strokeColor.active ? this._strokeColor.color : this._fillColor.color;
-				cr = w3color(color);
+				cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
 				incrValue = this._interpretKeyCode(evt.keyCode);
 				if (Math.abs(incrValue) == 1) {
+					incrValue *= -1;	// change up/dowun arrows
 					lumVal = cr.lightness + (incrValue / 100);
 					lumVal = lumVal < 0 ? 0 : lumVal > 1 ? 1 : lumVal;
-					cr = w3color(`hsl(${cr.hue},${cr.sat},${lumVal})`);
+					cr = w3color(`hsla(${cr.hue},${cr.sat},${lumVal},${cr.opacity})`);
 					this._updateUI(cr);
 				}
 				if (Math.abs(incrValue) == 5) {
 					satVal = cr.sat + (incrValue / 500);
 					satVal = satVal < 0 ? 0 : satVal > 1 ? 1 : satVal;
-					cr = w3color(`hsl(${cr.hue},${satVal},${cr.lightness})`);
+					cr = w3color(`hsla(${cr.hue},${satVal},${cr.lightness},${cr.opacity})`);
 					this._updateUI(cr);
 				}
 				break;
@@ -2954,37 +2965,36 @@ class SmartColorSelector {
 				break;
 			}
 			case 'rgb-r-val':
-				// curComponent = rgbUI.rSliderVal;
 				incrValue = this._interpretKeyCode(evt.keyCode);
 				val = Number(rgbUI.rSliderVal.textContent) + incrValue;
 				val = val <= 0 ? 0 : val >= 255 ? 255 : val; 
 				if (val != rV) {
-					cr = w3color(`rgb(${val},${gV},${bV})`);
+					cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+					cr = w3color(`rgba(${val},${gV},${bV},${cr.opacity})`);
 					this._updateUI(cr, 'nothing');
 				}
 				break;
 			case 'rgb-g-val':
-				// curComponent = rgbUI.gSliderVal;
 				incrValue = this._interpretKeyCode(evt.keyCode);
 				val = Number(rgbUI.gSliderVal.textContent) + incrValue;
 				val = val <= 0 ? 0 : val >= 255 ? 255 : val; 
 				if (val != rV) {
-					cr = w3color(`rgb(${rV},${val},${bV})`);
+					cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+					cr = w3color(`rgba(${rV},${val},${bV},${cr.opacity})`);
 					this._updateUI(cr, 'nothing');
 				}
 				break;
 			case 'rgb-b-val':
-				// curComponent = rgbUI.bSliderVal;
 				incrValue = this._interpretKeyCode(evt.keyCode);
 				val = Number(rgbUI.bSliderVal.textContent) + incrValue;
 				val = val <= 0 ? 0 : val >= 255 ? 255 : val; 
 				if (val != rV) {
-					cr = w3color(`rgb(${rV},${gV},${val})`);
+					cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
+					cr = w3color(`rgba(${rV},${gV},${val},${cr.opacity})`);
 					this._updateUI(cr, 'nothing');
 				}
 				break;
 		}
-		// console.log(`Key ${evt.keyCode} down on tab index = ${this._elInFocus.tabIndex}`);
 	}
 	/**
 	 * Get parameters of Smart Widget
