@@ -827,11 +827,11 @@ class SmartColorSelector {
 				ctrls.rSlider = SmartWidgets.addElement('rect', {
 					id: 'r-slider',
 					class: 'r-slider-to draggable clickable',
-					x: -2,
-					y: -2,
+					x: -4,
+					y: -4,
 					rx: 6,
-					width: 158,
-					height: 12,
+					width: 162,
+					height: 16,
 					'stroke-width': 1,
 					stroke: this._o.bkgColor,
 					fill: this._o.bkgColor,
@@ -846,7 +846,8 @@ class SmartColorSelector {
 					rx: 4,
 					width: 154,
 					height: 8,
-					'stroke-width': 0,
+					'stroke-width': 2,
+					stroke: this._o.bkgColor,
 					fill: '#000000',	// color 'from'
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
@@ -858,7 +859,8 @@ class SmartColorSelector {
 					rx: 4,
 					width: 154,
 					height: 8,
-					'stroke-width': 0,
+					'stroke-width': 2,
+					stroke: this._o.bkgColor,
 					fill: '#ff0000',	// color 'upto'
 					mask: 'url(#componentMask)',
 					'pointer-events': 'none'
@@ -913,11 +915,11 @@ class SmartColorSelector {
 				ctrls.gSlider = SmartWidgets.addElement('rect', {
 					id: 'g-slider',
 					class: 'g-slider-to draggable clickable',
-					x: -2,
-					y: -2,
+					x: -4,
+					y: -4,
 					rx: 6,
-					width: 158,
-					height: 12,
+					width: 162,
+					height: 16,
 					'stroke-width': 1,
 					stroke: this._o.bkgColor,
 					fill: this._o.bkgColor,
@@ -932,7 +934,8 @@ class SmartColorSelector {
 					rx: 4,
 					width: 154,
 					height: 8,
-					'stroke-width': 0,
+					'stroke-width': 2,
+					stroke: this._o.bkgColor,
 					fill: '#000000',	// color 'from'
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
@@ -944,7 +947,8 @@ class SmartColorSelector {
 					rx: 4,
 					width: 154,
 					height: 8,
-					'stroke-width': 0,
+					'stroke-width': 2,
+					stroke: this._o.bkgColor,
 					fill: '#00ff00',	// color 'upto'
 					mask: 'url(#componentMask)',
 					'pointer-events': 'none'
@@ -999,11 +1003,11 @@ class SmartColorSelector {
 				ctrls.bSlider = SmartWidgets.addElement('rect', {
 					id: 'b-slider',
 					class: 'b-slider-to draggable clickable',
-					x: -2,
-					y: -2,
+					x: -4,
+					y: -4,
 					rx: 6,
-					width: 158,
-					height: 12,
+					width: 162,
+					height: 16,
 					'stroke-width': 1,
 					stroke: this._o.bkgColor,
 					fill: this._o.bkgColor,
@@ -1018,7 +1022,8 @@ class SmartColorSelector {
 					rx: 4,
 					width: 154,
 					height: 8,
-					'stroke-width': 0,
+					'stroke-width': 2,
+					stroke: this._o.bkgColor,
 					fill: '#000000',	// color 'from'
 					'pointer-events': 'none'
 				}, gr, this._svgdoc);
@@ -1030,7 +1035,8 @@ class SmartColorSelector {
 					rx: 4,
 					width: 154,
 					height: 8,
-					'stroke-width': 0,
+					'stroke-width': 2,
+					stroke: this._o.bkgColor,
 					fill: '#0000ff',	// color 'upto'
 					mask: 'url(#componentMask)',
 					'pointer-events': 'none'
