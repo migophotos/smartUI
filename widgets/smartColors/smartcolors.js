@@ -138,6 +138,9 @@ class SmartColorSelector {
 		}
 		this._drawSliderMenuItem = this._drawSliderMenuItem.bind(this);
 		this._onSelectSliderType = this._onSelectSliderType.bind(this);
+		this._onBlur = this._onBlur.bind(this);
+		this._onSetFocus = this._onSetFocus.bind(this);
+		this._onKeydown = this._onKeydown.bind(this);
 
 		const txtStyle = `
 			svg {
@@ -167,8 +170,12 @@ class SmartColorSelector {
 				<text x="63.77" y="175.571" fill="#fff">Click to set opacity</text>
 			</g>
 			<g>
-				<rect x="65" y="132" width="86.945" height="14.173" fill="#5a6348"/>
-				<text x="73.77" y="141.571" fill="#fff">Click to select color</text>
+				<rect x="65" y="122" width="86.945" height="29.598" fill="#5a6348"/>
+				<g transform="matrix(1,0,0,1,6.98533,86.0709)">
+					<text x="68.91" y="45.5" fill="#fff">Click to select color</text>
+					<text x="70.185" y="53.429" fill="#fff">and use arrows for</text>
+					<text x="63.785" y="61.359" fill="#fff">increment / decrement</text>
+				</g>
 			</g>
 			<g>
 				<rect x="0" y="0" width="87.498" height="39.394" fill="#5a6348"/>
@@ -635,7 +642,8 @@ class SmartColorSelector {
 				'stroke-width': 0.6,
 				fill: '#cc0000',	// temporary
 				mask: 'url(#opacityMask)',
-				style: 'cursor:pointer'
+				style: 'cursor:pointer',
+				tabindex: 15
 			}, this._opacityG, this._svgdoc);
 			this._opInd = SmartWidgets.addElement('circle', {
 				id: 'opacity-indicator',
@@ -685,7 +693,8 @@ class SmartColorSelector {
 					stroke: '#000000',
 					'stroke-width': 0.6,
 					fill: 'url(#hueRange)',
-					style: 'cursor:pointer'
+					style: 'cursor:pointer',
+					tabindex: 17
 				}, hbG, this._svgdoc);
 
 				/**
@@ -701,7 +710,8 @@ class SmartColorSelector {
 					stroke: '#000000',
 					'stroke-width': 0.6,
 					fill: '#ff0000',
-					style: 'cursor:pointer'
+					style: 'cursor:pointer',
+					tabindex: 18
 				}, hbG, this._svgdoc);
 				SmartWidgets.addElement('rect', {
 					class: 'sat-range',
@@ -805,6 +815,7 @@ class SmartColorSelector {
 					'pointer-events': 'none'
 				}, rgbG, this._svgdoc);
 				ctrls.rSliderVal = SmartWidgets.addElement('text', {
+					id: 'rgb-r-val',
 					text: '#00',
 					x: 180,
 					y: 5,
@@ -814,7 +825,8 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
-					'pointer-events': 'none'
+					tabindex: 2
+					// 'pointer-events': 'none'
 				}, rgbG, this._svgdoc);
 
 				let gr = SmartWidgets.addElement('g', {
@@ -893,6 +905,7 @@ class SmartColorSelector {
 					'pointer-events': 'none'
 				}, rgbG, this._svgdoc);
 				ctrls.gSliderVal = SmartWidgets.addElement('text', {
+					id: 'rgb-g-val',
 					text: '#00',
 					x: 180,
 					y: 21,
@@ -902,7 +915,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
-					'pointer-events': 'none'
+					tabindex: 3
 				}, rgbG, this._svgdoc);
 
 				gr = SmartWidgets.addElement('g', {
@@ -981,6 +994,7 @@ class SmartColorSelector {
 					'pointer-events': 'none'
 				}, rgbG, this._svgdoc);
 				ctrls.bSliderVal = SmartWidgets.addElement('text', {
+					id: 'rgb-b-val',
 					text: '#00',
 					x: 180,
 					y: 37,
@@ -990,7 +1004,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
-					'pointer-events': 'none'
+					tabindex: 4
 				}, rgbG, this._svgdoc);
 
 				gr = SmartWidgets.addElement('g', {
@@ -1078,6 +1092,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
+					tabindex: 5
 					// 'pointer-events': 'none'
 				}, rgbG, this._svgdoc);
 
@@ -1159,6 +1174,7 @@ class SmartColorSelector {
 						'font-family': fontFamily,
 						'font-size': 8,
 						'stroke-linejoin': 'round',
+						tabindex: 6
 						// 'pointer-events': 'none'
 					}, ctrls.schemeG, this._svgdoc);					
 
@@ -1188,6 +1204,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
+					tabindex: 7
 					// 'pointer-events': 'none'
 				}, monoG, this._svgdoc);
 
@@ -1267,6 +1284,7 @@ class SmartColorSelector {
 						'font-family': fontFamily,
 						'font-size': 10,
 						'stroke-linejoin': 'round',
+						tabindex: 8
 						// 'pointer-events': 'none'
 					}, ctrls.schemeG, this._svgdoc);					
 				}
@@ -1296,6 +1314,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
+					tabindex: 9
 					// 'pointer-events': 'none'
 				}, compG, this._svgdoc);
 
@@ -1376,6 +1395,7 @@ class SmartColorSelector {
 						'font-family': fontFamily,
 						'font-size': 10,
 						'stroke-linejoin': 'round',
+						tabindex: 10
 						// 'pointer-events': 'none'
 					}, ctrls.schemeG, this._svgdoc);					
 
@@ -1405,6 +1425,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
+					tabindex: 11
 					// 'pointer-events': 'none'
 				}, analogG, this._svgdoc);
 
@@ -1484,6 +1505,7 @@ class SmartColorSelector {
 						'font-family': fontFamily,
 						'font-size': 10,
 						'stroke-linejoin': 'round',
+						tabindex: 12
 						// 'pointer-events': 'none'
 					}, ctrls.schemeG, this._svgdoc);					
 
@@ -1513,6 +1535,7 @@ class SmartColorSelector {
 					'font-family': fontFamily,
 					'font-size': 12,
 					'stroke-linejoin': 'round',
+					tabindex: 13
 					// 'pointer-events': 'none'
 				}, triadicG, this._svgdoc);
 
@@ -2185,6 +2208,7 @@ class SmartColorSelector {
 		this._opSlider.addEventListener('onContinueDrag', (evt) => {
 			evt.preventDefault();
 			evt.stopPropagation();
+			this._opSlider.focus();
 			const w = Number(this._opSlider.getAttribute('width'));
 			const opacity = +((evt.detail.x / w).toFixed(2));
 			this._updateUI(opacity);
@@ -2192,6 +2216,8 @@ class SmartColorSelector {
 		this._opSlider.addEventListener('click', (evt) => {
 			evt.preventDefault();
 			evt.stopPropagation();
+			this._opSlider.focus();
+
 			const scroll = SmartWidgets.getScroll();
 			const pt = SmartWidgets.svgPoint(triadicUI.rgbBox, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 
@@ -2199,6 +2225,7 @@ class SmartColorSelector {
 			const opacity = +((pt.x / w).toFixed(2));
 			this._updateUI(opacity);
 		});
+		this._opSlider.addEventListener('focus', this._onSetFocus);
 
 		const triadicUI = this._slTypes.get('triadic-scheme').ctrls;
 		if (triadicUI) {
@@ -2361,6 +2388,9 @@ class SmartColorSelector {
 			rgbUI.rSlider.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
+				// set focus to the correspondent input element
+				rgbUI.rSliderVal.focus();
+
 				rgbUI.rSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 				// const w = Number(rgbUI.rSlider.getTotalLength());
 				const w = Number(rgbUI.rSliderTo.getAttribute('width'));
@@ -2376,6 +2406,9 @@ class SmartColorSelector {
 			rgbUI.rSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
+				// set focus to the correspondent input element
+				rgbUI.rSliderVal.focus();
+
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(rgbUI.rSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				rgbUI.rSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
@@ -2396,6 +2429,9 @@ class SmartColorSelector {
 			rgbUI.gSlider.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
+				// set focus to the correspondent input element
+				rgbUI.gSliderVal.focus();
+
 				rgbUI.gSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
 				const w = Number(rgbUI.gSliderTo.getAttribute('width'));
@@ -2411,6 +2447,9 @@ class SmartColorSelector {
 			rgbUI.gSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
+				// set focus to the correspondent input element
+				rgbUI.gSliderVal.focus();
+
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(rgbUI.gSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				rgbUI.gSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
@@ -2430,6 +2469,9 @@ class SmartColorSelector {
 			rgbUI.bSlider.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
+				// set focus to the correspondent input element
+				rgbUI.bSliderVal.focus();
+
 				rgbUI.bSliderInd.setAttribute('transform', `translate(${evt.detail.x}, 0)`);
 
 				const w = Number(rgbUI.bSliderTo.getAttribute('width'));
@@ -2445,6 +2487,9 @@ class SmartColorSelector {
 			rgbUI.bSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
+				// set focus to the correspondent input element
+				rgbUI.bSliderVal.focus();
+
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(rgbUI.bSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				rgbUI.bSliderInd.setAttribute('transform', `translate(${pt.x}, 0)`);
@@ -2459,6 +2504,10 @@ class SmartColorSelector {
 				this._updateUI(cr);
 				rgbUI.bSlider.dataset['bisy'] = 'none';
 			});
+			rgbUI.rSliderVal.addEventListener('focus', this._onSetFocus);
+			rgbUI.gSliderVal.addEventListener('focus', this._onSetFocus);
+			rgbUI.bSliderVal.addEventListener('focus', this._onSetFocus);
+			rgbUI.rgbVal.addEventListener('focus', this._onSetFocus);
 			// rgb box
 			rgbUI.rgbBoxDrag = new SmartDragElement(rgbUI.rgbBox, {containment: rgbUI.rgbBox});
 			rgbUI.rgbBox.addEventListener('onContinueDrag', (evt) => {
@@ -2493,9 +2542,12 @@ class SmartColorSelector {
 			hueBoxUI.hueDrag = new SmartDragElement(hueBoxUI.hueSlider, {containment: hueBoxUI.hueSlider});
 			hueBoxUI.satDrag = new SmartDragElement(hueBoxUI.satlumColor, {containment: hueBoxUI.satlumColor});
 			// HSL slider hue is changed
+			hueBoxUI.hueSlider.addEventListener('focus', this._onSetFocus);
+
 			hueBoxUI.hueSlider.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
+				hueBoxUI.hueSlider.focus();
 
 				hueBoxUI.hueCtrl.setAttribute('transform', `translate(${evt.detail.x - 3}, 0)`);
 				const w = Number(hueBoxUI.hueSlider.getAttribute('width'));
@@ -2511,6 +2563,8 @@ class SmartColorSelector {
 			// HSL slider hue was clicked
 			hueBoxUI.hueSlider.addEventListener('click', (evt) => {
 				evt.preventDefault();
+				hueBoxUI.hueSlider.focus();
+
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(hueBoxUI.hueSlider, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				hueBoxUI.hueCtrl.setAttribute('transform', `translate(${pt.x - 3}, 0)`);
@@ -2525,9 +2579,13 @@ class SmartColorSelector {
 			});
 
 			// HSL slider saturation + lightness is changed
+			hueBoxUI.satlumColor.addEventListener('focus', this._onSetFocus);
+
 			hueBoxUI.satlumColor.addEventListener('onContinueDrag', (evt) => {
 				evt.preventDefault();
 				evt.stopPropagation();
+				hueBoxUI.satlumColor.focus();
+
 				hueBoxUI.slCtrl.setAttribute('transform', `translate(${evt.detail.x}, ${evt.detail.y})`);
 
 				const w = Number(evt.target.getAttribute('width'));
@@ -2541,6 +2599,8 @@ class SmartColorSelector {
 			// HSL slider saturation + lightness was clicked
 			hueBoxUI.satlumColor.addEventListener('click', (evt) => {
 				evt.preventDefault();
+				hueBoxUI.satlumColor.focus();
+
 				const scroll = SmartWidgets.getScroll();
 				const pt = SmartWidgets.svgPoint(hueBoxUI.satlumColor, evt.clientX + scroll.X, evt.clientY + scroll.Y);
 				hueBoxUI.slCtrl.setAttribute('transform', `translate(${pt.x}, ${pt.y})`);
@@ -2554,6 +2614,8 @@ class SmartColorSelector {
 			});
 		}
 		// capture keyboard input
+		this._elInFocus = null;
+
 		this._currentSliderTitle.addEventListener('keydown', (evt) => {
 			// console.log(`Key: ${evt.key}, KeyCode: ${evt.keyCode}`);
 			switch (evt.keyCode) {
@@ -2799,8 +2861,131 @@ class SmartColorSelector {
 			// this._updateSliders();
 			this._updateUI();
 		});
-    }
+	}
+	_onBlur(evt) {
+		evt.target.removeEventListener('blur', this._onBlur);
+		evt.target.removeEventListener('keydown', this._onKeydown);
+		console.log(`blur on tab index = ${evt.target.tabIndex}`);
+	}
+	_onSetFocus(evt) {
+		this._elInFocus = evt.target;
+		evt.target.addEventListener('blur', this._onBlur);
+		evt.target.addEventListener('keydown', this._onKeydown);
 
+		console.log(`tab index = ${evt.target.tabIndex}`);
+	}
+	_interpretKeyCode(code) {
+		let incr = 0;
+		switch (code) {
+			case 39:	// right arrow
+				incr = +5;
+				break;
+			case 38:	// up arrow
+				incr = +1;
+				break;
+			case 37:	// left arrow
+				incr = -5;
+				break;
+			case 40:	// down arrow
+				incr = -1;
+				break;
+			default:
+				break;
+		}
+		return incr;
+	}
+	_onKeydown(evt) {
+		const rgbUI = this._slTypes.get('rgb-sliders').ctrls;
+		let rV = Number(rgbUI.rSliderVal.textContent);
+		let gV = Number(rgbUI.gSliderVal.textContent);
+		let bV = Number(rgbUI.bSliderVal.textContent);
+		let rgbVal = 0;
+		let curComponent = null;
+		let val, incrValue = null;
+		let cr, color, satVal, lumVal, hueVal;
+		switch (evt.target.id) {
+			case 'rgb-rgb-val':
+				break;
+			case 'hue-slider': {
+				// hueBoxUI.hueSlider
+				let color = this._strokeColor.active ? this._strokeColor.color : this._fillColor.color;
+				cr = w3color(color);
+				incrValue = this._interpretKeyCode(evt.keyCode);
+				if (Math.abs(incrValue) == 1) {
+					lumVal = cr.lightness + (incrValue / 100);
+					lumVal = lumVal < 0 ? 0 : lumVal > 1 ? 1 : lumVal;
+					cr = w3color(`hsl(${cr.hue},${cr.sat},${lumVal})`);
+					this._updateUI(cr);
+				}
+				if (Math.abs(incrValue) == 5) {
+					hueVal = cr.hue + (incrValue / 5);
+					hueVal = hueVal < 0 ? 0 : hueVal > 359 ? 359 : hueVal;
+					cr = w3color(`hsl(${hueVal},${cr.sat},${cr.lightness})`);
+					this._updateUI(cr);
+				}
+				break;
+			}
+			case 'sat-lum-slider':
+				// hueBoxUI.satlumColor
+				let color = this._strokeColor.active ? this._strokeColor.color : this._fillColor.color;
+				cr = w3color(color);
+				incrValue = this._interpretKeyCode(evt.keyCode);
+				if (Math.abs(incrValue) == 1) {
+					lumVal = cr.lightness + (incrValue / 100);
+					lumVal = lumVal < 0 ? 0 : lumVal > 1 ? 1 : lumVal;
+					cr = w3color(`hsl(${cr.hue},${cr.sat},${lumVal})`);
+					this._updateUI(cr);
+				}
+				if (Math.abs(incrValue) == 5) {
+					satVal = cr.sat + (incrValue / 500);
+					satVal = satVal < 0 ? 0 : satVal > 1 ? 1 : satVal;
+					cr = w3color(`hsl(${cr.hue},${satVal},${cr.lightness})`);
+					this._updateUI(cr);
+				}
+				break;
+			case 'opacity-slider':{
+				let opacity = this._strokeColor.active ? this._strokeColor.opacity : this._fillColor.opacity;
+				incrValue = this._interpretKeyCode(evt.keyCode) / 100;
+				let val = opacity + incrValue;
+				val = val < 0 ? 0 : val > 1 ? 1 : val;
+				if (val != opacity) {
+					this._updateUI(val);
+				}
+				break;
+			}
+			case 'rgb-r-val':
+				// curComponent = rgbUI.rSliderVal;
+				incrValue = this._interpretKeyCode(evt.keyCode);
+				val = Number(rgbUI.rSliderVal.textContent) + incrValue;
+				val = val <= 0 ? 0 : val >= 255 ? 255 : val; 
+				if (val != rV) {
+					cr = w3color(`rgb(${val},${gV},${bV})`);
+					this._updateUI(cr, 'nothing');
+				}
+				break;
+			case 'rgb-g-val':
+				// curComponent = rgbUI.gSliderVal;
+				incrValue = this._interpretKeyCode(evt.keyCode);
+				val = Number(rgbUI.gSliderVal.textContent) + incrValue;
+				val = val <= 0 ? 0 : val >= 255 ? 255 : val; 
+				if (val != rV) {
+					cr = w3color(`rgb(${rV},${val},${bV})`);
+					this._updateUI(cr, 'nothing');
+				}
+				break;
+			case 'rgb-b-val':
+				// curComponent = rgbUI.bSliderVal;
+				incrValue = this._interpretKeyCode(evt.keyCode);
+				val = Number(rgbUI.bSliderVal.textContent) + incrValue;
+				val = val <= 0 ? 0 : val >= 255 ? 255 : val; 
+				if (val != rV) {
+					cr = w3color(`rgb(${rV},${gV},${val})`);
+					this._updateUI(cr, 'nothing');
+				}
+				break;
+		}
+		// console.log(`Key ${evt.keyCode} down on tab index = ${this._elInFocus.tabIndex}`);
+	}
 	/**
 	 * Get parameters of Smart Widget
 	 * @param {string} filter 'all', 'dirty', 'def', 'vars', 'names', 'css', 'json', 'cjson'
