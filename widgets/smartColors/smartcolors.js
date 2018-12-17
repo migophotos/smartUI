@@ -222,6 +222,7 @@ class SmartColorSelector {
 		</g>
 
 		`;
+		SmartColorSelectors.init();
 
 		let gId = id;
 		// check for options in JSON format and convert its to object in this case
@@ -2018,7 +2019,7 @@ class SmartColorSelector {
 				el  = root ? root.host : null;
 			}
 			if (el) {
-				el.dispatchEvent(custEvent);
+				el._svgroot.dispatchEvent(custEvent);
 				console.log(`sent event ${custEvent.type}: ${Object.getOwnPropertyNames(custEvent.detail).join(' and ')}`);
 			}
 		}

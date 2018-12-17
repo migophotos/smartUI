@@ -620,7 +620,7 @@
                                             <td>Полигон, диаметром 25 пикс. внутри SVG:</td></tr>
                                         <tr><td>
                                         <svg id="try-it" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                            width="200" heigh="100" viewBox="0 0 200 100">
+                                            width="200" height="100" viewBox="0 0 200 100">
                                             <rect x="0" y="0" width="200" height="200" fill="none" stroke="gray" stroke-dasharray="4 2"/>
                                             <circle cy="30" cx="30" r="25" fill="lightgray" stroke-dasharray="4 2"/>
                                             <g id="pgn-wdg">
@@ -979,8 +979,17 @@
                                 <div class="ml-p">
                                     <div class="ml-p_content">
                                         <div class="stpal-ml-p_content-ctrl">
-                                            <p>"Default Palette"</p>
-                                            <smart-ui-palette class="default demoMode" id="pal-03"></smart-ui-palette>
+                                                <p>"Color Selector in SVG"</p>
+                                            <svg id="colorsel-test" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                            width="300" height="250" viewBox="0 0 300 250" style="overflow: visible">
+
+                                            <g id="cs" transform="translate(30, 40)">
+                                                <rect id="cs-r" x="0" y="0" width="300" height="250" fill="none" stroke="gray" stroke-dasharray="4 2"/>
+                                            </g>
+                                            <rect id="rc-1" class="colorsel-test" x="260" y="40" width="40" height="40" fill-opacity="1" stroke-opacity="1" fill="#aa0000" stroke="#4500aa" stroke-width="5"/>
+                                            <rect id="rc-2" class="colorsel-test" x="260" y="90" width="40" height="40" fill-opacity="1" stroke-opacity="1" fill="#00aa00" stroke="#d69d00" stroke-width="5"/>
+                                            <rect id="rc-3" class="colorsel-test" x="260" y="140" width="40" height="40" fill-opacity="1" stroke-opacity="1" fill="#00bad6" stroke="#001fd6" stroke-width="5"/>
+                                        </svg>
                                         </div>
                                     </div>
                                 </div>
@@ -1707,6 +1716,41 @@
                         tmp.classList.add('example-grid--hidden');
                         tmp.classList.remove('example-grid--shown');
                     });
+
+                    const csElem = new SmartColorSelector('cs', {
+                        context: document.getElementById('colorsel-test')
+                    });
+                    const svgR = document.getElementById('colorsel-test');
+                    const gEl = svgR.getElementById('cs');
+                    svgR.querySelectorAll('.colorsel-test').forEach((el) => {
+                        el.addEventListener('click', (evt) => {
+                            gEl.dataset['refEl'] = evt.target.id;
+                            csElem.setData({
+                                fillColor: {
+                                    color: evt.target.getAttribute('fill'),
+                                    opacity: evt.target.getAttribute('fill-opacity'),
+                                    active: 1
+                                },
+                                strokeColor: {
+                                    color: evt.target.getAttribute('stroke'),
+                                    opacity: evt.target.getAttribute('stroke-opacity'),
+                                    active: 0
+                                }
+                            });
+                        });
+                    });
+                    gEl.addEventListener('dataChanged', (evt) => {
+                        const id = gEl.dataset['refEl'];
+                        if (id) {
+                            const refEl = svgR.getElementById(id);
+                            refEl.setAttribute('fill', evt.detail.fillColor.color);
+                            refEl.setAttribute('fill-opacity', evt.detail.fillColor.opacity);
+                            refEl.setAttribute('stroke', evt.detail.strokeColor.color);
+                            refEl.setAttribute('stroke-opacity', evt.detail.strokeColor.opacity);
+                        }
+                    });
+
+
                     // click on one palette example
                     // els = document.getElementsByClassName('stpal-ml-p_content-ctrl');
                     // for (let el of els) {
