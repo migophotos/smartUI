@@ -11,19 +11,19 @@
 
 /**
  * SmartColorSelectors
- * Allows you to set the exact color of the lines and background. 
- * It supports 4 color schemes, the choice of color parameters with 
- * the help of HSL and RGB sliders. It is possible to set the color 
+ * Allows you to set the exact color of the lines and background.
+ * It supports 4 color schemes, the choice of color parameters with
+ * the help of HSL and RGB sliders. It is possible to set the color
  * transparency. Supports entering parameters from the keyboard.
  * Pure SVG and Javascript.
  * Dependency on external w3color library only
  * w3color.js ver.1.18 by w3schools.com (Do not remove this line)
- * 
+ *
  * @copyright Copyright © 2018 ... All rights reserved.
  * @author Michael Goyberg
  * @license
  * @version   2.0
- * 
+ *
 
  */
 class SmartColorSelectors extends SmartWidgets {
@@ -161,25 +161,31 @@ class SmartColorSelector {
 			}
 		`;
 		this._helpLayerDef = `
-			<g id="show-help-layer" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:7.678px;">
+			<style>
+				rect.background {
+					fill: black;
+				}
+			</style>
+
+			<g id="show-help-layer" style="font-family:'Arial', 'DIN Condensed', sans-serif;font-size:8px;">
 			<rect x="0" y="0" width="188" height="191" fill="none" stroke="none"></rect>
 			<g>
-				<rect x="53.054" y="75" width="75.891" height="14.173" fill="#5a6348"/>
+				<rect class="background" x="53.054" y="75" width="75.891" height="14.173" fill="#5a6348"/>
 				<path d="M40.908,76.071L54.985,87.071L124.985,87.071" fill="none" stroke="#fff" stroke-width="1"/>
 				<text x="55.77" y="83.571" fill="#fff">Click to set &apos;ﬁll&apos; color</text>
 			</g>
 			<g>
-				<rect x="24.054" y="90" width="75.891" height="14.173" fill="#5a6348"/>
+				<rect class="background" x="24.054" y="90" width="75.891" height="14.173" fill="#5a6348"/>
 				<path d="M15.811,86.638L27.985,102.071L97.985,102.071" fill="none" stroke="#fff" stroke-width="1"/>
 				<text x="29.77" y="98.571" fill="#fff">Click to unset color</text>
 			</g>
 			<g>
-				<rect x="58.054" y="167" width="75.891" height="14.173" fill="#5a6348"/>
+				<rect class="background" x="58.054" y="167" width="75.891" height="14.173" fill="#5a6348"/>
 				<path d="M51.547,189.937L59.985,178.638L129.985,178.638" fill="none" stroke="#fff" stroke-width="1"/>
 				<text x="63.77" y="175.571" fill="#fff">Click to set opacity</text>
 			</g>
 			<g>
-				<rect x="65" y="122" width="86.945" height="29.598" fill="#5a6348"/>
+				<rect class="background" x="65" y="122" width="86.945" height="29.598" fill="#5a6348"/>
 				<g transform="matrix(1,0,0,1,6.98533,86.0709)">
 					<text x="68.91" y="45.5" fill="#fff">Click to select color</text>
 					<text x="70.185" y="53.429" fill="#fff">and use arrows for</text>
@@ -187,12 +193,12 @@ class SmartColorSelector {
 				</g>
 			</g>
 			<g>
-				<rect x="0" y="0" width="87.498" height="39.394" fill="#5a6348"/>
+				<rect class="background" x="0" y="0" width="87.498" height="39.394" fill="#5a6348"/>
 				<path d="M13.449,54.912L1.985,12.071L85.985,12.071" fill="none" stroke="#fff" stroke-width="1"/>
 				<text x="2.77" y="8.571" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:7.678px;fill:#fff;">Click to set &apos;stroke&apos; color</text>
 			</g>
 			<g>
-				<rect x="73.054" y="60" width="75.891" height="14.173" fill="#5a6348"/>
+				<rect class="background" x="73.054" y="60" width="75.891" height="14.173" fill="#5a6348"/>
 				<path d="M58.908,60.071L72.985,71.071L142.985,71.071" fill="none" stroke="#fff" stroke-width="1"/>
 				<text x="73.77px" y="67.571px" fill="#fff">Click to use this color</text>
 			</g>
@@ -201,12 +207,12 @@ class SmartColorSelector {
 				<text x="13.77" y="24.571" fill="#fff">Click to switch colors</text>
 			</g>
 			<g>
-				<rect x="105.054" y="45" width="74.061" height="14.173" fill="#5a6348"/>
+				<rect class="background" x="105.054" y="45" width="74.061" height="14.173" fill="#5a6348"/>
 				<path d="M184.709,51.205L177.908,57.071L107.908,57.071" fill="none" stroke="#fff" stroke-width="1"/>
 				<text x="109.77" y="53.571" fill="#fff">Click to open menu</text>
 			</g>
 			<g>
-				<rect x="87" y="0" width="100.363" height="39.394" fill="#5a6348"/>
+				<rect class="background" x="87" y="0" width="100.363" height="39.394" fill="#5a6348"/>
 				<path d="M87.306,40.575L98.528,12.26L183.528,12.26" fill="none" stroke="#fff" stroke-width="1"/>
 				<text x="100.312" y="8.76" fill="#fff">Click to enter color code</text>
 				<text x="100.312" y="20.76" fill="#fff">#XXXXXX&lt;enter&gt;</text>
@@ -303,7 +309,7 @@ class SmartColorSelector {
 				<stop offset="0%" stop-color="#000000"/>
 				<stop offset="100%" stop-color="rgba(204, 154, 129, 0)"/>
 			</linearGradient>`;
-			const opSliderDef = 
+			const opSliderDef =
 			`<pattern id="pats" x="0" y="0" width="0.04" height="1">
             <rect x="0" y="0" width="4" height="4" fill="#aaaaaa"/>
             <rect x="4" y="0" width="4" height="4" fill="#ffffff"/>
@@ -316,10 +322,10 @@ class SmartColorSelector {
 		    </linearGradient>
 			<mask id="opacityMask">
 				<rect x="0" y="0" width="192" height="8" fill="url(#maskGradient)"  />
-			</mask>			
+			</mask>
 			<mask id="componentMask">
 				<rect x="0" y="0" width="154" height="8" fill="url(#maskGradient)"  />
-			</mask>`;			
+			</mask>`;
 
 			this._defs.innerHTML = window.SmartColorSelectors.defs + hueRangeDef + lumRangeDef + satRangeDef + rgbRangeDef + opSliderDef;
 		}
@@ -372,7 +378,7 @@ class SmartColorSelector {
 	}
 	/**
 	 * Show or hide sliders menu. Changes button apperiance also
-	 * @param {boolean*} state 
+	 * @param {boolean*} state
 	 */
 	_displaySliderTypeMenu(state) {
 		let status = 'none';
@@ -1176,7 +1182,7 @@ class SmartColorSelector {
 						'font-size': 8,
 						'stroke-linejoin': 'round',
 						tabindex: 6
-					}, ctrls.schemeG, this._svgdoc);					
+					}, ctrls.schemeG, this._svgdoc);
 
 				}
 				/**
@@ -1283,7 +1289,7 @@ class SmartColorSelector {
 						'font-size': 10,
 						'stroke-linejoin': 'round',
 						tabindex: 8
-					}, ctrls.schemeG, this._svgdoc);					
+					}, ctrls.schemeG, this._svgdoc);
 				}
 
 				/**
@@ -1391,7 +1397,7 @@ class SmartColorSelector {
 						'font-size': 10,
 						'stroke-linejoin': 'round',
 						tabindex: 10
-					}, ctrls.schemeG, this._svgdoc);					
+					}, ctrls.schemeG, this._svgdoc);
 
 				}
 				/**
@@ -1498,7 +1504,7 @@ class SmartColorSelector {
 						'font-size': 10,
 						'stroke-linejoin': 'round',
 						tabindex: 12
-					}, ctrls.schemeG, this._svgdoc);					
+					}, ctrls.schemeG, this._svgdoc);
 
 				}
 				/**
@@ -1726,7 +1732,7 @@ class SmartColorSelector {
 
 		this._updateHueBoxes(cr);
 		this._updateRGBSliders(cr);
-		
+
 		this._updateAnalogScheme(cr, exclude);
 		this._updateCompScheme(cr, exclude);
 		this._updateMonoScheme(cr, exclude);
@@ -1737,7 +1743,7 @@ class SmartColorSelector {
 
 	_updateTriadicScheme(cr, excludeScheme) {
 		if (excludeScheme != 'nothing') {
-			if ((excludeScheme == 'exclude-schemes') || 
+			if ((excludeScheme == 'exclude-schemes') ||
 				(this._currentSliderIndex > 1 && this._currentSliderIndex < 6)) {
 					return;
 			}
@@ -1770,7 +1776,7 @@ class SmartColorSelector {
 	}
 	_updateMonoScheme(cr, excludeScheme) {
 		if (excludeScheme != 'nothing') {
-			if ((excludeScheme == 'exclude-schemes') || 
+			if ((excludeScheme == 'exclude-schemes') ||
 				(this._currentSliderIndex > 1 && this._currentSliderIndex < 6)) {
 					return;
 			}
@@ -1802,7 +1808,7 @@ class SmartColorSelector {
 	}
 	_updateCompScheme(cr, excludeScheme) {
 		if (excludeScheme != 'nothing') {
-			if ((excludeScheme == 'exclude-schemes') || 
+			if ((excludeScheme == 'exclude-schemes') ||
 				(this._currentSliderIndex > 1 && this._currentSliderIndex < 6)) {
 					return;
 			}
@@ -1833,7 +1839,7 @@ class SmartColorSelector {
 	}
 	_updateAnalogScheme(cr, excludeScheme) {
 		if (excludeScheme != 'nothing') {
-			if ((excludeScheme == 'exclude-schemes') || 
+			if ((excludeScheme == 'exclude-schemes') ||
 				(this._currentSliderIndex > 1 && this._currentSliderIndex < 6)) {
 					return;
 			}
@@ -1853,7 +1859,7 @@ class SmartColorSelector {
 		hue = hue > 360 ? hue - 360 : hue;
 		colors[3] = w3color(`hsl(${hue}, ${newColor.sat}, ${newColor.lightness})`).toHexString();	// +30 after selected
 		colors[4] = w3color(`hsl(${hue}, ${newColor.sat * 0.7}, ${0.24 * newColor.lightness})`).toHexString();	// very dark
-		
+
 		for (let i = 0; i < 5; i++) {
 			let el = this._root.getElementById(`analog-scheme-${i}`);
 			el.setAttribute('fill', colors[i]);
@@ -1941,15 +1947,15 @@ class SmartColorSelector {
 
 	/**
 	 * update user interface with fillColor and strokeColor data
-	 * @param {*} cr - w3color object in case of color was changed, 
-	 * 					number in case of opacity was changed, 
+	 * @param {*} cr - w3color object in case of color was changed,
+	 * 					number in case of opacity was changed,
 	 * 					string 'internal - ui was changed
 	 */
 	_updateUI(cr = null, exclude) {
 		let sendEvent = true;
 		if (typeof cr === 'string' && cr === 'internal') {
 			sendEvent = false;
-			// in case of color is 'internal', update colors of two main elements and 
+			// in case of color is 'internal', update colors of two main elements and
 			// set 'cr' to reference on w3x of active parameter
 			cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
 			this._actStrokeColor.setAttribute('stroke', this._strokeColor.w3c.toHexString());
@@ -2267,8 +2273,8 @@ class SmartColorSelector {
 				this._updateUI(cr, 'nothing');
 			});
 			triadicUI.schemeG.addEventListener('click', (evt) => {
-				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling : 
-							   evt.target.nodeName == 'g' ? evt.target.firstElementChild : 
+				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling :
+							   evt.target.nodeName == 'g' ? evt.target.firstElementChild :
 							   evt.target;
 				const cr = w3color(target.getAttribute('fill'));
 				this._updateUI(cr, 'exclude-schemes');
@@ -2307,8 +2313,8 @@ class SmartColorSelector {
 				this._updateUI(cr, 'nothing');
 			});
 			monoUI.schemeG.addEventListener('click', (evt) => {
-				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling : 
-							   evt.target.nodeName == 'g' ? evt.target.firstElementChild : 
+				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling :
+							   evt.target.nodeName == 'g' ? evt.target.firstElementChild :
 							   evt.target;
 				const cr = w3color(target.getAttribute('fill'));
 				this._updateUI(cr, 'exclude-schemes');
@@ -2346,8 +2352,8 @@ class SmartColorSelector {
 				this._updateUI(cr, 'nothing');
 			});
 			compUI.schemeG.addEventListener('click', (evt) => {
-				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling : 
-							   evt.target.nodeName == 'g' ? evt.target.firstElementChild : 
+				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling :
+							   evt.target.nodeName == 'g' ? evt.target.firstElementChild :
 							   evt.target;
 				const cr = w3color(target.getAttribute('fill'));
 				this._updateUI(cr, 'exclude-schemes');
@@ -2385,8 +2391,8 @@ class SmartColorSelector {
 				this._updateUI(cr, 'nothing');
 			});
 			analogUI.schemeG.addEventListener('click', (evt) => {
-				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling : 
-							   evt.target.nodeName == 'g' ? evt.target.firstElementChild : 
+				const target = evt.target.nodeName == 'text' ? evt.target.previousElementSibling :
+							   evt.target.nodeName == 'g' ? evt.target.firstElementChild :
 							   evt.target;
 				const cr = w3color(target.getAttribute('fill'));
 				this._updateUI(cr, 'exclude-schemes');
@@ -2408,7 +2414,7 @@ class SmartColorSelector {
 				const gV = Number(rgbUI.gSliderVal.textContent);
 				const bV = Number(rgbUI.bSliderVal.textContent);
 				const cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
-				
+
 				const newColor = w3color(`rgba(${(rV < 0 ? 0 : rV)},${gV},${bV},${cr.opacity})`);
 				rgbUI.rSlider.dataset['bisy'] = 'bisy';
 				this._updateUI(newColor);
@@ -2923,7 +2929,7 @@ class SmartColorSelector {
 				cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
 				incrValue = this._interpretKeyCode(evt.keyCode);
 				if (Math.abs(incrValue) == 1) {
-					incrValue *= -1;	// change up/dowun arrows 
+					incrValue *= -1;	// change up/dowun arrows
 					lumVal = cr.lightness + (incrValue / 100);
 					lumVal = lumVal < 0 ? 0 : lumVal > 1 ? 1 : lumVal;
 					cr = w3color(`hsla(${cr.hue},${cr.sat},${lumVal},${cr.opacity})`);
@@ -2967,7 +2973,7 @@ class SmartColorSelector {
 			case 'rgb-r-val':
 				incrValue = this._interpretKeyCode(evt.keyCode);
 				val = Number(rgbUI.rSliderVal.textContent) + incrValue;
-				val = val <= 0 ? 0 : val >= 255 ? 255 : val; 
+				val = val <= 0 ? 0 : val >= 255 ? 255 : val;
 				if (val != rV) {
 					cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
 					cr = w3color(`rgba(${val},${gV},${bV},${cr.opacity})`);
@@ -2977,7 +2983,7 @@ class SmartColorSelector {
 			case 'rgb-g-val':
 				incrValue = this._interpretKeyCode(evt.keyCode);
 				val = Number(rgbUI.gSliderVal.textContent) + incrValue;
-				val = val <= 0 ? 0 : val >= 255 ? 255 : val; 
+				val = val <= 0 ? 0 : val >= 255 ? 255 : val;
 				if (val != rV) {
 					cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
 					cr = w3color(`rgba(${rV},${val},${bV},${cr.opacity})`);
@@ -2987,7 +2993,7 @@ class SmartColorSelector {
 			case 'rgb-b-val':
 				incrValue = this._interpretKeyCode(evt.keyCode);
 				val = Number(rgbUI.bSliderVal.textContent) + incrValue;
-				val = val <= 0 ? 0 : val >= 255 ? 255 : val; 
+				val = val <= 0 ? 0 : val >= 255 ? 255 : val;
 				if (val != rV) {
 					cr = this._strokeColor.active? this._strokeColor.w3c : this._fillColor.w3c;
 					cr = w3color(`rgba(${rV},${gV},${val},${cr.opacity})`);
